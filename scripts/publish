@@ -1,0 +1,12 @@
+#!/bin/sh -e
+
+POETRY_VERSION="${POETRY_VERSION:=1.1.4}" 
+PREFIX=".venv/bin/"
+
+$PYTHON -m venv .venv
+
+. ${PREFIX}activate
+${PREFIX}pip install poetry==${POETRY_VERSION}
+
+poetry build
+poetry publish $@

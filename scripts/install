@@ -1,0 +1,12 @@
+#!/bin/sh -e
+
+PYTHON="${PYTHON:=python3.8}" 
+POETRY_VERSION="${POETRY_VERSION:=1.1.4}" 
+PREFIX=".venv/bin/"
+
+$PYTHON -m venv .venv --clear
+
+. ${PREFIX}activate
+${PREFIX}pip install poetry==${POETRY_VERSION}
+${PREFIX}poetry export --without-hashes --dev -f requirements.txt -o requirements.txt
+${PREFIX}pip install -r requirements.txt

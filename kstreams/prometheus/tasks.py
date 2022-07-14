@@ -1,0 +1,67 @@
+from .monitor import PrometheusMonitorType
+from kstreams.clients import Consumer
+from kstreams.streams import KafkaStream
+from typing import DefaultDict, List
+
+import asyncio
+
+
+async def metrics_task(streams: List[KafkaStream], monitor: PrometheusMonitorType):
+    while True:
+        for stream in streams:
+            await generate_consumer_metrics(stream.consumer, monitor=monitor)
+        await asyncio.sleep(3)
+
+
+async def generate_consumer_metrics(consumer: Consumer, monitor: PrometheusMonitorType):
+    """
+    Generate Consumer Metrics for Prometheus
+
+    Format:
+        {
+            "topic-1": {
+                "1": (
+                    [topic-1, partition-number, 'group-id-1'],
+                    committed, position, highwater, lag
+                )
+                "2": (
+                    [topic-1, partition-number, 'group-id-1'],
+                    committed, position, highwater, lag
+                )
+            },
+            ...
+            "topic-n": {
+                "1": (
+                    [topic-n, partition-number, 'group-id-n'],
+                    committed, position, highwater, lag
+                )
+                "2": (
+                    [topic-n, partition-number, 'group-id-n'],
+                    committed, position, highwater, lag
+                )
+            }
+        }
+    """
+
+    metrics = DefaultDict(str)
+
+    topic_partitions = consumer.assignment()
+    for topic_partition in topic_partitions:
+        committed = consumer.last_stable_offset(topic_partition)
+        position = await consumer.position(topic_partition)
+        highwater = consumer.highwater(topic_partition)
+
+        lag = None
+        if highwater:
+            lag = highwater - position
+
+        metrics[topic_partition.topic] = {
+            "partition": topic_partition.partition,
+            "group_id": consumer._group_id,
+            "committed": committed,
+            "position": position,
+            "highwater": highwater,
+            "lag": lag,
+        }
+
+    monitor.add_consumer_metrics(metrics)

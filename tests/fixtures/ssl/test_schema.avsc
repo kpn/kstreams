@@ -1,0 +1,9 @@
+{
+    "type" : "record",
+    "name" : "UpToDateToken",
+    "namespace" : "up_to_date_token.v0_0_0",
+    "fields" : [ {
+      "name" : "uuid",
+      "type" : "string"
+    } ]
+}

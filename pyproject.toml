@@ -1,0 +1,71 @@
+[tool.poetry]
+name = "kstreams"
+version = "0.1.0"
+description = ""
+authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aiokafka = "<1.0"
+prometheus-client = "<1.0"
+pkgsettings = "^0.12.0"
+future = "^0.18.2"
+PyYAML = "^5.4.1"
+pydantic = "^1.9.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.1"
+isort = "^5.7.0"
+black = "19.3b0"
+pytest-httpserver = "<1.0"
+pytest-cov = "^2.11.1"
+flake8 = "^3.8.4"
+jedi = "0.17.2"
+mkdocs = "^1.1.2"
+uvicorn = "<1.0"
+commitizen = "^2.27.1 "
+pytest-asyncio = "^0.18.3"
+fastapi = "^0.75.2"
+mkdocs-material = "^8.3.9"
+starlette-prometheus = "^0.9.0"
+codecov = "^2.1.12"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | \venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+line_length=88
+combine_as_imports = true
+multi_line_output=3
+indent='    '
+force_alphabetical_sort='true'
+force_to_top='true'
+default_section = "THIRDPARTY"
+sections = ["STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+from_first = false
+include_trailing_comma = true
+
+[tool.commitizen]
+bump_message = "BUMP: version $current_version → $new_version"
+version = "0.0.1"
+tag_format = "$version"
+version_files = [
+    "pyproject.toml:version",
+]

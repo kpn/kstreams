@@ -1,0 +1,48 @@
+site_name: kstreams
+repo_url: https://github.com/kpn/kstreams
+site_description: Micro streaming framework
+theme:
+  name: 'material'
+  palette:
+  - scheme: default
+    primary: blue grey
+    accent: indigo
+    toggle:
+      icon: material/lightbulb
+      name: Switch to dark mode
+  - scheme: slate
+    primary: blue grey
+    accent: indigo
+    toggle:
+      icon: material/lightbulb-outline
+      name: Switch to light mode
+  features:
+  - search.suggest
+  - search.highlight
+  - content.tabs.link
+  - content.code.annotate
+
+nav:
+  - Introduction: 'index.md'
+  - Getting Started: 'getting_started.md'
+  - Stream: 'stream.md'
+  - Metrics: 'metrics.md'
+  - Serialization: 'serialization.md'
+  - Configuration: 'configuration.md'
+  - Testing: 'test_client.md'
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.snippets
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.details
+  - tables
+  - attr_list
+  - md_in_html
+  - admonition
