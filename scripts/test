@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 export PREFIX=""
 if [ -d '.venv' ] ; then
@@ -6,8 +6,7 @@ if [ -d '.venv' ] ; then
 fi
 
 export PYTHONPATH=kstreams
-export SERVICE_KSTREAMS_ENVFILES_SECRETS=$(pwd)/params.env
 
-${PREFIX}pytest -x --cov-report term-missing --cov-report=html --cov=kstreams ${1-"./tests"}
+${PREFIX}pytest -x --cov-report term-missing --cov-report=xml:coverage.xml --cov=kstreams ${1-"./tests"}
 ${PREFIX}black kstreams tests --check --diff
 ${PREFIX}flake8 kstreams/ tests/
