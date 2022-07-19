@@ -2,7 +2,7 @@
 
 `kstreams` is a library/micro framework to use with `kafka`. It has simple kafka streams implementation that gives certain guarantees, see below.
 
-![Build status](https://github.com/kpn/kstreams/actions/workflows/pr-tests.yml/badge.svg?branch=master)
+![Build status](https://github.com/kpn/kstreams/actions/workflows/pr-tests.yaml/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/kpn/kstreams/branch/main/graph/badge.svg?token=t7pxIPtphF)](https://codecov.io/gh/kpn/kstreams)
 ![python version](https://img.shields.io/badge/python-3.7%2B-yellowgreen)
 
@@ -11,6 +11,8 @@
 python 3.8+
 
 ## API documentation
+
+https://kpn.github.io/kstreams/
 
 ## Installation
 
