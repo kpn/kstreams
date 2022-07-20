@@ -3,7 +3,7 @@
 
 # We should restore the cache and remove extra requirements installations after this is resolved https://github.com/actions/setup-python/issues/182
 
-name: PR Tests
+name: Tests
 
 on:
   push:
@@ -58,6 +58,9 @@ jobs:
         ./scripts/test
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v2
       with:
+        file: ./coverage.xml
+        flags: unittests
+        name: kstreams
         fail_ci_if_error: true
