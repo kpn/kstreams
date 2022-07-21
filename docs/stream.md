@@ -70,3 +70,32 @@ async def stream(stream: Stream):
 
 !!! note
     This is a tradeoff from at most once to at least once delivery, to achieve exactly once you will need to save offsets in the destination database and validate those yourself.
+
+
+## Yield from stream
+
+Sometimes is useful to `yield` values from a `stream` so you can consume events in your on phase or because you want to return results to the frontend (SSE example).
+If you use the `yield` keyword inside a `coroutine` it will be "transform" to a  `asynchronous generator function`, meaning that inside there is an `async generator` and it can be consumed.
+
+Consuming an `async generator` is simple, you just use the `async for in` clause. Because consuming events only happens with the `for loop`, you have to make sure that the `Stream` has been started properly and after leaving the `async for in` the `stream` has been properly stopped.
+
+To facilitate the process, we have `context manager` that makes sure of the `starting/stopping` process.
+
+```python title="Yield example"
+# Create your stream
+@stream_engine.stream("dev-kpn-des--kstream")
+async def stream(stream: Stream):
+    async for cr in stream:
+        yield cr.value
+
+
+# Consume the stream:
+async with stream as stream_flow:  # Use the context manager
+    async for value in stream_flow:
+        ...
+        # do something with value (cr.value)
+```
+
+!!! note
+    If for some reason you interrupt the "async for in" in the async generator, the Stream will stopped consuming events
+    meaning that the lag will increase.
