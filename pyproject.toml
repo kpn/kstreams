@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kstreams"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
 
@@ -64,7 +64,7 @@ include_trailing_comma = true
 
 [tool.commitizen]
 bump_message = "BUMP: version $current_version → $new_version"
-version = "0.1.0"
+version = "0.2.0"
 tag_format = "$version"
 version_files = [
     "pyproject.toml:version",
