@@ -18,7 +18,7 @@ async def test_add_streams(stream_engine: StreamEngine):
         pass
 
     stream_instance = stream_engine.get_stream("my-stream")
-    assert stream_instance.func == stream
+    assert stream_instance == stream
     assert stream_instance.topics == [topic]
 
 
@@ -31,7 +31,7 @@ async def test_add_stream_multiple_topics(stream_engine: StreamEngine):
         pass
 
     stream_instance = stream_engine.get_stream("my-stream")
-    assert stream_instance.func == stream
+    assert stream_instance == stream
     assert stream_instance.topics == topics
 
 
@@ -88,3 +88,32 @@ async def test_add_stream_custom_conf(stream_engine: StreamEngine):
 
             assert stream_instance.consumer._auto_offset_reset == "earliest"
             assert not stream_instance.consumer._enable_auto_commit
+
+
+@pytest.mark.asyncio
+async def test_add_stream_as_generator(
+    stream_engine: StreamEngine, consumer_record_factory
+):
+    @stream_engine.stream("dev-kpn-des--hello-kpn")
+    async def stream(consumer):
+        async for cr in consumer:
+            yield cr
+
+    assert stream == stream_engine._streams[0]
+    assert not stream._running
+
+    cr = consumer_record_factory()
+
+    async def getone(_):
+        return cr
+
+    with mock.patch.multiple(Consumer, start=mock.DEFAULT, getone=getone):
+        async with stream as stream_flow:
+            # Now the stream should be running as we are in the context
+            assert stream._running
+            async for value in stream_flow:
+                assert value == cr
+                break
+
+    # Now the stream is stopped because we left the context
+    assert not stream._running

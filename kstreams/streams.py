@@ -1,9 +1,20 @@
 from .clients import Consumer, ConsumerType
 from .serializers import ValueDeserializer
 from aiokafka import errors, structs
-from typing import Any, Coroutine, Dict, List, Optional, Type, TypeVar, Union
+from typing import (
+    Any,
+    AsyncGenerator,
+    Coroutine,
+    Dict,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+)
 
 import asyncio
+import inspect
 import logging
 import uuid
 
@@ -17,7 +28,7 @@ class BaseStream:
     def __init__(
         self,
         *,
-        func: Coroutine[Any, Any, Type[KafkaConsumer]],
+        func: Union[Coroutine[Any, Any, Type[KafkaConsumer]], AsyncGenerator],
         consumer_class: Any,
         name: Optional[str] = None,
         kafka_config: Optional[Dict] = None,
@@ -42,22 +53,52 @@ class BaseStream:
             self._running = False
 
     async def start(self) -> None:
-        self.consumer = self._create_consumer()
-
-        async def func_wrapper():
+        async def func_wrapper(func):
             try:
                 # await for the end user coroutine
                 # we do this to show a better error message to the user
                 # when the coroutine fails
-                await self.func(self)
+                await func
             except Exception as e:
                 logger.exception(
                     f"CRASHED Stream!!! Task {self._consumer_task} \n\n {e}"
                 )
 
+        self.consumer = self._create_consumer()
+        func = self.func(self)
         await self.consumer.start()
         self._running = True
-        self._consumer_task = asyncio.create_task(func_wrapper())
+
+        if inspect.isasyncgen(func):
+            return func
+        else:
+            # It is not an async_generator so we need to
+            # create an asyncio.Task with func
+            self._consumer_task = asyncio.create_task(func_wrapper(func))
+
+    async def __aenter__(self) -> AsyncGenerator:
+        """
+        Start the kafka Consumer and return an async_gen so it can be iterated
+
+        Usage:
+            @stream_engine.stream(topic, group_id=group_id, ...)
+            async def stream(consumer):
+                async for cr, value, headers in consumer:
+                    yield value
+
+
+            # Iterate the stream:
+            async with stream as stream_flow:
+                async for value in stream_flow:
+                    ...
+        """
+        logger.info("Starting async_gen Stream....")
+        async_gen = await self.start()
+        return async_gen
+
+    async def __aexit__(self, exc_type, exc, tb) -> None:
+        logger.info("Stopping async_gen Stream....")
+        await self.stop()
 
     def __aiter__(self):
         return self

@@ -10,6 +10,7 @@ from kstreams.utils import encode_headers
 from typing import Any, Coroutine, Dict, List, Optional, Type, Union
 
 import asyncio
+import inspect
 import logging
 
 logger = logging.getLogger(__name__)
@@ -98,7 +99,13 @@ class StreamEngine(metaclass=Singleton):
         await self._producer.start()
 
     async def start_streams(self) -> None:
-        for stream in self._streams:
+        # Only start the Streams that are not async_generators
+        streams = [
+            stream
+            for stream in self._streams
+            if not inspect.isasyncgenfunction(stream.func)
+        ]
+        for stream in streams:
             await stream.start()
 
     def _start_metrics_task(self):
@@ -152,6 +159,7 @@ class StreamEngine(metaclass=Singleton):
             value_deserializer=value_deserializer or self.value_deserializer,
         )
         self._streams.append(stream)
+        return stream
 
     def stream(
         self,
@@ -164,13 +172,13 @@ class StreamEngine(metaclass=Singleton):
         def decorator(
             func: Coroutine[Any, Any, ConsumerType]
         ) -> Coroutine[Any, Any, ConsumerType]:
-            self.add_stream(
+            stream = self.add_stream(
                 topics,
                 func=func,
                 name=name,
                 value_deserializer=value_deserializer,
                 **kwargs,
             )
-            return func
+            return stream
 
         return decorator

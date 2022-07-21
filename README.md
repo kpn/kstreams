@@ -4,7 +4,7 @@
 
 ![Build status](https://github.com/kpn/kstreams/actions/workflows/pr-tests.yaml/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/kpn/kstreams/branch/main/graph/badge.svg?token=t7pxIPtphF)](https://codecov.io/gh/kpn/kstreams)
-![python version](https://img.shields.io/badge/python-3.7%2B-yellowgreen)
+![python version](https://img.shields.io/badge/python-3.8%2B-yellowgreen)
 
 ## Requirements
 
@@ -60,7 +60,7 @@ if __name__ == "__main__":
 - [x] TestClient
 - [x] Custom Serialization and Deserialization
 - [x] Easy to integrate with any `async` framework. No tied to any library!!
-- [ ] Yield events from streams
+- [x] Yield events from streams
 - [ ] Store (kafka streams pattern)
 - [ ] Stream Join
 - [ ] Windowing
