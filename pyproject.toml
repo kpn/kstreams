@@ -1,8 +1,22 @@
 [tool.poetry]
 name = "kstreams"
 version = "0.2.0"
-description = ""
+description = "Build simple kafka streams applications"
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+keywords = ["stream", "kafka", "event streaming"]
+classifiers = [
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: System :: Networking",
+    "Topic :: System :: Distributed Computing",
+    "Framework :: AsyncIO",
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
