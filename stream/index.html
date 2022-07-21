@@ -313,6 +313,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#yield-from-stream" class="md-nav__link">
+    Yield from stream
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -426,6 +433,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#yield-from-stream" class="md-nav__link">
+    Yield from stream
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -503,6 +517,29 @@
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This is a tradeoff from at most once to at least once delivery, to achieve exactly once you will need to save offsets in the destination database and validate those yourself.</p>
+</div>
+<h2 id="yield-from-stream">Yield from stream</h2>
+<p>Sometimes is useful to <code>yield</code> values from a <code>stream</code> so you can consume events in your on phase or because you want to return results to the frontend (SSE example).
+If you use the <code>yield</code> keyword inside a <code>coroutine</code> it will be "transform" to a  <code>asynchronous generator function</code>, meaning that inside there is an <code>async generator</code> and it can be consumed.</p>
+<p>Consuming an <code>async generator</code> is simple, you just use the <code>async for in</code> clause. Because consuming events only happens with the <code>for loop</code>, you have to make sure that the <code>Stream</code> has been started properly and after leaving the <code>async for in</code> the <code>stream</code> has been properly stopped.</p>
+<p>To facilitate the process, we have <code>context manager</code> that makes sure of the <code>starting/stopping</code> process.</p>
+<div class="highlight"><span class="filename">Yield example</span><pre><span></span><code><span class="c1"># Create your stream</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;dev-kpn-des--kstream&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span>
+
+
+<span class="c1"># Consume the stream:</span>
+<span class="k">async</span> <span class="k">with</span> <span class="n">stream</span> <span class="k">as</span> <span class="n">stream_flow</span><span class="p">:</span>  <span class="c1"># Use the context manager</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">stream_flow</span><span class="p">:</span>
+        <span class="o">...</span>
+        <span class="c1"># do something with value (cr.value)</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If for some reason you interrupt the "async for in" in the async generator, the Stream will stopped consuming events
+meaning that the lag will increase.</p>
 </div>
 
               
