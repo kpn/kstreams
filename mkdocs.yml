@@ -4,15 +4,11 @@ site_description: Micro streaming framework
 theme:
   name: 'material'
   palette:
-  - scheme: default
-    primary: blue grey
-    accent: indigo
+  - scheme: kpn
     toggle:
       icon: material/lightbulb
       name: Switch to dark mode
-  - scheme: slate
-    primary: blue grey
-    accent: indigo
+  - scheme: kpn-dark
     toggle:
       icon: material/lightbulb-outline
       name: Switch to light mode
@@ -21,6 +17,9 @@ theme:
   - search.highlight
   - content.tabs.link
   - content.code.annotate
+
+extra_css:
+  - stylesheets/brand.css
 
 nav:
   - Introduction: 'index.md'
