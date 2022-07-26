@@ -4,7 +4,7 @@ from kstreams.streams import Stream
 
 import asyncio
 
-topic = "dev-kpn-des--py-streams"
+topic = "local--py-streams"
 
 stream_engine = create_engine(title="my-stream-engine")
 

@@ -1,0 +1,5 @@
+#!/bin/sh -e
+
+docker-compose up -d
+scripts/cluster/topics/create "local--kstreams"
+scripts/cluster/topics/create "local--hello-world"

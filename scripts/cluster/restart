@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+service="${1:-kafka}"
+docker-compose restart "${service}"

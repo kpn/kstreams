@@ -9,7 +9,7 @@ from kstreams import create_engine, Stream
 stream_engine = create_engine(title="my-stream-engine")
 
 
-@stream_engine.stream("dev-kpn-des--py-stream", group_id="de-my-partition")
+@stream_engine.stream("local--py-stream", group_id="de-my-partition")
 async def consume(stream: Stream):
     for cr in stream:
         print(f"Event consumed: headers: {cr.headers}, payload: {value}")
@@ -19,7 +19,7 @@ async def produce():
     payload = b'{"message": "Hello world!"}'
 
     for i in range(5):
-        metadata = await stream_engine.send("dev-kpn-des--py-streams", value=payload, key="1")
+        metadata = await stream_engine.send("local--py-streams", value=payload, key="1")
         print(f"Message sent: {metadata}")
         await asyncio.sleep(5)
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 ## FastAPI
 
 1. Create the kafka cluster: `make kafka-cluster`
-2. Creation your topics: `make create-topic topic-name=dev-kpn-des--hello-world`
+2. Creation your topics: `make create-topic topic-name=local--hello-world`
 
 ```python
 # streaming.engine.py
@@ -81,7 +81,7 @@ def add_endpoints(app):
         payload = {"message": "hello world!"}
 
         metadata = await stream_engine.send(
-            "dev-kpn-des--kstream",
+            "local--kstream",
             value=payload,
         )
         msg = (
@@ -105,7 +105,7 @@ from .engine import stream_engine
 from kstreams import Stream
 
 
-@stream_engine.stream("dev-kpn-des--kstream")
+@stream_engine.stream("local--kstream")
 async def stream(stream: Stream):
     print("consuming.....")
     async for cr in stream:

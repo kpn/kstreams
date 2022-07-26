@@ -24,7 +24,7 @@ async def test_engine_clients():
 
 @pytest.mark.asyncio
 async def test_send_event_with_test_client():
-    topic = "dev-kpn-des--kstreams"
+    topic = "local--kstreams"
 
     async with TestStreamClient() as test_client:
         metadata = await test_client.send(
@@ -44,7 +44,7 @@ async def test_send_event_with_test_client():
 async def test_streams_consume_events():
     from examples.simple import stream_engine
 
-    topic = "dev-kpn-des--kstreams-2"
+    topic = "local--kstreams-2"
     event = b'{"message": "Hello world!"}'
     save_to_db = Mock()
 
@@ -62,7 +62,7 @@ async def test_streams_consume_events():
 
 @pytest.mark.asyncio
 async def test_topic_created():
-    topic = "dev-kpn-des--kstreams"
+    topic = "local--kstreams"
     async with TestStreamClient() as test_client:
         await test_client.send(topic, value=b'{"message": "Hello world!"}', key="1")
 

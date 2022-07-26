@@ -8,7 +8,7 @@ Let's assume that you have the following code example:
 from kstreams import create_engine
 import asyncio
 
-topic = "dev-kpn-des--kstreams"
+topic = "local--kstreams"
 stream_engine = create_engine(title="my-stream-engine")
 
 
@@ -58,7 +58,7 @@ from kstreams.test_utils import TestStreamClient
 
 @pytest.mark.asyncio
 async def test_streams_consume_events():
-    topic = "dev-kpn-des--kstreams"  # Use the same topic as the stream
+    topic = "local--kstreams"  # Use the same topic as the stream
     event = b'{"message": "Hello world!"}'
 
     with patch("example.on_consume") as on_consume:

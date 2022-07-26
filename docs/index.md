@@ -25,7 +25,7 @@ from kstreams import create_engine, Stream
 
 stream_engine = create_engine(title="my-stream-engine")
 
-@stream_engine.stream("dev-kpn-des--kstream")
+@stream_engine.stream("local--kstream")
 async def consume(stream: Stream):
     for cr in stream:
         print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
@@ -35,7 +35,7 @@ async def produce():
     payload = b'{"message": "Hello world!"}'
 
     for i in range(5):
-        metadata = await create_engine.send("dev-kpn-des--kstreams", value=payload)
+        metadata = await create_engine.send("local--kstreams", value=payload)
         print(f"Message sent: {metadata}")
         await asyncio.sleep(3)
 

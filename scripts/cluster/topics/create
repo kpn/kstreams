@@ -1,0 +1,21 @@
+#!/bin/sh -e
+#
+# Create a new kafka topic
+#
+# Usage:
+# ./scripts/cluster/topics/create "example-topic"
+#
+
+topic_name=$1
+partitions=1
+replication_factor=1
+cleanup_policy=delete
+
+docker-compose exec kafka kafka-topics \
+    --create \
+    --if-not-exists \
+    --bootstrap-server kafka:9092 \
+    --replication-factor "${replication_factor}" \
+    --partitions "${partitions}" \
+    --config cleanup.policy="${cleanup_policy}" \
+    --topic "${topic_name}"

@@ -23,8 +23,8 @@ INFO:     Application startup complete.
 
 ### Stream
 
-There is one `stream` consuming from the topic `dev-kpn-des--kstream`.
+There is one `stream` consuming from the topic `local--kstream`.
 
 ### Producer
 
-To produce events to can `GET` the endpoint `http://localhost:8000/events` and it will produce events to the topic `dev-kpn-des--kstream`
+To produce events to can `GET` the endpoint `http://localhost:8000/events` and it will produce events to the topic `local--kstream`

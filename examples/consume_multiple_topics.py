@@ -3,7 +3,7 @@ from kstreams import create_engine, Stream
 import asyncio
 import json
 
-topics = ["dev-kpn-des--kstreams-2", "dev-kpn-des--hello-world"]
+topics = ["local--kstreams", "local--hello-world"]
 
 stream_engine = create_engine(title="my-stream-engine")
 
