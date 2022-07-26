@@ -47,6 +47,7 @@ async def produce():
 async def main():
     await stream_engine.init_streaming()
     await produce()
+    await stream_engine.stop_streaming()
 
 if __name__ == "__main__":
     asyncio.run(main())
