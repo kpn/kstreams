@@ -442,7 +442,7 @@
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
 
 
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;dev-kpn-des--py-stream&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--py-stream&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -452,7 +452,7 @@
     <span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-        <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;dev-kpn-des--py-streams&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;local--py-streams&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Message sent: </span><span class="si">{</span><span class="n">metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
@@ -470,7 +470,7 @@
 <h2 id="fastapi">FastAPI</h2>
 <ol>
 <li>Create the kafka cluster: <code>make kafka-cluster</code></li>
-<li>Creation your topics: <code>make create-topic topic-name=dev-kpn-des--hello-world</code></li>
+<li>Creation your topics: <code>make create-topic topic-name=local--hello-world</code></li>
 </ol>
 <div class="highlight"><pre><span></span><code><span class="c1"># streaming.engine.py</span>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
@@ -509,7 +509,7 @@
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;hello world!&quot;</span><span class="p">}</span>
 
         <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
-            <span class="s2">&quot;dev-kpn-des--kstream&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;local--kstream&quot;</span><span class="p">,</span>
             <span class="n">value</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
@@ -531,7 +531,7 @@
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">Stream</span>
 
 
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;dev-kpn-des--kstream&quot;</span><span class="p">)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstream&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;consuming.....&quot;</span><span class="p">)</span>
     <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>

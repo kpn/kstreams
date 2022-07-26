@@ -441,7 +441,7 @@ The <code>TestStreamClient</code> you can send events so you won't need a <code>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
 <span class="kn">import</span> <span class="nn">asyncio</span>
 
-<span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;dev-kpn-des--kstreams&quot;</span>
+<span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
 
 
@@ -488,7 +488,7 @@ The <code>TestStreamClient</code> you can send events so you won't need a <code>
 
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">test_streams_consume_events</span><span class="p">():</span>
-    <span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;dev-kpn-des--kstreams&quot;</span>  <span class="c1"># Use the same topic as the stream</span>
+    <span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>  <span class="c1"># Use the same topic as the stream</span>
     <span class="n">event</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span>
 
     <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;example.on_consume&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">on_consume</span><span class="p">:</span>
