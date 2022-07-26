@@ -37,7 +37,7 @@ stream_engine = create_engine(
 )
 
 data = {"message": "Hello world!"}
-topic = "dev-kpn-des--kstreams-json"
+topic = "local--kstreams-json"
 
 
 @stream_engine.stream(topic)

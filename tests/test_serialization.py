@@ -74,7 +74,7 @@ async def test_custom_serialization(stream_engine: StreamEngine, record_metadata
 async def test_custom_deserialization(
     stream_engine: StreamEngine, consumer_record_factory
 ):
-    topic = "dev-kpn-des--hello-kpn"
+    topic = "local--hello-kpn"
     payload = {"message": "test"}
     headers = {
         "content-type": consts.APPLICATION_JSON,

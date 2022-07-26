@@ -1,0 +1,9 @@
+#!/bin/sh -e
+#
+# List available topics
+#
+# Usage:
+# ./scripts/cluster/topics/ls
+#
+
+docker-compose exec kafka kafka-topics --list --bootstrap-server kafka:9092

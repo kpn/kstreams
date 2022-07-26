@@ -27,7 +27,7 @@ def add_endpoints(app):
         payload = '{"message": "hello world!"}'
 
         metadata = await stream_engine.send(
-            "dev-kpn-des--kstream",
+            "local--kstream",
             value=payload.encode(),
         )
         msg = (

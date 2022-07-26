@@ -6,7 +6,7 @@ Settings are read using [pkgsettings](https://github.com/kpn-digital/py-pkgsetti
 |---|-----|----|
 | SERVICE_KSTREAMS_KAFKA_CONFIG_BOOTSTRAP_SERVERS | Kafka servers | `["localhost:9092"]` |
 | SERVICE_KSTREAMS_KAFKA_CONFIG_SECURITY_PROTOCOL | Kafka security protocol | `PLAINTEXT` |
-| SERVICE_KSTREAMS_KAFKA_TOPIC_PREFIX | Topic prefix | `dev-kpn-des--` |
+| SERVICE_KSTREAMS_KAFKA_TOPIC_PREFIX | Topic prefix | `local--` |
 | SERVICE_KSTREAMS_KAFKA_SSL_CERT_DATA | client certificate data | `None` |
 | SERVICE_KSTREAMS_KAFKA_SSL_KEY_DATA | client private key data | `None` |
 | SERVICE_KSTREAMS_KAFKA_SSL_CABUNDLE_DATA | cabundle data (not needed for cluster environments) | `None` |
@@ -20,11 +20,11 @@ secret store like Vault.
 ```python
 from pkgsettings import Settings
 from kstreams.conf import settings as kstreams_settings
- 
+
 
 kstreams_settings.configure(
     SERVICE_KSTREAMS_KAFKA_CONFIG_BOOTSTRAP_SERVERS=["localhost:9092"],
     SERVICE_KSTREAMS_KAFKA_CONFIG_SECURITY_PROTOCOL="PLAINTEXT",
-    SERVICE_KSTREAMS_KAFKA_TOPIC_PREFIX="dev-kpn-des--",
+    SERVICE_KSTREAMS_KAFKA_TOPIC_PREFIX="local--",
 )
 ```

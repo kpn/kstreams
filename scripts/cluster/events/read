@@ -1,0 +1,17 @@
+#!/bin/sh -e
+#
+# Read messages from the given kafka topic
+#
+# Usage:
+#
+# ./scripts/cluster/events/read  # default: local--hello-world
+# ./scripts/cluster/events/read "example-topic"
+
+topic_name="${1:-local--hello-world}"
+
+docker-compose exec kafka kafka-console-consumer --bootstrap-server localhost:9092 \
+    --topic "$topic_name" --from-beginning
+
+
+docker-compose exec kafka kafka-console-consumer --bootstrap-server kafka:9092 \
+    --topic "local--hello-world" --from-beginning

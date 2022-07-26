@@ -10,7 +10,7 @@ async def test_consumer_metrics(mock_consumer_class):
         pass
 
     stream = Stream(
-        "dev-kpn-des--hello-kpn", consumer_class=mock_consumer_class, func=my_coroutine
+        "local--hello-kpn", consumer_class=mock_consumer_class, func=my_coroutine
     )
     await stream.start()
 

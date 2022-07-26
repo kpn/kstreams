@@ -10,7 +10,7 @@ stream_engine = create_engine(title="my-stream-engine")
 
 
 # here you can add any other AIOKafkaConsumer config, for example auto_offset_reset
-@stream_engine.stream("dev-kpn-des--py-stream", group_id="de-my-partition")
+@stream_engine.stream("local--py-stream", group_id="de-my-partition")
 async def stream(stream: Stream) -> None:
     async for cr in stream:
         print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
@@ -33,7 +33,7 @@ Consuming from multiple topics using one `stream` is possible. A `List[str]` of 
 stream_engine = create_engine(title="my-stream-engine")
 
 
-@stream_engine.stream(["dev-kpn-des--kstreams", "dev-kpn-des--hello-world"], group_id="example-group")
+@stream_engine.stream(["local--kstreams", "local--hello-world"], group_id="example-group")
 async def consume(stream: Stream) -> None:
     async for cr in stream:
         print(f"Event consumed from topic {cr.topic}: headers: {cr.headers}, payload: {cr.value}")
@@ -47,7 +47,7 @@ Most of the time you will only set the `topic` and the `group_id` to the `consum
 # The consumer sends periodic heartbeats every 500 ms
 # On OffsetOutOfRange errors, the offset will move to the oldest available message (‘earliest’)
 
-@stream_engine.stream("dev-kpn-des--kstream", group_id="de-my-partition", session_timeout_ms=500, auto_offset_reset"earliest")
+@stream_engine.stream("local--kstream", group_id="de-my-partition", session_timeout_ms=500, auto_offset_reset"earliest")
 async def stream(stream: Stream):
     async for cr in stream:
         print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
@@ -58,7 +58,7 @@ async def stream(stream: Stream):
 When processing more sensitive data and you want to be sure that the `kafka offeset` is commited once that you have done your tasks, you can use `enable_auto_commit=False` mode of Consumer.
 
 ```python title="Manual commit example"
-@stream_engine.stream("dev-kpn-des--kstream", group_id="de-my-partition", enable_auto_commit=False)
+@stream_engine.stream("local--kstream", group_id="de-my-partition", enable_auto_commit=False)
 async def stream(stream: Stream):
     async for cr in stream:
         print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
@@ -83,7 +83,7 @@ To facilitate the process, we have `context manager` that makes sure of the `sta
 
 ```python title="Yield example"
 # Create your stream
-@stream_engine.stream("dev-kpn-des--kstream")
+@stream_engine.stream("local--kstream")
 async def stream(stream: Stream):
     async for cr in stream:
         yield cr.value

@@ -1,0 +1,13 @@
+#!/bin/sh -e
+#
+# Send messages to the given kafka topic (default: local--hello-world)
+#
+# Usage:
+#
+# ./scripts/cluster/events/send  # default: local--hello-world
+# ./scripts/cluster/events/send "example-topic"
+
+topic_name="${1:-local--hello-world}"
+
+docker-compose exec kafka kafka-console-producer \
+    --broker-list kafka:9092 --topic "$topic_name"
