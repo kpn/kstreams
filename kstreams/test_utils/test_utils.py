@@ -37,7 +37,7 @@ class TestStreamClient:
 
     async def __aenter__(self) -> "TestStreamClient":
         self.setup_mocks()
-        await self.stream_engine.init_streaming()
+        await self.stream_engine.start()
         self.stream_engine._stop_metrics_task()
         return self
 
@@ -52,7 +52,7 @@ class TestStreamClient:
             while not TopicManager.all_messages_consumed():
                 await asyncio.sleep(1)
 
-        await self.stream_engine.stop_streaming()
+        await self.stream_engine.stop()
 
         # restore original config
         self.stream_engine.producer_class = self.producer_class

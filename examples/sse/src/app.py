@@ -43,11 +43,11 @@ def _setup_routes(app: FastAPI) -> None:
 def _on_startup(app: FastAPI):
     @app.on_event("startup")
     async def startup_event():
-        await stream_engine.init_streaming()
+        await stream_engine.start()
 
     @app.on_event("shutdown")
     async def shutdown_event():
-        await stream_engine.stop_streaming()
+        await stream_engine.stop()
 
 
 application = create_app()

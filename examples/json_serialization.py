@@ -65,9 +65,9 @@ async def produce():
 
 
 async def main():
-    await stream_engine.init_streaming()
+    await stream_engine.start()
     await produce()
-    await stream_engine.stop_streaming()
+    await stream_engine.stop()
 
 
 if __name__ == "__main__":

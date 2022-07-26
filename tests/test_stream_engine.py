@@ -60,11 +60,11 @@ async def test_init_stop_streaming(stream_engine: StreamEngine):
 
     with mock.patch.multiple(Consumer, start=mock.DEFAULT, stop=mock.DEFAULT):
         with mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
-            await stream_engine.init_streaming()
+            await stream_engine.start()
             Consumer.start.assert_awaited()
             stream_engine._producer.start.assert_awaited()
 
-            await stream_engine.stop_streaming()
+            await stream_engine.stop()
             stream_engine._producer.stop.assert_awaited()
             Consumer.stop.assert_awaited()
 
