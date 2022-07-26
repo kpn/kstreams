@@ -1,3 +1,9 @@
+## 0.2.2 (2022-07-26)
+
+### Fix
+
+- replace engine initializers methods with start and stop (#24)
+
 ## 0.2.1 (2022-07-22)
 
 ### Fix
