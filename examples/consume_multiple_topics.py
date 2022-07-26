@@ -27,9 +27,9 @@ async def produce(events_per_topic: int = 5, delay_seconds: int = 1) -> None:
 
 
 async def main():
-    await stream_engine.init_streaming()
+    await stream_engine.start()
     await produce()
-    await stream_engine.stop_streaming()
+    await stream_engine.stop()
 
 
 if __name__ == "__main__":

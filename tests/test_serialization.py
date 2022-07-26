@@ -47,7 +47,7 @@ async def test_custom_serialization(stream_engine: StreamEngine, record_metadata
 
     # with mock.patch.multiple(Consumer, start=mock.DEFAULT, stop=mock.DEFAULT):
     with mock.patch.multiple(Producer, start=mock.DEFAULT, send=send):
-        await stream_engine.init_streaming()
+        await stream_engine.start()
 
         value_serializer = MySerializer()
         serialized_data = await value_serializer.serialize(value)

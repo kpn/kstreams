@@ -11,7 +11,7 @@ stream_engine = create_engine(title="my-stream-engine")
 
 @stream_engine.stream("local--py-stream", group_id="de-my-partition")
 async def consume(stream: Stream):
-    for cr in stream:
+    async for cr in stream:
         print(f"Event consumed: headers: {cr.headers}, payload: {value}")
 
 
@@ -25,9 +25,9 @@ async def produce():
 
 
 async def main():
-    await stream_engine.init_streaming()
+    await stream_engine.start()
     await produce()
-    await stream_engine.stop_streaming()
+    await stream_engine.stop()
 
 
 if __name__ == "__main__":
@@ -66,11 +66,11 @@ def create_app():
 
     @app.on_event("startup")
     async def startup_event():
-        await stream_engine.init_streaming()
+        await stream_engine.start()
 
     @app.on_event("shutdown")
     async def shutdown_event():
-        await stream_engine.stop_streaming()
+        await stream_engine.stop()
 
     return app
 

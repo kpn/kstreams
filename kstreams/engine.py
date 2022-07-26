@@ -73,7 +73,7 @@ class StreamEngine(metaclass=Singleton):
 
         return metadata
 
-    async def init_streaming(self) -> None:
+    async def start(self) -> None:
         await self.start_producer()
         await self.start_streams()
 
@@ -82,7 +82,7 @@ class StreamEngine(metaclass=Singleton):
         self.monitor.add_streams(self._streams)
         self._start_metrics_task()
 
-    async def stop_streaming(self) -> None:
+    async def stop(self) -> None:
         self._stop_metrics_task()
         await self.stop_streams()
         await self.stop_producer()
