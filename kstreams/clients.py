@@ -1,9 +1,10 @@
-from . import conf, utils
-from pkgsettings import PrefixedSettings
+import logging
 from typing import Callable, Optional, TypeVar
 
 import aiokafka
-import logging
+from pkgsettings import PrefixedSettings
+
+from . import conf, utils
 
 logger = logging.getLogger(__name__)
 

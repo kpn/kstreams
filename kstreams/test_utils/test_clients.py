@@ -1,10 +1,12 @@
-from .structs import ConsumerRecord, RecordMetadata, TopicPartition
-from .topics import TopicManager
 from datetime import datetime
+from typing import Any, Coroutine, Dict, List, Optional, Tuple, Union
+
 from kstreams.clients import Consumer, Producer
 from kstreams.custom_types import Headers
 from kstreams.serializers import ValueSerializer
-from typing import Any, Coroutine, Dict, List, Optional, Tuple, Union
+
+from .structs import ConsumerRecord, RecordMetadata, TopicPartition
+from .topics import TopicManager
 
 
 class Base:
@@ -84,6 +86,8 @@ class TestConsumer(Base, Consumer):
     ) -> Union[bytes, Dict]:  # The return type must be fixed later on
         for topic_partition in self._assigments:
             topic = TopicManager.get_topic(topic_partition.topic)
+            if topic is None:
+                raise AttributeError("There should be a topic")
 
             if not topic.consumed:
                 break

@@ -1,8 +1,9 @@
-from kstreams.clients import Consumer
-from kstreams.conf import settings
 from unittest import mock
 
 import pytest
+
+from kstreams.clients import Consumer
+from kstreams.conf import settings
 
 
 @pytest.mark.asyncio

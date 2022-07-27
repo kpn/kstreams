@@ -1,10 +1,11 @@
+from unittest import mock
+
+import pytest
+
 from kstreams.clients import Consumer, Producer
 from kstreams.conf import settings
 from kstreams.engine import StreamEngine
 from kstreams.exceptions import DuplicateStreamException
-from unittest import mock
-
-import pytest
 
 settings.configure(KAFKA_CONFIG_BOOTSTRAP_SERVERS=["localhost:9092"])
 

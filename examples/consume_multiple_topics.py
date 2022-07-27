@@ -1,9 +1,9 @@
-from kstreams import create_engine, Stream
-
 import asyncio
 import json
 
-topics = ["local--kstreams", "local--hello-world"]
+from kstreams import Stream, create_engine
+
+topics = ["local--kstreams-2", "local--hello-world"]
 
 stream_engine = create_engine(title="my-stream-engine")
 

@@ -1,8 +1,9 @@
+from typing import Optional
+
 from .clients import Consumer, ConsumerType, Producer, ProducerType
 from .engine import StreamEngine
 from .prometheus.monitor import PrometheusMonitor, PrometheusMonitorType
 from .serializers import ValueDeserializer, ValueSerializer
-from typing import Optional
 
 
 def create_engine(

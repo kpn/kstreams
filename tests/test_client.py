@@ -1,12 +1,13 @@
+from unittest.mock import Mock, patch
+
+import pytest
+
 from kstreams.test_utils import (
     TestConsumer,
     TestProducer,
     TestStreamClient,
     TopicManager,
 )
-from unittest.mock import Mock, patch
-
-import pytest
 
 
 @pytest.mark.asyncio

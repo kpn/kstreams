@@ -10,3 +10,7 @@ export PYTHONPATH=kstreams
 ${PREFIX}pytest -x --cov-report term-missing --cov-report=xml:coverage.xml --cov=kstreams ${1-"./tests"}
 ${PREFIX}black kstreams tests --check --diff
 ${PREFIX}flake8 kstreams/ tests/
+${PREFIX}isort --check-only kstreams tests
+
+# TODO: Fix mypy warnings and then enable in CI
+# ${PREFIX}mypy kstreams/

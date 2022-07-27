@@ -1,8 +1,8 @@
-from . import test_clients
+import asyncio
 from dataclasses import dataclass
 from typing import Any, ClassVar, Dict, Optional
 
-import asyncio
+from . import test_clients
 
 
 @dataclass

@@ -1,11 +1,11 @@
+import pytest
+
 from kstreams.utils import (
-    create_ssl_context_from_pkgsettings,
     EmptySSLDataException,
     IncorrectCertificateFormat,
+    create_ssl_context_from_pkgsettings,
     settings,
 )
-
-import pytest
 
 settings_prefix = "TEST_"
 

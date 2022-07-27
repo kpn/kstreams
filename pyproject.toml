@@ -5,7 +5,7 @@ description = "Build simple kafka streams applications"
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
 license = "Apache-2.0"
 readme = "README.md"
-keywords = ["stream", "kafka", "event streaming"]
+keywords = ["stream", "processing", "kafka", "event streaming"]
 classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -29,10 +29,10 @@ pydantic = "^1.9.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.1"
+mypy = "^0.961"
 isort = "^5.7.0"
 pytest-httpserver = "<1.0"
 pytest-cov = "^2.11.1"
-flake8 = "^3.8.4"
 jedi = "0.17.2"
 mkdocs = "^1.1.2"
 uvicorn = "<1.0"
@@ -43,6 +43,7 @@ mkdocs-material = "^8.3.9"
 starlette-prometheus = "^0.9.0"
 codecov = "^2.1.12"
 black = "^22.6.0"
+flake8 = "^4.0.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -65,16 +66,8 @@ exclude = '''
 '''
 
 [tool.isort]
-line_length=88
-combine_as_imports = true
-multi_line_output=3
-indent='    '
-force_alphabetical_sort='true'
-force_to_top='true'
-default_section = "THIRDPARTY"
-sections = ["STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
-from_first = false
-include_trailing_comma = true
+profile = "black"
+known_first_party = ["kstreams", "tests", "examples"]
 
 [tool.commitizen]
 version = "0.2.2"
@@ -83,3 +76,7 @@ version_files = [
     "pyproject.toml:version",
 ]
 update_changelog_on_bump = true
+
+[tool.pytest.ini_options]
+timeout = 300
+log_level = "DEBUG"

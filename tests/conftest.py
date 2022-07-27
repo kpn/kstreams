@@ -1,12 +1,13 @@
+import asyncio
 from collections import namedtuple
 from dataclasses import field
-from kstreams import clients, conf, create_engine
-from pytest_httpserver import HTTPServer
 from typing import Any, Dict, List, NamedTuple, Optional, Sequence, Tuple
 
-import asyncio
 import pytest
 import pytest_asyncio
+from pytest_httpserver import HTTPServer
+
+from kstreams import clients, conf, create_engine
 
 
 class RecordMetadata(NamedTuple):
