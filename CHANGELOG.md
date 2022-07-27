@@ -1,3 +1,9 @@
+## 0.2.3 (2022-07-27)
+
+### Fix
+
+- call serialization methods only when value is present (#27)
+
 ## 0.2.2 (2022-07-26)
 
 ### Fix

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kstreams"
-version = "0.2.2"
+version = "0.2.3"
 description = "Build simple kafka streams applications"
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
 license = "Apache-2.0"
@@ -77,7 +77,7 @@ from_first = false
 include_trailing_comma = true
 
 [tool.commitizen]
-version = "0.2.2"
+version = "0.2.3"
 tag_format = "$version"
 version_files = [
     "pyproject.toml:version",
