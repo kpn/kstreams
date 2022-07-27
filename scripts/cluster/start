@@ -4,3 +4,5 @@ docker-compose up -d
 scripts/cluster/topics/create "local--kstreams"
 scripts/cluster/topics/create "local--hello-world"
 scripts/cluster/topics/create "local--sse"
+scripts/cluster/topics/create "local--avro-user"
+scripts/cluster/topics/create "local--avro-address"
