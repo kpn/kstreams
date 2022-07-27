@@ -111,9 +111,15 @@ class BaseStream:
         try:
             # value is a ConsumerRecord:
             # namedtuple["topic", "partition", "offset", "key", "value"]
-            consumer_record = await self.consumer.getone()
+            consumer_record: structs.ConsumerRecord = await self.consumer.getone()
 
-            if self.value_deserializer is not None:
+            # deserialize only when value and value_deserializer are present
+            if all(
+                (
+                    consumer_record.value,
+                    self.value_deserializer,
+                )
+            ):
                 return await self.value_deserializer.deserialize(consumer_record)
 
             return consumer_record
