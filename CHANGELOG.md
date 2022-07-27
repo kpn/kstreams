@@ -1,3 +1,9 @@
+## 0.2.4 (2022-07-27)
+
+### Fix
+
+- add mypy and some type hints
+
 ## 0.2.3 (2022-07-27)
 
 ### Fix
