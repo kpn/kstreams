@@ -1,7 +1,8 @@
-from .streaming.streams import stream_engine
 from fastapi import FastAPI
 from starlette.responses import Response
-from starlette_prometheus import metrics, PrometheusMiddleware
+from starlette_prometheus import PrometheusMiddleware, metrics
+
+from .streaming.streams import stream_engine
 
 
 def create_app():

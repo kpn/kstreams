@@ -1,14 +1,15 @@
-from .structs import RecordMetadata
-from .test_clients import TestConsumer, TestProducer
-from .topics import TopicManager
+import asyncio
+from types import TracebackType
+from typing import Any, Dict, List, Optional, Type
+
 from kstreams.create import create_engine
 from kstreams.custom_types import Headers
 from kstreams.serializers import ValueSerializer
 from kstreams.streams import Stream
-from types import TracebackType
-from typing import Any, Dict, List, Optional, Type
 
-import asyncio
+from .structs import RecordMetadata
+from .test_clients import TestConsumer, TestProducer
+from .topics import TopicManager
 
 
 class TestStreamClient:

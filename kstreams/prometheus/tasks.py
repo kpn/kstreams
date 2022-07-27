@@ -1,9 +1,10 @@
-from .monitor import PrometheusMonitorType
+import asyncio
+from typing import Any, DefaultDict, List
+
 from kstreams.clients import Consumer
 from kstreams.streams import KafkaStream
-from typing import DefaultDict, List
 
-import asyncio
+from .monitor import PrometheusMonitorType
 
 
 async def metrics_task(streams: List[KafkaStream], monitor: PrometheusMonitorType):
@@ -43,7 +44,7 @@ async def generate_consumer_metrics(consumer: Consumer, monitor: PrometheusMonit
         }
     """
 
-    metrics = DefaultDict(str)
+    metrics: DefaultDict[Any, dict] = DefaultDict(dict)
 
     topic_partitions = consumer.assignment()
     for topic_partition in topic_partitions:

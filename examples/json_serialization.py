@@ -1,10 +1,11 @@
-from kstreams import consts, create_engine, Stream
-from kstreams.custom_types import Headers
+import asyncio
+import json
 from typing import Any, Dict, Optional
 
 import aiokafka
-import asyncio
-import json
+
+from kstreams import Stream, consts, create_engine
+from kstreams.custom_types import Headers
 
 
 class JsonSerializer:

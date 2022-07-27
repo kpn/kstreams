@@ -1,3 +1,11 @@
+import asyncio
+import inspect
+import logging
+from typing import Any, Coroutine, Dict, List, Optional, Type, Union
+
+from kstreams.clients import ConsumerType, ProducerType
+from kstreams.utils import encode_headers
+
 from .custom_types import DecoratedCallable, Headers
 from .exceptions import DuplicateStreamException
 from .prometheus.monitor import PrometheusMonitorType
@@ -5,13 +13,6 @@ from .prometheus.tasks import metrics_task
 from .serializers import ValueDeserializer, ValueSerializer
 from .singlenton import Singleton
 from .streams import KafkaStream, Stream
-from kstreams.clients import ConsumerType, ProducerType
-from kstreams.utils import encode_headers
-from typing import Any, Coroutine, Dict, List, Optional, Type, Union
-
-import asyncio
-import inspect
-import logging
 
 logger = logging.getLogger(__name__)
 

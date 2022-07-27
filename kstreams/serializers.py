@@ -1,7 +1,8 @@
-from .custom_types import Headers
 from typing import Any, Dict, Optional, Protocol
 
 import aiokafka
+
+from .custom_types import Headers
 
 
 class ValueDeserializer(Protocol):

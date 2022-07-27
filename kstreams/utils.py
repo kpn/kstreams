@@ -1,10 +1,10 @@
-from kstreams import custom_types
-from kstreams.conf import settings
-from tempfile import NamedTemporaryFile
-
 import contextlib
 import ssl
 import typing
+from tempfile import NamedTemporaryFile
+
+from kstreams import custom_types
+from kstreams.conf import settings
 
 
 class EmptySSLDataException(Exception):

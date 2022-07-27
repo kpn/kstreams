@@ -1,6 +1,7 @@
-from .clients import Consumer, ConsumerType
-from .serializers import ValueDeserializer
-from aiokafka import errors, structs
+import asyncio
+import inspect
+import logging
+import uuid
 from typing import (
     Any,
     AsyncGenerator,
@@ -13,10 +14,10 @@ from typing import (
     Union,
 )
 
-import asyncio
-import inspect
-import logging
-import uuid
+from aiokafka import errors, structs
+
+from .clients import Consumer, ConsumerType
+from .serializers import ValueDeserializer
 
 logger = logging.getLogger(__name__)
 

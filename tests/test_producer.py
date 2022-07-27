@@ -1,8 +1,9 @@
-from kstreams.clients import Producer
-from kstreams.conf import settings
 from unittest.mock import patch
 
 import pytest
+
+from kstreams.clients import Producer
+from kstreams.conf import settings
 
 
 @pytest.mark.asyncio

@@ -1,7 +1,7 @@
+import pytest
+
 from kstreams.prometheus import monitor, tasks
 from kstreams.streams import Stream
-
-import pytest
 
 
 @pytest.mark.asyncio

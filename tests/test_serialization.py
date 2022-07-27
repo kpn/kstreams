@@ -1,14 +1,15 @@
-from kstreams import consts, StreamEngine
-from kstreams.clients import aiokafka, Producer
+import json
+from typing import Any, Dict, Optional
+from unittest import mock
+
+import pytest
+
+from kstreams import StreamEngine, consts
+from kstreams.clients import Producer, aiokafka
 from kstreams.custom_types import Headers
 from kstreams.streams import Stream
 from kstreams.test_utils.test_utils import TestStreamClient
 from kstreams.utils import encode_headers
-from typing import Any, Dict, Optional
-from unittest import mock
-
-import json
-import pytest
 
 
 class MySerializer:

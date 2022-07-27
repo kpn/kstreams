@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from kstreams.custom_types import KafkaHeaders
 from typing import Generic, NamedTuple, Optional, TypeVar
+
+from kstreams.custom_types import KafkaHeaders
 
 KT = TypeVar("KT")
 VT = TypeVar("VT")
