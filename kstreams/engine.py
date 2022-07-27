@@ -50,7 +50,14 @@ class StreamEngine(metaclass=Singleton):
     ):
 
         value_serializer = value_serializer or self.value_serializer
-        if value_serializer is not None:
+
+        # serialize only when value and value_serializer are present
+        if all(
+            (
+                value,
+                value_serializer,
+            )
+        ):
             value = await value_serializer.serialize(
                 value, headers=headers, value_serializer_kwargs=value_serializer_kwargs
             )
