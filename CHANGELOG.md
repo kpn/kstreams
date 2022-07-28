@@ -1,3 +1,9 @@
+## 0.3.0 (2022-07-28)
+
+### Feat
+
+- add streams instances without decorator (#28)
+
 ## 0.2.4 (2022-07-27)
 
 ### Fix
