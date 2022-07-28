@@ -68,7 +68,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#consuming-from-multiple-topics" class="md-skip">
+        <a href="#creating-a-stream-instance" class="md-skip">
           Skip to content
         </a>
       
@@ -295,6 +295,20 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#creating-a-stream-instance" class="md-nav__link">
+    Creating a Stream instance
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream-crashing" class="md-nav__link">
+    Stream crashing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#consuming-from-multiple-topics" class="md-nav__link">
     Consuming from multiple topics
   </a>
@@ -415,6 +429,20 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#creating-a-stream-instance" class="md-nav__link">
+    Creating a Stream instance
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stream-crashing" class="md-nav__link">
+    Stream crashing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#consuming-from-multiple-topics" class="md-nav__link">
     Consuming from multiple topics
   </a>
@@ -471,7 +499,7 @@
 
 
 <span class="c1"># here you can add any other AIOKafkaConsumer config, for example auto_offset_reset</span>
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--py-stream&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -484,6 +512,85 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<h2 id="creating-a-stream-instance">Creating a Stream instance</h2>
+<p>If for any reason you need to create <code>Streams</code> instances directly, you can do it without using the decorator <code>stream_engine.stream</code>.</p>
+<div class="highlight"><span class="filename">Stream instance</span><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">aiokafka</span> <span class="kn">import</span> <span class="n">structs</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Stream</span>
+
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">MyValueDeserializer</span><span class="p">:</span>
+
+        <span class="k">async</span> <span class="k">def</span> <span class="nf">deserialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer_record</span><span class="p">:</span> <span class="n">structs</span><span class="o">.</span><span class="n">ConsumerRecord</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">consumer_record</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="n">stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
+    <span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>  <span class="c1"># coroutine or async generator</span>
+    <span class="n">value_deserializer</span><span class="o">=</span><span class="n">MyValueDeserializer</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="c1"># add the stream to the engine</span>
+<span class="n">stream_engine</span><span class="o">.</span><span class="n">add_stream</span><span class="p">(</span><span class="n">stram</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<h2 id="stream-crashing">Stream crashing</h2>
+<p>If your stream <code>crashes</code> for any reason, the event consumption will stop meaning that non event will be consumed from the <code>topic</code>.
+As an end user you are responsable of deciding what to do. In future version approaches like <code>re-try</code>, <code>stream engine stops on stream crash</code> might be introduced.</p>
+<div class="highlight"><span class="filename">Crashing example</span><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
+
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed. Payload </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">payload</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">produce</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+        <span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;Hi&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">produce</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>CRASHED Stream!!! Task &lt;Task pending <span class="nv">name</span><span class="o">=</span><span class="s1">&#39;Task-23&#39;</span> <span class="nv">coro</span><span class="o">=</span>&lt;BaseStream.start.&lt;locals&gt;.func_wrapper<span class="o">()</span> running at /Users/Projects/kstreams/kstreams/streams.py:55&gt;&gt;
+
+ <span class="s1">&#39;ConsumerRecord&#39;</span> object has no attribute <span class="s1">&#39;payload&#39;</span>
+Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+  File <span class="s2">&quot;/Users/Projects/kstreams/kstreams/streams.py&quot;</span>, line <span class="m">52</span>, <span class="k">in</span> func_wrapper
+    await self.func<span class="o">(</span>self<span class="o">)</span>
+  File <span class="s2">&quot;/Users/Projects/kstreams/examples/fastapi_example/streaming/streams.py&quot;</span>, line <span class="m">9</span>, <span class="k">in</span> stream
+    print<span class="o">(</span>f<span class="s2">&quot;Event consumed: headers: {cr.headers}, payload: {cr.payload}&quot;</span><span class="o">)</span>
+AttributeError: <span class="s1">&#39;ConsumerRecord&#39;</span> object has no attribute <span class="s1">&#39;payload&#39;</span>
 </code></pre></div>
 <h2 id="consuming-from-multiple-topics">Consuming from multiple topics</h2>
 <p>Consuming from multiple topics using one <code>stream</code> is possible. A <code>List[str]</code> of topics must be provided.</p>
