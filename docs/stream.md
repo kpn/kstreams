@@ -10,7 +10,7 @@ stream_engine = create_engine(title="my-stream-engine")
 
 
 # here you can add any other AIOKafkaConsumer config, for example auto_offset_reset
-@stream_engine.stream("local--py-stream", group_id="de-my-partition")
+@stream_engine.stream("local--kstreams", group_id="de-my-partition")
 async def stream(stream: Stream) -> None:
     async for cr in stream:
         print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
@@ -23,6 +23,95 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+```
+
+## Creating a Stream instance
+
+If for any reason you need to create `Streams` instances directly, you can do it without using the decorator `stream_engine.stream`.
+
+```python title="Stream instance"
+import asyncio
+from aiokafka import structs
+from kstreams import create_engine, Stream
+
+stream_engine = create_engine(title="my-stream-engine")
+
+
+class MyValueDeserializer:
+
+        async def deserialize(self, consumer_record: structs.ConsumerRecord, **kwargs):
+            return consumer_record.value.decode()
+
+
+async def stream(stream: Stream) -> None:
+    async for cr in stream:
+        print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
+
+
+stream = Stream(
+    "local--kstreams",
+    name="my-stream"
+    func=stream,  # coroutine or async generator
+    value_deserializer=MyValueDeserializer(),
+)
+# add the stream to the engine
+stream_engine.add_stream(stram)
+
+
+async def main():
+    await stream_engine.start()
+    await stream_engine.stop()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+## Stream crashing
+
+If your stream `crashes` for any reason, the event consumption will stop meaning that non event will be consumed from the `topic`.
+As an end user you are responsable of deciding what to do. In future version approaches like `re-try`, `stream engine stops on stream crash` might be introduced.
+
+```python title="Crashing example"
+import asyncio
+from kstreams import create_engine
+
+stream_engine = create_engine(title="my-stream-engine")
+
+
+@stream_engine.stream("local--kstreams", group_id="de-my-partition")
+async def stream(stream: Stream) -> None:
+    async for cr in stream:
+        print(f"Event consumed. Payload {cr.payload}")
+
+
+async def produce():
+    await stream_engine.send(
+        "local--kstreams",
+        value=b"Hi"
+    )
+
+
+async def main():
+    await stream_engine.start()
+    await produce()
+    await stream_engine.stop()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+```bash
+CRASHED Stream!!! Task <Task pending name='Task-23' coro=<BaseStream.start.<locals>.func_wrapper() running at /Users/Projects/kstreams/kstreams/streams.py:55>>
+
+ 'ConsumerRecord' object has no attribute 'payload'
+Traceback (most recent call last):
+  File "/Users/Projects/kstreams/kstreams/streams.py", line 52, in func_wrapper
+    await self.func(self)
+  File "/Users/Projects/kstreams/examples/fastapi_example/streaming/streams.py", line 9, in stream
+    print(f"Event consumed: headers: {cr.headers}, payload: {cr.payload}")
+AttributeError: 'ConsumerRecord' object has no attribute 'payload'
 ```
 
 ## Consuming from multiple topics

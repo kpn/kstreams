@@ -1,6 +1,5 @@
-from dataclasses_avroschema import AvroModel
-
 import aiokafka
+from dataclasses_avroschema import AvroModel
 
 
 class AvroSerializer:

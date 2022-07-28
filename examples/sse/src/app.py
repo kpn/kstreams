@@ -1,9 +1,10 @@
-from .streaming.streams import stream_engine, stream_factory
+import asyncio
+
 from fastapi import FastAPI, Request
 from sse_starlette.sse import EventSourceResponse
 from starlette.datastructures import Address
 
-import asyncio
+from .streaming.streams import stream_engine, stream_factory
 
 
 def create_app() -> FastAPI:

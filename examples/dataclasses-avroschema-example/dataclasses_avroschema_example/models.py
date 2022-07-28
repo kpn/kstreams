@@ -1,7 +1,7 @@
-from dataclasses import dataclass
-from dataclasses_avroschema import AvroModel
-
 import typing
+from dataclasses import dataclass
+
+from dataclasses_avroschema import AvroModel
 
 
 @dataclass

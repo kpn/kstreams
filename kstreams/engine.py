@@ -143,7 +143,12 @@ class StreamEngine(metaclass=Singleton):
 
         return stream
 
-    def add_stream(
+    def add_stream(self, stream: Stream) -> None:
+        if self.exist_stream(stream.name):
+            raise DuplicateStreamException(name=stream.name)
+        self._streams.append(stream)
+
+    def _create_stream(
         self,
         topics: Union[List[str], str],
         *,
@@ -154,6 +159,7 @@ class StreamEngine(metaclass=Singleton):
     ) -> None:
         """
         Create a Stream processor and add it to the stream List.
+        This method should not be used by the end user
         """
         if self.exist_stream(name):
             raise DuplicateStreamException(name=name)
@@ -180,7 +186,7 @@ class StreamEngine(metaclass=Singleton):
         def decorator(
             func: Coroutine[Any, Any, ConsumerType]
         ) -> Coroutine[Any, Any, ConsumerType]:
-            stream = self.add_stream(
+            stream = self._create_stream(
                 topics,
                 func=func,
                 name=name,

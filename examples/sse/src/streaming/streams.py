@@ -1,5 +1,6 @@
-from .engine import stream_engine
 from kstreams import Stream
+
+from .engine import stream_engine
 
 
 def stream_factory(

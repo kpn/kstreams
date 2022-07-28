@@ -1,8 +1,9 @@
+import asyncio
+
+from kstreams import Stream, create_engine
+
 from . import serializers
 from .models import Address, User
-from kstreams import create_engine, Stream
-
-import asyncio
 
 user_topic = "local--avro-user"
 address_topic = "local--avro-address"
