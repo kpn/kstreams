@@ -39,8 +39,8 @@ stream_engine = create_engine(title="my-stream-engine")
 
 class MyValueDeserializer:
 
-        async def deserialize(self, consumer_record: structs.ConsumerRecord, **kwargs):
-            return consumer_record.value.decode()
+    async def deserialize(self, consumer_record: structs.ConsumerRecord, **kwargs):
+        return consumer_record.value.decode()
 
 
 async def stream(stream: Stream) -> None:
@@ -55,7 +55,7 @@ stream = Stream(
     value_deserializer=MyValueDeserializer(),
 )
 # add the stream to the engine
-stream_engine.add_stream(stram)
+stream_engine.add_stream(stream)
 
 
 async def main():
