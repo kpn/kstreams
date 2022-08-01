@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "confluent-example"
+version = "0.1.0"
+description = ""
+authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+kstreams = "^0.3.0"
+python-schema-registry-client = "^2.4.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+app = "confluent_example.app:main"
