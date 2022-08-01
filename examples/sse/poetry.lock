@@ -125,7 +125,7 @@ crc32c = ["crc32c"]
 
 [[package]]
 name = "kstreams"
-version = "0.2.1"
+version = "0.2.4"
 description = "Build simple kafka streams applications"
 category = "main"
 optional = false
