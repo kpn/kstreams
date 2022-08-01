@@ -434,9 +434,9 @@
 
   <h1>Getting Started</h1>
 
-<p>You can starting using <code>kstreams</code> with simple <code>producers</code> and <code>consumers</code> and/or integrated it with any <code>async</code> framework  like <code>FastAPI</code></p>
+<p>You can starting using <code>kstreams</code> with simple <code>producers</code> and <code>consumers</code> and/or integrated it with any <code>async</code> framework like <code>FastAPI</code></p>
 <h2 id="simple-consumer-and-producer">Simple consumer and producer</h2>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<div class="highlight"><span class="filename">Simple use case</span><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Stream</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
@@ -468,74 +468,63 @@
 </code></pre></div>
 <p><em>(This script is complete, it should run "as is")</em></p>
 <h2 id="fastapi">FastAPI</h2>
-<ol>
-<li>Create the kafka cluster: <code>make kafka-cluster</code></li>
-<li>Creation your topics: <code>make create-topic topic-name=local--hello-world</code></li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="c1"># streaming.engine.py</span>
+<p>The following code example shows how <code>kstreams</code> can be integrated with any <code>async</code> framework like <code>FastAPI</code>. The full example can be found <a href="https://github.com/kpn/kstreams/tree/master/examples/fastapi-example">here</a></p>
+<p>First, we need to create an <code>engine</code>:</p>
+<div class="highlight"><span class="filename">Create the StreamEngine</span><pre><span></span><code><span class="c1"># streaming.engine.py</span>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="c1"># app.py</span>
-<span class="kn">from</span> <span class="nn">.streaming.streams</span> <span class="kn">import</span> <span class="n">stream_engine</span>
-<span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">FastAPI</span>
-<span class="kn">from</span> <span class="nn">starlette.responses</span> <span class="kn">import</span> <span class="n">Response</span>
-<span class="kn">from</span> <span class="nn">starlette_prometheus</span> <span class="kn">import</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">PrometheusMiddleware</span>
-
-
-<span class="k">def</span> <span class="nf">create_app</span><span class="p">():</span>
-    <span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
-
-    <span class="n">add_endpoints</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
-    <span class="n">_setup_prometheus</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
-
-    <span class="nd">@app</span><span class="o">.</span><span class="n">on_event</span><span class="p">(</span><span class="s2">&quot;startup&quot;</span><span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">startup_event</span><span class="p">():</span>
-        <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-
-    <span class="nd">@app</span><span class="o">.</span><span class="n">on_event</span><span class="p">(</span><span class="s2">&quot;shutdown&quot;</span><span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown_event</span><span class="p">():</span>
-        <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-
-    <span class="k">return</span> <span class="n">app</span>
-
-
-<span class="k">def</span> <span class="nf">add_endpoints</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
-    <span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/events&quot;</span><span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">post_produce_event</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;hello world!&quot;</span><span class="p">}</span>
-
-        <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
-            <span class="s2">&quot;local--kstream&quot;</span><span class="p">,</span>
-            <span class="n">value</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Produced event on topic: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;part: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">partition</span><span class="si">}</span><span class="s2">, offset: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">offset</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">_setup_prometheus</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">FastAPI</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span><span class="n">PrometheusMiddleware</span><span class="p">,</span> <span class="n">filter_unhandled_paths</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">add_api_route</span><span class="p">(</span><span class="s2">&quot;/metrics&quot;</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
-
-
-<span class="n">application</span> <span class="o">=</span> <span class="n">create_app</span><span class="p">()</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="c1"># streaming.streams.py</span>
+<p>Define the <code>streams</code>:</p>
+<div class="highlight"><span class="filename">Application stream</span><pre><span></span><code><span class="c1"># streaming.streams.py</span>
 <span class="kn">from</span> <span class="nn">.engine</span> <span class="kn">import</span> <span class="n">stream_engine</span>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">Stream</span>
 
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstream&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;consuming.....&quot;</span><span class="p">)</span>
     <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">payload</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Create the <code>FastAPI</code>:</p>
+<div class="highlight"><span class="filename">FastAPI</span><pre><span></span><code><span class="c1"># app.py</span>
+<span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">FastAPI</span>
+<span class="kn">from</span> <span class="nn">starlette.responses</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">starlette_prometheus</span> <span class="kn">import</span> <span class="n">PrometheusMiddleware</span><span class="p">,</span> <span class="n">metrics</span>
+
+<span class="kn">from</span> <span class="nn">.streaming.streams</span> <span class="kn">import</span> <span class="n">stream_engine</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">on_event</span><span class="p">(</span><span class="s2">&quot;startup&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">startup_event</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">on_event</span><span class="p">(</span><span class="s2">&quot;shutdown&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown_event</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/events&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">post_produce_event</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="s1">&#39;{&quot;message&quot;: &quot;hello world!&quot;}&#39;</span>
+
+    <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+        <span class="s2">&quot;local--kstream&quot;</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
+    <span class="p">)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Produced event on topic: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;part: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">partition</span><span class="si">}</span><span class="s2">, offset: </span><span class="si">{</span><span class="n">metadata</span><span class="o">.</span><span class="n">offset</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+
+<span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span><span class="n">PrometheusMiddleware</span><span class="p">,</span> <span class="n">filter_unhandled_paths</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">add_api_route</span><span class="p">(</span><span class="s2">&quot;/metrics&quot;</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
 </code></pre></div>
 
               
