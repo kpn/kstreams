@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Type
 
 from .clients import Consumer, ConsumerType, Producer, ProducerType
 from .engine import StreamEngine
@@ -8,8 +8,8 @@ from .serializers import ValueDeserializer, ValueSerializer
 
 def create_engine(
     title: Optional[str] = None,
-    consumer_class: ConsumerType = Consumer,
-    producer_class: ProducerType = Producer,
+    consumer_class: Type[ConsumerType] = Consumer,
+    producer_class: Type[ProducerType] = Producer,
     value_serializer: Optional[ValueSerializer] = None,
     value_deserializer: Optional[ValueDeserializer] = None,
     monitor: Optional[PrometheusMonitorType] = None,

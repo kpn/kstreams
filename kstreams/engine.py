@@ -12,7 +12,7 @@ from .prometheus.monitor import PrometheusMonitorType
 from .prometheus.tasks import metrics_task
 from .serializers import ValueDeserializer, ValueSerializer
 from .singlenton import Singleton
-from .streams import KafkaStream, Stream
+from .streams import Stream
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +21,8 @@ class StreamEngine(metaclass=Singleton):
     def __init__(
         self,
         *,
-        consumer_class: ConsumerType,
-        producer_class: ProducerType,
+        consumer_class: Type[ConsumerType],
+        producer_class: Type[ProducerType],
         monitor: PrometheusMonitorType,
         title: Optional[str] = None,
         value_deserializer: Optional[ValueDeserializer] = None,
@@ -34,8 +34,8 @@ class StreamEngine(metaclass=Singleton):
         self.value_deserializer = value_deserializer
         self.value_serializer = value_serializer
         self.monitor = monitor
-        self._producer: Optional[ProducerType] = None
-        self._streams: List[Type[KafkaStream]] = []
+        self._producer: Optional[Type[ProducerType]] = None
+        self._streams: List[Stream] = []
         self.metrics_task: Optional[asyncio.Task] = None
 
     async def send(
@@ -138,7 +138,7 @@ class StreamEngine(metaclass=Singleton):
         stream = self.get_stream(name)
         return True if stream is not None else False
 
-    def get_stream(self, name: str) -> bool:
+    def get_stream(self, name: str) -> Optional[Stream]:
         stream = next((stream for stream in self._streams if stream.name == name), None)
 
         return stream
@@ -152,16 +152,16 @@ class StreamEngine(metaclass=Singleton):
         self,
         topics: Union[List[str], str],
         *,
-        func: Coroutine[Any, Any, ConsumerType],
+        func: Coroutine[Stream, Any, Any],
         name: Optional[str] = None,
         value_deserializer: Optional[ValueDeserializer] = None,
         **kwargs,
-    ) -> None:
+    ) -> Stream:
         """
         Create a Stream processor and add it to the stream List.
         This method should not be used by the end user
         """
-        if self.exist_stream(name):
+        if name is not None and self.exist_stream(name):
             raise DuplicateStreamException(name=name)
 
         stream = Stream(
@@ -183,9 +183,7 @@ class StreamEngine(metaclass=Singleton):
         value_deserializer: Optional[ValueDeserializer] = None,
         **kwargs,
     ) -> DecoratedCallable:
-        def decorator(
-            func: Coroutine[Any, Any, ConsumerType]
-        ) -> Coroutine[Any, Any, ConsumerType]:
+        def decorator(func: Coroutine[Stream, Any, Any]) -> Stream:
             stream = self._create_stream(
                 topics,
                 func=func,

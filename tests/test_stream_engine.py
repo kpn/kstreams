@@ -139,7 +139,7 @@ async def test_add_stream_as_generator(
             yield cr
 
     assert stream == stream_engine._streams[0]
-    assert not stream._running
+    assert not stream.running
 
     cr = consumer_record_factory()
 
@@ -149,10 +149,10 @@ async def test_add_stream_as_generator(
     with mock.patch.multiple(Consumer, start=mock.DEFAULT, getone=getone):
         async with stream as stream_flow:
             # Now the stream should be running as we are in the context
-            assert stream._running
+            assert stream.running
             async for value in stream_flow:
                 assert value == cr
                 break
 
     # Now the stream is stopped because we left the context
-    assert not stream._running
+    assert not stream.running
