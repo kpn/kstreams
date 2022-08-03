@@ -2,12 +2,12 @@ import asyncio
 from typing import Any, DefaultDict, List
 
 from kstreams.clients import Consumer
-from kstreams.streams import KafkaStream
+from kstreams.streams import Stream
 
 from .monitor import PrometheusMonitorType
 
 
-async def metrics_task(streams: List[KafkaStream], monitor: PrometheusMonitorType):
+async def metrics_task(streams: List[Stream], monitor: PrometheusMonitorType):
     while True:
         for stream in streams:
             await generate_consumer_metrics(stream.consumer, monitor=monitor)
