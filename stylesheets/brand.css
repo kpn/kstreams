@@ -31,6 +31,7 @@
   --md-default-bg-color: #fff;
   --md-typeset-color: #232323;
   --md-typeset-a-color: var(--dark-blue);
+  --md-typeset-table-thead-color: var(--light-grey);
   --md-accent-fg-color: var(--darkest-blue);
 }
 
@@ -40,7 +41,8 @@
   --md-primary-fg-color: var(--dark-green);
   --md-default-bg-color: var(--asphalt-grey);
   --md-typeset-color: var(--md-default-fg-color);
-
+  --md-typeset-table-color: var(--md-default-fg-color--light);
+  --md-typeset-table-thead-color: var(--coal-grey);
   --md-typeset-a-color: var(--blue);
   --md-accent-fg-color: var(--dark-blue);
 
@@ -61,4 +63,9 @@
   --md-code-hl-variable-color: var(--md-default-fg-color--light);
   --md-admonition-fg-color: var(--md-default-fg-color);
   --md-admonition-bg-color: var(--coal-grey);
+
+}
+
+.md-typeset__table thead {
+  background-color: var(--md-typeset-table-thead-color);
 }
