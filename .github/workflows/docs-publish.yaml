@@ -2,8 +2,8 @@ name: Publish documentation
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - master
 
 jobs:
   build:
