@@ -1,3 +1,9 @@
+## 0.4.0 (2022-08-08)
+
+### Feat
+
+- add kafka backend module
+
 ## 0.3.1 (2022-08-03)
 
 ### Fix
