@@ -18,6 +18,9 @@ theme:
   - content.tabs.link
   - content.code.annotate
 
+watch:
+  - kstreams
+
 extra_css:
   - stylesheets/brand.css
 
@@ -25,10 +28,11 @@ nav:
   - Introduction: 'index.md'
   - Getting Started: 'getting_started.md'
   - Stream: 'stream.md'
+  - Backends: 'backends.md'
   - Metrics: 'metrics.md'
   - Serialization: 'serialization.md'
-  - Configuration: 'configuration.md'
   - Testing: 'test_client.md'
+  - Utils: 'utils.md'
 
 markdown_extensions:
   - pymdownx.highlight
@@ -45,3 +49,7 @@ markdown_extensions:
   - attr_list
   - md_in_html
   - admonition
+
+plugins:
+  - autorefs
+  - mkdocstrings

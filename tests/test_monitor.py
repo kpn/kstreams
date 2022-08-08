@@ -1,5 +1,6 @@
 import pytest
 
+from kstreams.backends.kafka import Kafka
 from kstreams.prometheus import monitor, tasks
 from kstreams.streams import Stream
 
@@ -9,8 +10,12 @@ async def test_consumer_metrics(mock_consumer_class):
     async def my_coroutine(_):
         pass
 
+    backend = Kafka()
     stream = Stream(
-        "local--hello-kpn", consumer_class=mock_consumer_class, func=my_coroutine
+        "local--hello-kpn",
+        backend=backend,
+        consumer_class=mock_consumer_class,
+        func=my_coroutine,
     )
     await stream.start()
 

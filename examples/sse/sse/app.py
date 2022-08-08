@@ -6,12 +6,13 @@ from starlette.datastructures import Address
 
 from .streaming.streams import stream_engine, stream_factory
 
-
 app = FastAPI(title="streaming-sse")
+
 
 @app.on_event("startup")
 async def startup_event():
     await stream_engine.start()
+
 
 @app.on_event("shutdown")
 async def shutdown_event():

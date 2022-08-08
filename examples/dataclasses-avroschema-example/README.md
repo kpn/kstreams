@@ -103,3 +103,8 @@ async def address_stream(stream: Stream):
     async for cr in stream:
         print(f"Event consumed on topic {address_topic}. The Address is {cr.value}")
 ```
+
+## Note
+
+If you plan on using this example, pay attention to the `pyproject.toml` dependencies, where
+`kstreams` is pointing to the parent folder. You will have to set the latest version.

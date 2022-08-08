@@ -49,6 +49,10 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+## Kafka configuration
+
+Configure kafka using the [kafka backend](./backends.md) provided.
+
 ## Development
 
 This repo requires the use of [poetry](https://python-poetry.org/docs/basic-usage/) instead of pip.

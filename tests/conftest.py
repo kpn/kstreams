@@ -7,7 +7,8 @@ import pytest
 import pytest_asyncio
 from pytest_httpserver import HTTPServer
 
-from kstreams import clients, conf, create_engine
+from kstreams import clients, create_engine
+from kstreams.utils import create_ssl_context_from_mem
 
 
 class RecordMetadata(NamedTuple):
@@ -100,25 +101,21 @@ SSLData = namedtuple("SSLData", ["cabundle", "cert", "key"])
 
 
 @pytest.fixture
-def reset_settings():
-    def func():
-        conf.settings.configure(
-            SERVICE_KSTREAMS_KAFKA_CONFIG_BOOTSTRAP_SERVERS=["localhost:9092"],
-            SERVICE_KSTREAMS_KAFKA_SSL_CERT_DATA=None,
-            SERVICE_KSTREAMS_KAFKA_SSL_KEY_DATA=None,
-            SERVICE_KSTREAMS_KAFKA_TOPIC_CONFIG={},
-            SERVICE_KSTREAMS_KAFKA_CONFIG_SECURITY_PROTOCOL="PLAINTEXT",
-        )
-
-    return func
-
-
-@pytest.fixture
 def ssl_data():
     with open("tests/fixtures/ssl/cabundle.pem") as cabundle, open(
         "tests/fixtures/ssl/certificate.pem"
     ) as cert, open("tests/fixtures/ssl/certificate.key") as key:
         return SSLData(cabundle.read(), cert.read(), key.read())
+
+
+@pytest.fixture
+def ssl_context(ssl_data):
+    ssl_context = create_ssl_context_from_mem(
+        ssl_data.cabundle,
+        ssl_data.cert,
+        ssl_data.key,
+    )
+    return ssl_context
 
 
 AVRO_SCHEMA_V1 = {

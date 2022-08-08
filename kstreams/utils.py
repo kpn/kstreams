@@ -1,99 +1,91 @@
 import contextlib
 import ssl
-import typing
 from tempfile import NamedTemporaryFile
+from typing import Optional, Union
+
+from aiokafka.helpers import create_ssl_context as aiokafka_create_ssl_context
 
 from kstreams import custom_types
-from kstreams.conf import settings
-
-
-class EmptySSLDataException(Exception):
-    pass
-
-
-class IncorrectCertificateFormat(Exception):
-    pass
 
 
 def encode_headers(headers: custom_types.Headers) -> custom_types.KafkaHeaders:
     return [(header, value.encode()) for header, value in headers.items()]
 
 
-def retrieve_kafka_config(settings_prefix: str = "SERVICE_KSTREAMS_") -> typing.Dict:
-    # Will convert all entries in the settings with the
-    # `SERVICE_KSTREAMS_KAFKA_CONFIG_` prefix as keywords in a dict
-    # Will also verify there is an entry for BOOTSTRAP_SERVERS
-    # and will create the ssl context if the
-    # SECURITY_PROTOCOL equals "SSL"
-    prefix = settings_prefix + "KAFKA_CONFIG_"
-    config = {
-        k.replace(prefix, "").lower(): v
-        for k, v in settings.as_dict().items()
-        if k.startswith(prefix)
-    }
-    assert config["bootstrap_servers"]
-    if config["security_protocol"] == "SSL" and "ssl_context" not in config:
-        config["ssl_context"] = create_ssl_context_from_pkgsettings(
-            settings_prefix=settings_prefix
-        )
-    return config
-
-
-def verify_certificate_format(cert: str, cert_name: str):
-    if "\n" not in cert:
-        raise IncorrectCertificateFormat(
-            f"{cert_name} data have the wrong format, line breaks are missing"
-        )
-
-
-def verify_certificate(cert: str, cert_name: str):
-    if cert is None:
-        raise EmptySSLDataException(
-            f"{cert_name} data is empty while security_protocol is SSL. "
-            f"{cert_name} is required"
-        )
-
-    verify_certificate_format(cert, cert_name)
-
-
-def create_ssl_context_from_pkgsettings(
-    settings_prefix: str = "SERVICE_KSTREAMS_",
-) -> typing.Union[ssl.SSLContext, None]:
-    config = settings.as_dict()
-
-    cert_data = config[settings_prefix + "KAFKA_SSL_CERT_DATA"]
-    key_data = config[settings_prefix + "KAFKA_SSL_KEY_DATA"]
-    cabundle_data = config.get(settings_prefix + "KAFKA_SSL_CABUNDLE_DATA")
-
-    verify_certificate(cert_data, "certificate")
-    verify_certificate(key_data, "key")
-
-    if cabundle_data is not None:
-        verify_certificate_format(cabundle_data, "cabundle")
-
-    return create_ssl_context_from_mem(cabundle_data, cert_data, key_data)
-
-
 def create_ssl_context_from_mem(
-    cabundle: typing.Optional[str], cert: str, priv_key: str
-) -> typing.Optional[ssl.SSLContext]:
+    cadata: Optional[str], certdata: str, keydata: str, password: Optional[str] = None
+) -> Optional[ssl.SSLContext]:
     """Create a SSL context from data on memory.
 
     This makes it easy to read the certificates from environmental variables
     Usually the data is loaded from env variables.
+
+    Arguments:
+        cadata: certificates used to sign broker certificates provided as unicode str
+        certdata: the client certificate, as well as any CA certificates needed to
+            establish the certificate's authenticity provided as unicode str
+        keydata: the client private key provided as unicode str
+        password: optional password to be used when loading the
+            certificate chain
     """
     with contextlib.ExitStack() as stack:
         cert_file = stack.enter_context(NamedTemporaryFile(suffix=".crt"))
         key_file = stack.enter_context(NamedTemporaryFile(suffix=".key"))
 
         # expecting unicode data, writing it as bytes to files as utf-8
-        cert_file.write(cert.encode("utf-8"))
+        cert_file.write(certdata.encode("utf-8"))
         cert_file.flush()
 
-        key_file.write(priv_key.encode("utf-8"))
+        key_file.write(keydata.encode("utf-8"))
         key_file.flush()
 
-        ssl_context = ssl.create_default_context(cadata=cabundle)
-        ssl_context.load_cert_chain(cert_file.name, keyfile=key_file.name)
+        ssl_context = ssl.create_default_context(cadata=cadata)
+        ssl_context.load_cert_chain(
+            cert_file.name, keyfile=key_file.name, password=password
+        )
         return ssl_context
     return None
+
+
+def create_ssl_context(
+    *,
+    cafile: str = None,
+    capath: str = None,
+    cadata: Union[str, bytes] = None,
+    certfile: str = None,
+    keyfile: str = None,
+    password: str = None,
+    crlfile=None
+):
+    """Wrapper of [aiokafka.helpers.create_ssl_context](
+        https://aiokafka.readthedocs.io/en/stable/api.html#helpers
+    )
+    with typehints.
+
+    Arguments:
+        cafile: Certificate Authority file path containing certificates
+            used to sign broker certificates
+        capath: Same as `cafile`, but points to a directory containing
+            several CA certificates
+        cadata: Same as `cafile`, but instead contains already
+            read data in either ASCII or bytes format
+        certfile: optional filename of file in PEM format containing
+            the client certificate, as well as any CA certificates needed to
+            establish the certificate's authenticity
+        keyfile: optional filename containing the client private key.
+        password: optional password to be used when loading the
+            certificate chain
+
+    """
+    return aiokafka_create_ssl_context(
+        cafile=cafile,
+        capath=capath,
+        cadata=cadata,
+        certfile=certfile,
+        keyfile=keyfile,
+        password=password,
+        crlfile=crlfile,
+    )
+
+
+__all__ = ["create_ssl_context", "create_ssl_context_from_mem", "encode_headers"]

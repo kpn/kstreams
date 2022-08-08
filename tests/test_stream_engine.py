@@ -2,12 +2,10 @@ from unittest import mock
 
 import pytest
 
+from kstreams.backends.kafka import Kafka
 from kstreams.clients import Consumer, Producer
-from kstreams.conf import settings
 from kstreams.engine import Stream, StreamEngine
 from kstreams.exceptions import DuplicateStreamException
-
-settings.configure(KAFKA_CONFIG_BOOTSTRAP_SERVERS=["localhost:9092"])
 
 
 @pytest.mark.asyncio
@@ -48,11 +46,13 @@ async def test_add_stream_as_instance(stream_engine: StreamEngine):
     async def processor(stream: Stream):
         pass
 
+    backend = Kafka()
     my_stream = Stream(
         topics,
         name="my-stream",
         func=processor,
         value_deserializer=value_deserializer,
+        backend=backend,
     )
 
     assert not stream_engine.get_stream("my-stream")
@@ -66,11 +66,7 @@ async def test_add_stream_as_instance(stream_engine: StreamEngine):
     # can not add a stream with the same name
     with pytest.raises(DuplicateStreamException):
         stream_engine.add_stream(
-            Stream(
-                "a-topic",
-                name="my-stream",
-                func=processor,
-            )
+            Stream("a-topic", name="my-stream", func=processor, backend=backend)
         )
 
 

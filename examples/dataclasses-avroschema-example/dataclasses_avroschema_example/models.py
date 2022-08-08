@@ -12,7 +12,7 @@ class User(AvroModel):
     pets: typing.List[str]
     accounts: typing.Dict[str, int]
     country: str = "Argentina"
-    address: str = None
+    address: typing.Optional[str] = None
 
     class Meta:
         namespace = "User.v1"

@@ -6,9 +6,11 @@ from .streaming.streams import stream_engine
 
 app = FastAPI()
 
+
 @app.on_event("startup")
 async def startup_event():
     await stream_engine.start()
+
 
 @app.on_event("shutdown")
 async def shutdown_event():

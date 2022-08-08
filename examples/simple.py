@@ -1,5 +1,6 @@
 import asyncio
 
+from aiokafka import ConsumerRecord
 from aiokafka.structs import RecordMetadata
 
 from kstreams import create_engine
@@ -10,7 +11,7 @@ topic = "local--py-streams"
 stream_engine = create_engine(title="my-stream-engine")
 
 
-def on_consume(cr: bytes):
+def on_consume(cr: ConsumerRecord):
     print(f"Value {cr.value} consumed")
 
 
