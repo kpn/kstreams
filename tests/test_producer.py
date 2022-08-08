@@ -9,7 +9,8 @@ from kstreams.clients import Producer
 @pytest.mark.asyncio
 async def test_producer():
     with patch("kstreams.clients.aiokafka.AIOKafkaProducer.start") as mock_start_super:
-        prod = Producer()
+        backend = Kafka()
+        prod = Producer(**backend.dict())
 
         await prod.start()
         mock_start_super.assert_called()
@@ -18,7 +19,7 @@ async def test_producer():
 @pytest.mark.asyncio
 async def test_producer_with_ssl(ssl_context):
     backend = Kafka(ssl_context=ssl_context)
-    producer = Producer(backend=backend)
+    producer = Producer(**backend.dict())
     assert producer.client._ssl_context
 
     await producer.client.close()
@@ -45,7 +46,7 @@ async def test_two_producers():
         "group_id": "my-group-consumer",
     }
     backend_1 = Kafka(bootstrap_servers=kafka_config_1["bootstrap_servers"])
-    producer_1 = Producer(backend=backend_1, client_id="my-client")
+    producer_1 = Producer(**backend_1.dict(), client_id="my-client")
 
     kafka_config_2 = {
         "bootstrap_servers": ["otherhost:9092"],
@@ -53,7 +54,7 @@ async def test_two_producers():
     }
 
     backend_2 = Kafka(bootstrap_servers=kafka_config_2["bootstrap_servers"])
-    producer_2 = Producer(backend=backend_2, client_id="client_id2")
+    producer_2 = Producer(**backend_2.dict(), client_id="client_id2")
 
     assert producer_1.client._bootstrap_servers == kafka_config_1["bootstrap_servers"]
     assert producer_1.client._client_id == "my-client"

@@ -21,11 +21,11 @@ class StreamEngine(metaclass=Singleton):
     def __init__(
         self,
         *,
+        backend: Kafka,
         consumer_class: Type[ConsumerType],
         producer_class: Type[ProducerType],
         monitor: PrometheusMonitor,
         title: Optional[str] = None,
-        backend: Optional[Kafka] = None,
         value_deserializer: Optional[ValueDeserializer] = None,
         value_serializer: Optional[ValueSerializer] = None,
     ) -> None:
@@ -51,7 +51,6 @@ class StreamEngine(metaclass=Singleton):
         value_serializer: Optional[ValueSerializer] = None,
         value_serializer_kwargs: Optional[Dict] = None,
     ):
-
         value_serializer = value_serializer or self.value_serializer
 
         # serialize only when value and value_serializer are present
@@ -98,7 +97,12 @@ class StreamEngine(metaclass=Singleton):
             await self._producer.stop()
 
     async def start_producer(self, **kwargs) -> None:
-        self._producer = self.producer_class(backend=self.backend, **kwargs)
+        if self.producer_class is None:
+            return None
+        config = {**self.backend.dict(), **kwargs}
+        self._producer = self.producer_class(**config)
+        if self._producer is None:
+            return None
         await self._producer.start()
 
     async def start_streams(self) -> None:
@@ -163,9 +167,10 @@ class StreamEngine(metaclass=Singleton):
             topics=topics,
             func=func,
             name=name,
-            kafka_config=kwargs,
+            config=kwargs,
             consumer_class=self.consumer_class,
             value_deserializer=value_deserializer or self.value_deserializer,
+            backend=self.backend,
         )
         self._streams.append(stream)
         return stream

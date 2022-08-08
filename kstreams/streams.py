@@ -6,6 +6,7 @@ from typing import Any, AsyncGenerator, Coroutine, Dict, List, Optional, Type, U
 
 from aiokafka import errors, structs
 
+from .backends.kafka import Kafka
 from .clients import Consumer, ConsumerType
 from .serializers import ValueDeserializer
 
@@ -17,16 +18,18 @@ class Stream:
         self,
         topics: Union[List[str], str],
         *,
+        backend: Kafka,
         func: Union[Coroutine[Any, Any, Type[ConsumerType]], AsyncGenerator],
         consumer_class: Type[ConsumerType] = Consumer,
         name: Optional[str] = None,
-        kafka_config: Optional[Dict] = None,
+        config: Optional[Dict] = None,
         model: Optional[Any] = None,
         value_deserializer: Optional[ValueDeserializer] = None,
     ) -> None:
         self.func = func
+        self.backend = backend
         self.consumer_class = consumer_class
-        self.kafka_config = kafka_config or {}
+        self.config = config or {}
         self._consumer_task: Optional[asyncio.Task] = None
         self.name = name or str(uuid.uuid4())
         self.model = model
@@ -39,15 +42,17 @@ class Stream:
         self.topics = [topics] if isinstance(topics, str) else topics
 
     def _create_consumer(self) -> ConsumerType:
-        return self.consumer_class(*self.topics, **self.kafka_config)
+        config = {**self.backend.dict(), **self.config}
+        return self.consumer_class(*self.topics, **config)
 
     async def stop(self) -> None:
-        if self.running:
-            await self.consumer.stop()
-            self.running = False
+        if not self.running:
+            return None
+        await self.consumer.stop()
+        self.running = False
 
-            if self._consumer_task is not None:
-                self._consumer_task.cancel()
+        if self._consumer_task is not None:
+            self._consumer_task.cancel()
 
     async def start(self) -> None:
         async def func_wrapper(func):
@@ -111,11 +116,9 @@ class Stream:
             consumer_record: structs.ConsumerRecord = await self.consumer.getone()
 
             # deserialize only when value and value_deserializer are present
-            if all(
-                (
-                    consumer_record.value,
-                    self.value_deserializer,
-                )
+            if (
+                consumer_record.value is not None
+                and self.value_deserializer is not None
             ):
                 return await self.value_deserializer.deserialize(consumer_record)
 

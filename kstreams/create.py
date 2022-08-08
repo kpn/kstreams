@@ -20,9 +20,12 @@ def create_engine(
     if monitor is None:
         monitor = PrometheusMonitor()
 
+    if backend is None:
+        backend = Kafka()
+
     return StreamEngine(
-        title=title,
         backend=backend,
+        title=title,
         consumer_class=consumer_class,
         producer_class=producer_class,
         value_serializer=value_serializer,

@@ -40,3 +40,8 @@ poetry install
    ```bash
    Disconnected from client (via refresh/close) Address(host='127.0.0.1', port=51580)
    ```
+
+## Note
+
+If you plan on using this example, pay attention to the `pyproject.toml` dependencies, where
+`kstreams` is pointing to the parent folder. You will have to set the latest version.

@@ -41,3 +41,8 @@ After doing a `GET` to `http://localhost:8000` you should see the following logs
 ```bash
 Event consumed: headers: (), payload: b'{"message": "hello world!"}'
 ```
+
+## Note
+
+If you plan on using this example, pay attention to the `pyproject.toml` dependencies, where
+`kstreams` is pointing to the parent folder. You will have to set the latest version.

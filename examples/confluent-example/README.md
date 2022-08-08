@@ -52,7 +52,7 @@ COUNTRY_AVRO_SCHEMA = {
 
 We need to define custom `serializers` so the `engine` and `streams` will handle the payload properly.
 In this case we use `AsyncAvroMessageSerializer` that already contains the methods to `encode/decode` events.
-Because to `serialize` events we need to know the `subject` and the `schema`, we make use of `value_serializer_kwargs` 
+Because to `serialize` events we need to know the `subject` and the `schema`, we make use of `value_serializer_kwargs`
 to provide them.
 
 ```python
@@ -68,7 +68,7 @@ class AvroSerializer(AsyncAvroMessageSerializer):
         """
         schema = value_serializer_kwargs["schema"]  # GET THE SCHEMA
         subject = value_serializer_kwargs["subject"]  # GET THE SUBJECT
-        event = await self.encode_record_with_schema(subject, schema, payload)        
+        event = await self.encode_record_with_schema(subject, schema, payload)
 
         return event
 
@@ -124,7 +124,7 @@ await stream_engine.send(
         "subject": "deployment",
         "schema": deployment_schema,
     },
-    
+
 )
 
 await stream_engine.send(
@@ -160,3 +160,8 @@ async def country_stream(stream: Stream):
     async for cr in stream:
         print(f"Event consumed on topic {country_topic}. The Address is {cr.value}")
 ```
+
+## Note
+
+If you plan on using this example, pay attention to the `pyproject.toml` dependencies, where
+`kstreams` is pointing to the parent folder. You will have to set the latest version.

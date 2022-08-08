@@ -31,7 +31,6 @@ nav:
   - Backends: 'backends.md'
   - Metrics: 'metrics.md'
   - Serialization: 'serialization.md'
-  - Configuration: 'configuration.md'
   - Testing: 'test_client.md'
   - Utils: 'utils.md'
 
