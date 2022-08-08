@@ -1,6 +1,6 @@
-from .engine import stream_engine
 from kstreams import Stream
 
+from .engine import stream_engine
 
 deployment_topic = "local--deployment"
 country_topic = "local--country"

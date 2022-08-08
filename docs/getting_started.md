@@ -106,3 +106,7 @@ async def post_produce_event() -> Response:
 app.add_middleware(PrometheusMiddleware, filter_unhandled_paths=True)
 app.add_api_route("/metrics", metrics)
 ```
+
+## Changing Kafka settings
+
+To modify the settings of a cluster, like the servers, refer to the [backends docs](./backends.md)

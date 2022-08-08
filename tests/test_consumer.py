@@ -2,8 +2,8 @@ from unittest import mock
 
 import pytest
 
+from kstreams.backends.kafka import Kafka
 from kstreams.clients import Consumer
-from kstreams.conf import settings
 
 
 @pytest.mark.asyncio
@@ -18,14 +18,9 @@ async def test_consumer():
 
 
 @pytest.mark.asyncio
-async def test_consumer_with_ssl(ssl_data):
-    settings.configure(
-        SERVICE_KSTREAMS_KAFKA_CONFIG_SECURITY_PROTOCOL="SSL",
-        SERVICE_KSTREAMS_KAFKA_SSL_CERT_DATA=ssl_data.cert,
-        SERVICE_KSTREAMS_KAFKA_SSL_KEY_DATA=ssl_data.key,
-    )
-
-    consumer = Consumer()
+async def test_consumer_with_ssl(ssl_context):
+    backend = Kafka(security_protocol="SSL", ssl_context=ssl_context)
+    consumer = Consumer(backend=backend)
     assert consumer._client._ssl_context
 
 
@@ -43,7 +38,9 @@ async def test_consumer_custom_kafka_config():
         "bootstrap_servers": ["localhost:9093", "localhost:9094"],
         "group_id": "my-group-consumer",
     }
-    consumer = Consumer("my-topic", **kafka_config)
+    backend = Kafka(bootstrap_servers=kafka_config["bootstrap_servers"])
+
+    consumer = Consumer("my-topic", backend=backend, group_id=kafka_config["group_id"])
 
     # ugly checking of private attributes
     assert consumer._client._bootstrap_servers == kafka_config["bootstrap_servers"]

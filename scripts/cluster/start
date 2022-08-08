@@ -6,3 +6,5 @@ scripts/cluster/topics/create "local--hello-world"
 scripts/cluster/topics/create "local--sse"
 scripts/cluster/topics/create "local--avro-user"
 scripts/cluster/topics/create "local--avro-address"
+
+scripts/cluster/logs

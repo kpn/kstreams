@@ -1,10 +1,11 @@
 import asyncio
 
+from .schemas import country_schema, deployment_schema
 from .streaming.streams import stream_engine
-from .schemas import deployment_schema, country_schema
 
 deployment_topic = "local--deployment"
 country_topic = "local--country"
+
 
 async def produce():
     for _ in range(2):
@@ -19,7 +20,6 @@ async def produce():
                 "subject": "deployment",
                 "schema": deployment_schema,
             },
-            
         )
         print(f"Event produced on topic {deployment_topic}. Metadata: {metadata}")
 

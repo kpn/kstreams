@@ -3,16 +3,16 @@ import inspect
 import logging
 from typing import Any, Coroutine, Dict, List, Optional, Type, Union
 
-from kstreams.clients import ConsumerType, ProducerType
-from kstreams.utils import encode_headers
-
+from .backends.kafka import Kafka
+from .clients import ConsumerType, ProducerType
 from .custom_types import DecoratedCallable, Headers
 from .exceptions import DuplicateStreamException
-from .prometheus.monitor import PrometheusMonitorType
+from .prometheus.monitor import PrometheusMonitor
 from .prometheus.tasks import metrics_task
 from .serializers import ValueDeserializer, ValueSerializer
 from .singlenton import Singleton
 from .streams import Stream
+from .utils import encode_headers
 
 logger = logging.getLogger(__name__)
 
@@ -23,12 +23,14 @@ class StreamEngine(metaclass=Singleton):
         *,
         consumer_class: Type[ConsumerType],
         producer_class: Type[ProducerType],
-        monitor: PrometheusMonitorType,
+        monitor: PrometheusMonitor,
         title: Optional[str] = None,
+        backend: Optional[Kafka] = None,
         value_deserializer: Optional[ValueDeserializer] = None,
         value_serializer: Optional[ValueSerializer] = None,
     ) -> None:
         self.title = title
+        self.backend = backend
         self.consumer_class = consumer_class
         self.producer_class = producer_class
         self.value_deserializer = value_deserializer
@@ -53,12 +55,7 @@ class StreamEngine(metaclass=Singleton):
         value_serializer = value_serializer or self.value_serializer
 
         # serialize only when value and value_serializer are present
-        if all(
-            (
-                value,
-                value_serializer,
-            )
-        ):
+        if value is not None and value_serializer is not None:
             value = await value_serializer.serialize(
                 value, headers=headers, value_serializer_kwargs=value_serializer_kwargs
             )
@@ -100,10 +97,8 @@ class StreamEngine(metaclass=Singleton):
         if self._producer is not None:
             await self._producer.stop()
 
-    async def start_producer(
-        self, settings_prefix: str = "SERVICE_KSTREAMS_", **kwargs
-    ) -> None:
-        self._producer = self.producer_class(settings_prefix=settings_prefix, **kwargs)
+    async def start_producer(self, **kwargs) -> None:
+        self._producer = self.producer_class(backend=self.backend, **kwargs)
         await self._producer.start()
 
     async def start_streams(self) -> None:

@@ -1,18 +1,19 @@
 from typing import Dict
-import aiokafka
 
+import aiokafka
 from schema_registry.serializers import AsyncAvroMessageSerializer
 
 
 class AvroSerializer(AsyncAvroMessageSerializer):
-
-    async def serialize(self, payload: Dict, value_serializer_kwargs: Dict[str, str], **kwargs) -> bytes:
+    async def serialize(
+        self, payload: Dict, value_serializer_kwargs: Dict[str, str], **kwargs
+    ) -> bytes:
         """
         Serialize a payload to avro-binary using the schema and the subject
         """
         schema = value_serializer_kwargs["schema"]
         subject = value_serializer_kwargs["subject"]
-        event = await self.encode_record_with_schema(subject, schema, payload)        
+        event = await self.encode_record_with_schema(subject, schema, payload)
 
         return event
 

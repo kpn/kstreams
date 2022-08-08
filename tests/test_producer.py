@@ -2,8 +2,8 @@ from unittest.mock import patch
 
 import pytest
 
+from kstreams.backends.kafka import Kafka
 from kstreams.clients import Producer
-from kstreams.conf import settings
 
 
 @pytest.mark.asyncio
@@ -16,14 +16,9 @@ async def test_producer():
 
 
 @pytest.mark.asyncio
-async def test_producer_with_ssl(ssl_data):
-    settings.configure(
-        SERVICE_KSTREAMS_KAFKA_CONFIG_SECURITY_PROTOCOL="SSL",
-        SERVICE_KSTREAMS_KAFKA_SSL_CERT_DATA=ssl_data.cert,
-        SERVICE_KSTREAMS_KAFKA_SSL_KEY_DATA=ssl_data.key,
-    )
-
-    producer = Producer()
+async def test_producer_with_ssl(ssl_context):
+    backend = Kafka(ssl_context=ssl_context)
+    producer = Producer(backend=backend)
     assert producer.client._ssl_context
 
     await producer.client.close()
@@ -45,26 +40,26 @@ async def test_producer_custom_kafka_config():
 
 @pytest.mark.asyncio
 async def test_two_producers():
-    settings.configure(
-        TEST_KSTREAMS_KAFKA_CONFIG_BOOTSTRAP_SERVERS=["otherhost:9092"],
-        TEST_KSTREAMS_KAFKA_CONFIG_SECURITY_PROTOCOL="PLAINTEXT",
-        TEST_KSTREAMS_KAFKA_CONFIG_CLIENT_ID="client_id2",
-        TEST_KSTREAMS_KAFKA_SSL_CERT_DATA=None,
-        TEST_KSTREAMS_KAFKA_SSL_KEY_DATA=None,
-        TEST_KSTREAMS_KAFKA_TOPIC_PREFIX="",
-    )
-    kafka_config = {
-        "bootstrap_servers": ["localhost:9093", "localhost:9094"],
-        "client_id": "my-client",
+    kafka_config_1 = {
+        "bootstrap_servers": ["localhost:9093"],
+        "group_id": "my-group-consumer",
     }
-    producer = Producer(**kafka_config)
-    producer2 = Producer(settings_prefix="TEST_KSTREAMS_")
+    backend_1 = Kafka(bootstrap_servers=kafka_config_1["bootstrap_servers"])
+    producer_1 = Producer(backend=backend_1, client_id="my-client")
 
-    assert producer.client._bootstrap_servers == kafka_config["bootstrap_servers"]
-    assert producer.client._client_id == kafka_config["client_id"]
+    kafka_config_2 = {
+        "bootstrap_servers": ["otherhost:9092"],
+        "group_id": "my-group-consumer",
+    }
 
-    assert producer2.client._bootstrap_servers == ["otherhost:9092"]
-    assert producer2.client._client_id == "client_id2"
+    backend_2 = Kafka(bootstrap_servers=kafka_config_2["bootstrap_servers"])
+    producer_2 = Producer(backend=backend_2, client_id="client_id2")
 
-    await producer.client.close()
-    await producer2.client.close()
+    assert producer_1.client._bootstrap_servers == kafka_config_1["bootstrap_servers"]
+    assert producer_1.client._client_id == "my-client"
+
+    assert producer_2.client._bootstrap_servers == kafka_config_2["bootstrap_servers"]
+    assert producer_2.client._client_id == "client_id2"
+
+    await producer_1.client.close()
+    await producer_2.client.close()
