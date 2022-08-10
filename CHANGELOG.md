@@ -1,3 +1,9 @@
+## 0.4.1 (2022-08-10)
+
+### Fix
+
+- unsubscribe consumer before stopping (#37)
+
 ## 0.4.0 (2022-08-08)
 
 ### Feat
