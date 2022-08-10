@@ -48,6 +48,8 @@ class Stream:
     async def stop(self) -> None:
         if not self.running:
             return None
+
+        self.consumer.unsubscribe()
         await self.consumer.stop()
         self.running = False
 
