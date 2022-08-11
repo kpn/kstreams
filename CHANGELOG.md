@@ -1,3 +1,9 @@
+## 0.4.2 (2022-08-11)
+
+### Fix
+
+- remove unsubscribe before stopping consumer (#40)
+
 ## 0.4.1 (2022-08-10)
 
 ### Fix
