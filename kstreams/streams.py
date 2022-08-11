@@ -49,7 +49,6 @@ class Stream:
         if not self.running:
             return None
 
-        self.consumer.unsubscribe()
         await self.consumer.stop()
         self.running = False
 
