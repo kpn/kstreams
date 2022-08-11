@@ -1,17 +1,19 @@
 import asyncio
 import inspect
 import logging
-from typing import Any, Coroutine, Dict, List, Optional, Type, Union
+from typing import Any, Callable, Dict, List, Optional, Type, Union
+
+from aiokafka.structs import RecordMetadata
 
 from .backends.kafka import Kafka
 from .clients import ConsumerType, ProducerType
-from .custom_types import DecoratedCallable, Headers
-from .exceptions import DuplicateStreamException
+from .exceptions import DuplicateStreamException, EngineNotStartedException
 from .prometheus.monitor import PrometheusMonitor
 from .prometheus.tasks import metrics_task
 from .serializers import ValueDeserializer, ValueSerializer
 from .singlenton import Singleton
 from .streams import Stream
+from .types import Headers
 from .utils import encode_headers
 
 logger = logging.getLogger(__name__)
@@ -51,6 +53,9 @@ class StreamEngine(metaclass=Singleton):
         value_serializer: Optional[ValueSerializer] = None,
         value_serializer_kwargs: Optional[Dict] = None,
     ):
+        if self._producer is None:
+            raise EngineNotStartedException()
+
         value_serializer = value_serializer or self.value_serializer
 
         # serialize only when value and value_serializer are present
@@ -59,8 +64,9 @@ class StreamEngine(metaclass=Singleton):
                 value, headers=headers, value_serializer_kwargs=value_serializer_kwargs
             )
 
+        encoded_headers = None
         if headers is not None:
-            headers = encode_headers(headers)
+            encoded_headers = encode_headers(headers)
 
         fut = await self._producer.send(
             topic,
@@ -68,9 +74,9 @@ class StreamEngine(metaclass=Singleton):
             key=key,
             partition=partition,
             timestamp_ms=timestamp_ms,
-            headers=headers,
+            headers=encoded_headers,
         )
-        metadata = await fut
+        metadata: RecordMetadata = await fut
         self.monitor.add_topic_partition_offset(
             topic, metadata.partition, metadata.offset
         )
@@ -151,7 +157,7 @@ class StreamEngine(metaclass=Singleton):
         self,
         topics: Union[List[str], str],
         *,
-        func: Coroutine[Stream, Any, Any],
+        func: Callable[[Stream], None],
         name: Optional[str] = None,
         value_deserializer: Optional[ValueDeserializer] = None,
         **kwargs,
@@ -182,8 +188,8 @@ class StreamEngine(metaclass=Singleton):
         name: Optional[str] = None,
         value_deserializer: Optional[ValueDeserializer] = None,
         **kwargs,
-    ) -> DecoratedCallable:
-        def decorator(func: Coroutine[Stream, Any, Any]) -> Stream:
+    ) -> Callable[[Callable[[Stream], None]], Stream]:
+        def decorator(func: Callable[[Stream], None]) -> Stream:
             stream = self._create_stream(
                 topics,
                 func=func,

@@ -80,3 +80,11 @@ update_changelog_on_bump = true
 [tool.pytest.ini_options]
 timeout = 300
 log_level = "DEBUG"
+
+[[tool.mypy.overrides]]
+module = "aiokafka.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "prometheus_client.*"
+ignore_missing_imports = true

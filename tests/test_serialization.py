@@ -6,9 +6,9 @@ import pytest
 
 from kstreams import StreamEngine, consts
 from kstreams.clients import Producer, aiokafka
-from kstreams.custom_types import Headers
 from kstreams.streams import Stream
 from kstreams.test_utils.test_utils import TestStreamClient
+from kstreams.types import Headers
 from kstreams.utils import encode_headers
 
 

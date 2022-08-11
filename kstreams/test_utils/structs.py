@@ -1,10 +1,4 @@
-from dataclasses import dataclass
-from typing import Generic, NamedTuple, Optional, TypeVar
-
-from kstreams.custom_types import KafkaHeaders
-
-KT = TypeVar("KT")
-VT = TypeVar("VT")
+from typing import NamedTuple
 
 
 class TopicPartition(NamedTuple):
@@ -17,14 +11,3 @@ class RecordMetadata(NamedTuple):
     partition: int
     topic: str
     timestamp: int
-
-
-@dataclass
-class ConsumerRecord(Generic[KT, VT]):
-    topic: str
-    partition: int
-    offset: int
-    timestamp: int
-    key: Optional[KT]
-    value: Optional[VT]
-    headers: KafkaHeaders

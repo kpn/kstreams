@@ -13,3 +13,8 @@ class DuplicateStreamException(Exception):
         )
 
         return msg
+
+
+class EngineNotStartedException(Exception):
+    def __str__(self) -> str:
+        return "Engine has not been started. Try with `await engine.start()`"
