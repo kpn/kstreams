@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 import aiokafka
 
 from kstreams import Stream, consts, create_engine
-from kstreams.custom_types import Headers
+from kstreams.types import Headers
 
 
 class JsonSerializer:

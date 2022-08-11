@@ -5,10 +5,10 @@ from typing import Optional, Union
 
 from aiokafka.helpers import create_ssl_context as aiokafka_create_ssl_context
 
-from kstreams import custom_types
+from kstreams import types
 
 
-def encode_headers(headers: custom_types.Headers) -> custom_types.KafkaHeaders:
+def encode_headers(headers: types.Headers) -> types.EncodedHeaders:
     return [(header, value.encode()) for header, value in headers.items()]
 
 

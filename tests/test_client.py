@@ -67,7 +67,7 @@ async def test_topic_created():
     async with TestStreamClient() as test_client:
         await test_client.send(topic, value=b'{"message": "Hello world!"}', key="1")
 
-    assert TopicManager.get_topic(topic)
+    assert TopicManager.get(topic)
 
 
 @pytest.mark.asyncio
@@ -99,8 +99,8 @@ async def test_e2e_consume_multiple_topics():
     async with TestStreamClient():
         await produce(events_per_topic=events_per_topic)
 
-    topic_1 = TopicManager.get_topic(topics[0])
-    topic_2 = TopicManager.get_topic(topics[1])
+    topic_1 = TopicManager.get(topics[0])
+    topic_2 = TopicManager.get(topics[1])
 
     assert topic_1.total_messages == events_per_topic
     assert topic_2.total_messages == events_per_topic

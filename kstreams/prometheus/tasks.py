@@ -1,7 +1,7 @@
 import asyncio
-from typing import Any, DefaultDict, List
+from typing import Any, DefaultDict, List, Type
 
-from kstreams.clients import Consumer
+from kstreams.clients import ConsumerType
 from kstreams.streams import Stream
 
 from .monitor import PrometheusMonitorType
@@ -10,11 +10,14 @@ from .monitor import PrometheusMonitorType
 async def metrics_task(streams: List[Stream], monitor: PrometheusMonitorType):
     while True:
         for stream in streams:
-            await generate_consumer_metrics(stream.consumer, monitor=monitor)
+            if stream.consumer is not None:
+                await generate_consumer_metrics(stream.consumer, monitor=monitor)
         await asyncio.sleep(3)
 
 
-async def generate_consumer_metrics(consumer: Consumer, monitor: PrometheusMonitorType):
+async def generate_consumer_metrics(
+    consumer: Type[ConsumerType], monitor: PrometheusMonitorType
+):
     """
     Generate Consumer Metrics for Prometheus
 

@@ -47,11 +47,15 @@ class TopicManager:
     topics: ClassVar[Dict[str, Topic]] = {}
 
     @classmethod
-    def get_topic(cls, name: str) -> Optional[Topic]:
-        return cls.topics.get(name)
+    def get(cls, name: str) -> Topic:
+        topic = cls.topics.get(name)
+
+        if topic is not None:
+            return topic
+        raise ValueError(f"Topic {name} not found")
 
     @classmethod
-    def create_topic(
+    def create(
         cls, name: str, consumer: Optional["test_clients.Consumer"] = None
     ) -> Topic:
         topic = Topic(name=name, queue=asyncio.Queue(), consumer=consumer)
@@ -59,13 +63,14 @@ class TopicManager:
         return topic
 
     @classmethod
-    def get_or_create_topic(cls, name: str) -> Topic:
+    def get_or_create(cls, name: str) -> Topic:
         """
         Add a new queue if does not exist and return it
         """
-        topic = cls.get_topic(name)
-        if topic is None:
-            topic = cls.create_topic(name)
+        try:
+            topic = cls.get(name)
+        except ValueError:
+            topic = cls.create(name)
         return topic
 
     @classmethod

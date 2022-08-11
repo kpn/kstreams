@@ -3,9 +3,9 @@ from types import TracebackType
 from typing import Any, Dict, List, Optional, Type
 
 from kstreams.create import create_engine
-from kstreams.custom_types import Headers
 from kstreams.serializers import ValueSerializer
 from kstreams.streams import Stream
+from kstreams.types import Headers
 
 from .structs import RecordMetadata
 from .test_clients import TestConsumer, TestProducer

@@ -2,7 +2,7 @@ import asyncio
 import inspect
 import logging
 import uuid
-from typing import Any, AsyncGenerator, Coroutine, Dict, List, Optional, Type, Union
+from typing import Any, AsyncGenerator, Callable, Dict, List, Optional, Type, Union
 
 from aiokafka import errors, structs
 
@@ -19,7 +19,7 @@ class Stream:
         topics: Union[List[str], str],
         *,
         backend: Kafka,
-        func: Union[Coroutine[Any, Any, Type[ConsumerType]], AsyncGenerator],
+        func: Callable[["Stream"], None],
         consumer_class: Type[ConsumerType] = Consumer,
         name: Optional[str] = None,
         config: Optional[Dict] = None,
@@ -29,6 +29,7 @@ class Stream:
         self.func = func
         self.backend = backend
         self.consumer_class = consumer_class
+        self.consumer: Optional[Type[ConsumerType]] = None
         self.config = config or {}
         self._consumer_task: Optional[asyncio.Task] = None
         self.name = name or str(uuid.uuid4())
@@ -41,7 +42,7 @@ class Stream:
         # so we always create a list and then we expand it with *topics
         self.topics = [topics] if isinstance(topics, str) else topics
 
-    def _create_consumer(self) -> ConsumerType:
+    def _create_consumer(self) -> Type[ConsumerType]:
         config = {**self.backend.dict(), **self.config}
         return self.consumer_class(*self.topics, **config)
 
@@ -49,13 +50,14 @@ class Stream:
         if not self.running:
             return None
 
-        await self.consumer.stop()
-        self.running = False
+        if self.consumer is not None:
+            await self.consumer.stop()
+            self.running = False
 
         if self._consumer_task is not None:
             self._consumer_task.cancel()
 
-    async def start(self) -> None:
+    async def start(self) -> Optional[AsyncGenerator]:
         async def func_wrapper(func):
             try:
                 # await for the end user coroutine
@@ -78,6 +80,7 @@ class Stream:
             # It is not an async_generator so we need to
             # create an asyncio.Task with func
             self._consumer_task = asyncio.create_task(func_wrapper(func))
+            return None
 
     async def __aenter__(self) -> AsyncGenerator:
         """
@@ -97,7 +100,8 @@ class Stream:
         """
         logger.info("Starting async_gen Stream....")
         async_gen = await self.start()
-        return async_gen
+        # For now ignoring the typing issue. The start method might be splited
+        return async_gen  # type: ignore
 
     async def __aexit__(self, exc_type, exc, tb) -> None:
         logger.info("Stopping async_gen Stream....")
@@ -114,7 +118,9 @@ class Stream:
         try:
             # value is a ConsumerRecord:
             # namedtuple["topic", "partition", "offset", "key", "value"]
-            consumer_record: structs.ConsumerRecord = await self.consumer.getone()
+            consumer_record: structs.ConsumerRecord = (
+                await self.consumer.getone()  # type: ignore
+            )
 
             # deserialize only when value and value_deserializer are present
             if (

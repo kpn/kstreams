@@ -5,7 +5,7 @@ import pytest
 from kstreams.backends.kafka import Kafka
 from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
-from kstreams.exceptions import DuplicateStreamException
+from kstreams.exceptions import DuplicateStreamException, EngineNotStartedException
 
 
 @pytest.mark.asyncio
@@ -86,7 +86,7 @@ async def test_add_existing_streams(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
-async def test_init_stop_streaming(stream_engine: StreamEngine):
+async def test_start_stop_streaming(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
     @stream_engine.stream(topic)
@@ -102,6 +102,18 @@ async def test_init_stop_streaming(stream_engine: StreamEngine):
             await stream_engine.stop()
             stream_engine._producer.stop.assert_awaited()
             Consumer.stop.assert_awaited()
+
+
+@pytest.mark.asyncio
+async def test_engine_not_started(stream_engine: StreamEngine):
+    topic = "local--hello-kpn"
+
+    # TODO: create a new Engine instance after remove the singlenton and
+    # not do `stream_engine._producer = None`
+    stream_engine._producer = None
+
+    with pytest.raises(EngineNotStartedException):
+        await stream_engine.send(topic, value=b"1")
 
 
 @pytest.mark.asyncio
