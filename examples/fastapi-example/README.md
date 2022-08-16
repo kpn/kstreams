@@ -17,7 +17,7 @@ poetry install
 1. Start the kafka cluster: From `kstreams` project root execute `./scripts/cluster/start/`
 2. Inside the `fastapi-example` folder exeute `poetry run python -m fastapi_example`
 
-Then you should see something similat to the following logs:
+Then you should see something similar to the following logs:
 
 ```bash
 ❯ python -m fastapi_example

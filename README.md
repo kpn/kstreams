@@ -90,10 +90,10 @@ Run test:
 ./scripts/test
 ```
 
-Run code linting (`black` and `isort`)
+Run code formatting (`black` and `isort`)
 
 ```bash
-./scripts/lint
+./scripts/format
 ```
 
 ### Commit messages

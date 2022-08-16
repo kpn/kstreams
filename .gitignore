@@ -228,3 +228,4 @@ tags
 [Ll]ocal
 pyvenv.cfg
 pip-selfcheck.json
+poetry.toml
