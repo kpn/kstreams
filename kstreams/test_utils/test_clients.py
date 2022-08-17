@@ -4,7 +4,7 @@ from typing import Any, Coroutine, Dict, List, Optional, Tuple
 from aiokafka.structs import ConsumerRecord
 
 from kstreams.clients import Consumer, Producer
-from kstreams.serializers import ValueSerializer
+from kstreams.serializers import Serializer
 from kstreams.types import Headers
 
 from .structs import RecordMetadata, TopicPartition
@@ -25,8 +25,8 @@ class TestProducer(Base, Producer):
         partition: int = 1,
         timestamp_ms: Optional[float] = None,
         headers: Optional[Headers] = None,
-        value_serializer: Optional[ValueSerializer] = None,
-        value_serializer_kwargs: Optional[Dict] = None,
+        serializer: Optional[Serializer] = None,
+        serializer_kwargs: Optional[Dict] = None,
     ) -> Coroutine:
         topic = TopicManager.get_or_create(topic_name)
         timestamp_ms = timestamp_ms or datetime.now().timestamp()

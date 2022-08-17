@@ -37,7 +37,7 @@ from kstreams import create_engine, Stream
 stream_engine = create_engine(title="my-stream-engine")
 
 
-class MyValueDeserializer:
+class MyDeserializer:
 
     async def deserialize(self, consumer_record: structs.ConsumerRecord, **kwargs):
         return consumer_record.value.decode()
@@ -52,7 +52,7 @@ stream = Stream(
     "local--kstreams",
     name="my-stream"
     func=stream,  # coroutine or async generator
-    value_deserializer=MyValueDeserializer(),
+    deserializer=MyDeserializer(),
 )
 # add the stream to the engine
 stream_engine.add_stream(stream)

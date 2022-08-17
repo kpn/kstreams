@@ -17,7 +17,7 @@ class MySerializer:
         self,
         payload: Any,
         headers: Optional[Headers] = None,
-        value_serializer_kwargs: Optional[Dict] = None,
+        serializer_kwargs: Optional[Dict] = None,
     ) -> bytes:
         """
         Serialize paylod to json
@@ -50,14 +50,14 @@ async def test_custom_serialization(stream_engine: StreamEngine, record_metadata
     with mock.patch.multiple(Producer, start=mock.DEFAULT, send=send):
         await stream_engine.start()
 
-        value_serializer = MySerializer()
-        serialized_data = await value_serializer.serialize(value)
+        serializer = MySerializer()
+        serialized_data = await serializer.serialize(value)
 
         metadata = await stream_engine.send(
             topic,
             value=value,
             headers=headers,
-            value_serializer=value_serializer,
+            serializer=serializer,
         )
 
         assert metadata
@@ -83,7 +83,7 @@ async def test_custom_deserialization(
 
     save_to_db = mock.Mock()
 
-    @stream_engine.stream(topic, value_deserializer=MyDeserializer())
+    @stream_engine.stream(topic, deserializer=MyDeserializer())
     async def hello_stream(stream: Stream):
         async for event in stream:
             save_to_db(event)
@@ -95,7 +95,7 @@ async def test_custom_deserialization(
             value=payload,
             headers=headers,
             key="1",
-            value_serializer=MySerializer(),
+            serializer=MySerializer(),
         )
 
     # The payload as been encoded with json,

@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional, Protocol
 import aiokafka
 
 
-class ValueDeserializer(Protocol):
+class Deserializer(Protocol):
     async def deserialize(
         self, consumer_record: aiokafka.structs.ConsumerRecord, **kwargs
     ) -> Any:
@@ -15,7 +15,7 @@ class ValueDeserializer(Protocol):
         End users can provide their own class overriding this method.
         If the engine was created with a schema_store_client, it will be available.
 
-        class CustomValueDeserializer(ValueDeserializer):
+        class CustomDeserializer(Deserializer):
 
             async deserialize(self, consumer_record: aiokafka.structs.ConsumerRecord):
                 # custom logic and return something like a ConsumerRecord
@@ -24,12 +24,12 @@ class ValueDeserializer(Protocol):
         ...
 
 
-class ValueSerializer(Protocol):
+class Serializer(Protocol):
     async def serialize(
         self,
         payload: Any,
         headers: Optional[Dict[str, str]] = None,
-        value_serializer_kwargs: Optional[Dict] = None,
+        serializer_kwargs: Optional[Dict] = None,
     ) -> bytes:
         """
         Serialize the payload to bytes
@@ -46,14 +46,14 @@ You can write custom `Serializers` and `Deserializers`. There are 2 ways of usin
 ```python
 stream_engine = create_engine(
     title="my-stream-engine",
-    value_serializer=MyValueSerializer(),
-    value_deserializer=MyValueDeserializer(),
+    serializer=MySerializer(),
+    deserializer=MyDeserializer(),
 )
 ```
 
 
 ```python
-@stream_engine.stream(topic, value_deserializer=MyDeserializer())
+@stream_engine.stream(topic, deserializer=MyDeserializer())
     async def hello_stream(stream: Stream):
         async for event in stream:
             save_to_db(event)
@@ -65,6 +65,6 @@ await stream_engine.send(
     value={"message": "test"}
     headers={"content-type": consts.APPLICATION_JSON,}
     key="1",
-    value_serializer=MySerializer(),
+    serializer=MySerializer(),
 )
 ```

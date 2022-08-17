@@ -84,12 +84,12 @@ Then, we inject the `serializers` in the `engine` and `streams` and we are ready
 # app.py
 stream_engine = create_engine(
     title="my-stream-engine",
-    value_serializer=serializers.AvroSerializer(),
+    serializer=serializers.AvroSerializer(),
 )
 
 
 @stream_engine.stream(
-    user_topic, value_deserializer=serializers.AvroDeserializer(model=User)
+    user_topic, deserializer=serializers.AvroDeserializer(model=User)
 )
 async def user_stream(stream: Stream):
     async for cr in stream:
@@ -97,7 +97,7 @@ async def user_stream(stream: Stream):
 
 
 @stream_engine.stream(
-    address_topic, value_deserializer=serializers.AvroDeserializer(model=Address)
+    address_topic, deserializer=serializers.AvroDeserializer(model=Address)
 )
 async def address_stream(stream: Stream):
     async for cr in stream:

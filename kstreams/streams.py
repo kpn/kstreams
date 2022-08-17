@@ -8,7 +8,7 @@ from aiokafka import errors, structs
 
 from .backends.kafka import Kafka
 from .clients import Consumer, ConsumerType
-from .serializers import ValueDeserializer
+from .serializers import Deserializer
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class Stream:
         name: Optional[str] = None,
         config: Optional[Dict] = None,
         model: Optional[Any] = None,
-        value_deserializer: Optional[ValueDeserializer] = None,
+        deserializer: Optional[Deserializer] = None,
     ) -> None:
         self.func = func
         self.backend = backend
@@ -34,7 +34,7 @@ class Stream:
         self._consumer_task: Optional[asyncio.Task] = None
         self.name = name or str(uuid.uuid4())
         self.model = model
-        self.value_deserializer = value_deserializer
+        self.deserializer = deserializer
         self.running = False
 
         # aiokafka expects topic names as arguments, meaning that
@@ -122,12 +122,9 @@ class Stream:
                 await self.consumer.getone()  # type: ignore
             )
 
-            # deserialize only when value and value_deserializer are present
-            if (
-                consumer_record.value is not None
-                and self.value_deserializer is not None
-            ):
-                return await self.value_deserializer.deserialize(consumer_record)
+            # deserialize only when value and deserializer are present
+            if consumer_record.value is not None and self.deserializer is not None:
+                return await self.deserializer.deserialize(consumer_record)
 
             return consumer_record
         except errors.ConsumerStoppedError:

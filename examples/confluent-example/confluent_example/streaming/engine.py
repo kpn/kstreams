@@ -7,6 +7,6 @@ client = AsyncSchemaRegistryClient("http://localhost:8081")
 
 stream_engine = create_engine(
     title="my-stream-engine",
-    value_serializer=serializers.AvroSerializer(client),
-    value_deserializer=serializers.AvroDeserializer(client),
+    serializer=serializers.AvroSerializer(client),
+    deserializer=serializers.AvroDeserializer(client),
 )

@@ -38,10 +38,10 @@ async def test_add_stream_multiple_topics(stream_engine: StreamEngine):
 async def test_add_stream_as_instance(stream_engine: StreamEngine):
     topics = ["local--hello-kpn", "local--hello-kpn-2"]
 
-    class MyValueDeserializer:
+    class MyDeserializer:
         ...
 
-    value_deserializer = MyValueDeserializer()
+    deserializer = MyDeserializer()
 
     async def processor(stream: Stream):
         pass
@@ -51,7 +51,7 @@ async def test_add_stream_as_instance(stream_engine: StreamEngine):
         topics,
         name="my-stream",
         func=processor,
-        value_deserializer=value_deserializer,
+        deserializer=deserializer,
         backend=backend,
     )
 
@@ -61,7 +61,7 @@ async def test_add_stream_as_instance(stream_engine: StreamEngine):
     stream_instance = stream_engine.get_stream("my-stream")
     assert stream_instance == my_stream
     assert stream_instance.topics == topics
-    assert stream_instance.value_deserializer == value_deserializer
+    assert stream_instance.deserializer == deserializer
 
     # can not add a stream with the same name
     with pytest.raises(DuplicateStreamException):
