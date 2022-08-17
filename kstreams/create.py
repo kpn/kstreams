@@ -4,7 +4,7 @@ from .backends.kafka import Kafka
 from .clients import Consumer, ConsumerType, Producer, ProducerType
 from .engine import StreamEngine
 from .prometheus.monitor import PrometheusMonitor
-from .serializers import ValueDeserializer, ValueSerializer
+from .serializers import Deserializer, Serializer
 
 
 def create_engine(
@@ -12,8 +12,8 @@ def create_engine(
     backend: Optional[Kafka] = None,
     consumer_class: Type[ConsumerType] = Consumer,
     producer_class: Type[ProducerType] = Producer,
-    value_serializer: Optional[ValueSerializer] = None,
-    value_deserializer: Optional[ValueDeserializer] = None,
+    serializer: Optional[Serializer] = None,
+    deserializer: Optional[Deserializer] = None,
     monitor: Optional[PrometheusMonitor] = None,
 ) -> StreamEngine:
 
@@ -28,7 +28,7 @@ def create_engine(
         title=title,
         consumer_class=consumer_class,
         producer_class=producer_class,
-        value_serializer=value_serializer,
-        value_deserializer=value_deserializer,
+        serializer=serializer,
+        deserializer=deserializer,
         monitor=monitor,
     )

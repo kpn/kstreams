@@ -3,7 +3,7 @@ from types import TracebackType
 from typing import Any, Dict, List, Optional, Type
 
 from kstreams.create import create_engine
-from kstreams.serializers import ValueSerializer
+from kstreams.serializers import Serializer
 from kstreams.streams import Stream
 from kstreams.types import Headers
 
@@ -67,8 +67,8 @@ class TestStreamClient:
         partition: Optional[str] = None,
         timestamp_ms: Optional[int] = None,
         headers: Optional[Headers] = None,
-        value_serializer: Optional[ValueSerializer] = None,
-        value_serializer_kwargs: Optional[Dict] = None,
+        serializer: Optional[Serializer] = None,
+        serializer_kwargs: Optional[Dict] = None,
     ) -> RecordMetadata:
         return await self.stream_engine.send(
             topic,
@@ -77,6 +77,6 @@ class TestStreamClient:
             partition=partition,
             timestamp_ms=timestamp_ms,
             headers=headers,
-            value_serializer=value_serializer,
-            value_serializer_kwargs=value_serializer_kwargs,
+            serializer=serializer,
+            serializer_kwargs=serializer_kwargs,
         )

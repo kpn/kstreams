@@ -52,7 +52,7 @@ COUNTRY_AVRO_SCHEMA = {
 
 We need to define custom `serializers` so the `engine` and `streams` will handle the payload properly.
 In this case we use `AsyncAvroMessageSerializer` that already contains the methods to `encode/decode` events.
-Because to `serialize` events we need to know the `subject` and the `schema`, we make use of `value_serializer_kwargs`
+Because to `serialize` events we need to know the `subject` and the `schema`, we make use of `serializer_kwargs`
 to provide them.
 
 ```python
@@ -62,12 +62,12 @@ from schema_registry.serializers import AsyncAvroMessageSerializer
 
 class AvroSerializer(AsyncAvroMessageSerializer):
 
-    async def serialize(self, payload: Dict, value_serializer_kwargs: Dict[str, str], **kwargs) -> bytes:
+    async def serialize(self, payload: Dict, serializer_kwargs: Dict[str, str], **kwargs) -> bytes:
         """
         Serialize a payload to avro-binary using the schema and the subject
         """
-        schema = value_serializer_kwargs["schema"]  # GET THE SCHEMA
-        subject = value_serializer_kwargs["subject"]  # GET THE SUBJECT
+        schema = serializer_kwargs["schema"]  # GET THE SCHEMA
+        subject = serializer_kwargs["subject"]  # GET THE SUBJECT
         event = await self.encode_record_with_schema(subject, schema, payload)
 
         return event
@@ -99,8 +99,8 @@ client = AsyncSchemaRegistryClient("http://localhost:8081")
 
 stream_engine = create_engine(
     title="my-stream-engine",
-    value_serializer=serializers.AvroSerializer(client),
-    value_deserializer=serializers.AvroDeserializer(client)
+    serializer=serializers.AvroSerializer(client),
+    deserializer=serializers.AvroDeserializer(client)
 )
 ```
 
@@ -120,7 +120,7 @@ await stream_engine.send(
         "replicas": 1,
         "port": 8080,
     },
-    value_serializer_kwargs={  # Using the value_serializer_kwargs
+    serializer_kwargs={  # Using the serializer_kwargs
         "subject": "deployment",
         "schema": deployment_schema,
     },
@@ -132,7 +132,7 @@ await stream_engine.send(
     value={
         "country": "Netherlands",
     },
-    value_serializer_kwargs={  # Using the value_serializer_kwargs
+    serializer_kwargs={  # Using the serializer_kwargs
         "subject": "country",
         "schema": country_schema,
     },

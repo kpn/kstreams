@@ -5,7 +5,7 @@ import aiokafka
 from .types import Headers
 
 
-class ValueDeserializer(Protocol):
+class Deserializer(Protocol):
     async def deserialize(
         self, consumer_record: aiokafka.structs.ConsumerRecord, **kwargs
     ) -> Any:
@@ -13,7 +13,7 @@ class ValueDeserializer(Protocol):
         This method is used to deserialize the data in a KPN way.
         End users can provide their own class overriding this method.
 
-        class CustomValueDeserializer(ValueDeserializer):
+        class CustomDeserializer(Deserializer):
 
             async deserialize(self, consumer_record: aiokafka.structs.ConsumerRecord):
                 # custom logic and return something like a ConsumerRecord
@@ -22,12 +22,12 @@ class ValueDeserializer(Protocol):
         ...
 
 
-class ValueSerializer(Protocol):
+class Serializer(Protocol):
     async def serialize(
         self,
         payload: Any,
         headers: Optional[Headers] = None,
-        value_serializer_kwargs: Optional[Dict] = None,
+        serializer_kwargs: Optional[Dict] = None,
     ) -> bytes:
         """
         Serialize the payload to bytes

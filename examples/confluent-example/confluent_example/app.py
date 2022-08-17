@@ -16,7 +16,7 @@ async def produce():
                 "replicas": 1,
                 "port": 8080,
             },
-            value_serializer_kwargs={
+            serializer_kwargs={
                 "subject": "deployment",
                 "schema": deployment_schema,
             },
@@ -28,7 +28,7 @@ async def produce():
             value={
                 "country": "Netherlands",
             },
-            value_serializer_kwargs={
+            serializer_kwargs={
                 "subject": "country",
                 "schema": country_schema,
             },

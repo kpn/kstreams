@@ -10,7 +10,7 @@ from .clients import ConsumerType, ProducerType
 from .exceptions import DuplicateStreamException, EngineNotStartedException
 from .prometheus.monitor import PrometheusMonitor
 from .prometheus.tasks import metrics_task
-from .serializers import ValueDeserializer, ValueSerializer
+from .serializers import Deserializer, Serializer
 from .singlenton import Singleton
 from .streams import Stream
 from .types import Headers
@@ -28,15 +28,15 @@ class StreamEngine(metaclass=Singleton):
         producer_class: Type[ProducerType],
         monitor: PrometheusMonitor,
         title: Optional[str] = None,
-        value_deserializer: Optional[ValueDeserializer] = None,
-        value_serializer: Optional[ValueSerializer] = None,
+        deserializer: Optional[Deserializer] = None,
+        serializer: Optional[Serializer] = None,
     ) -> None:
         self.title = title
         self.backend = backend
         self.consumer_class = consumer_class
         self.producer_class = producer_class
-        self.value_deserializer = value_deserializer
-        self.value_serializer = value_serializer
+        self.deserializer = deserializer
+        self.serializer = serializer
         self.monitor = monitor
         self._producer: Optional[Type[ProducerType]] = None
         self._streams: List[Stream] = []
@@ -50,18 +50,18 @@ class StreamEngine(metaclass=Singleton):
         partition: Optional[str] = None,
         timestamp_ms: Optional[int] = None,
         headers: Optional[Headers] = None,
-        value_serializer: Optional[ValueSerializer] = None,
-        value_serializer_kwargs: Optional[Dict] = None,
+        serializer: Optional[Serializer] = None,
+        serializer_kwargs: Optional[Dict] = None,
     ):
         if self._producer is None:
             raise EngineNotStartedException()
 
-        value_serializer = value_serializer or self.value_serializer
+        serializer = serializer or self.serializer
 
-        # serialize only when value and value_serializer are present
-        if value is not None and value_serializer is not None:
-            value = await value_serializer.serialize(
-                value, headers=headers, value_serializer_kwargs=value_serializer_kwargs
+        # serialize only when value and serializer are present
+        if value is not None and serializer is not None:
+            value = await serializer.serialize(
+                value, headers=headers, serializer_kwargs=serializer_kwargs
             )
 
         encoded_headers = None
@@ -159,7 +159,7 @@ class StreamEngine(metaclass=Singleton):
         *,
         func: Callable[[Stream], None],
         name: Optional[str] = None,
-        value_deserializer: Optional[ValueDeserializer] = None,
+        deserializer: Optional[Deserializer] = None,
         **kwargs,
     ) -> Stream:
         """
@@ -175,7 +175,7 @@ class StreamEngine(metaclass=Singleton):
             name=name,
             config=kwargs,
             consumer_class=self.consumer_class,
-            value_deserializer=value_deserializer or self.value_deserializer,
+            deserializer=deserializer or self.deserializer,
             backend=self.backend,
         )
         self._streams.append(stream)
@@ -186,7 +186,7 @@ class StreamEngine(metaclass=Singleton):
         topics: Union[List[str], str],
         *,
         name: Optional[str] = None,
-        value_deserializer: Optional[ValueDeserializer] = None,
+        deserializer: Optional[Deserializer] = None,
         **kwargs,
     ) -> Callable[[Callable[[Stream], None]], Stream]:
         def decorator(func: Callable[[Stream], None]) -> Stream:
@@ -194,7 +194,7 @@ class StreamEngine(metaclass=Singleton):
                 topics,
                 func=func,
                 name=name,
-                value_deserializer=value_deserializer,
+                deserializer=deserializer,
                 **kwargs,
             )
             return stream

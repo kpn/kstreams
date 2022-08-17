@@ -13,7 +13,7 @@ class JsonSerializer:
         self,
         payload: Any,
         headers: Optional[Headers] = None,
-        value_serializer_kwargs: Optional[Dict] = None,
+        serializer_kwargs: Optional[Dict] = None,
     ) -> bytes:
         """
         Serialize a payload to json
@@ -33,8 +33,8 @@ class JsonDeserializer:
 
 stream_engine = create_engine(
     title="my-stream-engine",
-    value_serializer=JsonSerializer(),
-    value_deserializer=JsonDeserializer(),
+    serializer=JsonSerializer(),
+    deserializer=JsonDeserializer(),
 )
 
 data = {"message": "Hello world!"}
