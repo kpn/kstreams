@@ -1,3 +1,9 @@
+## 0.4.4 (2022-08-17)
+
+### Refactor
+
+- remove the `value_` prefix from `value_serializer` and `value_deserializer`
+
 ## 0.4.3 (2022-08-11)
 
 ### Fix
