@@ -359,7 +359,7 @@
 <span class="kn">import</span> <span class="nn">aiokafka</span>
 
 
-<span class="k">class</span> <span class="nc">ValueDeserializer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Deserializer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">deserialize</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">consumer_record</span><span class="p">:</span> <span class="n">aiokafka</span><span class="o">.</span><span class="n">structs</span><span class="o">.</span><span class="n">ConsumerRecord</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
@@ -368,7 +368,7 @@
 <span class="sd">        End users can provide their own class overriding this method.</span>
 <span class="sd">        If the engine was created with a schema_store_client, it will be available.</span>
 
-<span class="sd">        class CustomValueDeserializer(ValueDeserializer):</span>
+<span class="sd">        class CustomDeserializer(Deserializer):</span>
 
 <span class="sd">            async deserialize(self, consumer_record: aiokafka.structs.ConsumerRecord):</span>
 <span class="sd">                # custom logic and return something like a ConsumerRecord</span>
@@ -377,12 +377,12 @@
         <span class="o">...</span>
 
 
-<span class="k">class</span> <span class="nc">ValueSerializer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Serializer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">payload</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">headers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">value_serializer_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">serializer_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serialize the payload to bytes</span>
@@ -396,11 +396,11 @@
 </ol>
 <div class="highlight"><pre><span></span><code><span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">,</span>
-    <span class="n">value_serializer</span><span class="o">=</span><span class="n">MyValueSerializer</span><span class="p">(),</span>
-    <span class="n">value_deserializer</span><span class="o">=</span><span class="n">MyValueDeserializer</span><span class="p">(),</span>
+    <span class="n">serializer</span><span class="o">=</span><span class="n">MySerializer</span><span class="p">(),</span>
+    <span class="n">deserializer</span><span class="o">=</span><span class="n">MyDeserializer</span><span class="p">(),</span>
 <span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">value_deserializer</span><span class="o">=</span><span class="n">MyDeserializer</span><span class="p">())</span>
+<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">deserializer</span><span class="o">=</span><span class="n">MyDeserializer</span><span class="p">())</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">hello_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
         <span class="k">async</span> <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
             <span class="n">save_to_db</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
@@ -410,7 +410,7 @@
     <span class="n">value</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">}</span>
     <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;content-type&quot;</span><span class="p">:</span> <span class="n">consts</span><span class="o">.</span><span class="n">APPLICATION_JSON</span><span class="p">,}</span>
     <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
-    <span class="n">value_serializer</span><span class="o">=</span><span class="n">MySerializer</span><span class="p">(),</span>
+    <span class="n">serializer</span><span class="o">=</span><span class="n">MySerializer</span><span class="p">(),</span>
 <span class="p">)</span>
 </code></pre></div>
 
