@@ -1,4 +1,8 @@
-class DuplicateStreamException(Exception):
+class StreamException(Exception):
+    """Used to catch all kstream exceptions."""
+
+
+class DuplicateStreamException(StreamException):
     def __init__(self, name: str) -> None:
         self.name = name
 
@@ -15,6 +19,10 @@ class DuplicateStreamException(Exception):
         return msg
 
 
-class EngineNotStartedException(Exception):
+class EngineNotStartedException(StreamException):
     def __str__(self) -> str:
         return "Engine has not been started. Try with `await engine.start()`"
+
+
+class BackendNotSet(StreamException):
+    ...

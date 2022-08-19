@@ -1,4 +1,17 @@
-from .clients import Consumer, ConsumerType, Producer, ProducerType  # noqa: F401
-from .create import StreamEngine, create_engine  # noqa: F401
-from .prometheus.monitor import PrometheusMonitor, PrometheusMonitorType  # noqa: F401
-from .streams import Stream  # noqa: F401
+from .clients import Consumer, ConsumerType, Producer, ProducerType
+from .create import StreamEngine, create_engine
+from .prometheus.monitor import PrometheusMonitor, PrometheusMonitorType
+from .streams import Stream, stream
+
+__all__ = [
+    "Consumer",
+    "ConsumerType",
+    "Producer",
+    "ProducerType",
+    "StreamEngine",
+    "create_engine",
+    "PrometheusMonitor",
+    "PrometheusMonitorType",
+    "Stream",
+    "stream",
+]
