@@ -1,9 +1,8 @@
 import asyncio
 
-from aiokafka import ConsumerRecord
 from aiokafka.structs import RecordMetadata
 
-from kstreams import create_engine
+from kstreams import ConsumerRecord, create_engine
 from kstreams.streams import Stream
 
 topic = "local--py-streams"

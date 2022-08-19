@@ -2,9 +2,7 @@ import asyncio
 import json
 from typing import Any, Dict, Optional
 
-import aiokafka
-
-from kstreams import Stream, consts, create_engine
+from kstreams import ConsumerRecord, Stream, consts, create_engine
 from kstreams.types import Headers
 
 
@@ -24,8 +22,8 @@ class JsonSerializer:
 
 class JsonDeserializer:
     async def deserialize(
-        self, consumer_record: aiokafka.structs.ConsumerRecord, **kwargs
-    ) -> aiokafka.structs.ConsumerRecord:
+        self, consumer_record: ConsumerRecord, **kwargs
+    ) -> ConsumerRecord:
         data = json.loads(consumer_record.value.decode())
         consumer_record.value = data
         return consumer_record

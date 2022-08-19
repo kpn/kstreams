@@ -1,5 +1,6 @@
-import aiokafka
 from dataclasses_avroschema import AvroModel
+
+from kstreams import ConsumerRecord
 
 
 class AvroSerializer:
@@ -15,8 +16,8 @@ class AvroDeserializer:
         self.model = model
 
     async def deserialize(
-        self, consumer_record: aiokafka.structs.ConsumerRecord, **kwargs
-    ) -> aiokafka.structs.ConsumerRecord:
+        self, consumer_record: ConsumerRecord, **kwargs
+    ) -> ConsumerRecord:
         """
         Deserialize a payload to an AvroModel
         """

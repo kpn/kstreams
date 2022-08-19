@@ -1,3 +1,5 @@
+from aiokafka.structs import ConsumerRecord
+
 from .clients import Consumer, ConsumerType, Producer, ProducerType
 from .create import StreamEngine, create_engine
 from .prometheus.monitor import PrometheusMonitor, PrometheusMonitorType
@@ -14,4 +16,5 @@ __all__ = [
     "PrometheusMonitorType",
     "Stream",
     "stream",
+    "ConsumerRecord",
 ]

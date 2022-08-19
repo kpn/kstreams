@@ -1,7 +1,8 @@
 from typing import Dict
 
-import aiokafka
 from schema_registry.serializers import AsyncAvroMessageSerializer
+
+from kstreams import ConsumerRecord
 
 
 class AvroSerializer(AsyncAvroMessageSerializer):
@@ -20,8 +21,8 @@ class AvroSerializer(AsyncAvroMessageSerializer):
 
 class AvroDeserializer(AsyncAvroMessageSerializer):
     async def deserialize(
-        self, consumer_record: aiokafka.structs.ConsumerRecord, **kwargs
-    ) -> aiokafka.structs.ConsumerRecord:
+        self, consumer_record: ConsumerRecord, **kwargs
+    ) -> ConsumerRecord:
         """
         Deserialize the event to a dict
         """

@@ -53,6 +53,8 @@ To accomplish it, we need to define custom `serializers` for our `models`:
 
 ```python
 # serializers.py
+from kstreams import ConsumerRecord
+
 class AvroSerializer:
     async def serialize(self, instance: AvroModel, **kwargs) -> bytes:
         """
@@ -66,8 +68,8 @@ class AvroDeserializer:
         self.model = model
 
     async def deserialize(
-        self, consumer_record: aiokafka.structs.ConsumerRecord, **kwargs
-    ) -> aiokafka.structs.ConsumerRecord:
+        self, consumer_record: ConsumerRecord, **kwargs
+    ) -> ConsumerRecord:
         """
         Deserialize a payload to an AvroModel
         """

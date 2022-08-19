@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional, Protocol
 
-import aiokafka
+from kstreams import ConsumerRecord
 
 from .types import Headers
 
@@ -27,9 +27,7 @@ class Deserializer(Protocol):
     ```
     """
 
-    async def deserialize(
-        self, consumer_record: aiokafka.structs.ConsumerRecord, **kwargs
-    ) -> Any:
+    async def deserialize(self, consumer_record: ConsumerRecord, **kwargs) -> Any:
         """
         Implement this method to deserialize the data received from the topic.
         """

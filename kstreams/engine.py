@@ -12,7 +12,7 @@ from .prometheus.monitor import PrometheusMonitor
 from .prometheus.tasks import metrics_task
 from .serializers import Deserializer, Serializer
 from .singlenton import Singleton
-from .streams import Stream, stream
+from .streams import Func, Stream, stream
 from .types import Headers
 from .utils import encode_headers
 
@@ -189,8 +189,8 @@ class StreamEngine(metaclass=Singleton):
         name: Optional[str] = None,
         deserializer: Optional[Deserializer] = None,
         **kwargs,
-    ) -> Callable[[Callable[[Stream], None]], Stream]:
-        def decorator(func: Callable[[Stream], None]) -> Stream:
+    ) -> Callable[[Func], Stream]:
+        def decorator(func: Func) -> Stream:
             _stream = stream(topics, name=name, deserializer=deserializer, **kwargs)(
                 func
             )

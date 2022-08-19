@@ -11,7 +11,6 @@ from typing import (
     List,
     Optional,
     Type,
-    TypeAlias,
     Union,
 )
 
@@ -146,7 +145,8 @@ class Stream:
             raise StopAsyncIteration  # noqa: F821
 
 
-Func: TypeAlias = Callable[[Stream], Awaitable[Any]]
+# Function required by the `stream` decorator
+Func = Callable[[Stream], Awaitable[Any]]
 
 
 def stream(
