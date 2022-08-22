@@ -4,7 +4,7 @@ Kafka's job is to move bytes from producer to consumers, through a topic.
 By default, this is what kstream does.
 
 ```python
---8<-- "examples/recommended-usage/recommended_kstream/streams.py"
+--8<-- "examples/recommended-usage/recommended_usage/streams.py"
 ```
 
 As you can see the ConsumerRecord's `value` is bytes.
@@ -13,7 +13,7 @@ In order to keep your code pythonic, we provide a mechanism to serialize/deseria
 these bytes, into something more useful.
 This way, you can work with other data structures, like a `dict` or `dataclasses`.
 
-Sometimes is easier to work with a `dict` in your app, and give it to `kstreams`, and let it transform it into `bytes` to be delivered to Kafka. For this situations, you need to implement `kstreams.serializers.Serializer`.
+Sometimes it is easier to work with a `dict` in your app, give it to `kstreams`, and let it transform it into `bytes` to be delivered to Kafka. For this situations, you need to implement `kstreams.serializers.Serializer`.
 
 The other situation is when you consume from Kafka (or other brokers). Instead of dealing with `bytes`,
 you may want to receive in your function the `dict` ready to be used. For those cases, implement `kstreams.serializers.Deserializer`
@@ -34,7 +34,7 @@ you may want to receive in your function the `dict` ready to be used. For those 
 
 ## Usage
 
-Once you have written your serializer or deserializer. There are 2 ways of using them, in a
+Once you have written your serializer or deserializer, there are 2 ways of using them, in a
 generic fashion or per stream.
 
 ### Initialize the engine with your serializers

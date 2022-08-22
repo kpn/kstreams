@@ -146,7 +146,7 @@ class Stream:
 
 
 # Function required by the `stream` decorator
-Func = Callable[[Stream], Awaitable[Any]]
+StreamFunc = Callable[[Stream], Awaitable[Any]]
 
 
 def stream(
@@ -155,8 +155,8 @@ def stream(
     name: Optional[str] = None,
     deserializer: Optional[Deserializer] = None,
     **kwargs,
-) -> Callable[[Func], Stream]:
-    def decorator(func: Func) -> Stream:
+) -> Callable[[StreamFunc], Stream]:
+    def decorator(func: StreamFunc) -> Stream:
         return Stream(
             topics=topics,
             func=func,

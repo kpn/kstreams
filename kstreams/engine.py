@@ -12,7 +12,7 @@ from .prometheus.monitor import PrometheusMonitor
 from .prometheus.tasks import metrics_task
 from .serializers import Deserializer, Serializer
 from .singlenton import Singleton
-from .streams import Func, Stream, stream
+from .streams import Stream, StreamFunc, stream
 from .types import Headers
 from .utils import encode_headers
 
@@ -154,34 +154,6 @@ class StreamEngine(metaclass=Singleton):
         stream.backend = self.backend
         self._streams.append(stream)
 
-    # def _create_stream(
-    #     self,
-    #     topics: Union[List[str], str],
-    #     *,
-    #     func: Callable[[Stream], None],
-    #     name: Optional[str] = None,
-    #     deserializer: Optional[Deserializer] = None,
-    #     **kwargs,
-    # ) -> Stream:
-    #     """
-    #     Create a Stream processor and add it to the stream List.
-    #     This method should not be used by the end user
-    #     """
-    #     if name is not None and self.exist_stream(name):
-    #         raise DuplicateStreamException(name=name)
-
-    #     stream = Stream(
-    #         topics=topics,
-    #         func=func,
-    #         name=name,
-    #         config=kwargs,
-    #         consumer_class=self.consumer_class,
-    #         deserializer=deserializer or self.deserializer,
-    #         backend=self.backend,
-    #     )
-    #     self._streams.append(stream)
-    #     return stream
-
     def stream(
         self,
         topics: Union[List[str], str],
@@ -189,13 +161,13 @@ class StreamEngine(metaclass=Singleton):
         name: Optional[str] = None,
         deserializer: Optional[Deserializer] = None,
         **kwargs,
-    ) -> Callable[[Func], Stream]:
-        def decorator(func: Func) -> Stream:
-            _stream = stream(topics, name=name, deserializer=deserializer, **kwargs)(
-                func
-            )
-            self.add_stream(_stream)
+    ) -> Callable[[StreamFunc], Stream]:
+        def decorator(func: StreamFunc) -> Stream:
+            stream_from_func = stream(
+                topics, name=name, deserializer=deserializer, **kwargs
+            )(func)
+            self.add_stream(stream_from_func)
 
-            return _stream
+            return stream_from_func
 
         return decorator
