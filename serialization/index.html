@@ -69,6 +69,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#kstreams.serializers.Serializer" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -279,9 +284,98 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Serialization
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Serialization
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kstreams.serializers.Serializer" class="md-nav__link">
+    Serializer
+  </a>
+  
+    <nav class="md-nav" aria-label="Serializer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.serializers.Serializer.serialize" class="md-nav__link">
+    serialize()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kstreams.serializers.Deserializer" class="md-nav__link">
+    Deserializer
+  </a>
+  
+    <nav class="md-nav" aria-label="Deserializer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.serializers.Deserializer.deserialize" class="md-nav__link">
+    deserialize()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#initialize-the-engine-with-your-serializers" class="md-nav__link">
+    Initialize the engine with your serializers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initilize-streams-with-a-deserializer-and-produce-events-with-serializers" class="md-nav__link">
+    Initilize streams with a deserializer and produce events with serializers
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -335,6 +429,81 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kstreams.serializers.Serializer" class="md-nav__link">
+    Serializer
+  </a>
+  
+    <nav class="md-nav" aria-label="Serializer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.serializers.Serializer.serialize" class="md-nav__link">
+    serialize()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kstreams.serializers.Deserializer" class="md-nav__link">
+    Deserializer
+  </a>
+  
+    <nav class="md-nav" aria-label="Deserializer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.serializers.Deserializer.deserialize" class="md-nav__link">
+    deserialize()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#initialize-the-engine-with-your-serializers" class="md-nav__link">
+    Initialize the engine with your serializers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initilize-streams-with-a-deserializer-and-produce-events-with-serializers" class="md-nav__link">
+    Initilize streams with a deserializer and produce events with serializers
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -353,56 +522,366 @@
 
   <h1>Serialization</h1>
 
-<p>You can use custom <code>serialization/deserialization</code>. The protocol is the following:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Protocol</span>
-
-<span class="kn">import</span> <span class="nn">aiokafka</span>
-
-
-<span class="k">class</span> <span class="nc">Deserializer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">deserialize</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">consumer_record</span><span class="p">:</span> <span class="n">aiokafka</span><span class="o">.</span><span class="n">structs</span><span class="o">.</span><span class="n">ConsumerRecord</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This method is used to deserialize the data in a KPN way.</span>
-<span class="sd">        End users can provide their own class overriding this method.</span>
-<span class="sd">        If the engine was created with a schema_store_client, it will be available.</span>
-
-<span class="sd">        class CustomDeserializer(Deserializer):</span>
-
-<span class="sd">            async deserialize(self, consumer_record: aiokafka.structs.ConsumerRecord):</span>
-<span class="sd">                # custom logic and return something like a ConsumerRecord</span>
-<span class="sd">                return consumer_record</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
+<p>Kafka's job is to move bytes from producer to consumers, through a topic.</p>
+<p>By default, this is what kstream does.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">stream</span>
 
 
-<span class="k">class</span> <span class="nc">Serializer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="nd">@stream</span><span class="p">(</span><span class="s2">&quot;local--hello-world&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;showing bytes: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>As you can see the ConsumerRecord's <code>value</code> is bytes.</p>
+<p>In order to keep your code pythonic, we provide a mechanism to serialize/deserialize
+these bytes, into something more useful.
+This way, you can work with other data structures, like a <code>dict</code> or <code>dataclasses</code>.</p>
+<p>Sometimes it is easier to work with a <code>dict</code> in your app, give it to <code>kstreams</code>, and let it transform it into <code>bytes</code> to be delivered to Kafka. For this situations, you need to implement <code>kstreams.serializers.Serializer</code>.</p>
+<p>The other situation is when you consume from Kafka (or other brokers). Instead of dealing with <code>bytes</code>,
+you may want to receive in your function the <code>dict</code> ready to be used. For those cases, implement <code>kstreams.serializers.Deserializer</code></p>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="kstreams.serializers.Serializer" class="doc doc-heading">
+        <code>kstreams.serializers.Serializer</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents first">
+
+  
+      <p>Protocol used by the Stream to serialize.</p>
+<p>A Protocol is similar to other languages features like an interface or a trait.</p>
+<p>End users should provide their own class implementing this protocol.</p>
+<p>For example a <code>JsonSerializer</code></p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">json</span>
+
+<span class="k">class</span> <span class="nc">JsonSerializer</span><span class="p">:</span>
+
     <span class="k">async</span> <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">payload</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">headers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">serializer_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return UTF-8 encoded payload&quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+</code></pre></div>
+<p>Notice that you don't need to inherit anything,
+you just have to comply with the Protocol.</p>
+
+
+        <details class="quote">
+          <summary>Source code in <code>kstreams/serializers.py</code></summary>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Serializer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Protocol used by the Stream to serialize.</span>
+
+<span class="sd">    A Protocol is similar to other languages features like an interface or a trait.</span>
+
+<span class="sd">    End users should provide their own class implementing this protocol.</span>
+
+<span class="sd">    For example a `JsonSerializer`</span>
+
+<span class="sd">    ```python</span>
+<span class="sd">    import json</span>
+
+<span class="sd">    class JsonSerializer:</span>
+
+<span class="sd">        async def serialize(</span>
+<span class="sd">            self,</span>
+<span class="sd">            payload: dict,</span>
+<span class="sd">            headers: Optional[Dict[str, str]] = None,</span>
+<span class="sd">            serializer_kwargs: Optional[Dict] = None,</span>
+<span class="sd">        ) -&gt; bytes:</span>
+<span class="sd">            \&quot;&quot;&quot;</span><span class="n">Return</span> <span class="n">UTF</span><span class="o">-</span><span class="mi">8</span> <span class="n">encoded</span> <span class="n">payload</span>\<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            value = json.dumps(payload)</span>
+<span class="s2">            return value.encode()</span>
+<span class="s2">    ```</span>
+
+<span class="s2">    Notice that you don&#39;t need to inherit anything,</span>
+<span class="s2">    you just have to comply with the Protocol.</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">payload</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">headers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Headers</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">serializer_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Serialize the payload to bytes</span>
+<span class="sd">        Implement this method to deserialize the data received from the topic.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="kstreams.serializers.Serializer.serialize" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">serialize</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">serializer_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Implement this method to deserialize the data received from the topic.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>kstreams/serializers.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">payload</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">headers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Headers</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">serializer_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implement this method to deserialize the data received from the topic.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="o">...</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="kstreams.serializers.Deserializer" class="doc doc-heading">
+        <code>kstreams.serializers.Deserializer</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents first">
+
+  
+      <p>Protocol used by the Stream to deserialize.</p>
+<p>A Protocol is similar to other languages features like an interface or a trait.</p>
+<p>End users should provide their own class implementing this protocol.</p>
+<p>For example a <code>JsonDeserializer</code></p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span>
+
+<span class="k">class</span> <span class="nc">JsonDeserializer</span><span class="p">:</span>
+
+    <span class="k">async</span> <span class="n">deserialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer_record</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">consumer_record</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+        <span class="n">consumer_record</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">return</span> <span class="n">consumer_record</span>
 </code></pre></div>
-<p>You can write custom <code>Serializers</code> and <code>Deserializers</code>. There are 2 ways of using them:</p>
-<ol>
-<li>Initialize the engine with them</li>
-<li>Initilize <code>streams</code> with a <code>deserializer</code> and produce events with <code>serializers</code></li>
-</ol>
+
+
+        <details class="quote">
+          <summary>Source code in <code>kstreams/serializers.py</code></summary>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Deserializer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Protocol used by the Stream to deserialize.</span>
+
+<span class="sd">    A Protocol is similar to other languages features like an interface or a trait.</span>
+
+<span class="sd">    End users should provide their own class implementing this protocol.</span>
+
+<span class="sd">    For example a `JsonDeserializer`</span>
+
+<span class="sd">    ```python</span>
+<span class="sd">    import json</span>
+<span class="sd">    from kstreams import ConsumerRecord</span>
+
+<span class="sd">    class JsonDeserializer:</span>
+
+<span class="sd">        async deserialize(self, consumer_record: ConsumerRecord):</span>
+<span class="sd">            data = json.loads(consumer_record.value.decode())</span>
+<span class="sd">            consumer_record.value = data</span>
+<span class="sd">            return consumer_record</span>
+<span class="sd">    ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">deserialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer_record</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Implement this method to deserialize the data received from the topic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="kstreams.serializers.Deserializer.deserialize" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">deserialize</span><span class="p">(</span><span class="n">consumer_record</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Implement this method to deserialize the data received from the topic.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>kstreams/serializers.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">deserialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer_record</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implement this method to deserialize the data received from the topic.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="o">...</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div><h2 id="usage">Usage</h2>
+<p>Once you have written your serializer or deserializer, there are 2 ways of using them, in a
+generic fashion or per stream.</p>
+<h3 id="initialize-the-engine-with-your-serializers">Initialize the engine with your serializers</h3>
+<p>By doing this all the streams will use these serializers by default.</p>
 <div class="highlight"><pre><span></span><code><span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">,</span>
-    <span class="n">serializer</span><span class="o">=</span><span class="n">MySerializer</span><span class="p">(),</span>
-    <span class="n">deserializer</span><span class="o">=</span><span class="n">MyDeserializer</span><span class="p">(),</span>
+    <span class="n">serializer</span><span class="o">=</span><span class="n">JsonSerializer</span><span class="p">(),</span>
+    <span class="n">deserializer</span><span class="o">=</span><span class="n">JsonDeserializer</span><span class="p">(),</span>
 <span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">deserializer</span><span class="o">=</span><span class="n">MyDeserializer</span><span class="p">())</span>
+<h3 id="initilize-streams-with-a-deserializer-and-produce-events-with-serializers">Initilize <code>streams</code> with a <code>deserializer</code> and produce events with <code>serializers</code></h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">deserializer</span><span class="o">=</span><span class="n">JsonDeserializer</span><span class="p">())</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">hello_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
         <span class="k">async</span> <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="c1"># remember event.value is now a dict</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">])</span>
             <span class="n">save_to_db</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
@@ -410,7 +889,7 @@
     <span class="n">value</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">}</span>
     <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;content-type&quot;</span><span class="p">:</span> <span class="n">consts</span><span class="o">.</span><span class="n">APPLICATION_JSON</span><span class="p">,}</span>
     <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
-    <span class="n">serializer</span><span class="o">=</span><span class="n">MySerializer</span><span class="p">(),</span>
+    <span class="n">serializer</span><span class="o">=</span><span class="n">JsonSerializer</span><span class="p">(),</span>
 <span class="p">)</span>
 </code></pre></div>
 
