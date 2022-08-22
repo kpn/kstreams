@@ -1,3 +1,14 @@
+## 0.5.0 (2022-08-22)
+
+### Feat
+
+- add `stream` decorator
+
+### Refactor
+
+- rename some types and typos in docs
+- expose `ConsumerRecord` from `kstreams`
+
 ## 0.4.4 (2022-08-17)
 
 ### Refactor
