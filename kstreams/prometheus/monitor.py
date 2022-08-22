@@ -2,7 +2,7 @@ from typing import Dict, TypeVar
 
 from prometheus_client import Gauge
 
-from kstreams.singlenton import Singleton
+from .singlenton import Singleton
 
 PrometheusMonitorType = TypeVar("PrometheusMonitorType", bound="PrometheusMonitor")
 

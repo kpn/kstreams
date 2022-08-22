@@ -11,7 +11,6 @@ from .exceptions import DuplicateStreamException, EngineNotStartedException
 from .prometheus.monitor import PrometheusMonitor
 from .prometheus.tasks import metrics_task
 from .serializers import Deserializer, Serializer
-from .singlenton import Singleton
 from .streams import Stream, StreamFunc, stream
 from .types import Headers
 from .utils import encode_headers
@@ -19,7 +18,7 @@ from .utils import encode_headers
 logger = logging.getLogger(__name__)
 
 
-class StreamEngine(metaclass=Singleton):
+class StreamEngine:
     def __init__(
         self,
         *,

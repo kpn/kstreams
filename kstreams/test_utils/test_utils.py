@@ -2,7 +2,7 @@ import asyncio
 from types import TracebackType
 from typing import Any, Dict, List, Optional, Type
 
-from kstreams.create import create_engine
+from kstreams.engine import StreamEngine
 from kstreams.serializers import Serializer
 from kstreams.streams import Stream
 from kstreams.types import Headers
@@ -13,8 +13,8 @@ from .topics import TopicManager
 
 
 class TestStreamClient:
-    def __init__(self) -> None:
-        self.stream_engine = create_engine()
+    def __init__(self, stream_engine: StreamEngine) -> None:
+        self.stream_engine = stream_engine
 
         # store the user clients to restore them later
         self.producer_class = self.stream_engine.producer_class
