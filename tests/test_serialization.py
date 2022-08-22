@@ -78,6 +78,7 @@ async def test_custom_deserialization(
     headers = {
         "content-type": consts.APPLICATION_JSON,
     }
+    client = TestStreamClient(stream_engine)
 
     save_to_db = mock.Mock()
 
@@ -86,7 +87,7 @@ async def test_custom_deserialization(
         async for event in stream:
             save_to_db(event)
 
-    async with TestStreamClient() as client:
+    async with client:
         # encode payload with serializer
         await client.send(
             topic,

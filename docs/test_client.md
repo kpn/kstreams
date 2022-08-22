@@ -1,10 +1,25 @@
-To test your `streams` or perform `e2e` tests you can make use of the `test_utils.TestStreamClient`.
-The `TestStreamClient` you can send events so you won't need a `producer`
+# Testing
+
+To test your `streams` or perform `e2e` tests you can make use of the `test_utils.TestStreamClient`. The `TestStreamClient` also can send events so you won't need to mock the `producer`.
+
+## Using `TestStreamClient`
+
+Import `TestStreamClient`.
+
+Create a `TestStreamClient` by passing the **engine** instance to it.
+
+Create functions with a name that starts with `test_` (this is standard `pytest` conventions).
+
+Use the `TestStreamClient` object the same way as you do with `engine`.
+
+Write simple `assert` statements with the standard Python expressions that you need to check (again, standard `pytest`).
+
+## Example
 
 Let's assume that you have the following code example:
 
 ```python
-# simple.py
+# example.py
 from kstreams import create_engine
 import asyncio
 
@@ -48,12 +63,16 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-### Test stream using the TestStreamClient
+Then you could have a `test_stream.py` file to test the code, you need to instanciate the `TestStreamClient` with the `engine`:
 
 ```python
 # test_stream.py
 import pytest
 from kstreams.test_utils import TestStreamClient
+
+from example import stream_engine
+
+client = TestStreamClient(stream_engine)
 
 
 @pytest.mark.asyncio
@@ -62,13 +81,13 @@ async def test_streams_consume_events():
     event = b'{"message": "Hello world!"}'
 
     with patch("example.on_consume") as on_consume:
-        async with TestStreamClient() as test_client:
-            metadata = await test_client.send(topic, value=event, key="1")  # send the event with the test client
+        async with client:
+            metadata = await client.send(topic, value=event, key="1")  # send the event with the test client
             current_offset = metadata.offset
             assert metadata.topic == topic
 
             # send another event and check that the offset was incremented
-            metadata = await test_client.send(topic, value=b'{"message": "Hello world!"}', key="1")
+            metadata = await client.send(topic, value=b'{"message": "Hello world!"}', key="1")
             assert metadata.offset == current_offset + 1
 
     # check that the event was consumed
@@ -82,7 +101,9 @@ async def test_streams_consume_events():
 import pytest
 from kstreams.test_utils import TestStreamClient
 
-from .example import produce
+from .example import produce, stream_engine
+
+client = TestStreamClient(stream_engine)
 
 
 @pytest.mark.asyncio
@@ -91,7 +112,7 @@ async def test_e2e_example():
     Test that events are produce by the engine and consumed by the streams
     """
     with patch("example.on_consume") as on_consume, patch("example.on_produce") as on_produce:
-        async with TestStreamClient():
+        async with client:
             await produce()
 
     on_produce.call_count == 5
