@@ -4,8 +4,8 @@ from unittest import mock
 
 import pytest
 
-from kstreams import StreamEngine, consts
-from kstreams.clients import Producer, aiokafka
+from kstreams import ConsumerRecord, StreamEngine, consts
+from kstreams.clients import Producer
 from kstreams.streams import Stream
 from kstreams.test_utils.test_utils import TestStreamClient
 from kstreams.types import Headers
@@ -27,9 +27,7 @@ class MySerializer:
 
 
 class MyDeserializer:
-    async def deserialize(
-        self, consumer_record: aiokafka.structs.ConsumerRecord, **kwargs
-    ) -> Any:
+    async def deserialize(self, consumer_record: ConsumerRecord, **kwargs) -> Any:
         data = consumer_record.value.decode()
         return json.loads(data)
 

@@ -57,6 +57,7 @@ to provide them.
 
 ```python
 # serializers.py
+from kstreams import ConsumerRecord
 from schema_registry.serializers import AsyncAvroMessageSerializer
 
 
@@ -75,8 +76,8 @@ class AvroSerializer(AsyncAvroMessageSerializer):
 
 class AvroDeserializer(AsyncAvroMessageSerializer):
     async def deserialize(
-        self, consumer_record: aiokafka.structs.ConsumerRecord, **kwargs
-    ) -> aiokafka.structs.ConsumerRecord:
+        self, consumer_record: ConsumerRecord, **kwargs
+    ) -> ConsumerRecord:
         """
         Deserialize the event to a dict
         """

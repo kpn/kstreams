@@ -1,61 +1,62 @@
-You can use custom `serialization/deserialization`. The protocol is the following:
+
+Kafka's job is to move bytes from producer to consumers, through a topic.
+
+By default, this is what kstream does.
 
 ```python
-from typing import Any, Dict, Optional, Protocol
-
-import aiokafka
-
-
-class Deserializer(Protocol):
-    async def deserialize(
-        self, consumer_record: aiokafka.structs.ConsumerRecord, **kwargs
-    ) -> Any:
-        """
-        This method is used to deserialize the data in a KPN way.
-        End users can provide their own class overriding this method.
-        If the engine was created with a schema_store_client, it will be available.
-
-        class CustomDeserializer(Deserializer):
-
-            async deserialize(self, consumer_record: aiokafka.structs.ConsumerRecord):
-                # custom logic and return something like a ConsumerRecord
-                return consumer_record
-        """
-        ...
-
-
-class Serializer(Protocol):
-    async def serialize(
-        self,
-        payload: Any,
-        headers: Optional[Dict[str, str]] = None,
-        serializer_kwargs: Optional[Dict] = None,
-    ) -> bytes:
-        """
-        Serialize the payload to bytes
-        """
-        ...
-
+--8<-- "examples/recommended-usage/recommended_usage/streams.py"
 ```
 
-You can write custom `Serializers` and `Deserializers`. There are 2 ways of using them:
+As you can see the ConsumerRecord's `value` is bytes.
 
-1. Initialize the engine with them
-2. Initilize `streams` with a `deserializer` and produce events with `serializers`
+In order to keep your code pythonic, we provide a mechanism to serialize/deserialize
+these bytes, into something more useful.
+This way, you can work with other data structures, like a `dict` or `dataclasses`.
+
+Sometimes it is easier to work with a `dict` in your app, give it to `kstreams`, and let it transform it into `bytes` to be delivered to Kafka. For this situations, you need to implement `kstreams.serializers.Serializer`.
+
+The other situation is when you consume from Kafka (or other brokers). Instead of dealing with `bytes`,
+you may want to receive in your function the `dict` ready to be used. For those cases, implement `kstreams.serializers.Deserializer`
+
+::: kstreams.serializers.Serializer
+    options:
+        show_root_heading: true
+        docstring_section_style: table
+        show_bases: false
+
+
+::: kstreams.serializers.Deserializer
+    options:
+        show_root_heading: true
+        docstring_section_style: table
+        show_bases: false
+
+
+## Usage
+
+Once you have written your serializer or deserializer, there are 2 ways of using them, in a
+generic fashion or per stream.
+
+### Initialize the engine with your serializers
+
+By doing this all the streams will use these serializers by default.
 
 ```python
 stream_engine = create_engine(
     title="my-stream-engine",
-    serializer=MySerializer(),
-    deserializer=MyDeserializer(),
+    serializer=JsonSerializer(),
+    deserializer=JsonDeserializer(),
 )
 ```
 
+### Initilize `streams` with a `deserializer` and produce events with `serializers`
 
 ```python
-@stream_engine.stream(topic, deserializer=MyDeserializer())
+@stream_engine.stream(topic, deserializer=JsonDeserializer())
     async def hello_stream(stream: Stream):
         async for event in stream:
+            # remember event.value is now a dict
+            print(event.value["message"])
             save_to_db(event)
 ```
 
@@ -65,6 +66,6 @@ await stream_engine.send(
     value={"message": "test"}
     headers={"content-type": consts.APPLICATION_JSON,}
     key="1",
-    serializer=MySerializer(),
+    serializer=JsonSerializer(),
 )
 ```

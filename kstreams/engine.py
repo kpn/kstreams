@@ -12,7 +12,7 @@ from .prometheus.monitor import PrometheusMonitor
 from .prometheus.tasks import metrics_task
 from .serializers import Deserializer, Serializer
 from .singlenton import Singleton
-from .streams import Stream
+from .streams import Stream, StreamFunc, stream
 from .types import Headers
 from .utils import encode_headers
 
@@ -151,35 +151,8 @@ class StreamEngine(metaclass=Singleton):
     def add_stream(self, stream: Stream) -> None:
         if self.exist_stream(stream.name):
             raise DuplicateStreamException(name=stream.name)
+        stream.backend = self.backend
         self._streams.append(stream)
-
-    def _create_stream(
-        self,
-        topics: Union[List[str], str],
-        *,
-        func: Callable[[Stream], None],
-        name: Optional[str] = None,
-        deserializer: Optional[Deserializer] = None,
-        **kwargs,
-    ) -> Stream:
-        """
-        Create a Stream processor and add it to the stream List.
-        This method should not be used by the end user
-        """
-        if name is not None and self.exist_stream(name):
-            raise DuplicateStreamException(name=name)
-
-        stream = Stream(
-            topics=topics,
-            func=func,
-            name=name,
-            config=kwargs,
-            consumer_class=self.consumer_class,
-            deserializer=deserializer or self.deserializer,
-            backend=self.backend,
-        )
-        self._streams.append(stream)
-        return stream
 
     def stream(
         self,
@@ -188,15 +161,13 @@ class StreamEngine(metaclass=Singleton):
         name: Optional[str] = None,
         deserializer: Optional[Deserializer] = None,
         **kwargs,
-    ) -> Callable[[Callable[[Stream], None]], Stream]:
-        def decorator(func: Callable[[Stream], None]) -> Stream:
-            stream = self._create_stream(
-                topics,
-                func=func,
-                name=name,
-                deserializer=deserializer,
-                **kwargs,
-            )
-            return stream
+    ) -> Callable[[StreamFunc], Stream]:
+        def decorator(func: StreamFunc) -> Stream:
+            stream_from_func = stream(
+                topics, name=name, deserializer=deserializer, **kwargs
+            )(func)
+            self.add_stream(stream_from_func)
+
+            return stream_from_func
 
         return decorator

@@ -31,15 +31,14 @@ If for any reason you need to create `Streams` instances directly, you can do it
 
 ```python title="Stream instance"
 import asyncio
-from aiokafka import structs
-from kstreams import create_engine, Stream
+from kstreams import create_engine, Stream, ConsumerRecord
 
 stream_engine = create_engine(title="my-stream-engine")
 
 
 class MyDeserializer:
 
-    async def deserialize(self, consumer_record: structs.ConsumerRecord, **kwargs):
+    async def deserialize(self, consumer_record: ConsumerRecord, **kwargs):
         return consumer_record.value.decode()
 
 

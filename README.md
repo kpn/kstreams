@@ -6,13 +6,11 @@
 [![codecov](https://codecov.io/gh/kpn/kstreams/branch/master/graph/badge.svg?token=t7pxIPtphF)](https://codecov.io/gh/kpn/kstreams)
 ![python version](https://img.shields.io/badge/python-3.8%2B-yellowgreen)
 
-## Requirements
+---
 
-python 3.8+
+**Documentation**: https://kpn.github.io/kstreams/
 
-## API documentation
-
-https://kpn.github.io/kstreams/
+---
 
 ## Installation
 
@@ -97,6 +95,8 @@ Run code formatting (`black` and `isort`)
 ```
 
 ### Commit messages
+
+We use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) for the commit message.
 
 The use of [commitizen](https://commitizen-tools.github.io/commitizen/) is recommended. Commitizen is part of the dev dependencies.
 

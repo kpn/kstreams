@@ -2,9 +2,21 @@ import asyncio
 import inspect
 import logging
 import uuid
-from typing import Any, AsyncGenerator, Callable, Dict, List, Optional, Type, Union
+from typing import (
+    Any,
+    AsyncGenerator,
+    Awaitable,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Type,
+    Union,
+)
 
 from aiokafka import errors, structs
+
+from kstreams.exceptions import BackendNotSet
 
 from .backends.kafka import Kafka
 from .clients import Consumer, ConsumerType
@@ -18,8 +30,8 @@ class Stream:
         self,
         topics: Union[List[str], str],
         *,
-        backend: Kafka,
-        func: Callable[["Stream"], None],
+        func: Callable[["Stream"], Awaitable[Any]],
+        backend: Optional[Kafka] = None,
         consumer_class: Type[ConsumerType] = Consumer,
         name: Optional[str] = None,
         config: Optional[Dict] = None,
@@ -43,6 +55,8 @@ class Stream:
         self.topics = [topics] if isinstance(topics, str) else topics
 
     def _create_consumer(self) -> Type[ConsumerType]:
+        if self.backend is None:
+            raise BackendNotSet("A backend has not been set for this stream")
         config = {**self.backend.dict(), **self.config}
         return self.consumer_class(*self.topics, **config)
 
@@ -129,3 +143,26 @@ class Stream:
             return consumer_record
         except errors.ConsumerStoppedError:
             raise StopAsyncIteration  # noqa: F821
+
+
+# Function required by the `stream` decorator
+StreamFunc = Callable[[Stream], Awaitable[Any]]
+
+
+def stream(
+    topics: Union[List[str], str],
+    *,
+    name: Optional[str] = None,
+    deserializer: Optional[Deserializer] = None,
+    **kwargs,
+) -> Callable[[StreamFunc], Stream]:
+    def decorator(func: StreamFunc) -> Stream:
+        return Stream(
+            topics=topics,
+            func=func,
+            name=name,
+            deserializer=deserializer,
+            config=kwargs,
+        )
+
+    return decorator

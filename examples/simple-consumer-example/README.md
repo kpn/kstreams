@@ -14,9 +14,9 @@ poetry install
 
 ## Usage
 
-1. Start the kafka cluster: From `kstreams` project root execute `./scripts/cluster/start/`
-2. Inside the `simple-consumer-example` folder exeute `poetry run app`
-3. Then you can use the scripts/cluster/events/send.sh to send events to the kafka cluster. A prompt will open. Enter messages to send. The command is:
+1. Start the kafka cluster: From `kstreams` project root execute `./scripts/cluster/start`
+2. Inside the `simple-consumer-example` folder execute `poetry run app`
+3. Then you can use the `scripts/cluster/events/send` to send events to the kafka cluster. A prompt will open. Enter messages to send. The command is:
 ```bash
 ./scripts/cluster/events/send "local--hello-world"
 ```
