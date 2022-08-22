@@ -1,3 +1,9 @@
+## 0.5.1 (2022-08-22)
+
+### Fix
+
+- singlenton removed from StreamEngine
+
 ## 0.5.0 (2022-08-22)
 
 ### Feat
