@@ -5,7 +5,7 @@ from aiokafka.structs import RecordMetadata
 from kstreams import ConsumerRecord, create_engine
 from kstreams.streams import Stream
 
-topic = "local--py-streams"
+topic = "local--kstreams"
 
 stream_engine = create_engine(title="my-stream-engine")
 
@@ -33,11 +33,20 @@ async def produce():
         await asyncio.sleep(2)
 
 
-async def main():
+async def start():
     await stream_engine.start()
     await produce()
+
+
+async def shutdown():
     await stream_engine.stop()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(start())
+        loop.run_forever()
+    finally:
+        loop.run_until_complete(shutdown())
+        loop.close()

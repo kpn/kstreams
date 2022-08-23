@@ -5,9 +5,9 @@
 # Usage:
 #
 # ./scripts/cluster/events/send  # default: local--hello-world
-# ./scripts/cluster/events/send "example-topic"
+# ./scripts/cluster/events/send example-topic
 
 topic_name="${1:-local--hello-world}"
 
 docker-compose exec kafka kafka-console-producer \
-    --broker-list kafka:9092 --topic "$topic_name"
+    --broker-list kafka:9092 --topic $topic_name

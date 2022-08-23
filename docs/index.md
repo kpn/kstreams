@@ -16,10 +16,16 @@ python 3.8+
 pip install kstreams
 ```
 
+You will need a worker, we recommend [aiorun](https://github.com/cjrh/aiorun)
+
+```bash
+pip install aiorun
+```
+
 ## Usage
 
 ```python
-import asyncio
+import aiorun
 from kstreams import create_engine, Stream
 
 
@@ -37,16 +43,19 @@ async def produce():
     for i in range(5):
         metadata = await create_engine.send("local--kstreams", value=payload)
         print(f"Message sent: {metadata}")
-        await asyncio.sleep(3)
 
 
-async def main():
+async def start():
     await stream_engine.start()
     await produce()
+
+
+async def shutdown(loop):
     await stream_engine.stop()
 
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)
 ```
 
 ## Kafka configuration
@@ -57,7 +66,6 @@ Configure kafka using the [kafka backend](./backends.md) provided.
 
 This repo requires the use of [poetry](https://python-poetry.org/docs/basic-usage/) instead of pip.
 *Note*: If you want to have the `virtualenv` in the same path as the project first you should run `poetry config --local virtualenvs.in-project true`
-
 
 To install the dependencies just execute:
 

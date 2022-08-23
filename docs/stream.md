@@ -3,7 +3,7 @@ A `Stream` in `kstreams` is an extension of [AIOKafkaConsumer](https://aiokafka.
 Consuming can be done using `kstreams.Stream`. You only need to decorate a `coroutine` with `@stream_engine.streams`. The decorator has the same  [aiokafka consumer](https://aiokafka.readthedocs.io/en/stable/api.html#aiokafkaconsumer-class) API at initialization, in other words they accept the same `args` and `kwargs` that the `aiokafka consumer` accepts.
 
 ```python title="Stream usage"
-import asyncio
+import aiorun
 from kstreams import create_engine
 
 stream_engine = create_engine(title="my-stream-engine")
@@ -16,13 +16,17 @@ async def stream(stream: Stream) -> None:
         print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
 
 
-async def main():
+async def start():
     await stream_engine.start()
+    await produce()
+
+
+async def shutdown(loop):
     await stream_engine.stop()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)
 ```
 
 ## Creating a Stream instance
@@ -30,7 +34,7 @@ if __name__ == "__main__":
 If for any reason you need to create `Streams` instances directly, you can do it without using the decorator `stream_engine.stream`.
 
 ```python title="Stream instance"
-import asyncio
+import aiorun
 from kstreams import create_engine, Stream, ConsumerRecord
 
 stream_engine = create_engine(title="my-stream-engine")
@@ -57,13 +61,17 @@ stream = Stream(
 stream_engine.add_stream(stream)
 
 
-async def main():
+async def start():
     await stream_engine.start()
+    await produce()
+
+
+async def shutdown(loop):
     await stream_engine.stop()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)
 ```
 
 ## Stream crashing
@@ -72,7 +80,7 @@ If your stream `crashes` for any reason, the event consumption will stop meaning
 As an end user you are responsable of deciding what to do. In future version approaches like `re-try`, `stream engine stops on stream crash` might be introduced.
 
 ```python title="Crashing example"
-import asyncio
+import aiorun
 from kstreams import create_engine
 
 stream_engine = create_engine(title="my-stream-engine")
@@ -91,14 +99,17 @@ async def produce():
     )
 
 
-async def main():
+async def start():
     await stream_engine.start()
     await produce()
+
+
+async def shutdown(loop):
     await stream_engine.stop()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)
 ```
 
 ```bash
@@ -158,7 +169,6 @@ async def stream(stream: Stream):
 
 !!! note
     This is a tradeoff from at most once to at least once delivery, to achieve exactly once you will need to save offsets in the destination database and validate those yourself.
-
 
 ## Yield from stream
 
