@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "fastapi-example"
+name = "fastapi_webapp"
 version = "0.1.0"
 description = ""
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
@@ -14,3 +14,6 @@ uvicorn = "^0.18.2"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+app = "fastapi_webapp.__main__:main"

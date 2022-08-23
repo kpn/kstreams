@@ -130,8 +130,7 @@ class Stream:
             await self.start()
 
         try:
-            # value is a ConsumerRecord:
-            # namedtuple["topic", "partition", "offset", "key", "value"]
+            # value is a ConsumerRecord, which is a dataclass
             consumer_record: structs.ConsumerRecord = (
                 await self.consumer.getone()  # type: ignore
             )

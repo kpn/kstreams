@@ -1,4 +1,4 @@
-## FastAPI example
+## FastAPI webapp example
 
 Simple [`FastAPI`](https://fastapi.tiangolo.com/) example with `kstreams`
 
@@ -6,16 +6,11 @@ Simple [`FastAPI`](https://fastapi.tiangolo.com/) example with `kstreams`
 
 python 3.8+, poetry, docker-compose
 
-### Installation
-
-```bash
-poetry install
-```
-
 ## Usage
 
-1. Start the kafka cluster: From `kstreams` project root execute `./scripts/cluster/start/`
-2. Inside the `fastapi-example` folder exeute `poetry run python -m fastapi_example`
+1. Start the kafka cluster: From `kstreams` project root execute `./scripts/cluster/start`
+2. Run `cd examples/fastapi-webapp` and execute `poetry install`
+3. Run `poetry run app`
 
 Then you should see something similar to the following logs:
 
@@ -36,7 +31,7 @@ INFO:     Application startup complete.
 - The application also has a `stream` that consumes from the topic `local--kstream`.
 - The application `metrics` are exposed with the endpoint `/metrics`. To see the do a `GET` `/metrics`.
 
-After doing a `GET` to `http://localhost:8000` you should see the following logs:
+After doing a `GET` to `http://localhost:8000/events` you should see the following logs:
 
 ```bash
 Event consumed: headers: (), payload: b'{"message": "hello world!"}'
