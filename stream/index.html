@@ -474,7 +474,7 @@
 
 <p>A <code>Stream</code> in <code>kstreams</code> is an extension of <a href="https://aiokafka.readthedocs.io/en/stable/consumer.html">AIOKafkaConsumer</a></p>
 <p>Consuming can be done using <code>kstreams.Stream</code>. You only need to decorate a <code>coroutine</code> with <code>@stream_engine.streams</code>. The decorator has the same  <a href="https://aiokafka.readthedocs.io/en/stable/api.html#aiokafkaconsumer-class">aiokafka consumer</a> API at initialization, in other words they accept the same <code>args</code> and <code>kwargs</code> that the <code>aiokafka consumer</code> accepts.</p>
-<div class="highlight"><span class="filename">Stream usage</span><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<div class="highlight"><span class="filename">Stream usage</span><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
@@ -487,17 +487,21 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">produce</span><span class="p">()</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">loop</span><span class="p">):</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+    <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start</span><span class="p">(),</span> <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">shutdown</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="creating-a-stream-instance">Creating a Stream instance</h2>
 <p>If for any reason you need to create <code>Streams</code> instances directly, you can do it without using the decorator <code>stream_engine.stream</code>.</p>
-<div class="highlight"><span class="filename">Stream instance</span><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<div class="highlight"><span class="filename">Stream instance</span><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
@@ -524,18 +528,22 @@
 <span class="n">stream_engine</span><span class="o">.</span><span class="n">add_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
 
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">produce</span><span class="p">()</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">loop</span><span class="p">):</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+    <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start</span><span class="p">(),</span> <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">shutdown</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="stream-crashing">Stream crashing</h2>
 <p>If your stream <code>crashes</code> for any reason, the event consumption will stop meaning that non event will be consumed from the <code>topic</code>.
 As an end user you are responsable of deciding what to do. In future version approaches like <code>re-try</code>, <code>stream engine stops on stream crash</code> might be introduced.</p>
-<div class="highlight"><span class="filename">Crashing example</span><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<div class="highlight"><span class="filename">Crashing example</span><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
@@ -554,14 +562,17 @@ As an end user you are responsable of deciding what to do. In future version app
     <span class="p">)</span>
 
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">await</span> <span class="n">produce</span><span class="p">()</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">loop</span><span class="p">):</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+    <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start</span><span class="p">(),</span> <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">shutdown</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>CRASHED Stream!!! Task &lt;Task pending <span class="nv">name</span><span class="o">=</span><span class="s1">&#39;Task-23&#39;</span> <span class="nv">coro</span><span class="o">=</span>&lt;BaseStream.start.&lt;locals&gt;.func_wrapper<span class="o">()</span> running at /Users/Projects/kstreams/kstreams/streams.py:55&gt;&gt;
 

@@ -458,6 +458,7 @@
 <p>Let's assume that you have the following code example:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># example.py</span>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
+<span class="kn">import</span> <span class="nn">aiorun</span>
 <span class="kn">import</span> <span class="nn">asyncio</span>
 
 <span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>
@@ -490,14 +491,17 @@
         <span class="n">on_produce</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
 
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">await</span> <span class="n">produce</span><span class="p">()</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">loop</span><span class="p">):</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start</span><span class="p">(),</span> <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">shutdown</span><span class="p">)</span>
 </code></pre></div>
 <p>Then you could have a <code>test_stream.py</code> file to test the code, you need to instanciate the <code>TestStreamClient</code> with the <code>engine</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># test_stream.py</span>

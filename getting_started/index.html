@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#simple-consumer-and-producer" class="md-skip">
+        <a href="#getting-started" class="md-skip">
           Skip to content
         </a>
       
@@ -223,6 +223,8 @@
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
       
+        
+      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           Getting Started
@@ -239,6 +241,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -249,6 +253,13 @@
         <li class="md-nav__item">
   <a href="#simple-consumer-and-producer" class="md-nav__link">
     Simple consumer and producer
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-usage" class="md-nav__link">
+    Recommended usage
   </a>
   
 </li>
@@ -382,6 +393,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -392,6 +405,13 @@
         <li class="md-nav__item">
   <a href="#simple-consumer-and-producer" class="md-nav__link">
     Simple consumer and producer
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-usage" class="md-nav__link">
+    Recommended usage
   </a>
   
 </li>
@@ -428,8 +448,7 @@
 
 
 
-  <h1>Getting Started</h1>
-
+<h1 id="getting-started">Getting Started</h1>
 <p>You can starting using <code>kstreams</code> with simple <code>producers</code> and <code>consumers</code> and/or integrated it with any <code>async</code> framework like <code>FastAPI</code></p>
 <h2 id="simple-consumer-and-producer">Simple consumer and producer</h2>
 <div class="highlight"><span class="filename">Simple use case</span><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
@@ -453,14 +472,60 @@
         <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">await</span> <span class="n">produce</span><span class="p">()</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown</span><span class="p">():</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">start</span><span class="p">())</span>
+        <span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">shutdown</span><span class="p">())</span>
+        <span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+<p><em>(This script is complete, it should run "as is")</em></p>
+<h2 id="recommended-usage">Recommended usage</h2>
+<p>In the previous example you can see some boiler plate regarding how to start the program. We recommend to use <a href="https://github.com/cjrh/aiorun">aiorun</a>,
+so you want have to worry about <code>set signal handlers</code>, <code>shutdown callbacks</code>, <code>graceful shutdown</code> and <code>close the event loop</code>.</p>
+<div class="highlight"><span class="filename">Usage with aiorun</span><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Stream</span>
+
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--py-stream&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">produce</span><span class="p">():</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;local--py-streams&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Message sent: </span><span class="si">{</span><span class="n">metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">produce</span><span class="p">()</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">loop</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start</span><span class="p">(),</span> <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">shutdown</span><span class="p">)</span>
 </code></pre></div>
 <p><em>(This script is complete, it should run "as is")</em></p>
 <h2 id="fastapi">FastAPI</h2>
