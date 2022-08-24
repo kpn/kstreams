@@ -30,6 +30,7 @@ nav:
   - Stream: 'stream.md'
   - Backends: 'backends.md'
   - Metrics: 'metrics.md'
+  - Monitoring: 'monitoring.md'
   - Serialization: 'serialization.md'
   - Testing: 'test_client.md'
   - Utils: 'utils.md'
