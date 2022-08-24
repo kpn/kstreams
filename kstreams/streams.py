@@ -2,6 +2,7 @@ import asyncio
 import inspect
 import logging
 import uuid
+from functools import update_wrapper
 from typing import (
     Any,
     AsyncGenerator,
@@ -156,12 +157,14 @@ def stream(
     **kwargs,
 ) -> Callable[[StreamFunc], Stream]:
     def decorator(func: StreamFunc) -> Stream:
-        return Stream(
+        s = Stream(
             topics=topics,
             func=func,
             name=name,
             deserializer=deserializer,
             config=kwargs,
         )
+        update_wrapper(s, func)
+        return s
 
     return decorator
