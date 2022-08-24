@@ -21,6 +21,7 @@ Let's assume that you have the following code example:
 ```python
 # example.py
 from kstreams import create_engine
+import aiorun
 import asyncio
 
 topic = "local--kstreams"
@@ -53,14 +54,18 @@ async def produce():
         on_produce(metadata)
 
 
-async def main():
+async def start():
     await stream_engine.start()
     await produce()
+
+
+async def shutdown(loop):
     await stream_engine.stop()
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+def main():
+    aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)
+
 ```
 
 Then you could have a `test_stream.py` file to test the code, you need to instanciate the `TestStreamClient` with the `engine`:

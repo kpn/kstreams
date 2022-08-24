@@ -1,5 +1,7 @@
 import asyncio
 
+import aiorun
+
 from .schemas import country_schema, deployment_schema
 from .streaming.streams import stream_engine
 
@@ -41,8 +43,11 @@ async def produce():
 async def start():
     await stream_engine.start()
     await produce()
+
+
+async def shutdown(loop):
     await stream_engine.stop()
 
 
 def main():
-    asyncio.run(start())
+    aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)

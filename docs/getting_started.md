@@ -1,3 +1,5 @@
+# Getting Started
+
 You can starting using `kstreams` with simple `producers` and `consumers` and/or integrated it with any `async` framework like `FastAPI`
 
 ## Simple consumer and producer
@@ -24,14 +26,65 @@ async def produce():
         await asyncio.sleep(5)
 
 
-async def main():
+async def start():
     await stream_engine.start()
     await produce()
+
+
+async def shutdown():
     await stream_engine.stop()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(start())
+        loop.run_forever()
+    finally:
+        loop.run_until_complete(shutdown())
+        loop.close()
+```
+
+*(This script is complete, it should run "as is")*
+
+## Recommended usage
+
+In the previous example you can see some boiler plate regarding how to start the program. We recommend to use [aiorun](https://github.com/cjrh/aiorun),
+so you want have to worry about `set signal handlers`, `shutdown callbacks`, `graceful shutdown` and `close the event loop`.
+
+```python title="Usage with aiorun"
+import aiorun
+from kstreams import create_engine, Stream
+
+stream_engine = create_engine(title="my-stream-engine")
+
+
+@stream_engine.stream("local--py-stream", group_id="de-my-partition")
+async def consume(stream: Stream):
+    async for cr in stream:
+        print(f"Event consumed: headers: {cr.headers}, payload: {value}")
+
+
+async def produce():
+    payload = b'{"message": "Hello world!"}'
+
+    for i in range(5):
+        metadata = await stream_engine.send("local--py-streams", value=payload, key="1")
+        print(f"Message sent: {metadata}")
+        await asyncio.sleep(5)
+
+
+async def start():
+    await stream_engine.start()
+    await produce()
+
+
+async def shutdown(loop):
+    await stream_engine.stop()
+
+
+if __name__ == "__main__":
+    aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)
 ```
 
 *(This script is complete, it should run "as is")*
@@ -39,7 +92,6 @@ if __name__ == "__main__":
 ## FastAPI
 
 The following code example shows how `kstreams` can be integrated with any `async` framework like `FastAPI`. The full example can be found [here](https://github.com/kpn/kstreams/tree/master/examples/fastapi-example)
-
 
 First, we need to create an `engine`:
 
