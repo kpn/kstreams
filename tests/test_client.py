@@ -73,12 +73,18 @@ async def test_streams_consume_events(stream_engine: StreamEngine):
 
 @pytest.mark.asyncio
 async def test_topic_created(stream_engine: StreamEngine):
-    topic = "local--kstreams"
+    topic_name = "local--kstreams"
+    value = b'{"message": "Hello world!"}'
+    key = "1"
     client = TestStreamClient(stream_engine)
     async with client:
-        await client.send(topic, value=b'{"message": "Hello world!"}', key="1")
+        await client.send(topic_name, value=value, key=key)
 
-    assert TopicManager.get(topic)
+    # check that the event was sent to a Topic
+    topic = client.get_topic(topic_name)
+    consumer_record = await topic.get()
+    assert consumer_record.value == value
+    assert consumer_record.key == key
 
 
 @pytest.mark.asyncio

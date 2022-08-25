@@ -9,7 +9,7 @@ from kstreams.types import Headers
 
 from .structs import RecordMetadata
 from .test_clients import TestConsumer, TestProducer
-from .topics import TopicManager
+from .topics import Topic, TopicManager
 
 
 class TestStreamClient:
@@ -36,18 +36,12 @@ class TestStreamClient:
         self.mock_producer()
         self.mock_streams()
 
-    async def __aenter__(self) -> "TestStreamClient":
+    async def start(self) -> None:
         self.setup_mocks()
         await self.stream_engine.start()
         self.stream_engine._stop_metrics_task()
-        return self
 
-    async def __aexit__(
-        self,
-        exc_t: Optional[Type[BaseException]],
-        exc_v: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
-    ) -> None:
+    async def stop(self) -> None:
         # If there are streams, we must wait until all the messages are consumed
         if self.stream_engine._streams:
             while not TopicManager.all_messages_consumed():
@@ -59,10 +53,22 @@ class TestStreamClient:
         self.stream_engine.producer_class = self.producer_class
         self.stream_engine.consumer_class = self.consumer_class
 
+    async def __aenter__(self) -> "TestStreamClient":
+        await self.start()
+        return self
+
+    async def __aexit__(
+        self,
+        exc_t: Optional[Type[BaseException]],
+        exc_v: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> None:
+        await self.stop()
+
     async def send(
         self,
         topic: str,
-        value: Optional[Dict] = None,
+        value: Any = None,
         key: Optional[Any] = None,
         partition: Optional[str] = None,
         timestamp_ms: Optional[int] = None,
@@ -80,3 +86,6 @@ class TestStreamClient:
             serializer=serializer,
             serializer_kwargs=serializer_kwargs,
         )
+
+    def get_topic(self, topic_name: str) -> Topic:
+        return TopicManager.get(topic_name)
