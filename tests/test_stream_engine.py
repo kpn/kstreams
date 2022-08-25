@@ -2,10 +2,10 @@ from unittest import mock
 
 import pytest
 
-from kstreams.backends.kafka import Kafka
 from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
 from kstreams.exceptions import DuplicateStreamException, EngineNotStartedException
+from kstreams.streams import stream
 
 
 @pytest.mark.asyncio
@@ -46,13 +46,11 @@ async def test_add_stream_as_instance(stream_engine: StreamEngine):
     async def processor(stream: Stream):
         pass
 
-    backend = Kafka()
     my_stream = Stream(
         topics,
         name="my-stream",
         func=processor,
         deserializer=deserializer,
-        backend=backend,
     )
 
     assert not stream_engine.get_stream("my-stream")
@@ -65,9 +63,7 @@ async def test_add_stream_as_instance(stream_engine: StreamEngine):
 
     # can not add a stream with the same name
     with pytest.raises(DuplicateStreamException):
-        stream_engine.add_stream(
-            Stream("a-topic", name="my-stream", func=processor, backend=backend)
-        )
+        stream_engine.add_stream(Stream("a-topic", name="my-stream", func=processor))
 
 
 @pytest.mark.asyncio
@@ -164,3 +160,36 @@ async def test_add_stream_as_generator(
 
     # Now the stream is stopped because we left the context
     assert not stream.running
+
+
+@pytest.mark.asyncio
+async def test_sream_decorator(stream_engine: StreamEngine):
+    topic = "local--hello-kpn"
+
+    @stream(topic)
+    async def streaming_fn(_):
+        pass
+
+    stream_engine.add_stream(streaming_fn)
+
+    with mock.patch.multiple(Consumer, start=mock.DEFAULT, stop=mock.DEFAULT):
+        with mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
+            await stream_engine.start()
+            Consumer.start.assert_awaited()
+            stream_engine._producer.start.assert_awaited()
+
+            await stream_engine.stop()
+            stream_engine._producer.stop.assert_awaited()
+            Consumer.stop.assert_awaited()
+
+
+@pytest.mark.asyncio
+async def test_sream_decorates_properly(stream_engine: StreamEngine):
+    topic = "local--hello-kpn"
+
+    @stream(topic)
+    async def streaming_fn(_):
+        """text from func"""
+
+    assert streaming_fn.__name__ == "streaming_fn"
+    assert streaming_fn.__doc__ == "text from func"

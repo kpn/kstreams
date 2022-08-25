@@ -1,4 +1,3 @@
-import asyncio
 from collections import namedtuple
 from dataclasses import field
 from typing import Any, Dict, List, NamedTuple, Optional, Sequence, Tuple
@@ -147,11 +146,6 @@ def schema_server_url(httpserver: HTTPServer):
 @pytest.fixture
 def avro_schema_v1():
     return AVRO_SCHEMA_V1
-
-
-@pytest.fixture()
-def event_loop():
-    return asyncio.get_event_loop()
 
 
 @pytest.fixture()
