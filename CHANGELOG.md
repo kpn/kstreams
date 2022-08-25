@@ -1,3 +1,9 @@
+## 0.5.3 (2022-08-25)
+
+### Fix
+
+- decorator wrapper and tests
+
 ## 0.5.2 (2022-08-23)
 
 ### Fix
