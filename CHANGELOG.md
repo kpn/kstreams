@@ -1,3 +1,9 @@
+## 0.6.0 (2022-08-25)
+
+### Feat
+
+- get topics using the TestStreamClient
+
 ## 0.5.3 (2022-08-25)
 
 ### Fix
