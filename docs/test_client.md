@@ -16,42 +16,52 @@ Write simple `assert` statements with the standard Python expressions that you n
 
 ## Example
 
-Let's assume that you have the following code example:
+Let's assume that you have the following code example. The goal is to store all the consumed events in an `EventStore` for future analysis.
 
 ```python
 # example.py
-from kstreams import create_engine
 import aiorun
-import asyncio
+import typing
+from dataclasses import dataclass, field
+
+from kstreams import ConsumerRecord, create_engine
+from kstreams.streams import Stream
 
 topic = "local--kstreams"
+
 stream_engine = create_engine(title="my-stream-engine")
 
 
-def on_consume(value):
-    print(f"Value {value} consumed")
-    return value
+@dataclass
+class EventStore:
+    """
+    Store events in memory
+    """
+    events: typing.List[ConsumerRecord] = field(default_factory=list)
+
+    def add(self, event: ConsumerRecord) -> None:
+        self.events.append(event)
+
+    @property
+    def total(self):
+        return len(self.events)
 
 
-def on_produce(metadata):
-    print(f"Metadata {metadata} sent")
-    return metadata
+event_store = EventStore()
 
 
 @stream_engine.stream(topic, group_id="example-group")
 async def consume(stream: Stream):
     async for cr in stream:
-        print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
-        on_consume(value)
+        event_store.add(cr)
 
 
 async def produce():
     payload = b'{"message": "Hello world!"}'
 
     for _ in range(5):
-        metadata = await stream_engine.send(topic, value=payload, key="1")
-        print(f"Message sent: {metadata}")
-        on_produce(metadata)
+        await stream_engine.send(topic, value=payload, key="1")
+        await asyncio.sleep(2)
 
 
 async def start():
@@ -74,28 +84,30 @@ Then you could have a `test_stream.py` file to test the code, you need to instan
 import pytest
 from kstreams.test_utils import TestStreamClient
 
-from example import stream_engine
+from example import stream_engine, event_store
 
 client = TestStreamClient(stream_engine)
 
 
 @pytest.mark.asyncio
-async def test_streams_consume_events():
+async def test_add_event_on_consume():
+    """
+    Produce some events and check that the EventStore is updated.
+    """
     topic = "local--kstreams"  # Use the same topic as the stream
     event = b'{"message": "Hello world!"}'
 
-    with patch("example.on_consume") as on_consume:
-        async with client:
-            metadata = await client.send(topic, value=event, key="1")  # send the event with the test client
-            current_offset = metadata.offset
-            assert metadata.topic == topic
+    async with client:
+        metadata = await client.send(topic, value=event, key="1")  # send the event with the test client
+        current_offset = metadata.offset
+        assert metadata.topic == topic
 
-            # send another event and check that the offset was incremented
-            metadata = await client.send(topic, value=b'{"message": "Hello world!"}', key="1")
-            assert metadata.offset == current_offset + 1
+        # send another event and check that the offset was incremented
+        metadata = await client.send(topic, value=b'{"message": "Hello world!"}', key="1")
+        assert metadata.offset == current_offset + 1
 
-    # check that the event was consumed
-    on_consume.assert_called()
+    # check that the event_store has 2 events stored
+    assert event_store.total == 2
 ```
 
 !!! Note

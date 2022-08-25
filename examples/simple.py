@@ -1,6 +1,6 @@
 import asyncio
-
-from aiokafka.structs import RecordMetadata
+import typing
+from dataclasses import dataclass, field
 
 from kstreams import ConsumerRecord, create_engine
 from kstreams.streams import Stream
@@ -10,26 +10,36 @@ topic = "local--kstreams"
 stream_engine = create_engine(title="my-stream-engine")
 
 
-def on_consume(cr: ConsumerRecord):
-    print(f"Value {cr.value} consumed")
+@dataclass
+class EventStore:
+    """
+    Store events in memory
+    """
+
+    events: typing.List[ConsumerRecord] = field(default_factory=list)
+
+    def add(self, event: ConsumerRecord) -> None:
+        self.events.append(event)
+
+    @property
+    def total(self):
+        return len(self.events)
 
 
-def on_produce(metadata: RecordMetadata):
-    print(f"Event sent. Metadata {metadata}")
+event_store = EventStore()
 
 
 @stream_engine.stream(topic, group_id="example-group")
 async def consume(stream: Stream):
     async for cr in stream:
-        on_consume(cr)
+        event_store.add(cr)
 
 
 async def produce():
     payload = b'{"message": "Hello world!"}'
 
     for _ in range(5):
-        metadata = await stream_engine.send(topic, value=payload, key="1")
-        on_produce(metadata)
+        await stream_engine.send(topic, value=payload, key="1")
         await asyncio.sleep(2)
 
 
