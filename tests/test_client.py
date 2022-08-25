@@ -1,4 +1,4 @@
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 import pytest
 
@@ -92,18 +92,14 @@ async def test_e2e_example():
     """
     Test that events are produce by the engine and consumed by the streams
     """
-    from examples.simple import produce, stream_engine
+    from examples.simple import event_store, produce, stream_engine
 
     client = TestStreamClient(stream_engine)
 
-    with patch("examples.simple.on_consume") as on_consume, patch(
-        "examples.simple.on_produce"
-    ) as on_produce:
-        async with client:
-            await produce()
+    async with client:
+        await produce()
 
-    on_produce.call_count == 5
-    on_consume.call_count == 5
+    assert event_store.total == 5
 
     # check that all events has been consumed
     assert TopicManager.all_messages_consumed()
