@@ -1,6 +1,8 @@
 import asyncio
 from dataclasses import dataclass
-from typing import Any, ClassVar, Dict, Optional
+from typing import ClassVar, Dict, Optional
+
+from kstreams import ConsumerRecord
 
 from . import test_clients
 
@@ -13,11 +15,11 @@ class Topic:
     # for now we assumed that 1 streams is connected to 1 topic
     consumer: Optional["test_clients.Consumer"] = None
 
-    async def put(self, event: Any) -> None:
+    async def put(self, event: ConsumerRecord) -> None:
         await self.queue.put(event)
         self.total_messages += 1
 
-    async def get(self) -> Any:
+    async def get(self) -> ConsumerRecord:
         return await self.queue.get()
 
     def is_empty(self) -> bool:

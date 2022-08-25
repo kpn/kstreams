@@ -1,6 +1,6 @@
 # Testing
 
-To test your `streams` or perform `e2e` tests you can make use of the `test_utils.TestStreamClient`. The `TestStreamClient` also can send events so you won't need to mock the `producer`.
+To test `streams` and `producers` or perform `e2e` tests you can make use of the `test_utils.TestStreamClient`. The `TestStreamClient` can send events so you won't need to mock the `producer`.
 
 ## Using `TestStreamClient`
 
@@ -65,7 +65,6 @@ async def shutdown(loop):
 
 def main():
     aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)
-
 ```
 
 Then you could have a `test_stream.py` file to test the code, you need to instanciate the `TestStreamClient` with the `engine`:
@@ -99,7 +98,14 @@ async def test_streams_consume_events():
     on_consume.assert_called()
 ```
 
+!!! Note
+    Notice that the `produce` coroutine is not used to send events in the test case.
+    The `TestStreamClient.send` coroutine is used instead.
+    This allows to test `streams` without having producer code in your application
+
 ### E2E test
+
+In the previous code example the application produces to and consumes from the same topic, then `TestStreamClient.send` is not needed because the `engine.send` is producing. For those situation you can just use your `producer` code and check that certain code was called.
 
 ```python
 # test_example.py
@@ -123,3 +129,72 @@ async def test_e2e_example():
     on_produce.call_count == 5
     on_consume.call_count == 5
 ```
+
+## Producer only
+
+In some scenarios, your application will only produce events and other application/s will consume it, but you want to make sure that
+the event was procuced in a proper way and the `topic` contains that `event`.
+
+```python
+# producer_example.py
+from kstreams import create_engine
+import aiorun
+import asyncio
+
+stream_engine = create_engine(title="my-stream-engine")
+
+
+async def produce(topic: str, value: bytes, key: str):
+    # This could be a complicated function or something like a FastAPI view
+    await stream_engine.send(topic, value=value, key=key)
+
+
+async def start():
+    await stream_engine.start()
+    await produce()
+
+
+async def shutdown(loop):
+    await stream_engine.stop()
+
+
+def main():
+    aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)
+```
+
+Then you could have a `test_producer_example.py` file to test the code:
+
+```python
+# test_producer_example.py
+import pytest
+from kstreams.test_utils import TestStreamClient
+
+from producer_example import stream_engine, produce
+
+client = TestStreamClient(stream_engine)
+
+
+@pytest.mark.asyncio
+async def test_event_produced():
+    topic_name = "local--kstreams"
+    value = b'{"message": "Hello world!"}'
+    key = "1"
+
+    async with client:
+        await produce(topic=topic_name ,value=value, key=key) # use the produce code to send events
+
+    # check that the event was placed in a topic in a proper way
+    topic = client.get_topic(topic_name)
+
+    # get the event
+    consumer_record = await topic.get()
+
+    assert consumer_record.value == value
+    assert consumer_record.key == key
+```
+
+!!! Note
+    Even thought the previous example is using a simple `produce` function,
+    it shows what to do when the `procuder code` is encapsulated in other functions,
+    for example a `FastAPI` view.
+    Then you don't want to use `client.send` directly, just called the function that contains `stream_engine.send(...)`
