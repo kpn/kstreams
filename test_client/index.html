@@ -367,6 +367,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#producer-only" class="md-nav__link">
+    Producer only
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -443,6 +450,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#producer-only" class="md-nav__link">
+    Producer only
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -462,7 +476,7 @@
 
 
 <h1 id="testing">Testing</h1>
-<p>To test your <code>streams</code> or perform <code>e2e</code> tests you can make use of the <code>test_utils.TestStreamClient</code>. The <code>TestStreamClient</code> also can send events so you won't need to mock the <code>producer</code>.</p>
+<p>To test <code>streams</code> and <code>producers</code> or perform <code>e2e</code> tests you can make use of the <code>test_utils.TestStreamClient</code>. The <code>TestStreamClient</code> can send events so you won't need to mock the <code>producer</code>.</p>
 <h2 id="using-teststreamclient">Using <code>TestStreamClient</code></h2>
 <p>Import <code>TestStreamClient</code>.</p>
 <p>Create a <code>TestStreamClient</code> by passing the <strong>engine</strong> instance to it.</p>
@@ -546,7 +560,14 @@
     <span class="c1"># check that the event was consumed</span>
     <span class="n">on_consume</span><span class="o">.</span><span class="n">assert_called</span><span class="p">()</span>
 </code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Notice that the <code>produce</code> coroutine is not used to send events in the test case.
+The <code>TestStreamClient.send</code> coroutine is used instead.
+This allows to test <code>streams</code> without having producer code in your application</p>
+</div>
 <h3 id="e2e-test">E2E test</h3>
+<p>In the previous code example the application produces to and consumes from the same topic, then <code>TestStreamClient.send</code> is not needed because the <code>engine.send</code> is producing. For those situation you can just use your <code>producer</code> code and check that certain code was called.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># test_example.py</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">from</span> <span class="nn">kstreams.test_utils</span> <span class="kn">import</span> <span class="n">TestStreamClient</span>
@@ -568,6 +589,69 @@
     <span class="n">on_produce</span><span class="o">.</span><span class="n">call_count</span> <span class="o">==</span> <span class="mi">5</span>
     <span class="n">on_consume</span><span class="o">.</span><span class="n">call_count</span> <span class="o">==</span> <span class="mi">5</span>
 </code></pre></div>
+<h2 id="producer-only">Producer only</h2>
+<p>In some scenarios, your application will only produce events and other application/s will consume it, but you want to make sure that
+the event was procuced in a proper way and the <code>topic</code> contains that <code>event</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># producer_example.py</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
+<span class="kn">import</span> <span class="nn">aiorun</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">produce</span><span class="p">(</span><span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="c1"># This could be a complicated function or something like a FastAPI view</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">produce</span><span class="p">()</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">loop</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start</span><span class="p">(),</span> <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">shutdown</span><span class="p">)</span>
+</code></pre></div>
+<p>Then you could have a <code>test_producer_example.py</code> file to test the code:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># test_producer_example.py</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">kstreams.test_utils</span> <span class="kn">import</span> <span class="n">TestStreamClient</span>
+
+<span class="kn">from</span> <span class="nn">producer_example</span> <span class="kn">import</span> <span class="n">stream_engine</span><span class="p">,</span> <span class="n">produce</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">TestStreamClient</span><span class="p">(</span><span class="n">stream_engine</span><span class="p">)</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">test_event_produced</span><span class="p">():</span>
+    <span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
+
+    <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">produce</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">topic_name</span> <span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span> <span class="c1"># use the produce code to send events</span>
+
+    <span class="c1"># check that the event was placed in a topic in a proper way</span>
+    <span class="n">topic</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_topic</span><span class="p">(</span><span class="n">topic_name</span><span class="p">)</span>
+
+    <span class="c1"># get the event</span>
+    <span class="n">consumer_record</span> <span class="o">=</span> <span class="k">await</span> <span class="n">topic</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">consumer_record</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">value</span>
+    <span class="k">assert</span> <span class="n">consumer_record</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">key</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Even thought the previous example is using a simple <code>produce</code> function,
+it shows what to do when the <code>procuder code</code> is encapsulated in other functions,
+for example a <code>FastAPI</code> view.
+Then you don't want to use <code>client.send</code> directly, just called the function that contains <code>stream_engine.send(...)</code></p>
+</div>
 
               
             </article>
