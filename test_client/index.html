@@ -484,40 +484,50 @@
 <p>Use the <code>TestStreamClient</code> object the same way as you do with <code>engine</code>.</p>
 <p>Write simple <code>assert</code> statements with the standard Python expressions that you need to check (again, standard <code>pytest</code>).</p>
 <h2 id="example">Example</h2>
-<p>Let's assume that you have the following code example:</p>
+<p>Let's assume that you have the following code example. The goal is to store all the consumed events in an <code>EventStore</code> for future analysis.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># example.py</span>
-<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
 <span class="kn">import</span> <span class="nn">aiorun</span>
-<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">create_engine</span>
+<span class="kn">from</span> <span class="nn">kstreams.streams</span> <span class="kn">import</span> <span class="n">Stream</span>
 
 <span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>
+
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">on_consume</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> consumed&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">value</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">EventStore</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Store events in memory</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">events</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ConsumerRecord</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">on_produce</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Metadata </span><span class="si">{</span><span class="n">metadata</span><span class="si">}</span><span class="s2"> sent&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">metadata</span>
+<span class="n">event_store</span> <span class="o">=</span> <span class="n">EventStore</span><span class="p">()</span>
 
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
     <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">on_consume</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">event_store</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">produce</span><span class="p">():</span>
     <span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span>
 
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-        <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Message sent: </span><span class="si">{</span><span class="n">metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">on_produce</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
@@ -537,28 +547,30 @@
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">from</span> <span class="nn">kstreams.test_utils</span> <span class="kn">import</span> <span class="n">TestStreamClient</span>
 
-<span class="kn">from</span> <span class="nn">example</span> <span class="kn">import</span> <span class="n">stream_engine</span>
+<span class="kn">from</span> <span class="nn">example</span> <span class="kn">import</span> <span class="n">stream_engine</span><span class="p">,</span> <span class="n">event_store</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">TestStreamClient</span><span class="p">(</span><span class="n">stream_engine</span><span class="p">)</span>
 
 
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">test_streams_consume_events</span><span class="p">():</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">test_add_event_on_consume</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Produce some events and check that the EventStore is updated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>  <span class="c1"># Use the same topic as the stream</span>
     <span class="n">event</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span>
 
-    <span class="k">with</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;example.on_consume&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">on_consume</span><span class="p">:</span>
-        <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="p">:</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">event</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>  <span class="c1"># send the event with the test client</span>
-            <span class="n">current_offset</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">offset</span>
-            <span class="k">assert</span> <span class="n">metadata</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="n">topic</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="p">:</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">event</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>  <span class="c1"># send the event with the test client</span>
+        <span class="n">current_offset</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">offset</span>
+        <span class="k">assert</span> <span class="n">metadata</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="n">topic</span>
 
-            <span class="c1"># send another event and check that the offset was incremented</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="n">metadata</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="n">current_offset</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="c1"># send another event and check that the offset was incremented</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">metadata</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="n">current_offset</span> <span class="o">+</span> <span class="mi">1</span>
 
-    <span class="c1"># check that the event was consumed</span>
-    <span class="n">on_consume</span><span class="o">.</span><span class="n">assert_called</span><span class="p">()</span>
+    <span class="c1"># check that the event_store has 2 events stored</span>
+    <span class="k">assert</span> <span class="n">event_store</span><span class="o">.</span><span class="n">total</span> <span class="o">==</span> <span class="mi">2</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
