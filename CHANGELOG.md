@@ -1,3 +1,9 @@
+## 0.6.1 (2022-08-31)
+
+### Fix
+
+- module singlenton renamed to singleton (#56)
+
 ## 0.6.0 (2022-08-25)
 
 ### Feat
