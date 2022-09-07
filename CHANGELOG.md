@@ -1,3 +1,9 @@
+## 0.6.2 (2022-09-07)
+
+### Fix
+
+- missing default deserializer
+
 ## 0.6.1 (2022-08-31)
 
 ### Fix
