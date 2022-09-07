@@ -151,6 +151,8 @@ class StreamEngine:
         if self.exist_stream(stream.name):
             raise DuplicateStreamException(name=stream.name)
         stream.backend = self.backend
+        if stream.deserializer is None:
+            stream.deserializer = self.deserializer
         self._streams.append(stream)
 
     def stream(
