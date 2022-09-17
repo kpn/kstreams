@@ -124,3 +124,29 @@ def test_consume_many(
         consume_bench,
         crs,
     )
+
+
+if __name__ == "__main__":
+    """Section added for profiling purposes."""
+    import asyncio
+
+    from kstreams.create import create_engine
+
+    stream_engine = create_engine(
+        title="test-engine",
+    )
+    cr = ConsumerRecord(
+        topic="local--kstreams",
+        value="hello",
+        partition=0,
+        offset=0,
+        key="foo",
+        timestamp=0,
+        timestamp_type=0,
+        checksum=None,
+        serialized_key_size=0,
+        serialized_value_size=0,
+        headers=[],
+    )
+    r= asyncio.run(bench_startup_and_processing_single_consumer_record(stream_engine, cr))
+    print(r)

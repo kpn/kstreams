@@ -1,4 +1,4 @@
-name: Bump version
+name: Benchmark latest release
 
 on:
   push:
@@ -46,5 +46,5 @@ jobs:
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
         git add .benchmarks/
-        git commit -m "bench: bench: add benchmark current release"
+        git commit -m "bench: current release"
         git push origin master

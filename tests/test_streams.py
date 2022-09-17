@@ -339,7 +339,6 @@ async def test_stream_decorator(stream_engine: StreamEngine):
             Consumer.stop.assert_awaited()
 
 
-@pytest.mark.asyncio
 async def test_stream_decorates_properly(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 

@@ -4,7 +4,7 @@ import sys
 import typing
 
 from kstreams import types
-from kstreams.streams_utils import StreamErrorPolicy
+from kstreams.streams_utils import StreamErrorPolicy, UDFType
 
 if typing.TYPE_CHECKING:
     from kstreams import Stream, StreamEngine  #  pragma: no cover
@@ -14,6 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 class MiddlewareProtocol(typing.Protocol):
+    next_call: types.NextMiddlewareCall
+    send: types.Send
+    stream: "Stream"
+
     def __init__(
         self,
         *,
@@ -44,7 +48,11 @@ class Middleware:
         return f"{middleware_name}({extra_options})"
 
 
-class BaseMiddleware:
+class BaseMiddleware(MiddlewareProtocol):
+    next_call: types.NextMiddlewareCall
+    send: types.Send
+    stream: "Stream"
+
     def __init__(
         self,
         *,
@@ -145,3 +153,20 @@ class ExceptionMiddleware(BaseMiddleware):
             await self.engine.stop()
             await self.stream.is_processing.acquire()
             signal.raise_signal(signal.SIGTERM)
+
+        # acquire the asyncio.Lock `is_processing` again to resume the processing
+        # and avoid `RuntimeError: Lock is not acquired.`
+        await self.stream.is_processing.acquire()
+
+
+class BaseDependcyMiddleware(MiddlewareProtocol, typing.Protocol):
+    """Base class for Dependency Injection Middleware.
+
+    Both old and new DI middlewares make use of the type.
+
+    The `type` is used to identify the way to call the user defined function.
+
+    On top of that, this middleware helps avoid circular dependencies.
+    """
+
+    def get_type(self) -> UDFType: ...

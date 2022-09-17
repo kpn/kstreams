@@ -25,3 +25,6 @@ class EngineNotStartedException(StreamException):
 
 
 class BackendNotSet(StreamException): ...
+
+
+class HeaderNotFound(StreamException): ...

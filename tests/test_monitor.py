@@ -20,62 +20,68 @@ async def test_consumer_metrics(mock_consumer_class, stream_engine: StreamEngine
     stream_engine.add_stream(stream=stream)
     await stream.start()
 
+    assert stream.consumer is not None
     await stream_engine.monitor.generate_consumer_metrics(stream.consumer)
     consumer = stream.consumer
 
     for topic_partition in consumer.assignment():
         # super ugly notation but for now is the only way to get the metrics
         met_committed = (
-            stream_engine.monitor.MET_COMMITTED.labels(
-                topic=topic_partition.topic,
-                partition=topic_partition.partition,
-                consumer_group=consumer._group_id,
-            )
-            .collect()[0]
+            list(
+                stream_engine.monitor.MET_COMMITTED.labels(
+                    topic=topic_partition.topic,
+                    partition=topic_partition.partition,
+                    consumer_group=consumer._group_id,
+                ).collect()
+            )[0]
             .samples[0]
             .value
         )
 
         met_position = (
-            stream_engine.monitor.MET_POSITION.labels(
-                topic=topic_partition.topic,
-                partition=topic_partition.partition,
-                consumer_group=consumer._group_id,
-            )
-            .collect()[0]
+            list(
+                stream_engine.monitor.MET_POSITION.labels(
+                    topic=topic_partition.topic,
+                    partition=topic_partition.partition,
+                    consumer_group=consumer._group_id,
+                ).collect()
+            )[0]
             .samples[0]
             .value
         )
 
         met_highwater = (
-            stream_engine.monitor.MET_HIGHWATER.labels(
-                topic=topic_partition.topic,
-                partition=topic_partition.partition,
-                consumer_group=consumer._group_id,
-            )
-            .collect()[0]
+            list(
+                stream_engine.monitor.MET_HIGHWATER.labels(
+                    topic=topic_partition.topic,
+                    partition=topic_partition.partition,
+                    consumer_group=consumer._group_id,
+                ).collect()
+            )[0]
             .samples[0]
             .value
         )
 
         met_lag = (
-            stream_engine.monitor.MET_LAG.labels(
-                topic=topic_partition.topic,
-                partition=topic_partition.partition,
-                consumer_group=consumer._group_id,
-            )
-            .collect()[0]
+            list(
+                stream_engine.monitor.MET_LAG.labels(
+                    topic=topic_partition.topic,
+                    partition=topic_partition.partition,
+                    consumer_group=consumer._group_id,
+                ).collect()
+            )[0]
             .samples[0]
             .value
         )
 
         met_position_lag = (
-            stream_engine.monitor.MET_POSITION_LAG.labels(
-                topic=topic_partition.topic,
-                partition=topic_partition.partition,
-                consumer_group=consumer._group_id,
-            )
-            .collect()[0]
+            list(
+                stream_engine.monitor.MET_POSITION_LAG.labels(
+                    topic=topic_partition.topic,
+                    partition=topic_partition.partition,
+                    consumer_group=consumer._group_id,
+                ).collect()
+            )[0]
             .samples[0]
             .value
         )
@@ -135,56 +141,61 @@ async def test_clean_stream_consumer_metrics(
     for topic_partition in consumer.assignment():
         # super ugly notation but for now is the only way to get the metrics
         met_committed = (
-            stream_engine.monitor.MET_COMMITTED.labels(
-                topic=topic_partition.topic,
-                partition=topic_partition.partition,
-                consumer_group=consumer._group_id,
-            )
-            .collect()[0]
+            list(
+                stream_engine.monitor.MET_COMMITTED.labels(
+                    topic=topic_partition.topic,
+                    partition=topic_partition.partition,
+                    consumer_group=consumer._group_id,
+                ).collect()
+            )[0]
             .samples[0]
             .value
         )
 
         met_position = (
-            stream_engine.monitor.MET_POSITION.labels(
-                topic=topic_partition.topic,
-                partition=topic_partition.partition,
-                consumer_group=consumer._group_id,
-            )
-            .collect()[0]
+            list(
+                stream_engine.monitor.MET_POSITION.labels(
+                    topic=topic_partition.topic,
+                    partition=topic_partition.partition,
+                    consumer_group=consumer._group_id,
+                ).collect()
+            )[0]
             .samples[0]
             .value
         )
 
         met_highwater = (
-            stream_engine.monitor.MET_HIGHWATER.labels(
-                topic=topic_partition.topic,
-                partition=topic_partition.partition,
-                consumer_group=consumer._group_id,
-            )
-            .collect()[0]
+            list(
+                stream_engine.monitor.MET_HIGHWATER.labels(
+                    topic=topic_partition.topic,
+                    partition=topic_partition.partition,
+                    consumer_group=consumer._group_id,
+                ).collect()
+            )[0]
             .samples[0]
             .value
         )
 
         met_lag = (
-            stream_engine.monitor.MET_LAG.labels(
-                topic=topic_partition.topic,
-                partition=topic_partition.partition,
-                consumer_group=consumer._group_id,
-            )
-            .collect()[0]
+            list(
+                stream_engine.monitor.MET_LAG.labels(
+                    topic=topic_partition.topic,
+                    partition=topic_partition.partition,
+                    consumer_group=consumer._group_id,
+                ).collect()
+            )[0]
             .samples[0]
             .value
         )
 
         met_position_lag = (
-            stream_engine.monitor.MET_POSITION_LAG.labels(
-                topic=topic_partition.topic,
-                partition=topic_partition.partition,
-                consumer_group=consumer._group_id,
-            )
-            .collect()[0]
+            list(
+                stream_engine.monitor.MET_POSITION_LAG.labels(
+                    topic=topic_partition.topic,
+                    partition=topic_partition.partition,
+                    consumer_group=consumer._group_id,
+                ).collect()
+            )[0]
             .samples[0]
             .value
         )
@@ -200,9 +211,9 @@ async def test_clean_stream_consumer_metrics(
             met_position_lag == consumer.highwater(topic_partition) - consumer_position
         )
 
-    assert len(stream_engine.monitor.MET_POSITION_LAG.collect()[0].samples) == 2
+    assert len(list(stream_engine.monitor.MET_POSITION_LAG.collect())[0].samples) == 2
     await stream_engine.remove_stream(stream)
-    assert len(stream_engine.monitor.MET_POSITION_LAG.collect()[0].samples) == 0
+    assert len(list(stream_engine.monitor.MET_POSITION_LAG.collect())[0].samples) == 0
 
 
 @pytest.mark.asyncio
@@ -223,6 +234,6 @@ async def test_skip_clean_stream_consumer_metrics(
     stream_engine.add_stream(stream=stream)
     await stream.start()
 
-    assert len(stream_engine.monitor.MET_POSITION_LAG.collect()[0].samples) == 0
+    assert len(list(stream_engine.monitor.MET_POSITION_LAG.collect())[0].samples) == 0
     await stream_engine.remove_stream(stream)
     assert "Metrics for consumer with group-id: my-group not found" in caplog.text

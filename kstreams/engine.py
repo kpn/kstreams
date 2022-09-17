@@ -5,13 +5,13 @@ import typing
 
 from aiokafka.structs import RecordMetadata
 
+from kstreams.middleware.di_middleware import DependencyInjectionHandler
 from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
 from .clients import Consumer, Producer
 from .exceptions import DuplicateStreamException, EngineNotStartedException
 from .middleware import Middleware
-from .middleware.udf_middleware import UdfHandler
 from .prometheus.monitor import PrometheusMonitor
 from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import Deserializer, Serializer
@@ -389,7 +389,13 @@ class StreamEngine:
         stream.rebalance_listener.stream = stream
         stream.rebalance_listener.engine = self
 
-        stream.udf_handler = UdfHandler(
+        # stream.udf_handler = UdfHandler(
+        #     next_call=stream.func,
+        #     send=self.send,
+        #     stream=stream,
+        # )
+
+        stream.udf_handler = DependencyInjectionHandler(
             next_call=stream.func,
             send=self.send,
             stream=stream,
@@ -397,7 +403,7 @@ class StreamEngine:
 
         # NOTE: When `no typing` support is deprecated this check can
         # be removed
-        if stream.udf_handler.type != UDFType.NO_TYPING:
+        if stream.udf_handler.get_type() != UDFType.NO_TYPING:
             stream.func = self._build_stream_middleware_stack(stream=stream)
 
     def _build_stream_middleware_stack(self, *, stream: Stream) -> NextMiddlewareCall:

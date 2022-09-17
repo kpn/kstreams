@@ -1,5 +1,7 @@
 from aiokafka.structs import RecordMetadata, TopicPartition
 
+from ._di.parameters import FromHeader, Header
+from .backends.kafka import Kafka
 from .clients import Consumer, Producer
 from .create import StreamEngine, create_engine
 from .prometheus.monitor import PrometheusMonitor, PrometheusMonitorType
@@ -31,4 +33,8 @@ __all__ = [
     "TestStreamClient",
     "TopicPartition",
     "TopicPartitionOffset",
+    "Kafka",
+    "StreamDependencyManager",
+    "FromHeader",
+    "Header",
 ]
