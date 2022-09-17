@@ -2,9 +2,10 @@ import inspect
 import sys
 import typing
 
-from kstreams import ConsumerRecord, types
+from kstreams import types
 from kstreams.streams import Stream
 from kstreams.streams_utils import UDFType, setup_type
+from kstreams.types import ConsumerRecord
 
 from .middleware import BaseMiddleware
 

@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import Any, Coroutine, Dict, List, Optional, Sequence, Set
 
-from kstreams import ConsumerRecord, RebalanceListener, TopicPartition
+from kstreams import RebalanceListener, TopicPartition
 from kstreams.clients import Consumer, Producer
 from kstreams.serializers import Serializer
-from kstreams.types import Headers
+from kstreams.types import ConsumerRecord, Headers
 
 from .structs import RecordMetadata
 from .topics import TopicManager
@@ -204,7 +204,7 @@ class TestConsumer(Base, Consumer):
         *partitions: List[TopicPartition],
         timeout_ms: int = 0,
         max_records: int = 1,
-    ) -> Dict[TopicPartition, List[ConsumerRecord]]:
+    ) -> Dict[TopicPartition, List[ConsumerRecord | None]]:
         """
         Basic getmany implementation.
         `partitions` and `timeout_ms` could be added to the logic
