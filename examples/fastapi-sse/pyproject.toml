@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "sse"
+name = "fastapi_sse"
 version = "0.1.0"
 description = "SSE example with kstreams"
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]

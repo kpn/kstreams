@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "recommended_usage"
+name = "recommended_worker_app"
 version = "0.1.0"
 description = ""
 authors = ["Santiago Fraire <santiago.fraire@kpn.com>"]
@@ -17,4 +17,4 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poetry.scripts]
-app = "recommended_usage.app:main"
+app = "recommended_worker_app.app:main"
