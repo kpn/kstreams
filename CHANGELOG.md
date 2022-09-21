@@ -1,3 +1,9 @@
+## 0.6.3 (2022-09-21)
+
+### Refactor
+
+- **examples**: rename some examples and fix broken links
+
 ## 0.6.2 (2022-09-07)
 
 ### Fix
