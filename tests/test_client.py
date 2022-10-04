@@ -3,6 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from kstreams import StreamEngine
+from kstreams.streams import Stream
 from kstreams.test_utils import (
     TestConsumer,
     TestProducer,
@@ -85,6 +86,34 @@ async def test_topic_created(stream_engine: StreamEngine):
     consumer_record = await topic.get()
     assert consumer_record.value == value
     assert consumer_record.key == key
+
+
+@pytest.mark.asyncio
+async def test_consumer_commit(stream_engine: StreamEngine):
+    topic_name = "local--kstreams-marcos"
+    value = b'{"message": "Hello world!"}'
+    name = "my-stream"
+    key = "1"
+    partition = 2
+    tp = structs.TopicPartition(
+        topic=topic_name,
+        partition=partition,
+    )
+    total_events = 10
+
+    @stream_engine.stream(topic_name, name=name)
+    async def my_stream(stream: Stream):
+        async for cr in stream:
+            await stream.consumer.commit({tp: cr.offset})
+
+    client = TestStreamClient(stream_engine)
+    async with client:
+        for _ in range(0, total_events):
+            await client.send(topic_name, partition=partition, value=value, key=key)
+
+    # check that everything was commited
+    stream = stream_engine.get_stream(name)
+    assert (await stream.consumer.committed(tp)) == total_events
 
 
 @pytest.mark.asyncio

@@ -46,7 +46,7 @@ class StreamEngine:
         topic: str,
         value: Any = None,
         key: Any = None,
-        partition: Optional[str] = None,
+        partition: Optional[int] = None,
         timestamp_ms: Optional[int] = None,
         headers: Optional[Headers] = None,
         serializer: Optional[Serializer] = None,

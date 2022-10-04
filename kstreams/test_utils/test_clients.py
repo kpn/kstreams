@@ -65,6 +65,7 @@ class TestConsumer(Base, Consumer):
         self.topics: Tuple[str, ...] = topics
         self._group_id: Optional[str] = group_id
         self._assigments: List[TopicPartition] = []
+        self.partitions_committed: Dict[TopicPartition, int] = {}
 
         for topic_name in topics:
             TopicManager.create(topic_name, consumer=self)
@@ -89,6 +90,15 @@ class TestConsumer(Base, Consumer):
 
     def highwater(self, topic_partition: TopicPartition) -> int:
         return self.last_stable_offset(topic_partition)
+
+    async def commit(self, offsets: Optional[Dict[TopicPartition, int]] = None) -> None:
+        if offsets is not None:
+            for topic_partition, offset in offsets.items():
+                self.partitions_committed[topic_partition] = offset
+        return None
+
+    async def committed(self, topic_partition: TopicPartition) -> Optional[int]:
+        return self.partitions_committed.get(topic_partition)
 
     async def getone(
         self,
