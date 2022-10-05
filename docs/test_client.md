@@ -115,6 +115,48 @@ async def test_add_event_on_consume():
     The `TestStreamClient.send` coroutine is used instead.
     This allows to test `streams` without having producer code in your application
 
+### Testing the Commit
+
+In some cases your stream will commit, in this situation checking the commited partitions can be useful.
+
+```python
+import pytest
+from kstreams.test_utils import TestStreamClient
+
+from .example import produce, stream_engine
+
+topic_name = "local--kstreams-marcos"
+value = b'{"message": "Hello world!"}'
+name = "my-stream"
+key = "1"
+partition = 2
+tp = structs.TopicPartition(
+    topic=topic_name,
+    partition=partition,
+)
+total_events = 10
+
+@stream_engine.stream(topic_name, name=name)
+async def my_stream(stream: Stream):
+    async for cr in stream:
+        # commit every time that an event arrives
+        await stream.consumer.commit({tp: cr.offset})
+
+
+# test the code
+client = TestStreamClient(stream_engine)
+
+@pytest.mark.asyncio
+async def test_consumer_commit(stream_engine: StreamEngine):
+    async with client:
+        for _ in range(0, total_events):
+            await client.send(topic_name, partition=partition, value=value, key=key)
+
+    # check that everything was commited
+    stream = stream_engine.get_stream(name)
+    assert (await stream.consumer.committed(tp)) == total_events
+```
+
 ### E2E test
 
 In the previous code example the application produces to and consumes from the same topic, then `TestStreamClient.send` is not needed because the `engine.send` is producing. For those situation you can just use your `producer` code and check that certain code was called.

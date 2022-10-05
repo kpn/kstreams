@@ -73,6 +73,9 @@ class Stream:
             self._consumer_task.cancel()
 
     async def start(self) -> Optional[AsyncGenerator]:
+        if self.running:
+            return None
+
         async def func_wrapper(func):
             try:
                 # await for the end user coroutine
