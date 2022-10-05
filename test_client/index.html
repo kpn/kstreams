@@ -356,6 +356,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#testing-the-commit" class="md-nav__link">
+    Testing the Commit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#e2e-test" class="md-nav__link">
     E2E test
   </a>
@@ -437,6 +444,13 @@
   
     <nav class="md-nav" aria-label="Example">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#testing-the-commit" class="md-nav__link">
+    Testing the Commit
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#e2e-test" class="md-nav__link">
@@ -578,6 +592,44 @@
 The <code>TestStreamClient.send</code> coroutine is used instead.
 This allows to test <code>streams</code> without having producer code in your application</p>
 </div>
+<h3 id="testing-the-commit">Testing the Commit</h3>
+<p>In some cases your stream will commit, in this situation checking the commited partitions can be useful.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">kstreams.test_utils</span> <span class="kn">import</span> <span class="n">TestStreamClient</span>
+
+<span class="kn">from</span> <span class="nn">.example</span> <span class="kn">import</span> <span class="n">produce</span><span class="p">,</span> <span class="n">stream_engine</span>
+
+<span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams-marcos&quot;</span>
+<span class="n">value</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;my-stream&quot;</span>
+<span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
+<span class="n">partition</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">tp</span> <span class="o">=</span> <span class="n">structs</span><span class="o">.</span><span class="n">TopicPartition</span><span class="p">(</span>
+    <span class="n">topic</span><span class="o">=</span><span class="n">topic_name</span><span class="p">,</span>
+    <span class="n">partition</span><span class="o">=</span><span class="n">partition</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">total_events</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">my_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="c1"># commit every time that an event arrives</span>
+        <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">commit</span><span class="p">({</span><span class="n">tp</span><span class="p">:</span> <span class="n">cr</span><span class="o">.</span><span class="n">offset</span><span class="p">})</span>
+
+
+<span class="c1"># test the code</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">TestStreamClient</span><span class="p">(</span><span class="n">stream_engine</span><span class="p">)</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">test_consumer_commit</span><span class="p">(</span><span class="n">stream_engine</span><span class="p">:</span> <span class="n">StreamEngine</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">total_events</span><span class="p">):</span>
+            <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="n">partition</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="c1"># check that everything was commited</span>
+    <span class="n">stream</span> <span class="o">=</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">get_stream</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">committed</span><span class="p">(</span><span class="n">tp</span><span class="p">))</span> <span class="o">==</span> <span class="n">total_events</span>
+</code></pre></div>
 <h3 id="e2e-test">E2E test</h3>
 <p>In the previous code example the application produces to and consumes from the same topic, then <code>TestStreamClient.send</code> is not needed because the <code>engine.send</code> is producing. For those situation you can just use your <code>producer</code> code and check that certain code was called.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># test_example.py</span>
