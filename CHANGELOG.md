@@ -1,3 +1,9 @@
+## 0.6.4 (2022-10-05)
+
+### Fix
+
+- add commit and commited functions to consumer test client. Closes #61 (#63)
+
 ## 0.6.3 (2022-09-21)
 
 ### Refactor
