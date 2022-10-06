@@ -1,3 +1,9 @@
+## 0.6.5 (2022-10-06)
+
+### Fix
+
+- use partition 1 as default partition when producing with test client. Producer test client record metadata fixed. Closes #64
+
 ## 0.6.4 (2022-10-05)
 
 ### Fix
