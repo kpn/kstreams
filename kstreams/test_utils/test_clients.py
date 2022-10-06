@@ -51,7 +51,7 @@ class TestProducer(Base, Producer):
         async def fut():
             return RecordMetadata(
                 topic=topic_name,
-                partition=1,
+                partition=partition,
                 timestamp=timestamp_ms,
                 offset=total_messages,
             )

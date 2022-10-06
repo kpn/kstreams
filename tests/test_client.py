@@ -37,6 +37,7 @@ async def test_send_event_with_test_client(stream_engine: StreamEngine):
         )
         current_offset = metadata.offset
         assert metadata.topic == topic
+        assert metadata.partition == 1
 
         # send another event and check that the offset was incremented
         metadata = await client.send(
@@ -109,7 +110,10 @@ async def test_consumer_commit(stream_engine: StreamEngine):
     client = TestStreamClient(stream_engine)
     async with client:
         for _ in range(0, total_events):
-            await client.send(topic_name, partition=partition, value=value, key=key)
+            record_metadata = await client.send(
+                topic_name, partition=partition, value=value, key=key
+            )
+            assert record_metadata.partition == partition
 
     # check that everything was commited
     stream = stream_engine.get_stream(name)
