@@ -30,7 +30,9 @@ class TestProducer(Base, Producer):
     ) -> Coroutine:
         topic = TopicManager.get_or_create(topic_name)
         timestamp_ms = timestamp_ms or datetime.now().timestamp()
-        total_messages = topic.total_messages + 1
+        total_partition_events = (
+            topic.get_total_partition_events(partition=partition) + 1
+        )
 
         consumer_record = ConsumerRecord(
             topic=topic_name,
@@ -39,7 +41,7 @@ class TestProducer(Base, Producer):
             headers=headers,
             partition=partition,
             timestamp=timestamp_ms,
-            offset=total_messages,
+            offset=total_partition_events,
             timestamp_type=None,
             checksum=None,
             serialized_key_size=None,
@@ -53,7 +55,7 @@ class TestProducer(Base, Producer):
                 topic=topic_name,
                 partition=partition,
                 timestamp=timestamp_ms,
-                offset=total_messages,
+                offset=total_partition_events,
             )
 
         return fut()
@@ -64,25 +66,42 @@ class TestConsumer(Base, Consumer):
         # copy the aiokafka behavior
         self.topics: Tuple[str, ...] = topics
         self._group_id: Optional[str] = group_id
-        self._assigments: List[TopicPartition] = []
+        self._assignment: List[TopicPartition] = []
         self.partitions_committed: Dict[TopicPartition, int] = {}
 
         for topic_name in topics:
-            TopicManager.create(topic_name, consumer=self)
-            self._assigments.append(TopicPartition(topic=topic_name, partition=1))
+            TopicManager.get_or_create(topic_name, consumer=self)
+            self._assignment.append(TopicPartition(topic=topic_name, partition=1))
 
         # Called to make sure that has all the kafka attributes like _coordinator
         # so it will behave like an real Kafka Consumer
         super().__init__()
 
     def assignment(self) -> List[TopicPartition]:
-        return self._assigments
+        return self._assignment
+
+    def _check_partition_assignments(self, consumer_record: ConsumerRecord) -> None:
+        """
+        When an event is consumed the partition can be any positive int number
+        because there is not limit in the producer side (only during testing of course).
+        In case that the partition is not in the `_assignment` we need to register it.
+
+        This is only during testing as in real use cases the assignments happens
+        at the moment of kafka bootstrapping
+        """
+        topic_partition = TopicPartition(
+            topic=consumer_record.topic,
+            partition=consumer_record.partition,
+        )
+
+        if topic_partition not in self._assignment:
+            self._assignment.append(topic_partition)
 
     def last_stable_offset(self, topic_partition: TopicPartition) -> int:
         topic = TopicManager.get(topic_partition.topic)
 
         if topic is not None:
-            return topic.total_messages
+            return topic.get_total_partition_events(partition=topic_partition.partition)
         return -1
 
     async def position(self, topic_partition: TopicPartition) -> int:
@@ -104,12 +123,14 @@ class TestConsumer(Base, Consumer):
         self,
     ) -> Optional[ConsumerRecord]:  # The return type must be fixed later on
         topic = None
-        for topic_partition in self._assigments:
+        for topic_partition in self._assignment:
             topic = TopicManager.get(topic_partition.topic)
 
             if not topic.consumed:
                 break
 
         if topic is not None:
-            return await topic.get()
+            consumer_record = await topic.get()
+            self._check_partition_assignments(consumer_record)
+            return consumer_record
         return None

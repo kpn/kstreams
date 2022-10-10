@@ -35,23 +35,30 @@ async def test_send_event_with_test_client(stream_engine: StreamEngine):
         metadata = await client.send(
             topic, value=b'{"message": "Hello world!"}', key="1"
         )
-        current_offset = metadata.offset
+
         assert metadata.topic == topic
         assert metadata.partition == 1
+        assert metadata.offset == 1
 
         # send another event and check that the offset was incremented
         metadata = await client.send(
             topic, value=b'{"message": "Hello world!"}', key="1"
         )
-        assert metadata.offset == current_offset + 1
+        assert metadata.offset == 2
+
+        # send en event to a different partition
+        metadata = await client.send(
+            topic, value=b'{"message": "Hello world!"}', key="1", partition=2
+        )
+
+        # because it is a different partition the offset should be 1
+        assert metadata.offset == 1
 
 
 @pytest.mark.asyncio
 async def test_streams_consume_events(stream_engine: StreamEngine):
-    from examples.simple import stream_engine
-
     client = TestStreamClient(stream_engine)
-    topic = "local--kstreams-2"
+    topic = "local--kstreams-consumer"
     event = b'{"message": "Hello world!"}'
     tp = structs.TopicPartition(topic=topic, partition=1)
     save_to_db = Mock()
@@ -91,7 +98,7 @@ async def test_topic_created(stream_engine: StreamEngine):
 
 @pytest.mark.asyncio
 async def test_consumer_commit(stream_engine: StreamEngine):
-    topic_name = "local--kstreams-marcos"
+    topic_name = "local--kstreams-consumer-commit"
     value = b'{"message": "Hello world!"}'
     name = "my-stream"
     key = "1"
@@ -151,7 +158,7 @@ async def test_e2e_consume_multiple_topics():
     topic_1 = TopicManager.get(topics[0])
     topic_2 = TopicManager.get(topics[1])
 
-    assert topic_1.total_messages == events_per_topic
-    assert topic_2.total_messages == events_per_topic
+    assert topic_1.total_events == events_per_topic
+    assert topic_2.total_events == events_per_topic
 
     assert TopicManager.all_messages_consumed()
