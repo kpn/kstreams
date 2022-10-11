@@ -1,3 +1,9 @@
+## 0.6.7 (2022-10-11)
+
+### Fix
+
+- test client initial partition (#67)
+
 ## 0.6.6 (2022-10-11)
 
 ### Fix
