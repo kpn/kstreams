@@ -1,3 +1,9 @@
+## 0.6.6 (2022-10-11)
+
+### Fix
+
+- TestConsumer partition assigments, TestProducer consumer record and record metadata (#66)
+
 ## 0.6.5 (2022-10-06)
 
 ### Fix
