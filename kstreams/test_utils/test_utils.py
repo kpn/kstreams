@@ -2,6 +2,7 @@ import asyncio
 from types import TracebackType
 from typing import Any, Dict, List, Optional, Type
 
+from kstreams import ConsumerRecord
 from kstreams.engine import StreamEngine
 from kstreams.serializers import Serializer
 from kstreams.streams import Stream
@@ -53,6 +54,10 @@ class TestStreamClient:
         self.stream_engine.producer_class = self.producer_class
         self.stream_engine.consumer_class = self.consumer_class
 
+        # clean the topics after finishing the test to make sure that
+        # no data is left tover
+        TopicManager.clean()
+
     async def __aenter__(self) -> "TestStreamClient":
         await self.start()
         return self
@@ -87,5 +92,9 @@ class TestStreamClient:
             serializer_kwargs=serializer_kwargs,
         )
 
-    def get_topic(self, topic_name: str) -> Topic:
+    def get_topic(self, *, topic_name: str) -> Topic:
         return TopicManager.get(topic_name)
+
+    async def get_event(self, *, topic_name: str) -> ConsumerRecord:
+        topic = TopicManager.get(topic_name)
+        return await topic.get()

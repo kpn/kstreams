@@ -89,11 +89,60 @@ async def test_topic_created(stream_engine: StreamEngine):
     async with client:
         await client.send(topic_name, value=value, key=key)
 
-    # check that the event was sent to a Topic
-    topic = client.get_topic(topic_name)
-    consumer_record = await topic.get()
-    assert consumer_record.value == value
-    assert consumer_record.key == key
+        # check that the event was sent to a Topic
+        consumer_record = await client.get_event(topic_name=topic_name)
+
+        assert consumer_record.value == value
+        assert consumer_record.key == key
+
+
+@pytest.mark.asyncio
+async def test_get_event_outside_context(stream_engine: StreamEngine):
+    topic_name = "local--kstreams"
+    value = b'{"message": "Hello world!"}'
+    key = "1"
+    client = TestStreamClient(stream_engine)
+    async with client:
+        # produce to events and consume only one in the client context
+        await client.send(topic_name, value=value, key=key)
+        await client.send(topic_name, value=value, key=key)
+
+        # check that the event was sent to a Topic
+        consumer_record = await client.get_event(topic_name=topic_name)
+        assert consumer_record.value == value
+        assert consumer_record.key == key
+
+    with pytest.raises(ValueError) as exc:
+        await client.get_event(topic_name=topic_name)
+
+    assert (
+        f"You might be trying to get the topic {topic_name} outside the "
+        "`client async context` or trying to get an event from an empty "
+        f"topic {topic_name}. Make sure that the code is inside the async context"
+        "and the topic has events."
+    ) == str(exc.value)
+
+
+@pytest.mark.asyncio
+async def test_clean_up_events(stream_engine: StreamEngine):
+    topic_name = "local--kstreams-clean-up"
+    value = b'{"message": "Hello world!"}'
+    key = "1"
+    client = TestStreamClient(stream_engine)
+
+    async with client:
+        # produce to events and consume only one in the client context
+        await client.send(topic_name, value=value, key=key)
+        await client.send(topic_name, value=value, key=key)
+
+        # check that the event was sent to a Topic
+        consumer_record = await client.get_event(topic_name=topic_name)
+        assert consumer_record.value == value
+        assert consumer_record.key == key
+
+    # even though there is still one event in the topic
+    # after leaving the context the topic should be empty
+    assert not TopicManager.topics
 
 
 @pytest.mark.asyncio
@@ -149,16 +198,16 @@ async def test_e2e_example():
 async def test_e2e_consume_multiple_topics():
     from examples.consume_multiple_topics import produce, stream_engine, topics
 
-    events_per_topic = 2
+    total_events = 2
     client = TestStreamClient(stream_engine)
 
     async with client:
-        await produce(events_per_topic=events_per_topic)
+        await produce(total_events)
 
-    topic_1 = TopicManager.get(topics[0])
-    topic_2 = TopicManager.get(topics[1])
+        topic_1 = TopicManager.get(topics[0])
+        topic_2 = TopicManager.get(topics[1])
 
-    assert topic_1.total_events == events_per_topic
-    assert topic_2.total_events == events_per_topic
+        assert topic_1.total_events == total_events
+        assert topic_2.total_events == total_events
 
-    assert TopicManager.all_messages_consumed()
+        assert TopicManager.all_messages_consumed()
