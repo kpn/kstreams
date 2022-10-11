@@ -1,6 +1,7 @@
 import asyncio
-from dataclasses import dataclass
-from typing import ClassVar, Dict, Optional
+from collections import defaultdict
+from dataclasses import dataclass, field
+from typing import ClassVar, DefaultDict, Dict, Optional
 
 from kstreams import ConsumerRecord
 
@@ -11,19 +12,31 @@ from . import test_clients
 class Topic:
     name: str
     queue: asyncio.Queue
-    total_messages: int = 0
+    total_partition_events: DefaultDict[int, int] = field(
+        default_factory=lambda: defaultdict(int)
+    )
+    total_events: int = 0
     # for now we assumed that 1 streams is connected to 1 topic
     consumer: Optional["test_clients.Consumer"] = None
 
     async def put(self, event: ConsumerRecord) -> None:
         await self.queue.put(event)
-        self.total_messages += 1
+
+        # keep track of the amount of events per topic partition
+        self.total_partition_events[event.partition] += 1
+        self.total_events += 1
 
     async def get(self) -> ConsumerRecord:
         return await self.queue.get()
 
     def is_empty(self) -> bool:
         return self.queue.empty()
+
+    def size(self) -> int:
+        return self.queue.qsize()
+
+    def get_total_partition_events(self, *, partition: int) -> int:
+        return self.total_partition_events[partition]
 
     @property
     def consumed(self) -> bool:
@@ -54,7 +67,12 @@ class TopicManager:
 
         if topic is not None:
             return topic
-        raise ValueError(f"Topic {name} not found")
+        raise ValueError(
+            f"You might be trying to get the topic {name} outside the "
+            "`client async context` or trying to geh an event from an empty "
+            f"topic {name}. Make sure that the code is inside the async context"
+            "and the topic has events."
+        )
 
     @classmethod
     def create(
@@ -65,14 +83,16 @@ class TopicManager:
         return topic
 
     @classmethod
-    def get_or_create(cls, name: str) -> Topic:
+    def get_or_create(
+        cls, name: str, consumer: Optional["test_clients.Consumer"] = None
+    ) -> Topic:
         """
         Add a new queue if does not exist and return it
         """
         try:
             topic = cls.get(name)
         except ValueError:
-            topic = cls.create(name)
+            topic = cls.create(name, consumer=consumer)
         return topic
 
     @classmethod

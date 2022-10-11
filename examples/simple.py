@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from kstreams import ConsumerRecord, create_engine
 from kstreams.streams import Stream
 
-topic = "local--kstreams"
+topic = "local--kstreams-test"
 
 stream_engine = create_engine(title="my-stream-engine")
 
