@@ -37,7 +37,7 @@ async def test_send_event_with_test_client(stream_engine: StreamEngine):
         )
 
         assert metadata.topic == topic
-        assert metadata.partition == 1
+        assert metadata.partition == 0
         assert metadata.offset == 1
 
         # send another event and check that the offset was incremented
@@ -60,7 +60,7 @@ async def test_streams_consume_events(stream_engine: StreamEngine):
     client = TestStreamClient(stream_engine)
     topic = "local--kstreams-consumer"
     event = b'{"message": "Hello world!"}'
-    tp = structs.TopicPartition(topic=topic, partition=1)
+    tp = structs.TopicPartition(topic=topic, partition=0)
     save_to_db = Mock()
 
     @stream_engine.stream(topic, name="my-stream")
