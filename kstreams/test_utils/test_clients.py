@@ -22,7 +22,7 @@ class TestProducer(Base, Producer):
         topic_name: str,
         value: Any = None,
         key: Any = None,
-        partition: int = 1,
+        partition: int = 0,
         timestamp_ms: Optional[float] = None,
         headers: Optional[Headers] = None,
         serializer: Optional[Serializer] = None,
@@ -71,7 +71,7 @@ class TestConsumer(Base, Consumer):
 
         for topic_name in topics:
             TopicManager.get_or_create(topic_name, consumer=self)
-            self._assignment.append(TopicPartition(topic=topic_name, partition=1))
+            self._assignment.append(TopicPartition(topic=topic_name, partition=0))
 
         # Called to make sure that has all the kafka attributes like _coordinator
         # so it will behave like an real Kafka Consumer
