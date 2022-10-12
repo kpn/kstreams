@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Coroutine, Dict, List, Optional, Tuple
+from typing import Any, Coroutine, Dict, List, Optional, Set, Tuple
 
 from aiokafka.structs import ConsumerRecord
 
@@ -118,6 +118,17 @@ class TestConsumer(Base, Consumer):
 
     async def committed(self, topic_partition: TopicPartition) -> Optional[int]:
         return self.partitions_committed.get(topic_partition)
+
+    def partitions_for_topic(self, topic: str) -> Set:
+        """
+        Return the partitions of all assigned topics. The `topic` argument is not used
+        because in a testing enviroment the only topics are the ones declared by the end
+        user.
+
+        The AIOKafkaConsumer returns a Set, so we do the same.
+        """
+        partitions = [topic_partition.partition for topic_partition in self._assignment]
+        return set(partitions)
 
     async def getone(
         self,
