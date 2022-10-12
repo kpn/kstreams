@@ -1,3 +1,9 @@
+## 0.6.9 (2022-10-12)
+
+### Fix
+
+- add partitions_for_topic method to consumer test client (#70)
+
 ## 0.6.8 (2022-10-12)
 
 ### Fix
