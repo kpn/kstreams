@@ -146,6 +146,28 @@ async def test_clean_up_events(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
+async def test_partitions_for_topic(stream_engine: StreamEngine):
+    topic_name = "local--kstreams"
+    value = b'{"message": "Hello world!"}'
+    key = "1"
+    client = TestStreamClient(stream_engine)
+
+    @stream_engine.stream(topic_name, name="my-stream")
+    async def consume(stream):
+        async for cr in stream:
+            ...
+
+    async with client:
+        # produce to events and consume only one in the client context
+        await client.send(topic_name, value=value, key=key)
+        await client.send(topic_name, value=value, key=key, partition=2)
+        await client.send(topic_name, value=value, key=key, partition=10)
+
+    stream = stream_engine.get_stream("my-stream")
+    assert stream.consumer.partitions_for_topic(topic_name) == set([0, 2, 10])
+
+
+@pytest.mark.asyncio
 async def test_consumer_commit(stream_engine: StreamEngine):
     topic_name = "local--kstreams-consumer-commit"
     value = b'{"message": "Hello world!"}'
