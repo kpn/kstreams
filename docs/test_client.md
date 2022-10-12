@@ -152,9 +152,9 @@ async def test_consumer_commit(stream_engine: StreamEngine):
         for _ in range(0, total_events):
             await client.send(topic_name, partition=partition, value=value, key=key)
 
-    # check that everything was commited
-    stream = stream_engine.get_stream(name)
-    assert (await stream.consumer.committed(tp)) == total_events
+        # check that everything was commited
+        stream = stream_engine.get_stream(name)
+        assert (await stream.consumer.committed(tp)) == total_events
 ```
 
 ### E2E test
@@ -237,14 +237,11 @@ async def test_event_produced():
     async with client:
         await produce(topic=topic_name ,value=value, key=key) # use the produce code to send events
 
-    # check that the event was placed in a topic in a proper way
-    topic = client.get_topic(topic_name)
+        # check that the event was placed in a topic in a proper way
+        consumer_record = await client.get_event(topic_name=topic_name)
 
-    # get the event
-    consumer_record = await topic.get()
-
-    assert consumer_record.value == value
-    assert consumer_record.key == key
+        assert consumer_record.value == value
+        assert consumer_record.key == key
 ```
 
 !!! Note

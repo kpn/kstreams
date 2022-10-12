@@ -69,7 +69,7 @@ class TopicManager:
             return topic
         raise ValueError(
             f"You might be trying to get the topic {name} outside the "
-            "`client async context` or trying to geh an event from an empty "
+            "`client async context` or trying to get an event from an empty "
             f"topic {name}. Make sure that the code is inside the async context"
             "and the topic has events."
         )
@@ -105,3 +105,7 @@ class TopicManager:
             if not topic.consumed:
                 return False
         return True
+
+    @classmethod
+    def clean(cls) -> None:
+        cls.topics = {}
