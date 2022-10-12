@@ -1,3 +1,9 @@
+## 0.6.8 (2022-10-12)
+
+### Fix
+
+- clean up topic events after leaving the async context (#68)
+
 ## 0.6.7 (2022-10-11)
 
 ### Fix
