@@ -626,9 +626,9 @@ This allows to test <code>streams</code> without having producer code in your ap
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">total_events</span><span class="p">):</span>
             <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="n">partition</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
 
-    <span class="c1"># check that everything was commited</span>
-    <span class="n">stream</span> <span class="o">=</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">get_stream</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="p">(</span><span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">committed</span><span class="p">(</span><span class="n">tp</span><span class="p">))</span> <span class="o">==</span> <span class="n">total_events</span>
+        <span class="c1"># check that everything was commited</span>
+        <span class="n">stream</span> <span class="o">=</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">get_stream</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">committed</span><span class="p">(</span><span class="n">tp</span><span class="p">))</span> <span class="o">==</span> <span class="n">total_events</span>
 </code></pre></div>
 <h3 id="e2e-test">E2E test</h3>
 <p>In the previous code example the application produces to and consumes from the same topic, then <code>TestStreamClient.send</code> is not needed because the <code>engine.send</code> is producing. For those situation you can just use your <code>producer</code> code and check that certain code was called.</p>
@@ -700,14 +700,11 @@ the event was procuced in a proper way and the <code>topic</code> contains that 
     <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="p">:</span>
         <span class="k">await</span> <span class="n">produce</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">topic_name</span> <span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span> <span class="c1"># use the produce code to send events</span>
 
-    <span class="c1"># check that the event was placed in a topic in a proper way</span>
-    <span class="n">topic</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_topic</span><span class="p">(</span><span class="n">topic_name</span><span class="p">)</span>
+        <span class="c1"># check that the event was placed in a topic in a proper way</span>
+        <span class="n">consumer_record</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_event</span><span class="p">(</span><span class="n">topic_name</span><span class="o">=</span><span class="n">topic_name</span><span class="p">)</span>
 
-    <span class="c1"># get the event</span>
-    <span class="n">consumer_record</span> <span class="o">=</span> <span class="k">await</span> <span class="n">topic</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-
-    <span class="k">assert</span> <span class="n">consumer_record</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">value</span>
-    <span class="k">assert</span> <span class="n">consumer_record</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">key</span>
+        <span class="k">assert</span> <span class="n">consumer_record</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">value</span>
+        <span class="k">assert</span> <span class="n">consumer_record</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">key</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
