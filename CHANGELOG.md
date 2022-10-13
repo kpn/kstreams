@@ -1,3 +1,9 @@
+## 0.6.10 (2022-10-13)
+
+### Fix
+
+- **test_clients.py**: adds end_offsets to consumer test client
+
 ## 0.6.9 (2022-10-12)
 
 ### Fix
