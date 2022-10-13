@@ -119,6 +119,18 @@ class TestConsumer(Base, Consumer):
     async def committed(self, topic_partition: TopicPartition) -> Optional[int]:
         return self.partitions_committed.get(topic_partition)
 
+    async def end_offsets(
+        self, partitions: List[TopicPartition]
+    ) -> Dict[TopicPartition, int]:
+        topic = TopicManager.get(partitions[0].topic)
+        end_offsets = {
+            topic_partition: topic.get_total_partition_events(
+                partition=topic_partition.partition
+            )
+            for topic_partition in partitions
+        }
+        return end_offsets
+
     def partitions_for_topic(self, topic: str) -> Set:
         """
         Return the partitions of all assigned topics. The `topic` argument is not used

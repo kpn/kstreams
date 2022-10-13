@@ -159,12 +159,45 @@ async def test_partitions_for_topic(stream_engine: StreamEngine):
 
     async with client:
         # produce to events and consume only one in the client context
-        await client.send(topic_name, value=value, key=key)
+        await client.send(topic_name, value=value, key=key, partition=0)
         await client.send(topic_name, value=value, key=key, partition=2)
         await client.send(topic_name, value=value, key=key, partition=10)
 
     stream = stream_engine.get_stream("my-stream")
     assert stream.consumer.partitions_for_topic(topic_name) == set([0, 2, 10])
+
+
+@pytest.mark.asyncio
+async def test_end_offsets(stream_engine: StreamEngine):
+    topic_name = "local--kstreams"
+    value = b'{"message": "Hello world!"}'
+    key = "1"
+    client = TestStreamClient(stream_engine)
+
+    @stream_engine.stream(topic_name, name="my-stream")
+    async def consume(stream):
+        async for cr in stream:
+            ...
+
+    async with client:
+        # produce to events and consume only one in the client context
+        await client.send(topic_name, value=value, key=key, partition=0)
+        await client.send(topic_name, value=value, key=key, partition=0)
+        await client.send(topic_name, value=value, key=key, partition=2)
+        await client.send(topic_name, value=value, key=key, partition=10)
+
+        topic_partitions = [
+            structs.TopicPartition(topic_name, 0),
+            structs.TopicPartition(topic_name, 2),
+            structs.TopicPartition(topic_name, 10),
+        ]
+
+        stream = stream_engine.get_stream("my-stream")
+        assert (await stream.consumer.end_offsets(topic_partitions)) == {
+            structs.TopicPartition(topic="local--kstreams", partition=0): 2,
+            structs.TopicPartition(topic="local--kstreams", partition=2): 1,
+            structs.TopicPartition(topic="local--kstreams", partition=10): 1,
+        }
 
 
 @pytest.mark.asyncio
