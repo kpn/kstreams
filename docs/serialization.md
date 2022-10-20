@@ -4,7 +4,7 @@ Kafka's job is to move bytes from producer to consumers, through a topic.
 By default, this is what kstream does.
 
 ```python
---8<-- "examples/recommended-usage/recommended_usage/streams.py"
+--8<-- "examples/recommended-worker-app/recommended_worker_app/streams.py"
 ```
 
 As you can see the ConsumerRecord's `value` is bytes.
