@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
 ## FastAPI
 
-The following code example shows how `kstreams` can be integrated with any `async` framework like `FastAPI`. The full example can be found [here](https://github.com/kpn/kstreams/tree/master/examples/fastapi-example)
+The following code example shows how `kstreams` can be integrated with any `async` framework like `FastAPI`. The full example can be found [here](https://github.com/kpn/kstreams/tree/master/examples/fastapi-webapp)
 
 First, we need to create an `engine`:
 
