@@ -1,3 +1,9 @@
+## 0.6.11 (2022-11-02)
+
+### Fix
+
+- **TestStreamClient**: remove unused/unclosed mock producer (#74)
+
 ## 0.6.10 (2022-10-13)
 
 ### Fix
