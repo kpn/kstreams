@@ -29,12 +29,7 @@ class TestStreamClient:
         for stream in streams:
             stream.consumer_class = TestConsumer
 
-    def mock_producer(self) -> None:
-        producer = TestProducer()
-        self.stream_engine._producer = producer
-
     def setup_mocks(self) -> None:
-        self.mock_producer()
         self.mock_streams()
 
     async def start(self) -> None:
