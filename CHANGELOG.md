@@ -1,3 +1,9 @@
+## 0.6.12 (2022-11-08)
+
+### Fix
+
+- **teststreamclient**: check if consumer is none before creating one
+
 ## 0.6.11 (2022-11-02)
 
 ### Fix
