@@ -1,4 +1,3 @@
-from unittest import mock
 from unittest.mock import Mock
 
 import pytest
@@ -267,21 +266,3 @@ async def test_e2e_consume_multiple_topics():
         assert topic_2.total_events == total_events
 
         assert TopicManager.all_messages_consumed()
-
-
-@pytest.mark.asyncio
-async def test_create_consumer_if_consumer_is_none(stream_engine: StreamEngine):
-    with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"):
-        topic_name = "local--kstreams"
-
-        @stream_engine.stream(topic_name, name="my-stream")
-        async def consume(stream):
-            async for cr in stream:
-                ...
-
-        stream = stream_engine.get_stream("my-stream")
-        await stream.start()
-        temp = stream.consumer
-        await stream.stop()
-        await stream.start()
-        assert temp == stream.consumer

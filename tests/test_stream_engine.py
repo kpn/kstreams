@@ -101,6 +101,25 @@ async def test_start_stop_streaming(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
+async def test_recreate_consumer_on_re_tart_stream(stream_engine: StreamEngine):
+    with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"):
+        topic_name = "local--kstreams"
+        stream_name = "my-stream"
+
+        @stream_engine.stream(topic_name, name=stream_name)
+        async def consume(stream):
+            async for _ in stream:
+                ...
+
+        stream = stream_engine.get_stream(stream_name)
+        await stream.start()
+        consumer = stream.consumer
+        await stream.stop()
+        await stream.start()
+        assert consumer is not stream.consumer
+
+
+@pytest.mark.asyncio
 async def test_engine_not_started(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 

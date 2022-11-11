@@ -87,9 +87,8 @@ class Stream:
                     f"CRASHED Stream!!! Task {self._consumer_task} \n\n {e}"
                 )
 
-        if self.consumer is None:
-            self.consumer = self._create_consumer()
-
+        # Always create a consumer on stream.start
+        self.consumer = self._create_consumer()
         func = self.func(self)
         await self.consumer.start()
         self.running = True

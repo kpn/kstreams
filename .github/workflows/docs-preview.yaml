@@ -39,6 +39,6 @@ jobs:
           poetry run mkdocs build
 
       - name: Deploy preview
-        uses: rossjrw/pr-preview-action@v1
+        uses: rossjrw/pr-preview-action@v1.2.0
         with:
           source-dir: ./site/
