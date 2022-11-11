@@ -1,3 +1,9 @@
+## 0.6.13 (2022-11-11)
+
+### Fix
+
+- **stream**: recreate consumer when a stream instance is restarted (#77)
+
 ## 0.6.12 (2022-11-08)
 
 ### Fix
