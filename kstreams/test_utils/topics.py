@@ -29,6 +29,12 @@ class Topic:
     async def get(self) -> ConsumerRecord:
         return await self.queue.get()
 
+    def task_done(self) -> None:
+        self.queue.task_done()
+
+    async def join(self) -> None:
+        await self.queue.join()
+
     def is_empty(self) -> bool:
         return self.queue.empty()
 
@@ -105,6 +111,13 @@ class TopicManager:
             if not topic.consumed:
                 return False
         return True
+
+    @classmethod
+    async def join(cls) -> None:
+        """
+        Wait for all topic messages to be processed
+        """
+        await asyncio.gather(*[topic.join() for topic in cls.topics.values()])
 
     @classmethod
     def clean(cls) -> None:
