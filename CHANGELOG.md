@@ -1,3 +1,9 @@
+## 0.6.14 (2022-11-17)
+
+### Fix
+
+- add remove-stream function to stream_engine
+
 ## 0.6.13 (2022-11-11)
 
 ### Fix
