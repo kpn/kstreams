@@ -74,6 +74,11 @@ if __name__ == "__main__":
     aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)
 ```
 
+### Removing a stream from the engine
+```python title="Removing stream"
+stream_engine.remove_stream(stream)
+```
+
 ## Stream crashing
 
 If your stream `crashes` for any reason, the event consumption will stop meaning that non event will be consumed from the `topic`.

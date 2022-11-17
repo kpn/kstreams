@@ -9,6 +9,79 @@ from kstreams.streams import stream
 
 
 @pytest.mark.asyncio
+async def test_remove_existing_stream(stream_engine: StreamEngine):
+    topic = "local--hello-kpn"
+
+    class MyDeserializer:
+        ...
+
+    deserializer = MyDeserializer()
+
+    async def processor(stream: Stream):
+        pass
+
+    my_stream = Stream(
+        topic,
+        name="my-stream",
+        func=processor,
+        deserializer=deserializer,
+    )
+
+    stream_engine.add_stream(my_stream)
+    assert len(stream_engine._streams) == 1
+    await stream_engine.remove_stream(my_stream)
+    assert len(stream_engine._streams) == 0
+
+
+@pytest.mark.asyncio
+async def test_remove_missing_stream(stream_engine: StreamEngine):
+    topic = "local--hello-kpn"
+
+    class MyDeserializer:
+        ...
+
+    deserializer = MyDeserializer()
+
+    async def processor(stream: Stream):
+        pass
+
+    my_stream = Stream(
+        topic,
+        name="my-stream",
+        func=processor,
+        deserializer=deserializer,
+    )
+
+    with pytest.raises(ValueError):
+        await stream_engine.remove_stream(my_stream)
+
+
+@pytest.mark.asyncio
+async def test_remove_existing_stream_stops_stream(stream_engine: StreamEngine):
+    topic = "local--hello-kpn"
+
+    class MyDeserializer:
+        ...
+
+    deserializer = MyDeserializer()
+
+    async def processor(stream: Stream):
+        pass
+
+    my_stream = Stream(
+        topic,
+        name="my-stream",
+        func=processor,
+        deserializer=deserializer,
+    )
+    stream_engine.add_stream(my_stream)
+
+    with mock.patch.multiple(Stream, start=mock.DEFAULT, stop=mock.DEFAULT):
+        await stream_engine.remove_stream(my_stream)
+        Stream.stop.assert_awaited()
+
+
+@pytest.mark.asyncio
 async def test_add_streams(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
@@ -182,7 +255,7 @@ async def test_add_stream_as_generator(
 
 
 @pytest.mark.asyncio
-async def test_sream_decorator(stream_engine: StreamEngine):
+async def test_stream_decorator(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
     @stream(topic)
@@ -203,7 +276,7 @@ async def test_sream_decorator(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
-async def test_sream_decorates_properly(stream_engine: StreamEngine):
+async def test_stream_decorates_properly(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
     @stream(topic)

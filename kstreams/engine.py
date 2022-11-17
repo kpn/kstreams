@@ -155,6 +155,10 @@ class StreamEngine:
             stream.deserializer = self.deserializer
         self._streams.append(stream)
 
+    async def remove_stream(self, stream: Stream) -> None:
+        await stream.stop()
+        self._streams.remove(stream)
+
     def stream(
         self,
         topics: Union[List[str], str],
