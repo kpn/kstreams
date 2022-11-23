@@ -1,3 +1,9 @@
+## 0.6.15 (2022-11-23)
+
+### Perf
+
+- **test_utils**: replace sleep with async queue join when stopping test stream (#78)
+
 ## 0.6.14 (2022-11-17)
 
 ### Fix
