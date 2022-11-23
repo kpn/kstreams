@@ -1,4 +1,3 @@
-import asyncio
 from types import TracebackType
 from typing import Any, Dict, List, Optional, Type
 
@@ -14,6 +13,8 @@ from .topics import Topic, TopicManager
 
 
 class TestStreamClient:
+    __test__ = False
+
     def __init__(self, stream_engine: StreamEngine) -> None:
         self.stream_engine = stream_engine
 
@@ -40,8 +41,7 @@ class TestStreamClient:
     async def stop(self) -> None:
         # If there are streams, we must wait until all the messages are consumed
         if self.stream_engine._streams:
-            while not TopicManager.all_messages_consumed():
-                await asyncio.sleep(1)
+            await TopicManager.join()
 
         await self.stream_engine.stop()
 

@@ -1,3 +1,4 @@
+import asyncio
 from unittest import mock
 
 import pytest
@@ -167,6 +168,8 @@ async def test_start_stop_streaming(stream_engine: StreamEngine):
             await stream_engine.start()
             Consumer.start.assert_awaited()
             stream_engine._producer.start.assert_awaited()
+
+            await asyncio.sleep(0)  # Allow stream coroutine to run once
 
             await stream_engine.stop()
             stream_engine._producer.stop.assert_awaited()
