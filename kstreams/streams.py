@@ -11,13 +11,16 @@ from typing import (
     Dict,
     List,
     Optional,
+    Set,
     Type,
     Union,
 )
 
-from aiokafka import errors, structs
+from aiokafka import errors
 
+from kstreams import ConsumerRecord, TopicPartition
 from kstreams.exceptions import BackendNotSet
+from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
 from .clients import Consumer, ConsumerType
@@ -38,6 +41,7 @@ class Stream:
         config: Optional[Dict] = None,
         model: Optional[Any] = None,
         deserializer: Optional[Deserializer] = None,
+        initial_offsets: Optional[List[TopicPartitionOffset]] = None,
     ) -> None:
         self.func = func
         self.backend = backend
@@ -49,6 +53,7 @@ class Stream:
         self.model = model
         self.deserializer = deserializer
         self.running = False
+        self.initial_offsets = initial_offsets
 
         # aiokafka expects topic names as arguments, meaning that
         # can receive N topics -> N arguments,
@@ -93,6 +98,8 @@ class Stream:
         await self.consumer.start()
         self.running = True
 
+        self._seek_to_initial_offsets()
+
         if inspect.isasyncgen(func):
             return func
         else:
@@ -100,6 +107,25 @@ class Stream:
             # create an asyncio.Task with func
             self._consumer_task = asyncio.create_task(func_wrapper(func))
             return None
+
+    def _seek_to_initial_offsets(self):
+        assignments: Set[TopicPartition] = self.consumer.assignment()
+        if self.initial_offsets is not None:
+            topicPartitionOffset: TopicPartitionOffset
+            for topicPartitionOffset in self.initial_offsets:
+                tp = TopicPartition(
+                    topic=topicPartitionOffset.topic,
+                    partition=topicPartitionOffset.partition,
+                )
+                if tp in assignments:
+                    self.consumer.seek(partition=tp, offset=topicPartitionOffset.offset)
+                else:
+                    logger.warning(
+                        f"""You are attempting to seek on an TopicPartitionOffset that isn't in the
+                    consumer assignments. The code will simply ignore the seek request
+                    on this partition. {tp} is not in the partition assignment.
+                    The partition assignment is {assignments}."""
+                    )
 
     async def __aenter__(self) -> AsyncGenerator:
         """
@@ -129,14 +155,14 @@ class Stream:
     def __aiter__(self):
         return self
 
-    async def __anext__(self) -> structs.ConsumerRecord:
+    async def __anext__(self) -> ConsumerRecord:
         # This will be used only with async generators
         if not self.running:
             await self.start()
 
         try:
             # value is a ConsumerRecord, which is a dataclass
-            consumer_record: structs.ConsumerRecord = (
+            consumer_record: ConsumerRecord = (
                 await self.consumer.getone()  # type: ignore
             )
 
@@ -158,6 +184,7 @@ def stream(
     *,
     name: Optional[str] = None,
     deserializer: Optional[Deserializer] = None,
+    initial_offsets: Optional[List[TopicPartitionOffset]] = None,
     **kwargs,
 ) -> Callable[[StreamFunc], Stream]:
     def decorator(func: StreamFunc) -> Stream:
@@ -166,6 +193,7 @@ def stream(
             func=func,
             name=name,
             deserializer=deserializer,
+            initial_offsets=initial_offsets,
             config=kwargs,
         )
         update_wrapper(s, func)

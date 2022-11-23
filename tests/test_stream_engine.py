@@ -1,12 +1,95 @@
 import asyncio
+from typing import Set
 from unittest import mock
 
 import pytest
 
+from kstreams import TopicPartition
 from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
 from kstreams.exceptions import DuplicateStreamException, EngineNotStartedException
 from kstreams.streams import stream
+from kstreams.structs import TopicPartitionOffset
+
+
+@pytest.mark.asyncio
+async def test_seek_to_initial_offsets_normal(stream_engine: StreamEngine):
+    with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"):
+        with mock.patch(
+            "kstreams.clients.aiokafka.AIOKafkaConsumer.assignment"
+        ) as assignment:
+            stream_name = "example_stream"
+            offset = 100
+            partition = 100
+            topic_name = "example_topic"
+
+            assignments: Set[TopicPartition] = set()
+            assignments.add(TopicPartition(topic=topic_name, partition=partition))
+            assignment.return_value = assignments
+
+            @stream_engine.stream(
+                topic_name,
+                name=stream_name,
+                initial_offsets=[
+                    TopicPartitionOffset(
+                        topic=topic_name, partition=partition, offset=offset
+                    )
+                ],
+            )
+            async def consume(stream):
+                async for _ in stream:
+                    ...
+
+            stream = stream_engine.get_stream(stream_name)
+            with mock.patch(
+                "kstreams.clients.aiokafka.AIOKafkaConsumer.seek"
+            ) as mock_seek:
+                await stream.start()
+                mock_seek.assert_called_once_with(
+                    partition=TopicPartition(topic=topic_name, partition=partition),
+                    offset=offset,
+                )
+
+
+@pytest.mark.asyncio
+async def test_seek_to_initial_offsets_ignores_wrong_input(stream_engine: StreamEngine):
+    with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"):
+        with mock.patch(
+            "kstreams.clients.aiokafka.AIOKafkaConsumer.assignment"
+        ) as assignment:
+            stream_name = "example_stream"
+            offset = 100
+            partition = 100
+            topic_name = "example_topic"
+            wrong_topic = "different_topic"
+            wrong_partition = 1
+
+            assignments: Set[TopicPartition] = set()
+            assignments.add(TopicPartition(topic=topic_name, partition=partition))
+            assignment.return_value = assignments
+
+            @stream_engine.stream(
+                topic_name,
+                name=stream_name,
+                initial_offsets=[
+                    TopicPartitionOffset(
+                        topic=wrong_topic, partition=partition, offset=offset
+                    ),
+                    TopicPartitionOffset(
+                        topic=topic_name, partition=wrong_partition, offset=offset
+                    ),
+                ],
+            )
+            async def consume(stream):
+                async for _ in stream:
+                    ...
+
+            stream = stream_engine.get_stream(stream_name)
+            with mock.patch(
+                "kstreams.clients.aiokafka.AIOKafkaConsumer.seek"
+            ) as mock_seek:
+                await stream.start()
+                mock_seek.assert_not_called()
 
 
 @pytest.mark.asyncio

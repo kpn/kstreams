@@ -5,6 +5,8 @@ from typing import Any, Callable, Dict, List, Optional, Type, Union
 
 from aiokafka.structs import RecordMetadata
 
+from kstreams.structs import TopicPartitionOffset
+
 from .backends.kafka import Kafka
 from .clients import ConsumerType, ProducerType
 from .exceptions import DuplicateStreamException, EngineNotStartedException
@@ -165,11 +167,16 @@ class StreamEngine:
         *,
         name: Optional[str] = None,
         deserializer: Optional[Deserializer] = None,
+        initial_offsets: Optional[List[TopicPartitionOffset]] = None,
         **kwargs,
     ) -> Callable[[StreamFunc], Stream]:
         def decorator(func: StreamFunc) -> Stream:
             stream_from_func = stream(
-                topics, name=name, deserializer=deserializer, **kwargs
+                topics,
+                name=name,
+                deserializer=deserializer,
+                initial_offsets=initial_offsets,
+                **kwargs,
             )(func)
             self.add_stream(stream_from_func)
 

@@ -1,9 +1,10 @@
-from aiokafka.structs import ConsumerRecord
+from aiokafka.structs import ConsumerRecord, TopicPartition
 
 from .clients import Consumer, ConsumerType, Producer, ProducerType
 from .create import StreamEngine, create_engine
 from .prometheus.monitor import PrometheusMonitor, PrometheusMonitorType
 from .streams import Stream, stream
+from .structs import TopicPartitionOffset
 
 __all__ = [
     "Consumer",
@@ -17,4 +18,6 @@ __all__ = [
     "Stream",
     "stream",
     "ConsumerRecord",
+    "TopicPartition",
+    "TopicPartitionOffset",
 ]
