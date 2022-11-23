@@ -1,13 +1,19 @@
+import logging
 from collections import namedtuple
 from dataclasses import field
 from typing import Any, Dict, List, NamedTuple, Optional, Sequence, Tuple
 
 import pytest
 import pytest_asyncio
+from faker import Faker
 from pytest_httpserver import HTTPServer
 
-from kstreams import clients, create_engine
+from kstreams import ConsumerRecord, clients, create_engine
 from kstreams.utils import create_ssl_context_from_mem
+
+# Silence faker DEBUG logs
+logger = logging.getLogger("faker")
+logger.setLevel(logging.INFO)
 
 
 class RecordMetadata(NamedTuple):
@@ -180,3 +186,43 @@ def consumer_record_factory():
         )
 
     return consumer_record
+
+
+@pytest.fixture
+def fake():
+    return Faker()
+
+
+@pytest.fixture()
+def rand_consumer_record(fake: Faker):
+    """A random consumer record"""
+
+    def generate(
+        topic: Optional[str] = None,
+        headers: Optional[Sequence[Tuple[str, bytes]]] = None,
+        partition: Optional[int] = None,
+        offset: Optional[int] = None,
+        timestamp: Optional[int] = None,
+        timestamp_type: Optional[int] = None,
+        key: Optional[Any] = None,
+        value: Optional[Any] = None,
+        checksum: Optional[int] = None,
+        serialized_key_size: Optional[int] = None,
+        serialized_value_size: Optional[int] = None,
+    ) -> ConsumerRecord:
+
+        return ConsumerRecord(
+            topic=topic or fake.slug(),
+            headers=headers or tuple(),
+            partition=partition or fake.pyint(max_value=10),
+            offset=offset or fake.pyint(max_value=99999999),
+            timestamp=timestamp or fake.unix_time(),
+            timestamp_type=timestamp_type or 1,
+            key=key or fake.pystr(),
+            value=value or fake.pystr().encode(),
+            checksum=checksum or fake.pystr(),
+            serialized_key_size=serialized_key_size or fake.pyint(max_value=10),
+            serialized_value_size=serialized_value_size or fake.pyint(max_value=10),
+        )
+
+    return generate

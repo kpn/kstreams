@@ -72,6 +72,7 @@ if __name__ == "__main__":
 - [ ] Store (kafka streams pattern)
 - [ ] Stream Join
 - [ ] Windowing
+- [ ] PEP 593
 
 ## Development
 
