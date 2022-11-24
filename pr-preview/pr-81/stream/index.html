@@ -600,8 +600,12 @@
 </code></pre></div>
 <h3 id="starting-the-stream-with-initial-offsets">Starting the stream with initial offsets</h3>
 <p>If you want to start your consumption from certain offsets, you can include that in your stream instantiation.</p>
+<p>If you try to seek on a partition or topic that is not assigned to your stream, the code will ignore the seek
+and print out a warning. For example, if you have two consumers that are consuming from different partitions,
+and you try to seek for all of the partitions on each consumer, each consumer will seek for the partitions
+it has been asigned, and it will print out a warning log for the ones it was not assigned.</p>
 <div class="highlight"><span class="filename">Initial Offsets</span><pre><span></span><code><span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>
-<span class="n">initial_offsets</span><span class="p">:</span> <span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">stream_name</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">100</span><span class="p">)]</span>
+<span class="n">initial_offsets</span><span class="p">:</span> <span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">100</span><span class="p">)]</span>
 
 <span class="n">stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
     <span class="n">topic_name</span><span class="p">,</span>
