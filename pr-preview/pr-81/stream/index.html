@@ -276,6 +276,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#starting-the-stream-with-initial-offsets" class="md-nav__link">
+    Starting the stream with initial offsets
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -453,6 +460,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#starting-the-stream-with-initial-offsets" class="md-nav__link">
+    Starting the stream with initial offsets
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -583,6 +597,19 @@
 </code></pre></div>
 <h3 id="removing-a-stream-from-the-engine">Removing a stream from the engine</h3>
 <div class="highlight"><span class="filename">Removing stream</span><pre><span></span><code><span class="n">stream_engine</span><span class="o">.</span><span class="n">remove_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="starting-the-stream-with-initial-offsets">Starting the stream with initial offsets</h3>
+<p>If you want to start your consumption from certain offsets, you can include that in your stream instantiation.</p>
+<div class="highlight"><span class="filename">Initial Offsets</span><pre><span></span><code><span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>
+<span class="n">initial_offsets</span><span class="p">:</span> <span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">stream_name</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">100</span><span class="p">)]</span>
+
+<span class="n">stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
+    <span class="n">topic_name</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>  <span class="c1"># coroutine or async generator</span>
+    <span class="n">deserializer</span><span class="o">=</span><span class="n">MyDeserializer</span><span class="p">(),</span>
+    <span class="n">initial_offsets</span><span class="o">=</span><span class="n">initial_offsets</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="stream-crashing">Stream crashing</h2>
 <p>If your stream <code>crashes</code> for any reason, the event consumption will stop meaning that non event will be consumed from the <code>topic</code>.
