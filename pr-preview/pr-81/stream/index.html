@@ -602,15 +602,19 @@
 <p>If you want to start your consumption from certain offsets, you can include that in your stream instantiation.</p>
 <p>Use case:
 This feature is useful if one wants to manage their own offsets, rather than committing consumed offsets to Kafka.
-When an application manages its own offsets and tries to start a stream, Kafka doesn't know the last committed offset,
-and thus will start at a point decided by the auto_offset_reset param. Rather, the application can include initial_offsets,
-telling Kafka where to start the stream.</p>
+When an application manages its own offsets and tries to start a stream, we start the stream using the initial
+offsets as defined in the database.</p>
 <p>If you try to seek on a partition or topic that is not assigned to your stream, the code will ignore the seek
 and print out a warning. For example, if you have two consumers that are consuming from different partitions,
 and you try to seek for all of the partitions on each consumer, each consumer will seek for the partitions
 it has been assigned, and it will print out a warning log for the ones it was not assigned.</p>
-<div class="highlight"><span class="filename">Initial Offsets</span><pre><span></span><code><span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>
-<span class="n">initial_offsets</span><span class="p">:</span> <span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">100</span><span class="p">)]</span>
+<p>If you try to seek on offsets that are not yet present on your partition, the consumer will revert to the auto_offset_reset
+config. There will not be a warning, so be aware of this.</p>
+<p>Also be aware that when your application restarts, it most likely will trigger the initial_offsets again.
+This means that setting intial_offsets to be a hardcoded number might not get the results you expect.</p>
+<div class="highlight"><span class="filename">Initial Offsets from Database</span><pre><span></span><code><span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>
+<span class="n">db_table</span> <span class="o">=</span> <span class="n">ExampleDatabase</span><span class="p">()</span>
+<span class="n">initial_offsets</span><span class="p">:</span> <span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">db_table</span><span class="o">.</span><span class="n">offset</span><span class="p">)]</span>
 
 <span class="n">stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
     <span class="n">topic_name</span><span class="p">,</span>
