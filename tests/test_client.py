@@ -2,14 +2,13 @@ from unittest.mock import Mock
 
 import pytest
 
-from kstreams import StreamEngine
+from kstreams import StreamEngine, TopicPartition
 from kstreams.streams import Stream
 from kstreams.test_utils import (
     TestConsumer,
     TestProducer,
     TestStreamClient,
     TopicManager,
-    structs,
 )
 
 
@@ -60,7 +59,7 @@ async def test_streams_consume_events(stream_engine: StreamEngine):
     client = TestStreamClient(stream_engine)
     topic = "local--kstreams-consumer"
     event = b'{"message": "Hello world!"}'
-    tp = structs.TopicPartition(topic=topic, partition=0)
+    tp = TopicPartition(topic=topic, partition=0)
     save_to_db = Mock()
 
     @stream_engine.stream(topic, name="my-stream")
@@ -187,16 +186,16 @@ async def test_end_offsets(stream_engine: StreamEngine):
         await client.send(topic_name, value=value, key=key, partition=10)
 
         topic_partitions = [
-            structs.TopicPartition(topic_name, 0),
-            structs.TopicPartition(topic_name, 2),
-            structs.TopicPartition(topic_name, 10),
+            TopicPartition(topic_name, 0),
+            TopicPartition(topic_name, 2),
+            TopicPartition(topic_name, 10),
         ]
 
         stream = stream_engine.get_stream("my-stream")
         assert (await stream.consumer.end_offsets(topic_partitions)) == {
-            structs.TopicPartition(topic="local--kstreams", partition=0): 2,
-            structs.TopicPartition(topic="local--kstreams", partition=2): 1,
-            structs.TopicPartition(topic="local--kstreams", partition=10): 1,
+            TopicPartition(topic="local--kstreams", partition=0): 2,
+            TopicPartition(topic="local--kstreams", partition=2): 1,
+            TopicPartition(topic="local--kstreams", partition=10): 1,
         }
 
 
@@ -207,7 +206,7 @@ async def test_consumer_commit(stream_engine: StreamEngine):
     name = "my-stream"
     key = "1"
     partition = 2
-    tp = structs.TopicPartition(
+    tp = TopicPartition(
         topic=topic_name,
         partition=partition,
     )

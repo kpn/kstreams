@@ -79,6 +79,40 @@ if __name__ == "__main__":
 stream_engine.remove_stream(stream)
 ```
 
+### Starting the stream with initial offsets
+If you want to start your consumption from certain offsets, you can include that in your stream instantiation.
+
+Use case:
+This feature is useful if one wants to manage their own offsets, rather than committing consumed offsets to Kafka.
+When an application manages its own offsets and tries to start a stream, we start the stream using the initial
+offsets as defined in the database.
+
+If you try to seek on a partition or topic that is not assigned to your stream, the code will ignore the seek
+and print out a warning. For example, if you have two consumers that are consuming from different partitions,
+and you try to seek for all of the partitions on each consumer, each consumer will seek for the partitions
+it has been assigned, and it will print out a warning log for the ones it was not assigned.
+
+If you try to seek on offsets that are not yet present on your partition, the consumer will revert to the auto_offset_reset
+config. There will not be a warning, so be aware of this.
+
+Also be aware that when your application restarts, it most likely will trigger the initial_offsets again.
+This means that setting intial_offsets to be a hardcoded number might not get the results you expect.
+
+```python title="Initial Offsets from Database"
+
+topic_name = "local--kstreams"
+db_table = ExampleDatabase()
+initial_offsets: [List[TopicPartitionOffset]] = [TopicPartitionOffset(topic=topic_name, partition=0, offset=db_table.offset)]
+
+stream = Stream(
+    topic_name,
+    name="my-stream"
+    func=stream,  # coroutine or async generator
+    deserializer=MyDeserializer(),
+    initial_offsets=initial_offsets
+)
+```
+
 ## Stream crashing
 
 If your stream `crashes` for any reason, the event consumption will stop meaning that non event will be consumed from the `topic`.

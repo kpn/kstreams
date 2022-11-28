@@ -1,13 +1,12 @@
 from datetime import datetime
 from typing import Any, Coroutine, Dict, List, Optional, Set, Tuple
 
-from aiokafka.structs import ConsumerRecord
-
+from kstreams import ConsumerRecord, TopicPartition
 from kstreams.clients import Consumer, Producer
 from kstreams.serializers import Serializer
 from kstreams.types import Headers
 
-from .structs import RecordMetadata, TopicPartition
+from .structs import RecordMetadata
 from .topics import Topic, TopicManager
 
 

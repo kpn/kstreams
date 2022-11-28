@@ -122,6 +122,7 @@ In some cases your stream will commit, in this situation checking the commited p
 ```python
 import pytest
 from kstreams.test_utils import TestStreamClient
+from kstreams import TopicPartition
 
 from .example import produce, stream_engine
 
@@ -130,7 +131,7 @@ value = b'{"message": "Hello world!"}'
 name = "my-stream"
 key = "1"
 partition = 2
-tp = structs.TopicPartition(
+tp = TopicPartition(
     topic=topic_name,
     partition=partition,
 )
