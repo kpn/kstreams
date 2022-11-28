@@ -596,6 +596,7 @@ This allows to test <code>streams</code> without having producer code in your ap
 <p>In some cases your stream will commit, in this situation checking the commited partitions can be useful.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">from</span> <span class="nn">kstreams.test_utils</span> <span class="kn">import</span> <span class="n">TestStreamClient</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">TopicPartition</span>
 
 <span class="kn">from</span> <span class="nn">.example</span> <span class="kn">import</span> <span class="n">produce</span><span class="p">,</span> <span class="n">stream_engine</span>
 
@@ -604,7 +605,7 @@ This allows to test <code>streams</code> without having producer code in your ap
 <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;my-stream&quot;</span>
 <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
 <span class="n">partition</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">tp</span> <span class="o">=</span> <span class="n">structs</span><span class="o">.</span><span class="n">TopicPartition</span><span class="p">(</span>
+<span class="n">tp</span> <span class="o">=</span> <span class="n">TopicPartition</span><span class="p">(</span>
     <span class="n">topic</span><span class="o">=</span><span class="n">topic_name</span><span class="p">,</span>
     <span class="n">partition</span><span class="o">=</span><span class="n">partition</span><span class="p">,</span>
 <span class="p">)</span>
