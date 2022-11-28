@@ -1,3 +1,9 @@
+## 0.7.0 (2022-11-28)
+
+### Feat
+
+- adds ability for stream to be initiated with initial offsets
+
 ## 0.6.15 (2022-11-23)
 
 ### Perf
