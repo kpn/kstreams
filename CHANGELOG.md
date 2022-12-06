@@ -1,3 +1,9 @@
+## 0.7.1 (2022-12-06)
+
+### Fix
+
+- call deserializer regardless consumer_record value (#83)
+
 ## 0.7.0 (2022-11-28)
 
 ### Feat
