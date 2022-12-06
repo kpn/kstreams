@@ -24,8 +24,9 @@ class JsonDeserializer:
     async def deserialize(
         self, consumer_record: ConsumerRecord, **kwargs
     ) -> ConsumerRecord:
-        data = json.loads(consumer_record.value.decode())
-        consumer_record.value = data
+        if consumer_record.value is not None:
+            data = json.loads(consumer_record.value.decode())
+            consumer_record.value = data
         return consumer_record
 
 

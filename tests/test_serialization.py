@@ -28,8 +28,9 @@ class MySerializer:
 
 class MyDeserializer:
     async def deserialize(self, consumer_record: ConsumerRecord, **kwargs) -> Any:
-        data = consumer_record.value.decode()
-        return json.loads(data)
+        if consumer_record.value is not None:
+            data = consumer_record.value.decode()
+            return json.loads(data)
 
 
 @pytest.mark.asyncio
@@ -44,7 +45,6 @@ async def test_custom_serialization(stream_engine: StreamEngine, record_metadata
         "content-type": consts.APPLICATION_JSON,
     }
 
-    # with mock.patch.multiple(Consumer, start=mock.DEFAULT, stop=mock.DEFAULT):
     with mock.patch.multiple(Producer, start=mock.DEFAULT, send=send):
         await stream_engine.start()
 
@@ -70,14 +70,20 @@ async def test_custom_serialization(stream_engine: StreamEngine, record_metadata
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "value, headers",
+    (
+        (
+            {"message": "test"},
+            {"content-type": consts.APPLICATION_JSON, "event-type": "hello-world"},
+        ),
+        (None, {"event-type": "delete-hello-world"}),
+    ),
+)
 async def test_custom_deserialization(
-    stream_engine: StreamEngine, consumer_record_factory
+    stream_engine: StreamEngine, value: Optional[Dict], headers: Dict
 ):
     topic = "local--hello-kpn"
-    payload = {"message": "test"}
-    headers = {
-        "content-type": consts.APPLICATION_JSON,
-    }
     client = TestStreamClient(stream_engine)
 
     save_to_db = mock.Mock()
@@ -91,7 +97,7 @@ async def test_custom_deserialization(
         # encode payload with serializer
         await client.send(
             topic,
-            value=payload,
+            value=value,
             headers=headers,
             key="1",
             serializer=MySerializer(),
@@ -99,4 +105,4 @@ async def test_custom_deserialization(
 
     # The payload as been encoded with json,
     # we expect that the mock has been called with the original value (decoded)
-    save_to_db.assert_called_once_with(payload)
+    save_to_db.assert_called_once_with(value)
