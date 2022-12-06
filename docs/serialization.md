@@ -24,13 +24,11 @@ you may want to receive in your function the `dict` ready to be used. For those 
         docstring_section_style: table
         show_bases: false
 
-
 ::: kstreams.serializers.Deserializer
     options:
         show_root_heading: true
         docstring_section_style: table
         show_bases: false
-
 
 ## Usage
 

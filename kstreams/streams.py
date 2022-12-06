@@ -166,8 +166,9 @@ class Stream:
                 await self.consumer.getone()  # type: ignore
             )
 
-            # deserialize only when value and deserializer are present
-            if consumer_record.value is not None and self.deserializer is not None:
+            # call deserializer if there is one regarless consumer_record.value
+            # as the end user might want to do something extra with headers or metadata
+            if self.deserializer is not None:
                 return await self.deserializer.deserialize(consumer_record)
 
             return consumer_record

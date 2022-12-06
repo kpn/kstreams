@@ -21,6 +21,7 @@ class AvroDeserializer:
         """
         Deserialize a payload to an AvroModel
         """
-        data = self.model.deserialize(consumer_record.value)
-        consumer_record.value = data
+        if consumer_record.value is not None:
+            data = self.model.deserialize(consumer_record.value)
+            consumer_record.value = data
         return consumer_record
