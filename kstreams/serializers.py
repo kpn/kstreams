@@ -20,7 +20,7 @@ class Deserializer(Protocol):
 
     class JsonDeserializer:
 
-        async deserialize(self, consumer_record: ConsumerRecord):
+        async def deserialize(self, consumer_record: ConsumerRecord, **kwargs) -> Any:
             data = json.loads(consumer_record.value.decode())
             consumer_record.value = data
             return consumer_record
@@ -44,6 +44,7 @@ class Serializer(Protocol):
     For example a `JsonSerializer`
 
     ```python
+    from typing import Optional, Dict
     import json
 
     class JsonSerializer:
