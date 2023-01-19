@@ -110,9 +110,9 @@ def ssl_data():
 @pytest.fixture
 def ssl_context(ssl_data):
     ssl_context = create_ssl_context_from_mem(
-        ssl_data.cabundle,
-        ssl_data.cert,
-        ssl_data.key,
+        cadata=ssl_data.cabundle,
+        certdata=ssl_data.cert,
+        keydata=ssl_data.key,
     )
     return ssl_context
 

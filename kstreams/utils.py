@@ -13,7 +13,11 @@ def encode_headers(headers: types.Headers) -> types.EncodedHeaders:
 
 
 def create_ssl_context_from_mem(
-    cadata: Optional[str], certdata: str, keydata: str, password: Optional[str] = None
+    *,
+    certdata: str,
+    keydata: str,
+    password: Optional[str] = None,
+    cadata: Optional[str] = None,
 ) -> Optional[ssl.SSLContext]:
     """Create a SSL context from data on memory.
 
@@ -55,7 +59,7 @@ def create_ssl_context(
     certfile: str = None,
     keyfile: str = None,
     password: str = None,
-    crlfile=None
+    crlfile=None,
 ):
     """Wrapper of [aiokafka.helpers.create_ssl_context](
         https://aiokafka.readthedocs.io/en/stable/api.html#helpers
