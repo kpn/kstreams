@@ -586,11 +586,7 @@ certificate chain</p></td>
 
       <details class="quote">
         <summary>Source code in <code>kstreams/utils.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span>
 <span class="normal">57</span>
@@ -624,7 +620,11 @@ certificate chain</p></td>
 <span class="normal">85</span>
 <span class="normal">86</span>
 <span class="normal">87</span>
-<span class="normal">88</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_ssl_context</span><span class="p">(</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_ssl_context</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">cafile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">capath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -632,7 +632,7 @@ certificate chain</p></td>
     <span class="n">certfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">keyfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">crlfile</span><span class="o">=</span><span class="kc">None</span>
+    <span class="n">crlfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Wrapper of [aiokafka.helpers.create_ssl_context](</span>
 <span class="sd">        https://aiokafka.readthedocs.io/en/stable/api.html#helpers</span>
@@ -674,7 +674,7 @@ certificate chain</p></td>
 
 
 <h3 id="kstreams.utils.create_ssl_context_from_mem" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_ssl_context_from_mem</span><span class="p">(</span><span class="n">cadata</span><span class="p">,</span> <span class="n">certdata</span><span class="p">,</span> <span class="n">keydata</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_ssl_context_from_mem</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">certdata</span><span class="p">,</span> <span class="n">keydata</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
@@ -703,7 +703,7 @@ Usually the data is loaded from env variables.</p>
           </td>
           <td><p>certificates used to sign broker certificates provided as unicode str</p></td>
           <td>
-              <em>required</em>
+                <code>None</code>
           </td>
         </tr>
         <tr>
@@ -775,8 +775,16 @@ certificate chain</p></td>
 <span class="normal">44</span>
 <span class="normal">45</span>
 <span class="normal">46</span>
-<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_ssl_context_from_mem</span><span class="p">(</span>
-    <span class="n">cadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">certdata</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">keydata</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_ssl_context_from_mem</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">certdata</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">keydata</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Create a SSL context from data on memory.</span>
 
