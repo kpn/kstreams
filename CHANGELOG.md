@@ -1,3 +1,9 @@
+## 0.7.3 (2023-01-25)
+
+### Fix
+
+- TestStreamClient should not wait for topics that are empty (#93)
+
 ## 0.7.2 (2023-01-19)
 
 ### Fix
