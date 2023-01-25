@@ -80,6 +80,31 @@ async def test_streams_consume_events(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
+async def test_only_consume_topics_with_streams(stream_engine: StreamEngine):
+    """
+    The test creates a stream but no events are send to it,
+    it means that the `TestStreamClient` should not wait for the topic to be consumed
+    even thought the topic is exist.
+    """
+    client = TestStreamClient(stream_engine)
+    topic = "local--kstreams"
+
+    @stream_engine.stream("a-different-topic", name="my-stream")
+    async def consume(stream):
+        async for cr in stream:
+            ...
+
+    async with client:
+        metadata = await client.send(
+            topic, value=b'{"message": "Hello world!"}', key="1"
+        )
+
+        assert metadata.topic == topic
+        assert metadata.partition == 0
+        assert metadata.offset == 1
+
+
+@pytest.mark.asyncio
 async def test_topic_created(stream_engine: StreamEngine):
     topic_name = "local--kstreams"
     value = b'{"message": "Hello world!"}'
