@@ -115,9 +115,12 @@ class TopicManager:
     @classmethod
     async def join(cls) -> None:
         """
-        Wait for all topic messages to be processed
+        Wait for all topic messages to be processed.
+        Only topics that have a consumer assigned should be awaited.
         """
-        await asyncio.gather(*[topic.join() for topic in cls.topics.values()])
+        await asyncio.gather(
+            *[topic.join() for topic in cls.topics.values() if not topic.consumed]
+        )
 
     @classmethod
     def clean(cls) -> None:
