@@ -4,6 +4,7 @@ import pytest
 
 from kstreams import StreamEngine, TopicPartition
 from kstreams.streams import Stream
+from kstreams.structs import TopicPartitionOffset
 from kstreams.test_utils import (
     TestConsumer,
     TestProducer,
@@ -37,21 +38,21 @@ async def test_send_event_with_test_client(stream_engine: StreamEngine):
 
         assert metadata.topic == topic
         assert metadata.partition == 0
-        assert metadata.offset == 1
+        assert metadata.offset == 0
 
         # send another event and check that the offset was incremented
         metadata = await client.send(
             topic, value=b'{"message": "Hello world!"}', key="1"
         )
-        assert metadata.offset == 2
+        assert metadata.offset == 1
 
         # send en event to a different partition
         metadata = await client.send(
             topic, value=b'{"message": "Hello world!"}', key="1", partition=2
         )
 
-        # because it is a different partition the offset should be 1
-        assert metadata.offset == 1
+        # because it is a different partition the offset should be 0
+        assert metadata.offset == 0
 
 
 @pytest.mark.asyncio
@@ -101,7 +102,7 @@ async def test_only_consume_topics_with_streams(stream_engine: StreamEngine):
 
         assert metadata.topic == topic
         assert metadata.partition == 0
-        assert metadata.offset == 1
+        assert metadata.offset == 0
 
 
 @pytest.mark.asyncio
@@ -252,7 +253,7 @@ async def test_consumer_commit(stream_engine: StreamEngine):
 
     # check that everything was commited
     stream = stream_engine.get_stream(name)
-    assert (await stream.consumer.committed(tp)) == total_events
+    assert (await stream.consumer.committed(tp)) == total_events - 1
 
 
 @pytest.mark.asyncio
@@ -290,3 +291,50 @@ async def test_e2e_consume_multiple_topics():
         assert topic_2.total_events == total_events
 
         assert TopicManager.all_messages_consumed()
+
+@pytest.mark.asyncio
+async def test_streams_consume_events_with_initial_offsets(stream_engine: StreamEngine):
+    client = TestStreamClient(stream_engine)
+    topic = "local--kstreams-consumer"
+    event1 = b'{"message": "Hello world1!"}'
+    event2 = b'{"message": "Hello world2!"}'
+    event3 = b'{"message": "Hello world3!"}'
+    event4 = b'{"message": "Hello world4!"}'
+    tp1 = TopicPartition(topic=topic, partition=0)
+    tp2 = TopicPartition(topic=topic, partition=1)
+    process = Mock()
+
+    async with client:
+        await client.send(topic, value=event1, partition=0)
+        await client.send(topic, value=event2, partition=0)
+
+        # stream = stream_engine.get_stream("my-stream")
+
+        # assert stream.consumer.assignment() == [tp1, tp2]
+        # assert stream.consumer.last_stable_offset(tp) == 1
+        # assert stream.consumer.highwater(tp) == 1
+        # assert await stream.consumer.position(tp) == 1
+
+        async def func_stream(consumer: Stream):
+            async for cr in consumer:
+                process(cr.value)
+
+        stream: Stream = Stream(
+            topics=topic,
+            consumer_class=TestConsumer,
+            name="my-stream",
+            func=func_stream,
+            # initial_offsets=[
+            #     TopicPartitionOffset(topic=topic, partition=0, offset=1),
+            #     TopicPartitionOffset(topic=topic, partition=1, offset=1),
+            # ],
+        )
+        stream_engine.add_stream(stream)
+        await stream.start()
+
+        # # # check that the event was consumed
+
+        # process.assert_called_once_with(event1)
+        # process.assert_called_once_with(event2)
+        # process.assert_called_once_with(event3)
+        process.assert_called_once_with(event1)

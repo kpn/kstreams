@@ -31,9 +31,7 @@ class TestProducer(Base, Producer):
     ) -> Coroutine:
         topic = TopicManager.get_or_create(topic_name)
         timestamp_ms = timestamp_ms or datetime.now().timestamp()
-        total_partition_events = (
-            topic.get_total_partition_events(partition=partition) + 1
-        )
+        total_partition_events = topic.get_total_partition_events(partition=partition)
 
         consumer_record = ConsumerRecord(
             topic=topic_name,
@@ -72,6 +70,7 @@ class TestConsumer(Base, Consumer):
         self._assignment: List[TopicPartition] = []
         self._previous_topic: Optional[Topic] = None
         self.partitions_committed: Dict[TopicPartition, int] = {}
+        self._seek_vals: Dict[int, int] = {}
 
         for topic_name in topics:
             TopicManager.get_or_create(topic_name, consumer=self)
@@ -162,9 +161,19 @@ class TestConsumer(Base, Consumer):
                 break
 
         if topic is not None:
-            consumer_record = await topic.get()
-            self._check_partition_assignments(consumer_record)
-            self._previous_topic = topic
-            return consumer_record
-
+            while True:
+                consumer_record = await topic.get()
+                self._check_partition_assignments(consumer_record)
+                self._previous_topic = topic
+                if self._seek_vals.get(consumer_record.partition):
+                    if (
+                        consumer_record.offset
+                        >= self._seek_vals[consumer_record.partition]
+                    ):
+                        return consumer_record
+                else:
+                    return consumer_record
         return None
+
+    def seek(self, partition, offset):
+        self._seek_vals[partition.partition] = offset
