@@ -29,11 +29,9 @@ class TestProducer(Base, Producer):
         serializer: Optional[Serializer] = None,
         serializer_kwargs: Optional[Dict] = None,
     ) -> Coroutine:
-        topic = TopicManager.get_or_create(topic_name)
+        topic, _ = TopicManager.get_or_create(topic_name)
         timestamp_ms = timestamp_ms or datetime.now().timestamp()
-        total_partition_events = (
-            topic.get_total_partition_events(partition=partition) + 1
-        )
+        total_partition_events = topic.offset(partition=partition)
 
         consumer_record = ConsumerRecord(
             topic=topic_name,
@@ -42,7 +40,7 @@ class TestProducer(Base, Producer):
             headers=headers,
             partition=partition,
             timestamp=timestamp_ms,
-            offset=total_partition_events,
+            offset=total_partition_events + 1,
             timestamp_type=None,
             checksum=None,
             serialized_key_size=None,
@@ -56,7 +54,7 @@ class TestProducer(Base, Producer):
                 topic=topic_name,
                 partition=partition,
                 timestamp=timestamp_ms,
-                offset=total_partition_events,
+                offset=total_partition_events + 1,
             )
 
         return fut()
@@ -74,8 +72,18 @@ class TestConsumer(Base, Consumer):
         self.partitions_committed: Dict[TopicPartition, int] = {}
 
         for topic_name in topics:
-            TopicManager.get_or_create(topic_name, consumer=self)
-            self._assignment.append(TopicPartition(topic=topic_name, partition=0))
+            topic, created = TopicManager.get_or_create(topic_name, consumer=self)
+
+            if not created:
+                # It means that the topic already exist, so we are in
+                # the situation where the topic hs events and the Stream
+                # was added on runtime
+                topic.consumer = self
+
+            for partition_number in range(0, 3):
+                self._assignment.append(
+                    TopicPartition(topic=topic_name, partition=partition_number)
+                )
 
         # Called to make sure that has all the kafka attributes like _coordinator
         # so it will behave like an real Kafka Consumer
@@ -105,14 +113,23 @@ class TestConsumer(Base, Consumer):
         topic = TopicManager.get(topic_partition.topic)
 
         if topic is not None:
-            return topic.get_total_partition_events(partition=topic_partition.partition)
+            return topic.offset(partition=topic_partition.partition)
         return -1
 
     async def position(self, topic_partition: TopicPartition) -> int:
-        return self.last_stable_offset(topic_partition)
+        """
+        Get the offset of the *next record* that will be fetched,
+        so it returns offset(topic_partition) + 1
+        """
+        return self.last_stable_offset(topic_partition) + 1
 
     def highwater(self, topic_partition: TopicPartition) -> int:
-        return self.last_stable_offset(topic_partition)
+        """
+        A highwater offset is the offset that will be assigned to
+        the *next message* that is produced, so it returns
+        offset(topic_partition) + 1
+        """
+        return self.last_stable_offset(topic_partition) + 1
 
     async def commit(self, offsets: Optional[Dict[TopicPartition, int]] = None) -> None:
         if offsets is not None:
@@ -128,9 +145,7 @@ class TestConsumer(Base, Consumer):
     ) -> Dict[TopicPartition, int]:
         topic = TopicManager.get(partitions[0].topic)
         end_offsets = {
-            topic_partition: topic.get_total_partition_events(
-                partition=topic_partition.partition
-            )
+            topic_partition: topic.offset(partition=topic_partition.partition)
             for topic_partition in partitions
         }
         return end_offsets
@@ -168,3 +183,34 @@ class TestConsumer(Base, Consumer):
             return consumer_record
 
         return None
+
+    def seek(self, *, partition: TopicPartition, offset: int) -> None:
+        # This method intends to have the same signature as aiokafka but with kwargs
+        # rather than positional arguments
+        if partition.topic in self.topics:
+            topic = TopicManager.get(name=partition.topic)
+            partition_offset = topic.offset(partition=partition.partition)
+
+            # only consume if the offset to seek if <= the parition total events
+            if offset <= partition_offset:
+                consumed_events = 0
+
+                # keep consuming if the events to consume <= offset to seek
+                while consumed_events < offset:
+                    event = topic.get_nowait()
+                    topic.task_done()
+
+                    if event.partition == partition.partition:
+                        # only decrease if the event.partition matches
+                        # the partition that the user wants to seek
+                        consumed_events += 1
+                    else:
+                        # ideally each partition should be a Queue
+                        # for now just add the same event to the queue
+                        topic.put_nowait(event=event)
+
+                    # it means that this consumer can consume
+                    # from the TopicPartition so we can add it
+                    # to the _assignment
+                    if partition not in self._assignment:
+                        self._assignment.append(partition)

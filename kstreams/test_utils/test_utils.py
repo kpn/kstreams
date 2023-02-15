@@ -42,7 +42,6 @@ class TestStreamClient:
         # If there are streams, we must wait until all the messages are consumed
         if self.stream_engine._streams:
             await TopicManager.join()
-
         await self.stream_engine.stop()
 
         # restore original config

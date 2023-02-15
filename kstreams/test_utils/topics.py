@@ -1,7 +1,7 @@
 import asyncio
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import ClassVar, DefaultDict, Dict, Optional
+from typing import ClassVar, DefaultDict, Dict, Optional, Tuple
 
 from kstreams import ConsumerRecord
 
@@ -13,7 +13,7 @@ class Topic:
     name: str
     queue: asyncio.Queue
     total_partition_events: DefaultDict[int, int] = field(
-        default_factory=lambda: defaultdict(int)
+        default_factory=lambda: defaultdict(lambda: -1)
     )
     total_events: int = 0
     # for now we assumed that 1 streams is connected to 1 topic
@@ -29,6 +29,12 @@ class Topic:
     async def get(self) -> ConsumerRecord:
         return await self.queue.get()
 
+    def get_nowait(self) -> ConsumerRecord:
+        return self.queue.get_nowait()
+
+    def put_nowait(self, *, event: ConsumerRecord) -> None:
+        return self.queue.put_nowait(event)
+
     def task_done(self) -> None:
         self.queue.task_done()
 
@@ -41,7 +47,7 @@ class Topic:
     def size(self) -> int:
         return self.queue.qsize()
 
-    def get_total_partition_events(self, *, partition: int) -> int:
+    def offset(self, *, partition: int) -> int:
         return self.total_partition_events[partition]
 
     @property
@@ -91,15 +97,21 @@ class TopicManager:
     @classmethod
     def get_or_create(
         cls, name: str, consumer: Optional["test_clients.Consumer"] = None
-    ) -> Topic:
+    ) -> Tuple[Topic, bool]:
         """
-        Add a new queue if does not exist and return it
+        A convenience method for looking up Topic by name.
+        If the topic does not exist a new one is created.
+
+        Returns a tuple of (Topic, created), where Topic is the
+        retrieved or created object and created is a boolean
+        specifying whether a new Topic was created.
         """
         try:
             topic = cls.get(name)
+            return topic, False
         except ValueError:
             topic = cls.create(name, consumer=consumer)
-        return topic
+            return topic, True
 
     @classmethod
     def all_messages_consumed(cls) -> bool:
