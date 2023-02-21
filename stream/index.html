@@ -70,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#creating-a-stream-instance" class="md-skip">
+        <a href="#streams" class="md-skip">
           Skip to content
         </a>
       
@@ -230,6 +230,21 @@
 
   
   
+  
+    <li class="md-nav__item">
+      <a href="../engine/" class="md-nav__link">
+        StreamEngine
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
     
   
   
@@ -237,6 +252,8 @@
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
+      
+        
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
@@ -254,12 +271,34 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kstreams.streams.Stream" class="md-nav__link">
+    Stream
+  </a>
+  
+    <nav class="md-nav" aria-label="Stream">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.streams.Stream.__aenter__" class="md-nav__link">
+    __aenter__()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#creating-a-stream-instance" class="md-nav__link">
@@ -438,12 +477,34 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kstreams.streams.Stream" class="md-nav__link">
+    Stream
+  </a>
+  
+    <nav class="md-nav" aria-label="Stream">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.streams.Stream.__aenter__" class="md-nav__link">
+    __aenter__()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#creating-a-stream-instance" class="md-nav__link">
@@ -525,17 +586,102 @@
 
 
 
-  <h1>Stream</h1>
-
+<h1 id="streams">Streams</h1>
 <p>A <code>Stream</code> in <code>kstreams</code> is an extension of <a href="https://aiokafka.readthedocs.io/en/stable/consumer.html">AIOKafkaConsumer</a></p>
 <p>Consuming can be done using <code>kstreams.Stream</code>. You only need to decorate a <code>coroutine</code> with <code>@stream_engine.streams</code>. The decorator has the same  <a href="https://aiokafka.readthedocs.io/en/stable/api.html#aiokafkaconsumer-class">aiokafka consumer</a> API at initialization, in other words they accept the same <code>args</code> and <code>kwargs</code> that the <code>aiokafka consumer</code> accepts.</p>
-<div class="highlight"><span class="filename">Stream usage</span><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="kstreams.streams.Stream" class="doc doc-heading">
+        <code>kstreams.streams.Stream</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents first">
+
+  
+
+  <p><strong>Attributes:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>name</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Stream name</p></td>
+        </tr>
+        <tr>
+          <td><code>topics</code></td>
+          <td>
+                <code><span title="typing.List">List</span>[str]</code>
+          </td>
+          <td><p>List of topics to consume</p></td>
+        </tr>
+        <tr>
+          <td><code>backend</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" href="../#kstreams">kstreams</a>.<span title="kstreams.backends">backends</span>.<a class="autorefs autorefs-internal" title="kstreams.backends.Kafka" href="../backends/#kstreams.backends.kafka.Kafka">Kafka</a></code>
+          </td>
+          <td><p>backend kstreams.backends.kafka.Kafka:
+Backend to connect. Default <code>Kafka</code></p></td>
+        </tr>
+        <tr>
+          <td><code>func</code></td>
+          <td>
+                <code><span title="typing.Callable">Callable</span>[[<a class="autorefs autorefs-internal" title="kstreams.streams.Stream" href="#kstreams.streams.Stream">Stream</a>], <span title="typing.Awaitable">Awaitable</span>[<span title="typing.Any">Any</span>]]</code>
+          </td>
+          <td><p>Coroutine fucntion or generator
+to be called when an event arrives</p></td>
+        </tr>
+        <tr>
+          <td><code>config</code></td>
+          <td>
+                <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Any">Any</span>]</code>
+          </td>
+          <td><p>Stream configuration. Here all the
+<a href="https://aiokafka.readthedocs.io/en/stable/api.html#consumer-class">properties</a>
+can be passed in the dictionary</p></td>
+        </tr>
+        <tr>
+          <td><code>deserializer</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" href="../#kstreams">kstreams</a>.<span title="kstreams.serializers">serializers</span>.<a class="autorefs autorefs-internal" title="kstreams.serializers.Deserializer" href="../serialization/#kstreams.serializers.Deserializer">Deserializer</a></code>
+          </td>
+          <td><p>Deserializer to be used
+when an event is consumed</p></td>
+        </tr>
+        <tr>
+          <td><code>initial_offsets</code></td>
+          <td>
+                <code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="../#kstreams">kstreams</a>.<span title="kstreams.TopicPartitionOffset">TopicPartitionOffset</span>]</code>
+          </td>
+          <td><p>List of
+TopicPartitionOffset that will <code>seek</code> the initial offsets to</p></td>
+        </tr>
+    </tbody>
+  </table>
+      <div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><span class="filename">Usage</span><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
 
 
-<span class="c1"># here you can add any other AIOKafkaConsumer config, for example auto_offset_reset</span>
+<span class="c1"># here you can add any other AIOKafkaConsumer config</span>
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
@@ -552,9 +698,513 @@
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start</span><span class="p">(),</span> <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">shutdown</span><span class="p">)</span>
+    <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">start</span><span class="p">(),</span>
+        <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">shutdown</span>
+    <span class="p">)</span>
 </code></pre></div>
-<h2 id="creating-a-stream-instance">Creating a Stream instance</h2>
+</div>
+
+
+        <details class="quote">
+          <summary>Source code in <code>kstreams/streams.py</code></summary>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        name str: Stream name</span>
+<span class="sd">        topics List[str]: List of topics to consume</span>
+<span class="sd">        backend kstreams.backends.Kafka: backend kstreams.backends.kafka.Kafka:</span>
+<span class="sd">            Backend to connect. Default `Kafka`</span>
+<span class="sd">        func Callable[[&quot;Stream&quot;], Awaitable[Any]]: Coroutine fucntion or generator</span>
+<span class="sd">            to be called when an event arrives</span>
+<span class="sd">        config Dict[str, Any]: Stream configuration. Here all the</span>
+<span class="sd">         [properties](https://aiokafka.readthedocs.io/en/stable/api.html#consumer-class)</span>
+<span class="sd">            can be passed in the dictionary</span>
+<span class="sd">        deserializer kstreams.serializers.Deserializer: Deserializer to be used</span>
+<span class="sd">            when an event is consumed</span>
+<span class="sd">        initial_offsets List[kstreams.TopicPartitionOffset]: List of</span>
+<span class="sd">            TopicPartitionOffset that will `seek` the initial offsets to</span>
+
+<span class="sd">    !!! Example</span>
+<span class="sd">        ```python title=&quot;Usage&quot;</span>
+<span class="sd">        import aiorun</span>
+<span class="sd">        from kstreams import create_engine</span>
+
+<span class="sd">        stream_engine = create_engine(title=&quot;my-stream-engine&quot;)</span>
+
+
+<span class="sd">        # here you can add any other AIOKafkaConsumer config</span>
+<span class="sd">        @stream_engine.stream(&quot;local--kstreams&quot;, group_id=&quot;de-my-partition&quot;)</span>
+<span class="sd">        async def stream(stream: Stream) -&gt; None:</span>
+<span class="sd">            async for cr in stream:</span>
+<span class="sd">                print(f&quot;Event consumed: headers: {cr.headers}, payload: {cr.value}&quot;)</span>
+
+
+<span class="sd">        async def start():</span>
+<span class="sd">            await stream_engine.start()</span>
+<span class="sd">            await produce()</span>
+
+
+<span class="sd">        async def shutdown(loop):</span>
+<span class="sd">            await stream_engine.stop()</span>
+
+
+<span class="sd">        if __name__ == &quot;__main__&quot;:</span>
+<span class="sd">            aiorun.run(</span>
+<span class="sd">                start(),</span>
+<span class="sd">                stop_on_unhandled_errors=True,</span>
+<span class="sd">                shutdown_callback=shutdown</span>
+<span class="sd">            )</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">topics</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;Stream&quot;</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
+        <span class="n">backend</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Kafka</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">consumer_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">ConsumerType</span><span class="p">]</span> <span class="o">=</span> <span class="n">Consumer</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">deserializer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Deserializer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">initial_offsets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer_class</span> <span class="o">=</span> <span class="n">consumer_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">ConsumerType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Task</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span> <span class="o">=</span> <span class="n">deserializer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_offsets</span> <span class="o">=</span> <span class="n">initial_offsets</span>
+
+        <span class="c1"># aiokafka expects topic names as arguments, meaning that</span>
+        <span class="c1"># can receive N topics -&gt; N arguments,</span>
+        <span class="c1"># so we always create a list and then we expand it with *topics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">topics</span> <span class="o">=</span> <span class="p">[</span><span class="n">topics</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">topics</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">topics</span>
+
+    <span class="k">def</span> <span class="nf">_create_consumer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">ConsumerType</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BackendNotSet</span><span class="p">(</span><span class="s2">&quot;A backend has not been set for this stream&quot;</span><span class="p">)</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer_class</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AsyncGenerator</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">async</span> <span class="k">def</span> <span class="nf">func_wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># await for the end user coroutine</span>
+                <span class="c1"># we do this to show a better error message to the user</span>
+                <span class="c1"># when the coroutine fails</span>
+                <span class="k">await</span> <span class="n">func</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;CRASHED Stream!!! Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="si">}</span><span class="s2"> </span><span class="se">\n\n</span><span class="s2"> </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Always create a consumer on stream.start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_consumer</span><span class="p">()</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seek_to_initial_offsets</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isasyncgen</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">func</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># It is not an async_generator so we need to</span>
+            <span class="c1"># create an asyncio.Task with func</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">func_wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_seek_to_initial_offsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">assignments</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">assignment</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_offsets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">topicPartitionOffset</span><span class="p">:</span> <span class="n">TopicPartitionOffset</span>
+            <span class="k">for</span> <span class="n">topicPartitionOffset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_offsets</span><span class="p">:</span>
+                <span class="n">tp</span> <span class="o">=</span> <span class="n">TopicPartition</span><span class="p">(</span>
+                    <span class="n">topic</span><span class="o">=</span><span class="n">topicPartitionOffset</span><span class="o">.</span><span class="n">topic</span><span class="p">,</span>
+                    <span class="n">partition</span><span class="o">=</span><span class="n">topicPartitionOffset</span><span class="o">.</span><span class="n">partition</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">tp</span> <span class="ow">in</span> <span class="n">assignments</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">partition</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">topicPartitionOffset</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;&quot;&quot;You are attempting to seek on an TopicPartitionOffset that isn&#39;t in the</span>
+<span class="s2">                    consumer assignments. The code will simply ignore the seek request</span>
+<span class="s2">                    on this partition. </span><span class="si">{</span><span class="n">tp</span><span class="si">}</span><span class="s2"> is not in the partition assignment.</span>
+<span class="s2">                    The partition assignment is </span><span class="si">{</span><span class="n">assignments</span><span class="si">}</span><span class="s2">.&quot;&quot;&quot;</span>
+                    <span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Start the kafka Consumer and return an `async_gen` so it can be iterated</span>
+
+<span class="sd">        !!! Example</span>
+<span class="sd">            ```python title=&quot;Usage&quot;</span>
+<span class="sd">            @stream_engine.stream(topic, group_id=group_id, ...)</span>
+<span class="sd">            async def stream(consumer):</span>
+<span class="sd">                async for cr, value, headers in consumer:</span>
+<span class="sd">                    yield value</span>
+
+
+<span class="sd">            # Iterate the stream:</span>
+<span class="sd">            async with stream as stream_flow:</span>
+<span class="sd">                async for value in stream_flow:</span>
+<span class="sd">                    ...</span>
+<span class="sd">            ```</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting async_gen Stream....&quot;</span><span class="p">)</span>
+        <span class="n">async_gen</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="c1"># For now ignoring the typing issue. The start method might be splited</span>
+        <span class="k">return</span> <span class="n">async_gen</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__aexit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stopping async_gen Stream....&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__aiter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__anext__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConsumerRecord</span><span class="p">:</span>
+        <span class="c1"># This will be used only with async generators</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># value is a ConsumerRecord, which is a dataclass</span>
+            <span class="n">consumer_record</span><span class="p">:</span> <span class="n">ConsumerRecord</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">getone</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+            <span class="p">)</span>
+
+            <span class="c1"># call deserializer if there is one regarless consumer_record.value</span>
+            <span class="c1"># as the end user might want to do something extra with headers or metadata</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">consumer_record</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">consumer_record</span>
+        <span class="k">except</span> <span class="n">errors</span><span class="o">.</span><span class="n">ConsumerStoppedError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopAsyncIteration</span>  <span class="c1"># noqa: F821</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="kstreams.streams.Stream.__aenter__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__aenter__</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Start the kafka Consumer and return an <code>async_gen</code> so it can be iterated</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><span class="filename">Usage</span><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="n">group_id</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">consumer</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">headers</span> <span class="ow">in</span> <span class="n">consumer</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">value</span>
+
+
+<span class="c1"># Iterate the stream:</span>
+<span class="k">async</span> <span class="k">with</span> <span class="n">stream</span> <span class="k">as</span> <span class="n">stream_flow</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">stream_flow</span><span class="p">:</span>
+        <span class="o">...</span>
+</code></pre></div>
+</div>
+
+      <details class="quote">
+        <summary>Source code in <code>kstreams/streams.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Start the kafka Consumer and return an `async_gen` so it can be iterated</span>
+
+<span class="sd">    !!! Example</span>
+<span class="sd">        ```python title=&quot;Usage&quot;</span>
+<span class="sd">        @stream_engine.stream(topic, group_id=group_id, ...)</span>
+<span class="sd">        async def stream(consumer):</span>
+<span class="sd">            async for cr, value, headers in consumer:</span>
+<span class="sd">                yield value</span>
+
+
+<span class="sd">        # Iterate the stream:</span>
+<span class="sd">        async with stream as stream_flow:</span>
+<span class="sd">            async for value in stream_flow:</span>
+<span class="sd">                ...</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting async_gen Stream....&quot;</span><span class="p">)</span>
+    <span class="n">async_gen</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="c1"># For now ignoring the typing issue. The start method might be splited</span>
+    <span class="k">return</span> <span class="n">async_gen</span>  <span class="c1"># type: ignore</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div><h2 id="creating-a-stream-instance">Creating a Stream instance</h2>
 <p>If for any reason you need to create <code>Streams</code> instances directly, you can do it without using the decorator <code>stream_engine.stream</code>.</p>
 <div class="highlight"><span class="filename">Stream instance</span><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
@@ -612,16 +1262,24 @@ it has been assigned, and it will print out a warning log for the ones it was no
 config. There will not be a warning, so be aware of this.</p>
 <p>Also be aware that when your application restarts, it most likely will trigger the initial_offsets again.
 This means that setting intial_offsets to be a hardcoded number might not get the results you expect.</p>
-<div class="highlight"><span class="filename">Initial Offsets from Database</span><pre><span></span><code><span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>
+<div class="highlight"><span class="filename">Initial Offsets from Database</span><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">structs</span>
+
+
+<span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>
 <span class="n">db_table</span> <span class="o">=</span> <span class="n">ExampleDatabase</span><span class="p">()</span>
-<span class="n">initial_offsets</span><span class="p">:</span> <span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">db_table</span><span class="o">.</span><span class="n">offset</span><span class="p">)]</span>
+<span class="n">initial_offset</span> <span class="o">=</span> <span class="n">structs</span><span class="o">.</span><span class="n">TopicPartitionOffset</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">db_table</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">my_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
+    <span class="o">...</span>
+
 
 <span class="n">stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
     <span class="n">topic_name</span><span class="p">,</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span>
-    <span class="n">func</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>  <span class="c1"># coroutine or async generator</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">,</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">my_stream</span><span class="p">,</span>  <span class="c1"># coroutine or async generator</span>
     <span class="n">deserializer</span><span class="o">=</span><span class="n">MyDeserializer</span><span class="p">(),</span>
-    <span class="n">initial_offsets</span><span class="o">=</span><span class="n">initial_offsets</span>
+    <span class="n">initial_offsets</span><span class="o">=</span><span class="p">[</span><span class="n">initial_offset</span><span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="stream-crashing">Stream crashing</h2>
@@ -743,7 +1401,7 @@ meaning that the lag will increase.</p>
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../getting_started/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Getting Started" rel="prev">
+        <a href="../engine/" class="md-footer__link md-footer__link--prev" aria-label="Previous: StreamEngine" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -752,7 +1410,7 @@ meaning that the lag will increase.</p>
               <span class="md-footer__direction">
                 Previous
               </span>
-              Getting Started
+              StreamEngine
             </div>
           </div>
         </a>
