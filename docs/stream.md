@@ -1,33 +1,14 @@
+# Streams
+
 A `Stream` in `kstreams` is an extension of [AIOKafkaConsumer](https://aiokafka.readthedocs.io/en/stable/consumer.html)
 
 Consuming can be done using `kstreams.Stream`. You only need to decorate a `coroutine` with `@stream_engine.streams`. The decorator has the same  [aiokafka consumer](https://aiokafka.readthedocs.io/en/stable/api.html#aiokafkaconsumer-class) API at initialization, in other words they accept the same `args` and `kwargs` that the `aiokafka consumer` accepts.
 
-```python title="Stream usage"
-import aiorun
-from kstreams import create_engine
-
-stream_engine = create_engine(title="my-stream-engine")
-
-
-# here you can add any other AIOKafkaConsumer config, for example auto_offset_reset
-@stream_engine.stream("local--kstreams", group_id="de-my-partition")
-async def stream(stream: Stream) -> None:
-    async for cr in stream:
-        print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
-
-
-async def start():
-    await stream_engine.start()
-    await produce()
-
-
-async def shutdown(loop):
-    await stream_engine.stop()
-
-
-if __name__ == "__main__":
-    aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)
-```
+::: kstreams.streams.Stream
+    options:
+        show_root_heading: true
+        docstring_section_style: table
+        show_signature_annotations: false
 
 ## Creating a Stream instance
 
@@ -75,11 +56,13 @@ if __name__ == "__main__":
 ```
 
 ### Removing a stream from the engine
+
 ```python title="Removing stream"
 stream_engine.remove_stream(stream)
 ```
 
 ### Starting the stream with initial offsets
+
 If you want to start your consumption from certain offsets, you can include that in your stream instantiation.
 
 Use case:
@@ -99,17 +82,24 @@ Also be aware that when your application restarts, it most likely will trigger t
 This means that setting intial_offsets to be a hardcoded number might not get the results you expect.
 
 ```python title="Initial Offsets from Database"
+from kstreams import Stream, structs
+
 
 topic_name = "local--kstreams"
 db_table = ExampleDatabase()
-initial_offsets: [List[TopicPartitionOffset]] = [TopicPartitionOffset(topic=topic_name, partition=0, offset=db_table.offset)]
+initial_offset = structs.TopicPartitionOffset(topic=topic_name, partition=0, offset=db_table.offset)
+
+
+async def my_stream(stream: Stream):
+    ...
+
 
 stream = Stream(
     topic_name,
-    name="my-stream"
-    func=stream,  # coroutine or async generator
+    name="my-stream",
+    func=my_stream,  # coroutine or async generator
     deserializer=MyDeserializer(),
-    initial_offsets=initial_offsets
+    initial_offsets=[initial_offset],
 )
 ```
 

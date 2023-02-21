@@ -27,6 +27,7 @@ extra_css:
 nav:
   - Introduction: 'index.md'
   - Getting Started: 'getting_started.md'
+  - StreamEngine: 'engine.md'
   - Stream: 'stream.md'
   - Backends: 'backends.md'
   - Metrics: 'metrics.md'
