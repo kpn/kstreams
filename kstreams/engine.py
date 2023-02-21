@@ -21,6 +21,41 @@ logger = logging.getLogger(__name__)
 
 
 class StreamEngine:
+    """
+    Attributes:
+        backend kstreams.backends.Kafka: Backend to connect. Default `Kafka`
+        consumer_class kstreams.Consumer: The consumer class to use when
+            instanciate a consumer. Default kstreams.Consumer
+        producer_class kstreams.Producer: The producer class to use when
+            instanciate the producer. Default kstreams.Producer
+        monitor kstreams.PrometheusMonitor: Prometheus monitor that holds
+            the [metrics](https://kpn.github.io/kstreams/metrics/)
+        title str | None: Engine name
+        serializer kstreams.serializers.Serializer | None: Serializer to
+            use when an event is produced.
+        deserializer kstreams.serializers.Deserializer | None: Deserializer
+            to be used when an event is consumed.
+            If provided it will be used in all Streams instances as a general one.
+            To override it per Stream, you can provide one per Stream
+
+    !!! Example
+        ```python title="Usage"
+        import kstreams
+
+        stream_engine = kstreams.create_engine(
+            title="my-stream-engine"
+        )
+
+        @kstreams.stream("local--hello-world", group_id="example-group")
+        async def consume(stream: kstreams.Stream) -> None:
+            async for cr in stream:
+                print(f"showing bytes: {cr.value}")
+
+
+        await stream_engine.start()
+        ```
+    """
+
     def __init__(
         self,
         *,
@@ -54,6 +89,18 @@ class StreamEngine:
         serializer: Optional[Serializer] = None,
         serializer_kwargs: Optional[Dict] = None,
     ):
+        """
+        Attributes:
+            topic str: Topic name to send the event to
+            value Any: Event value
+            key str | None: Event key
+            partition int | None: Topic partition
+            timestamp_ms int | None: Event timestamp in miliseconds
+            headers Dict[str, str] | None: Event headers
+            serializer kstreams.serializers.Serializer | None: Serializer to
+                encode the event
+            serializer_kwargs Dict[str, Any] | None: Serializer kwargs
+        """
         if self._producer is None:
             raise EngineNotStartedException()
 

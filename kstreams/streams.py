@@ -30,6 +30,55 @@ logger = logging.getLogger(__name__)
 
 
 class Stream:
+    """
+    Attributes:
+        name str: Stream name
+        topics List[str]: List of topics to consume
+        backend kstreams.backends.Kafka: backend kstreams.backends.kafka.Kafka:
+            Backend to connect. Default `Kafka`
+        func Callable[["Stream"], Awaitable[Any]]: Coroutine fucntion or generator
+            to be called when an event arrives
+        config Dict[str, Any]: Stream configuration. Here all the
+         [properties](https://aiokafka.readthedocs.io/en/stable/api.html#consumer-class)
+            can be passed in the dictionary
+        deserializer kstreams.serializers.Deserializer: Deserializer to be used
+            when an event is consumed
+        initial_offsets List[kstreams.TopicPartitionOffset]: List of
+            TopicPartitionOffset that will `seek` the initial offsets to
+
+    !!! Example
+        ```python title="Usage"
+        import aiorun
+        from kstreams import create_engine
+
+        stream_engine = create_engine(title="my-stream-engine")
+
+
+        # here you can add any other AIOKafkaConsumer config
+        @stream_engine.stream("local--kstreams", group_id="de-my-partition")
+        async def stream(stream: Stream) -> None:
+            async for cr in stream:
+                print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
+
+
+        async def start():
+            await stream_engine.start()
+            await produce()
+
+
+        async def shutdown(loop):
+            await stream_engine.stop()
+
+
+        if __name__ == "__main__":
+            aiorun.run(
+                start(),
+                stop_on_unhandled_errors=True,
+                shutdown_callback=shutdown
+            )
+        ```
+    """
+
     def __init__(
         self,
         topics: Union[List[str], str],
@@ -129,9 +178,10 @@ class Stream:
 
     async def __aenter__(self) -> AsyncGenerator:
         """
-        Start the kafka Consumer and return an async_gen so it can be iterated
+        Start the kafka Consumer and return an `async_gen` so it can be iterated
 
-        Usage:
+        !!! Example
+            ```python title="Usage"
             @stream_engine.stream(topic, group_id=group_id, ...)
             async def stream(consumer):
                 async for cr, value, headers in consumer:
@@ -142,6 +192,7 @@ class Stream:
             async with stream as stream_flow:
                 async for value in stream_flow:
                     ...
+            ```
         """
         logger.info("Starting async_gen Stream....")
         async_gen = await self.start()
