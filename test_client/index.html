@@ -490,7 +490,13 @@
 
 
 <h1 id="testing">Testing</h1>
-<p>To test <code>streams</code> and <code>producers</code> or perform <code>e2e</code> tests you can make use of the <code>test_utils.TestStreamClient</code>. The <code>TestStreamClient</code> can send events so you won't need to mock the <code>producer</code>.</p>
+<p>To test <code>streams</code> and <code>producers</code> or perform <code>e2e</code> tests you can make use of the <code>test_utils.TestStreamClient</code>.</p>
+<p>The <code>TestStreamClient</code> aims to emulate as much as possible the <code>kafka</code> behaviour using <code>asyncio.Queue</code>. This is excellent because you can test quite easily your code without spinning up <code>kafka</code>, but this comes with some limitations. It is not possible to know beforehand how many topics exist, how many partitions per topic exist, the replication factor, current offsets, etc. So, the <code>test client</code> will create <code>topics</code>, <code>partitions</code>, <code>assigments</code>, etc on runtime. Each <code>Stream</code> in your application will have assigned 3 partitions per topic by default (0, 1 and 2) during <em><code>test environment</code></em></p>
+<p>With the <code>test client</code> you can:</p>
+<ul>
+<li>Send events so you won't need to mock the <code>producer</code></li>
+<li>Call the consumer code, then the client will make sure that all the events are consumed before leaving the <code>async context</code></li>
+</ul>
 <h2 id="using-teststreamclient">Using <code>TestStreamClient</code></h2>
 <p>Import <code>TestStreamClient</code>.</p>
 <p>Create a <code>TestStreamClient</code> by passing the <strong>engine</strong> instance to it.</p>
