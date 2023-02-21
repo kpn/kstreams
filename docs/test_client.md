@@ -1,6 +1,13 @@
 # Testing
 
-To test `streams` and `producers` or perform `e2e` tests you can make use of the `test_utils.TestStreamClient`. The `TestStreamClient` can send events so you won't need to mock the `producer`.
+To test `streams` and `producers` or perform `e2e` tests you can make use of the `test_utils.TestStreamClient`.
+
+The `TestStreamClient` aims to emulate as much as possible the `kafka` behaviour using `asyncio.Queue`. This is excellent because you can test quite easily your code without spinning up `kafka`, but this comes with some limitations. It is not possible to know beforehand how many topics exist, how many partitions per topic exist, the replication factor, current offsets, etc. So, the `test client` will create `topics`, `partitions`, `assigments`, etc on runtime. Each `Stream` in your application will have assigned 3 partitions per topic by default (0, 1 and 2) during *`test environment`*
+
+With the `test client` you can:
+
+- Send events so you won't need to mock the `producer`
+- Call the consumer code, then the client will make sure that all the events are consumed before leaving the `async context`
 
 ## Using `TestStreamClient`
 
