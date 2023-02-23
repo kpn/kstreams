@@ -1,10 +1,10 @@
 import asyncio
-from typing import Set
+from typing import Callable, Set
 from unittest import mock
 
 import pytest
 
-from kstreams import TopicPartition
+from kstreams import ConsumerRecord, TopicPartition
 from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
 from kstreams.exceptions import DuplicateStreamException, EngineNotStartedException
@@ -313,7 +313,7 @@ async def test_add_stream_custom_conf(stream_engine: StreamEngine):
 
 @pytest.mark.asyncio
 async def test_add_stream_as_generator(
-    stream_engine: StreamEngine, consumer_record_factory
+    stream_engine: StreamEngine, consumer_record_factory: Callable[..., ConsumerRecord]
 ):
     @stream_engine.stream("local--hello-kpn")
     async def stream(consumer):

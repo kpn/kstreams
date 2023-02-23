@@ -24,6 +24,7 @@ from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
 from .clients import Consumer, ConsumerType
+from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
 
 logger = logging.getLogger(__name__)
@@ -45,6 +46,8 @@ class Stream:
             when an event is consumed
         initial_offsets List[kstreams.TopicPartitionOffset]: List of
             TopicPartitionOffset that will `seek` the initial offsets to
+        rebalance_listener kstreams.rebalance_listener.RebalanceListener: Listener
+            callbacks when partition are assigned or revoked
 
     !!! Example
         ```python title="Usage"
@@ -91,6 +94,7 @@ class Stream:
         model: Optional[Any] = None,
         deserializer: Optional[Deserializer] = None,
         initial_offsets: Optional[List[TopicPartitionOffset]] = None,
+        rebalance_listener: Optional[RebalanceListener] = None,
     ) -> None:
         self.func = func
         self.backend = backend
@@ -103,6 +107,7 @@ class Stream:
         self.deserializer = deserializer
         self.running = False
         self.initial_offsets = initial_offsets
+        self.rebalance_listener = rebalance_listener
 
         # aiokafka expects topic names as arguments, meaning that
         # can receive N topics -> N arguments,
@@ -113,7 +118,7 @@ class Stream:
         if self.backend is None:
             raise BackendNotSet("A backend has not been set for this stream")
         config = {**self.backend.dict(), **self.config}
-        return self.consumer_class(*self.topics, **config)
+        return self.consumer_class(**config)
 
     async def stop(self) -> None:
         if not self.running:
@@ -125,6 +130,19 @@ class Stream:
 
         if self._consumer_task is not None:
             self._consumer_task.cancel()
+
+    async def subscribe(self) -> None:
+        # Always create a consumer on stream.start
+        self.consumer = self._create_consumer()
+        await self.consumer.start()
+        self.running = True
+
+        # set the stream to the listener to it will be available
+        # when the callbacks are called
+        if self.rebalance_listener is not None:
+            self.rebalance_listener.stream = self  # type: ignore
+
+        self.consumer.subscribe(topics=self.topics, listener=self.rebalance_listener)
 
     async def start(self) -> Optional[AsyncGenerator]:
         if self.running:
@@ -141,14 +159,10 @@ class Stream:
                     f"CRASHED Stream!!! Task {self._consumer_task} \n\n {e}"
                 )
 
-        # Always create a consumer on stream.start
-        self.consumer = self._create_consumer()
-        func = self.func(self)
-        await self.consumer.start()
-        self.running = True
-
+        await self.subscribe()
         self._seek_to_initial_offsets()
 
+        func = self.func(self)
         if inspect.isasyncgen(func):
             return func
         else:
@@ -237,6 +251,7 @@ def stream(
     name: Optional[str] = None,
     deserializer: Optional[Deserializer] = None,
     initial_offsets: Optional[List[TopicPartitionOffset]] = None,
+    rebalance_listener: Optional[RebalanceListener] = None,
     **kwargs,
 ) -> Callable[[StreamFunc], Stream]:
     def decorator(func: StreamFunc) -> Stream:
@@ -246,6 +261,7 @@ def stream(
             name=name,
             deserializer=deserializer,
             initial_offsets=initial_offsets,
+            rebalance_listener=rebalance_listener,
             config=kwargs,
         )
         update_wrapper(s, func)

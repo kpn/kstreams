@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "stream-with-rebalance-listener"
+version = "0.1.0"
+description = ""
+authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
+readme = "README.md"
+packages = [{include = "stream_with_rebalance_listener"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aiorun = "^2022.4.1"
+kstreams = { path = "../../.", develop = true }
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+app = "stream_with_rebalance_listener.app:main"

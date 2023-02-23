@@ -12,6 +12,7 @@ from .clients import ConsumerType, ProducerType
 from .exceptions import DuplicateStreamException, EngineNotStartedException
 from .prometheus.monitor import PrometheusMonitor
 from .prometheus.tasks import metrics_task
+from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer, Serializer
 from .streams import Stream, StreamFunc, stream
 from .types import Headers
@@ -215,6 +216,7 @@ class StreamEngine:
         name: Optional[str] = None,
         deserializer: Optional[Deserializer] = None,
         initial_offsets: Optional[List[TopicPartitionOffset]] = None,
+        rebalance_listener: Optional[RebalanceListener] = None,
         **kwargs,
     ) -> Callable[[StreamFunc], Stream]:
         def decorator(func: StreamFunc) -> Stream:
@@ -223,6 +225,7 @@ class StreamEngine:
                 name=name,
                 deserializer=deserializer,
                 initial_offsets=initial_offsets,
+                rebalance_listener=rebalance_listener,
                 **kwargs,
             )(func)
             self.add_stream(stream_from_func)

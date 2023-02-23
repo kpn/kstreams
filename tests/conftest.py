@@ -42,15 +42,22 @@ class MockProducer(Base):
 class MockConsumer(Base):
     def __init__(
         self,
-        topic: str,
         group_id: str = "my-group",
         assigments: Optional[List[TopicPartition]] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
-        self.topic = topic
+        self.topics: Optional[Tuple[str]] = None
         self._group_id = group_id
         if assigments is None:
             self._assigments = [TopicPartition(topic="my-topic", partition=1)]
+
+    def subscribe(
+        self,
+        *,
+        topics: Tuple[str],
+        **kwargs,
+    ) -> None:
+        self.topics = topics
 
     def assignment(self):
         return self._assigments

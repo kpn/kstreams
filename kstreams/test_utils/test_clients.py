@@ -63,13 +63,25 @@ class TestProducer(Base, Producer):
 class TestConsumer(Base, Consumer):
     __test__ = False
 
-    def __init__(self, *topics: str, group_id: Optional[str] = None, **kwargs) -> None:
+    def __init__(self, group_id: Optional[str] = None, **kwargs) -> None:
         # copy the aiokafka behavior
-        self.topics: Tuple[str, ...] = topics
+        self.topics: Optional[Tuple[str]] = None
         self._group_id: Optional[str] = group_id
         self._assignment: List[TopicPartition] = []
         self._previous_topic: Optional[Topic] = None
         self.partitions_committed: Dict[TopicPartition, int] = {}
+
+        # Called to make sure that has all the kafka attributes like _coordinator
+        # so it will behave like an real Kafka Consumer
+        super().__init__()
+
+    def subscribe(
+        self,
+        *,
+        topics: Tuple[str],
+        **kwargs,
+    ) -> None:
+        self.topics = topics
 
         for topic_name in topics:
             topic, created = TopicManager.get_or_create(topic_name, consumer=self)
@@ -84,10 +96,6 @@ class TestConsumer(Base, Consumer):
                 self._assignment.append(
                     TopicPartition(topic=topic_name, partition=partition_number)
                 )
-
-        # Called to make sure that has all the kafka attributes like _coordinator
-        # so it will behave like an real Kafka Consumer
-        super().__init__()
 
     def assignment(self) -> List[TopicPartition]:
         return self._assignment
@@ -187,7 +195,9 @@ class TestConsumer(Base, Consumer):
     def seek(self, *, partition: TopicPartition, offset: int) -> None:
         # This method intends to have the same signature as aiokafka but with kwargs
         # rather than positional arguments
-        if partition.topic in self.topics:
+        topics = self.topics or ()
+
+        if partition.topic in topics:
             topic = TopicManager.get(name=partition.topic)
             partition_offset = topic.offset(partition=partition.partition)
 
