@@ -1,3 +1,9 @@
+## 0.8.0 (2023-02-27)
+
+### Feat
+
+- RebalanceListener interface added so a rebalance listener can be set to Streams (#100)
+
 ## 0.7.4 (2023-02-21)
 
 ### Fix
