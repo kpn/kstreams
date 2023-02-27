@@ -47,7 +47,7 @@ async def consume(stream: Stream):
             print(f"Event consumed: headers: {cr.headers}, value: {cr.value}")
             assert cr.value == data
     finally:
-        await stream.consumer.stop()
+        await stream.stop()
 
 
 async def produce():

@@ -24,7 +24,7 @@ from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
 from .clients import Consumer, ConsumerType
-from .rebalance_listener import RebalanceListener
+from .rebalance_listener import KstreamsRebalanceListener, RebalanceListener
 from .serializers import Deserializer
 
 logger = logging.getLogger(__name__)
@@ -131,18 +131,25 @@ class Stream:
         if self._consumer_task is not None:
             self._consumer_task.cancel()
 
-    async def subscribe(self) -> None:
+    async def _subscribe(self) -> None:
         # Always create a consumer on stream.start
         self.consumer = self._create_consumer()
         await self.consumer.start()
         self.running = True
 
+        if self.rebalance_listener is None:
+            # creates the default listener to manage the commit and
+            # clean the metrics
+            self.rebalance_listener = KstreamsRebalanceListener()
+
         # set the stream to the listener to it will be available
         # when the callbacks are called
-        if self.rebalance_listener is not None:
-            self.rebalance_listener.stream = self  # type: ignore
+        self.rebalance_listener.stream = self  # type: ignore
 
         self.consumer.subscribe(topics=self.topics, listener=self.rebalance_listener)
+
+    async def commit(self, offsets: Optional[Dict[TopicPartition, int]] = None):
+        await self.consumer.commit(offsets=offsets)  # type: ignore
 
     async def start(self) -> Optional[AsyncGenerator]:
         if self.running:
@@ -159,7 +166,7 @@ class Stream:
                     f"CRASHED Stream!!! Task {self._consumer_task} \n\n {e}"
                 )
 
-        await self.subscribe()
+        await self._subscribe()
         self._seek_to_initial_offsets()
 
         func = self.func(self)
