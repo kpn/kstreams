@@ -226,3 +226,20 @@ async with stream as stream_flow:  # Use the context manager
 !!! note
     If for some reason you interrupt the "async for in" in the async generator, the Stream will stopped consuming events
     meaning that the lag will increase.
+
+## Rebalance Listener
+
+For some cases you will need a `RebalanceListener` so when partitions are `assigned` or `revoked` to the stream different accions can be performed.
+
+### Use cases
+
+- Cleanup or custom state save on the start of a rebalance operation
+- Saving offsets in a custom store when a partition is `revoked`
+- Load a state or cache warmup on completion of a successful partition re-assignment.
+
+::: kstreams.RebalanceListener
+    options:
+        show_root_heading: true
+        docstring_section_style: table
+        show_signature_annotations: false
+        show_bases: false
