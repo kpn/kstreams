@@ -243,7 +243,7 @@ async def test_consumer_commit(stream_engine: StreamEngine):
     @stream_engine.stream(topic_name, name=name)
     async def my_stream(stream: Stream):
         async for cr in stream:
-            await stream.consumer.commit({tp: cr.offset})
+            await stream.commit({tp: cr.offset})
 
     client = TestStreamClient(stream_engine)
     async with client:

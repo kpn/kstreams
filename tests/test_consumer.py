@@ -1,9 +1,9 @@
-from typing import List
+from typing import Set
 from unittest import mock
 
 import pytest
 
-from kstreams import RebalanceListener, TopicPartition
+from kstreams import KstreamsRebalanceListener, RebalanceListener, TopicPartition
 from kstreams.backends.kafka import Kafka
 from kstreams.clients import Consumer
 from kstreams.engine import Stream, StreamEngine
@@ -54,10 +54,10 @@ async def test_add_stream_with_rebalance_listener(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
     class MyRebalanceListener(RebalanceListener):
-        async def on_partitions_revoked(self, revoked: List[TopicPartition]) -> None:
+        async def on_partitions_revoked(self, revoked: Set[TopicPartition]) -> None:
             ...
 
-        async def on_partitions_assigned(self, assigned: List[TopicPartition]) -> None:
+        async def on_partitions_assigned(self, assigned: Set[TopicPartition]) -> None:
             ...
 
     rebalance_listener = MyRebalanceListener()
@@ -72,10 +72,34 @@ async def test_add_stream_with_rebalance_listener(stream_engine: StreamEngine):
                 ...
 
         await stream_engine.start()
+        await stream_engine.stop()
 
     assert my_stream.rebalance_listener == rebalance_listener
     assert rebalance_listener.stream == my_stream
 
     # checking that the subscription has also the rebalance_listener
     assert my_stream.consumer._subscription._listener == rebalance_listener
-    await stream_engine.stop()
+
+
+@pytest.mark.asyncio
+async def test_stream_default_rebalance_listener(stream_engine: StreamEngine):
+    topic = "local--hello-kpn"
+
+    with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"), mock.patch(
+        "kstreams.clients.aiokafka.AIOKafkaProducer.start"
+    ):
+
+        @stream_engine.stream(topic)
+        async def hello_stream(stream: Stream):
+            async for _ in stream:
+                ...
+
+        await stream_engine.start()
+        await stream_engine.stop()
+
+    assert isinstance(hello_stream.rebalance_listener, KstreamsRebalanceListener)
+
+    # checking that the subscription has also the rebalance_listener
+    assert isinstance(
+        hello_stream.consumer._subscription._listener, KstreamsRebalanceListener
+    )
