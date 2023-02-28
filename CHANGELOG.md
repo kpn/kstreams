@@ -1,3 +1,9 @@
+## 0.9.1 (2023-02-28)
+
+### Fix
+
+- not set a default rebalance listener to a stream. ManualCommitRebalanceListener added (#103)
+
 ## 0.9.0 (2023-02-28)
 
 ### Feat
