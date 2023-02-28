@@ -383,6 +383,33 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kstreams.KstreamsRebalanceListener" class="md-nav__link">
+    KstreamsRebalanceListener
+  </a>
+  
+    <nav class="md-nav" aria-label="KstreamsRebalanceListener">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.rebalance_listener.KstreamsRebalanceListener.on_partitions_revoked" class="md-nav__link">
+    on_partitions_revoked()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#base-class" class="md-nav__link">
+    Base Class
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kstreams.RebalanceListener" class="md-nav__link">
     RebalanceListener
   </a>
@@ -626,6 +653,33 @@
           <li class="md-nav__item">
   <a href="#use-cases" class="md-nav__link">
     Use cases
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kstreams.KstreamsRebalanceListener" class="md-nav__link">
+    KstreamsRebalanceListener
+  </a>
+  
+    <nav class="md-nav" aria-label="KstreamsRebalanceListener">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.rebalance_listener.KstreamsRebalanceListener.on_partitions_revoked" class="md-nav__link">
+    on_partitions_revoked()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#base-class" class="md-nav__link">
+    Base Class
   </a>
   
 </li>
@@ -1019,7 +1073,14 @@ callbacks when partition are assigned or revoked</p></td>
 <span class="normal">238</span>
 <span class="normal">239</span>
 <span class="normal">240</span>
-<span class="normal">241</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        name str: Stream name</span>
@@ -1120,18 +1181,25 @@ callbacks when partition are assigned or revoked</p></td>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Always create a consumer on stream.start</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_consumer</span><span class="p">()</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># creates the default listener to manage the commit and</span>
+            <span class="c1"># clean the metrics</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span> <span class="o">=</span> <span class="n">KstreamsRebalanceListener</span><span class="p">()</span>
+
         <span class="c1"># set the stream to the listener to it will be available</span>
         <span class="c1"># when the callbacks are called</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span>  <span class="c1"># type: ignore</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">topics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="p">,</span> <span class="n">listener</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offsets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">offsets</span><span class="o">=</span><span class="n">offsets</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AsyncGenerator</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
@@ -1148,7 +1216,7 @@ callbacks when partition are assigned or revoked</p></td>
                     <span class="sa">f</span><span class="s2">&quot;CRASHED Stream!!! Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="si">}</span><span class="s2"> </span><span class="se">\n\n</span><span class="s2"> </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
 
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscribe</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscribe</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_seek_to_initial_offsets</span><span class="p">()</span>
 
         <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -1277,14 +1345,7 @@ callbacks when partition are assigned or revoked</p></td>
 
       <details class="quote">
         <summary>Source code in <code>kstreams/streams.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">200</span>
 <span class="normal">201</span>
 <span class="normal">202</span>
 <span class="normal">203</span>
@@ -1298,7 +1359,14 @@ callbacks when partition are assigned or revoked</p></td>
 <span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span>
-<span class="normal">214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">:</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Start the kafka Consumer and return an `async_gen` so it can be iterated</span>
 
@@ -1520,6 +1588,198 @@ meaning that the lag will increase.</p>
 <li>Saving offsets in a custom store when a partition is <code>revoked</code></li>
 <li>Load a state or cache warmup on completion of a successful partition re-assignment.</li>
 </ul>
+<p>If you do not provide a <code>RebalanceListener</code> kstreams will set the default <code>KstreamsRebalanceListener</code>. If <code>manual</code> commit is enabled, <code>KstreamsRebalanceListener</code> will call <code>commit</code>
+before the <code>stream</code> partitions are revoked to avoid the error <code>CommitFailedError</code> and <em>duplicate</em> message delivery after a rebalance. See code <a href="https://github.com/kpn/kstreams/tree/master/examples/stream-with-manual-commit">example</a> with
+manual <code>commit</code></p>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="kstreams.KstreamsRebalanceListener" class="doc doc-heading">
+        <code>kstreams.KstreamsRebalanceListener</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents first">
+
+
+
+        <details class="quote">
+          <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KstreamsRebalanceListener</span><span class="p">(</span><span class="n">RebalanceListener</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Coroutine to be called *before* a rebalance operation starts and</span>
+<span class="sd">        *after* the consumer stops fetching data.</span>
+
+<span class="sd">        If manual commit is enabled, `commit` is called before the consumers</span>
+<span class="sd">        partitions are revoked to prevent the error `CommitFailedError`</span>
+<span class="sd">        and duplicate message delivery after a rebalance.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            revoked Set[TopicPartitions]: Partitions that were assigned</span>
+<span class="sd">                to the consumer on the last rebalance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">revoked</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">_enable_auto_commit</span>
+        <span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Manual commit enabled for stream </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;Performing `commit` before revoking partitions&quot;</span>
+            <span class="p">)</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="kstreams.rebalance_listener.KstreamsRebalanceListener.on_partitions_revoked" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Coroutine to be called <em>before</em> a rebalance operation starts and
+<em>after</em> the consumer stops fetching data.</p>
+<p>If manual commit is enabled, <code>commit</code> is called before the consumers
+partitions are revoked to prevent the error <code>CommitFailedError</code>
+and duplicate message delivery after a rebalance.</p>
+
+  <p><strong>Attributes:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>revoked</code></td>
+          <td>
+                <code><span title="typing.Set">Set</span>[TopicPartitions]</code>
+          </td>
+          <td><p>Partitions that were assigned
+to the consumer on the last rebalance</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Coroutine to be called *before* a rebalance operation starts and</span>
+<span class="sd">    *after* the consumer stops fetching data.</span>
+
+<span class="sd">    If manual commit is enabled, `commit` is called before the consumers</span>
+<span class="sd">    partitions are revoked to prevent the error `CommitFailedError`</span>
+<span class="sd">    and duplicate message delivery after a rebalance.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        revoked Set[TopicPartitions]: Partitions that were assigned</span>
+<span class="sd">            to the consumer on the last rebalance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">revoked</span>
+        <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">_enable_auto_commit</span>
+    <span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Manual commit enabled for stream </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="s2">&quot;Performing `commit` before revoking partitions&quot;</span>
+        <span class="p">)</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div><h3 id="base-class">Base Class</h3>
+<p>If you want to define a custom <code>RebalanceListener</code>, it has to inherits from <code>kstreams.RebalanceListener</code></p>
 
 
 <div class="doc doc-object doc-class">
@@ -1547,14 +1807,14 @@ when the set of partitions are assigned or revoked to the <code>Stream</code>.</
 <span class="k">class</span> <span class="nc">MyRebalanceListener</span><span class="p">(</span><span class="n">RebalanceListener</span><span class="p">):</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Do something with the revoked partitions</span>
         <span class="c1"># or with the Stream</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_assigned</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">assigned</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">assigned</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Do something with the assigned partitions</span>
         <span class="c1"># or with the Stream</span>
@@ -1571,11 +1831,7 @@ when the set of partitions are assigned or revoked to the <code>Stream</code>.</
 
         <details class="quote">
           <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
 <span class="normal">19</span>
@@ -1650,7 +1906,11 @@ when the set of partitions are assigned or revoked to the <code>Stream</code>.</
 <span class="normal">88</span>
 <span class="normal">89</span>
 <span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RebalanceListener</span><span class="p">(</span><span class="n">ConsumerRebalanceListener</span><span class="p">):</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RebalanceListener</span><span class="p">(</span><span class="n">ConsumerRebalanceListener</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A callback interface that the user can implement to trigger custom actions</span>
 <span class="sd">    when the set of partitions are assigned or revoked to the `Stream`.</span>
@@ -1664,14 +1924,14 @@ when the set of partitions are assigned or revoked to the <code>Stream</code>.</
 <span class="sd">        class MyRebalanceListener(RebalanceListener):</span>
 
 <span class="sd">            async def on_partitions_revoked(</span>
-<span class="sd">                self, revoked: List[TopicPartition]</span>
+<span class="sd">                self, revoked: Set[TopicPartition]</span>
 <span class="sd">            ) -&gt; None:</span>
 <span class="sd">                # Do something with the revoked partitions</span>
 <span class="sd">                # or with the Stream</span>
 <span class="sd">                print(self.stream)</span>
 
 <span class="sd">            async def on_partitions_assigned(</span>
-<span class="sd">                self, assigned: List[TopicPartition]</span>
+<span class="sd">                self, assigned: Set[TopicPartition]</span>
 <span class="sd">            ) -&gt; None:</span>
 <span class="sd">                # Do something with the assigned partitions</span>
 <span class="sd">                # or with the Stream</span>
@@ -1688,7 +1948,7 @@ when the set of partitions are assigned or revoked to the <code>Stream</code>.</
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Coroutine to be called *before* a rebalance operation starts and</span>
 <span class="sd">        *after* the consumer stops fetching data.</span>
@@ -1701,7 +1961,7 @@ when the set of partitions are assigned or revoked to the <code>Stream</code>.</
 <span class="sd">            - saving offsets in a custom store</span>
 
 <span class="sd">        Attributes:</span>
-<span class="sd">            revoked List[TopicPartitions]: Partitions that were assigned</span>
+<span class="sd">            revoked Set[TopicPartitions]: Partitions that were assigned</span>
 <span class="sd">                to the consumer on the last rebalance</span>
 
 <span class="sd">        !!! note</span>
@@ -1709,7 +1969,7 @@ when the set of partitions are assigned or revoked to the <code>Stream</code>.</
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_assigned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assigned</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_assigned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assigned</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Coroutine to be called *after* partition re-assignment completes</span>
 <span class="sd">        and *before* the consumer starts fetching data again.</span>
@@ -1723,7 +1983,7 @@ when the set of partitions are assigned or revoked to the <code>Stream</code>.</
 <span class="sd">            partition re-assignment.</span>
 
 <span class="sd">        Attributes:</span>
-<span class="sd">            assigned List[TopicPartition]: Partitions assigned to the</span>
+<span class="sd">            assigned Set[TopicPartition]: Partitions assigned to the</span>
 <span class="sd">                consumer (may include partitions that were previously assigned)</span>
 
 <span class="sd">        !!! note</span>
@@ -1787,7 +2047,7 @@ partition re-assignment.</li>
         <tr>
           <td><code>assigned</code></td>
           <td>
-                <code><span title="typing.List">List</span>[<span title="kstreams.TopicPartition">TopicPartition</span>]</code>
+                <code><span title="typing.Set">Set</span>[<span title="kstreams.TopicPartition">TopicPartition</span>]</code>
           </td>
           <td><p>Partitions assigned to the
 consumer (may include partitions that were previously assigned)</p></td>
@@ -1801,11 +2061,7 @@ consumer (may include partitions that were previously assigned)</p></td>
 
       <details class="quote">
         <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">75</span>
 <span class="normal">76</span>
 <span class="normal">77</span>
 <span class="normal">78</span>
@@ -1821,7 +2077,11 @@ consumer (may include partitions that were previously assigned)</p></td>
 <span class="normal">88</span>
 <span class="normal">89</span>
 <span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_assigned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assigned</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_assigned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assigned</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Coroutine to be called *after* partition re-assignment completes</span>
 <span class="sd">    and *before* the consumer starts fetching data again.</span>
@@ -1835,7 +2095,7 @@ consumer (may include partitions that were previously assigned)</p></td>
 <span class="sd">        partition re-assignment.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        assigned List[TopicPartition]: Partitions assigned to the</span>
+<span class="sd">        assigned Set[TopicPartition]: Partitions assigned to the</span>
 <span class="sd">            consumer (may include partitions that were previously assigned)</span>
 
 <span class="sd">    !!! note</span>
@@ -1889,7 +2149,7 @@ here, to avoid duplicate message delivery after rebalance is finished.</p>
         <tr>
           <td><code>revoked</code></td>
           <td>
-                <code><span title="typing.List">List</span>[TopicPartitions]</code>
+                <code><span title="typing.Set">Set</span>[TopicPartitions]</code>
           </td>
           <td><p>Partitions that were assigned
 to the consumer on the last rebalance</p></td>
@@ -1903,11 +2163,7 @@ to the consumer on the last rebalance</p></td>
 
       <details class="quote">
         <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span>
 <span class="normal">57</span>
@@ -1922,7 +2178,11 @@ to the consumer on the last rebalance</p></td>
 <span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span>
-<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Coroutine to be called *before* a rebalance operation starts and</span>
 <span class="sd">    *after* the consumer stops fetching data.</span>
@@ -1935,7 +2195,7 @@ to the consumer on the last rebalance</p></td>
 <span class="sd">        - saving offsets in a custom store</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        revoked List[TopicPartitions]: Partitions that were assigned</span>
+<span class="sd">        revoked Set[TopicPartitions]: Partitions that were assigned</span>
 <span class="sd">            to the consumer on the last rebalance</span>
 
 <span class="sd">    !!! note</span>
