@@ -377,29 +377,36 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#manual-commit_1" class="md-nav__link">
+    Manual Commit
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#kstreams.KstreamsRebalanceListener" class="md-nav__link">
-    KstreamsRebalanceListener
+  <a href="#kstreams.ManualCommitRebalanceListener" class="md-nav__link">
+    ManualCommitRebalanceListener
   </a>
   
-    <nav class="md-nav" aria-label="KstreamsRebalanceListener">
+    <nav class="md-nav" aria-label="ManualCommitRebalanceListener">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kstreams.rebalance_listener.KstreamsRebalanceListener.on_partitions_revoked" class="md-nav__link">
+  <a href="#kstreams.rebalance_listener.ManualCommitRebalanceListener.on_partitions_revoked" class="md-nav__link">
     on_partitions_revoked()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#base-class" class="md-nav__link">
-    Base Class
+  <a href="#custom-rebalance-listener" class="md-nav__link">
+    Custom Rebalance Listener
   </a>
   
 </li>
@@ -657,29 +664,36 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#manual-commit_1" class="md-nav__link">
+    Manual Commit
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#kstreams.KstreamsRebalanceListener" class="md-nav__link">
-    KstreamsRebalanceListener
+  <a href="#kstreams.ManualCommitRebalanceListener" class="md-nav__link">
+    ManualCommitRebalanceListener
   </a>
   
-    <nav class="md-nav" aria-label="KstreamsRebalanceListener">
+    <nav class="md-nav" aria-label="ManualCommitRebalanceListener">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kstreams.rebalance_listener.KstreamsRebalanceListener.on_partitions_revoked" class="md-nav__link">
+  <a href="#kstreams.rebalance_listener.ManualCommitRebalanceListener.on_partitions_revoked" class="md-nav__link">
     on_partitions_revoked()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#base-class" class="md-nav__link">
-    Base Class
+  <a href="#custom-rebalance-listener" class="md-nav__link">
+    Custom Rebalance Listener
   </a>
   
 </li>
@@ -1076,11 +1090,7 @@ callbacks when partition are assigned or revoked</p></td>
 <span class="normal">241</span>
 <span class="normal">242</span>
 <span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
-<span class="normal">246</span>
-<span class="normal">247</span>
-<span class="normal">248</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
+<span class="normal">244</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        name str: Stream name</span>
@@ -1187,14 +1197,10 @@ callbacks when partition are assigned or revoked</p></td>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># creates the default listener to manage the commit and</span>
-            <span class="c1"># clean the metrics</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span> <span class="o">=</span> <span class="n">KstreamsRebalanceListener</span><span class="p">()</span>
-
-        <span class="c1"># set the stream to the listener to it will be available</span>
-        <span class="c1"># when the callbacks are called</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># set the stream to the listener to it will be available</span>
+            <span class="c1"># when the callbacks are called</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span>  <span class="c1"># type: ignore</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">topics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="p">,</span> <span class="n">listener</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="p">)</span>
 
@@ -1345,7 +1351,11 @@ callbacks when partition are assigned or revoked</p></td>
 
       <details class="quote">
         <summary>Source code in <code>kstreams/streams.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">200</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
 <span class="normal">201</span>
 <span class="normal">202</span>
 <span class="normal">203</span>
@@ -1362,11 +1372,7 @@ callbacks when partition are assigned or revoked</p></td>
 <span class="normal">214</span>
 <span class="normal">215</span>
 <span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">:</span>
+<span class="normal">217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Start the kafka Consumer and return an `async_gen` so it can be iterated</span>
 
@@ -1588,7 +1594,8 @@ meaning that the lag will increase.</p>
 <li>Saving offsets in a custom store when a partition is <code>revoked</code></li>
 <li>Load a state or cache warmup on completion of a successful partition re-assignment.</li>
 </ul>
-<p>If you do not provide a <code>RebalanceListener</code> kstreams will set the default <code>KstreamsRebalanceListener</code>. If <code>manual</code> commit is enabled, <code>KstreamsRebalanceListener</code> will call <code>commit</code>
+<h3 id="manual-commit_1">Manual Commit</h3>
+<p>If <code>manual</code> commit is enabled, you migh want to use the <code>ManualCommitRebalanceListener</code>. This <code>rebalance listener</code> will call <code>commit</code>
 before the <code>stream</code> partitions are revoked to avoid the error <code>CommitFailedError</code> and <em>duplicate</em> message delivery after a rebalance. See code <a href="https://github.com/kpn/kstreams/tree/master/examples/stream-with-manual-commit">example</a> with
 manual <code>commit</code></p>
 
@@ -1597,8 +1604,8 @@ manual <code>commit</code></p>
 
 
 
-<h2 id="kstreams.KstreamsRebalanceListener" class="doc doc-heading">
-        <code>kstreams.KstreamsRebalanceListener</code>
+<h2 id="kstreams.ManualCommitRebalanceListener" class="doc doc-heading">
+        <code>kstreams.ManualCommitRebalanceListener</code>
 
 
 </h2>
@@ -1634,7 +1641,7 @@ manual <code>commit</code></p>
 <span class="normal">119</span>
 <span class="normal">120</span>
 <span class="normal">121</span>
-<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KstreamsRebalanceListener</span><span class="p">(</span><span class="n">RebalanceListener</span><span class="p">):</span>
+<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ManualCommitRebalanceListener</span><span class="p">(</span><span class="n">RebalanceListener</span><span class="p">):</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Coroutine to be called *before* a rebalance operation starts and</span>
@@ -1678,7 +1685,7 @@ manual <code>commit</code></p>
 
 
 
-<h3 id="kstreams.rebalance_listener.KstreamsRebalanceListener.on_partitions_revoked" class="doc doc-heading">
+<h3 id="kstreams.rebalance_listener.ManualCommitRebalanceListener.on_partitions_revoked" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
@@ -1778,8 +1785,8 @@ to the consumer on the last rebalance</p></td>
 
   </div>
 
-</div><h3 id="base-class">Base Class</h3>
-<p>If you want to define a custom <code>RebalanceListener</code>, it has to inherits from <code>kstreams.RebalanceListener</code></p>
+</div><h3 id="custom-rebalance-listener">Custom Rebalance Listener</h3>
+<p>If you want to define a custom <code>RebalanceListener</code>, it has to inherits from <code>kstreams.RebalanceListener</code>.</p>
 
 
 <div class="doc doc-object doc-class">
@@ -2214,6 +2221,9 @@ to the consumer on the last rebalance</p></td>
 
   </div>
 
+</div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It also possible to inherits from <code>ManualCommitRebalanceListener</code></p>
 </div>
 
               
