@@ -95,7 +95,7 @@ class RebalanceListener(ConsumerRebalanceListener):
         ...  # pragma: no cover
 
 
-class KstreamsRebalanceListener(RebalanceListener):
+class ManualCommitRebalanceListener(RebalanceListener):
     async def on_partitions_revoked(self, revoked: Set[TopicPartition]) -> None:
         """
         Coroutine to be called *before* a rebalance operation starts and

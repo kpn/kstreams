@@ -1,7 +1,7 @@
 from kstreams import Stream, stream
 
 
-@stream("local--kstream")
+@stream("local--kstream", group_id="kstreams--group-id")
 async def consume(stream: Stream):
     print("consuming.....")
     async for cr in stream:

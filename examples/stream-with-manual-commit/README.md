@@ -4,11 +4,11 @@
 
 ## Description
 
-This example demostrate that using the `KstreamsRebalanceListener` rebalace listener with `manual commit` will trigger a `commit` before the `Stream` partitions
+This example demostrate that using the `ManualCommitRebalanceListener` rebalance listener with `manual commit` will trigger a `commit` before the `Stream` partitions
 are `revoked`. This behaviour will avoid the error `CommitFailedError` and *duplicate* message delivery after a rebalance.
 
-The `Stream` process in batches and commits every 10 events. If a rebalance is triggered before the commit is called and the partition to `commit` was revoked
-then the error `CommitFailedError` should be raised if `KstreamsRebalanceListener` is not used.
+The `Stream` process in batches and commits every 5 events. If a rebalance is triggered before the commit is called and the partition to `commit` was revoked
+then the error `CommitFailedError` should be raised if `ManualCommitRebalanceListener` is not used.
 
 ## Requirements
 

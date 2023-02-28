@@ -24,7 +24,7 @@ from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
 from .clients import Consumer, ConsumerType
-from .rebalance_listener import KstreamsRebalanceListener, RebalanceListener
+from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
 
 logger = logging.getLogger(__name__)
@@ -137,14 +137,10 @@ class Stream:
         await self.consumer.start()
         self.running = True
 
-        if self.rebalance_listener is None:
-            # creates the default listener to manage the commit and
-            # clean the metrics
-            self.rebalance_listener = KstreamsRebalanceListener()
-
-        # set the stream to the listener to it will be available
-        # when the callbacks are called
-        self.rebalance_listener.stream = self  # type: ignore
+        if self.rebalance_listener is not None:
+            # set the stream to the listener to it will be available
+            # when the callbacks are called
+            self.rebalance_listener.stream = self  # type: ignore
 
         self.consumer.subscribe(topics=self.topics, listener=self.rebalance_listener)
 
