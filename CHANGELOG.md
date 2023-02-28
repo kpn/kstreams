@@ -1,3 +1,9 @@
+## 0.9.0 (2023-02-28)
+
+### Feat
+
+- KstreamsRebalanceListener added as default rebalance listener (#102)
+
 ## 0.8.0 (2023-02-27)
 
 ### Feat
