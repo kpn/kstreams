@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 
-from kstreams import KstreamsRebalanceListener, RebalanceListener, TopicPartition
+from kstreams import ManualCommitRebalanceListener, RebalanceListener, TopicPartition
 from kstreams.backends.kafka import Kafka
 from kstreams.clients import Consumer
 from kstreams.engine import Stream, StreamEngine
@@ -82,14 +82,19 @@ async def test_add_stream_with_rebalance_listener(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
-async def test_stream_default_rebalance_listener(stream_engine: StreamEngine):
+async def test_stream_manual_commit_rebalance_listener(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
     with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"), mock.patch(
         "kstreams.clients.aiokafka.AIOKafkaProducer.start"
     ):
 
-        @stream_engine.stream(topic)
+        @stream_engine.stream(
+            topic,
+            group_id="example-group",
+            enable_auto_commit=False,
+            rebalance_listener=ManualCommitRebalanceListener(),
+        )
         async def hello_stream(stream: Stream):
             async for _ in stream:
                 ...
@@ -97,9 +102,9 @@ async def test_stream_default_rebalance_listener(stream_engine: StreamEngine):
         await stream_engine.start()
         await stream_engine.stop()
 
-    assert isinstance(hello_stream.rebalance_listener, KstreamsRebalanceListener)
+    assert isinstance(hello_stream.rebalance_listener, ManualCommitRebalanceListener)
 
     # checking that the subscription has also the rebalance_listener
     assert isinstance(
-        hello_stream.consumer._subscription._listener, KstreamsRebalanceListener
+        hello_stream.consumer._subscription._listener, ManualCommitRebalanceListener
     )
