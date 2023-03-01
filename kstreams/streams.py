@@ -137,11 +137,6 @@ class Stream:
         await self.consumer.start()
         self.running = True
 
-        if self.rebalance_listener is not None:
-            # set the stream to the listener to it will be available
-            # when the callbacks are called
-            self.rebalance_listener.stream = self  # type: ignore
-
         self.consumer.subscribe(topics=self.topics, listener=self.rebalance_listener)
 
     async def commit(self, offsets: Optional[Dict[TopicPartition, int]] = None):
