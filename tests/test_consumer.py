@@ -3,7 +3,13 @@ from unittest import mock
 
 import pytest
 
-from kstreams import ManualCommitRebalanceListener, RebalanceListener, TopicPartition
+from kstreams import (
+    ManualCommitRebalanceListener,
+    MetricsRebalanceListener,
+    RebalanceListener,
+    TopicPartition,
+    create_engine,
+)
 from kstreams.backends.kafka import Kafka
 from kstreams.clients import Consumer
 from kstreams.engine import Stream, StreamEngine
@@ -74,20 +80,60 @@ async def test_add_stream_with_rebalance_listener(stream_engine: StreamEngine):
         await stream_engine.start()
         await stream_engine.stop()
 
-    assert my_stream.rebalance_listener == rebalance_listener
-    assert rebalance_listener.stream == my_stream
+        assert my_stream.rebalance_listener == rebalance_listener
+        assert rebalance_listener.stream == my_stream
 
-    # checking that the subscription has also the rebalance_listener
-    assert my_stream.consumer._subscription._listener == rebalance_listener
+        # checking that the subscription has also the rebalance_listener
+        assert my_stream.consumer._subscription._listener == rebalance_listener
+
+
+@pytest.mark.asyncio
+async def test_stream_with_default_rebalance_listener():
+    topic = "local--hello-kpn"
+    topic_partitions = set(TopicPartition(topic=topic, partition=0))
+
+    with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"), mock.patch(
+        "kstreams.clients.aiokafka.AIOKafkaProducer.start"
+    ), mock.patch("kstreams.PrometheusMonitor.start") as monitor_start, mock.patch(
+        "kstreams.PrometheusMonitor.stop"
+    ) as monitor_stop:
+        # use this function so we can mock PrometheusMonitor
+        stream_engine = create_engine()
+
+        @stream_engine.stream(topic)
+        async def my_stream(stream: Stream):
+            async for _ in stream:
+                ...
+
+        await stream_engine.start()
+        rebalance_listener = my_stream.rebalance_listener
+
+        assert isinstance(rebalance_listener, MetricsRebalanceListener)
+        # checking that the subscription has also the rebalance_listener
+        assert isinstance(
+            my_stream.consumer._subscription._listener, MetricsRebalanceListener
+        )
+        assert rebalance_listener.engine == stream_engine
+
+        await rebalance_listener.on_partitions_revoked(revoked=topic_partitions)
+        await rebalance_listener.on_partitions_assigned(assigned=topic_partitions)
+
+        monitor_stop.assert_called_once()
+
+        # called twice: When the engine starts and on_partitions_assigned
+        monitor_start.assert_has_calls([mock.call(), mock.call()])
+
+        await stream_engine.stop()
 
 
 @pytest.mark.asyncio
 async def test_stream_manual_commit_rebalance_listener(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
+    topic_partitions = set(TopicPartition(topic=topic, partition=0))
 
     with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"), mock.patch(
-        "kstreams.clients.aiokafka.AIOKafkaProducer.start"
-    ):
+        "kstreams.clients.aiokafka.AIOKafkaConsumer.commit"
+    ) as commit_mock, mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"):
 
         @stream_engine.stream(
             topic,
@@ -102,9 +148,15 @@ async def test_stream_manual_commit_rebalance_listener(stream_engine: StreamEngi
         await stream_engine.start()
         await stream_engine.stop()
 
-    assert isinstance(hello_stream.rebalance_listener, ManualCommitRebalanceListener)
+        rebalance_listener = hello_stream.rebalance_listener
 
-    # checking that the subscription has also the rebalance_listener
-    assert isinstance(
-        hello_stream.consumer._subscription._listener, ManualCommitRebalanceListener
-    )
+        assert isinstance(rebalance_listener, ManualCommitRebalanceListener)
+        # checking that the subscription has also the rebalance_listener
+        assert isinstance(
+            hello_stream.consumer._subscription._listener, ManualCommitRebalanceListener
+        )
+
+        await rebalance_listener.on_partitions_revoked(revoked=topic_partitions)
+        commit_mock.assert_awaited_once()
+
+        await stream_engine.clean_streams()

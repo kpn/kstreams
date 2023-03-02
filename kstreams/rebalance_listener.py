@@ -50,6 +50,8 @@ class RebalanceListener(ConsumerRebalanceListener):
 
     def __init__(self) -> None:
         self.stream = None
+        # engine added so it can react on rebalance events
+        self.engine = None
 
     async def on_partitions_revoked(self, revoked: Set[TopicPartition]) -> None:
         """
@@ -95,7 +97,41 @@ class RebalanceListener(ConsumerRebalanceListener):
         ...  # pragma: no cover
 
 
-class ManualCommitRebalanceListener(RebalanceListener):
+class MetricsRebalanceListener(RebalanceListener):
+    async def on_partitions_revoked(self, revoked: Set[TopicPartition]) -> None:
+        """
+        Coroutine to be called *before* a rebalance operation starts and
+        *after* the consumer stops fetching data.
+
+        This will method will clean up the `Prometheus` metrics
+
+        Attributes:
+            revoked Set[TopicPartitions]: Partitions that were assigned
+                to the consumer on the last rebalance
+        """
+        # lock all asyncio Tasks so no new metrics will be added to the Monitor
+        if revoked and self.engine is not None:
+            async with asyncio.Lock():
+                self.engine.monitor.stop()
+
+    async def on_partitions_assigned(self, assigned: Set[TopicPartition]) -> None:
+        """
+        Coroutine to be called *after* partition re-assignment completes
+        and *before* the consumer starts fetching data again.
+
+        This method will start the `Prometheus` metrics
+
+        Attributes:
+            assigned Set[TopicPartition]: Partitions assigned to the
+                consumer (may include partitions that were previously assigned)
+        """
+        # lock all asyncio Tasks so no new metrics will be added to the Monitor
+        if assigned and self.engine is not None:
+            async with asyncio.Lock():
+                self.engine.monitor.start()
+
+
+class ManualCommitRebalanceListener(MetricsRebalanceListener):
     async def on_partitions_revoked(self, revoked: Set[TopicPartition]) -> None:
         """
         Coroutine to be called *before* a rebalance operation starts and
@@ -120,3 +156,5 @@ class ManualCommitRebalanceListener(RebalanceListener):
             )
             async with asyncio.Lock():
                 await self.stream.commit()
+
+            await super().on_partitions_revoked(revoked=revoked)

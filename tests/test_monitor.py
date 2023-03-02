@@ -1,12 +1,11 @@
 import pytest
 
+from kstreams import Stream, StreamEngine
 from kstreams.backends.kafka import Kafka
-from kstreams.prometheus import monitor, tasks
-from kstreams.streams import Stream
 
 
 @pytest.mark.asyncio
-async def test_consumer_metrics(mock_consumer_class):
+async def test_consumer_metrics(mock_consumer_class, stream_engine: StreamEngine):
     async def my_coroutine(_):
         pass
 
@@ -17,17 +16,17 @@ async def test_consumer_metrics(mock_consumer_class):
         consumer_class=mock_consumer_class,
         func=my_coroutine,
     )
+    stream_engine.add_stream(stream=stream)
     await stream.start()
 
-    prometheus_monitor = monitor.PrometheusMonitor()
-    await tasks.generate_consumer_metrics(stream.consumer, monitor=prometheus_monitor)
+    await stream_engine.monitor._generate_consumer_metrics(stream.consumer)
 
     consumer = stream.consumer
     topic_partition = consumer.assignment()[0]
 
     # super ugly notation but for now is the only way to get the metrics
     met_committed = (
-        prometheus_monitor.met_committed.labels(
+        stream_engine.monitor.met_committed.labels(
             topic=topic_partition.topic,
             partition=topic_partition.partition,
             consumer_group=consumer._group_id,
@@ -38,7 +37,7 @@ async def test_consumer_metrics(mock_consumer_class):
     )
 
     met_position = (
-        prometheus_monitor.met_position.labels(
+        stream_engine.monitor.met_position.labels(
             topic=topic_partition.topic,
             partition=topic_partition.partition,
             consumer_group=consumer._group_id,
@@ -49,7 +48,7 @@ async def test_consumer_metrics(mock_consumer_class):
     )
 
     met_highwater = (
-        prometheus_monitor.met_highwater.labels(
+        stream_engine.monitor.met_highwater.labels(
             topic=topic_partition.topic,
             partition=topic_partition.partition,
             consumer_group=consumer._group_id,
@@ -60,7 +59,7 @@ async def test_consumer_metrics(mock_consumer_class):
     )
 
     met_lag = (
-        prometheus_monitor.met_lag.labels(
+        stream_engine.monitor.met_lag.labels(
             topic=topic_partition.topic,
             partition=topic_partition.partition,
             consumer_group=consumer._group_id,

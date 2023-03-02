@@ -237,6 +237,17 @@ For some cases you will need a `RebalanceListener` so when partitions are `assig
 - Saving offsets in a custom store when a partition is `revoked`
 - Load a state or cache warmup on completion of a successful partition re-assignment.
 
+### Metrics Rebalance Listener
+
+Kstreams use a default listener for all the streams to clean the metrics after a rebalance takes place
+
+::: kstreams.MetricsRebalanceListener
+    options:
+        show_root_heading: true
+        docstring_section_style: table
+        show_signature_annotations: false
+        show_bases: false
+
 ### Manual Commit
 
 If `manual` commit is enabled, you migh want to use the `ManualCommitRebalanceListener`. This `rebalance listener` will call `commit`
@@ -250,6 +261,9 @@ manual `commit`
         show_signature_annotations: false
         show_bases: false
 
+!!! note
+    `ManualCommitRebalanceListener` also includes the `MetricsRebalanceListener` funcionality.
+
 ### Custom Rebalance Listener
 
 If you want to define a custom `RebalanceListener`, it has to inherits from `kstreams.RebalanceListener`.
@@ -262,4 +276,4 @@ If you want to define a custom `RebalanceListener`, it has to inherits from `kst
         show_bases: false
 
 !!! note
-    It also possible to inherits from `ManualCommitRebalanceListener`
+    It also possible to inherits from `ManualCommitRebalanceListener` and `MetricsRebalanceListener`

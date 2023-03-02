@@ -1,4 +1,3 @@
-import asyncio
 import inspect
 import logging
 from typing import Any, Callable, Dict, List, Optional, Type, Union
@@ -11,8 +10,7 @@ from .backends.kafka import Kafka
 from .clients import ConsumerType, ProducerType
 from .exceptions import DuplicateStreamException, EngineNotStartedException
 from .prometheus.monitor import PrometheusMonitor
-from .prometheus.tasks import metrics_task
-from .rebalance_listener import RebalanceListener
+from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import Deserializer, Serializer
 from .streams import Stream, StreamFunc, stream
 from .types import Headers
@@ -77,7 +75,6 @@ class StreamEngine:
         self.monitor = monitor
         self._producer: Optional[Type[ProducerType]] = None
         self._streams: List[Stream] = []
-        self.metrics_task: Optional[asyncio.Task] = None
 
     async def send(
         self,
@@ -139,12 +136,12 @@ class StreamEngine:
         # add the producer and streams to the Monitor
         self.monitor.add_producer(self._producer)
         self.monitor.add_streams(self._streams)
-        self._start_metrics_task()
+        self.monitor.start()
 
     async def stop(self) -> None:
-        self._stop_metrics_task()
         await self.stop_streams()
         await self.stop_producer()
+        self.monitor.stop()
 
     async def stop_producer(self):
         logger.info("Waiting Producer to STOP....")
@@ -169,15 +166,6 @@ class StreamEngine:
         ]
         for stream in streams:
             await stream.start()
-
-    def _start_metrics_task(self):
-        self.metrics_task = asyncio.create_task(
-            metrics_task(self._streams, self.monitor)
-        )
-
-    def _stop_metrics_task(self):
-        if self.metrics_task is not None:
-            self.metrics_task.cancel()
 
     async def stop_streams(self) -> None:
         logger.info("Waiting for Streams to STOP....")
@@ -204,6 +192,14 @@ class StreamEngine:
         if stream.deserializer is None:
             stream.deserializer = self.deserializer
         self._streams.append(stream)
+
+        if stream.rebalance_listener is None:
+            # set the stream to the listener to it will be available
+            # when the callbacks are called
+            stream.rebalance_listener = MetricsRebalanceListener()
+
+        stream.rebalance_listener.stream = stream  # type: ignore
+        stream.rebalance_listener.engine = self  # type: ignore
 
     async def remove_stream(self, stream: Stream) -> None:
         await stream.stop()
