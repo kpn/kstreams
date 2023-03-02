@@ -1,3 +1,9 @@
+## 0.10.0 (2023-03-02)
+
+### Feat
+
+- MetricsRebalanceListener added (#104)
+
 ## 0.9.1 (2023-02-28)
 
 ### Fix
