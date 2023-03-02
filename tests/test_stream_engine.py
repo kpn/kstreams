@@ -260,7 +260,7 @@ async def test_start_stop_streaming(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
-async def test_recreate_consumer_on_re_tart_stream(stream_engine: StreamEngine):
+async def test_recreate_consumer_on_re_start_stream(stream_engine: StreamEngine):
     with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"):
         topic_name = "local--kstreams"
         stream_name = "my-stream"

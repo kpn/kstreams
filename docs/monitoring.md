@@ -6,6 +6,12 @@ This means that we can quickly add some graphs to our dashboards by utilizing th
 
 `Kstreams` includes a collection of metrics. See [Metrics Docs](./metrics.md) for more information.
 
+::: kstreams.PrometheusMonitor
+    options:
+        show_root_heading: true
+        docstring_section_style: table
+        show_signature_annotations: false
+
 ## Consumer Metrics
 
 We advise including the `consumer_lag` in your application's grafana dashboard.
@@ -61,7 +67,7 @@ In our scenario, we will most likely want a `Counter` for orders received and a 
 
 ```python
 from prometheus_client import Counter
-from kstreams.prometheus.monitor import PrometheusMonitor
+from kstreams import PrometheusMonitor
 
 class MyAppPrometheusMonitor(PrometheusMonitor):
     def __init__(self):
