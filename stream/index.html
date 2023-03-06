@@ -1719,7 +1719,7 @@ meaning that the lag will increase.</p>
         <span class="c1"># lock all asyncio Tasks so no new metrics will be added to the Monitor</span>
         <span class="k">if</span> <span class="n">revoked</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_assigned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assigned</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1900,7 +1900,7 @@ to the consumer on the last rebalance</p></td>
     <span class="c1"># lock all asyncio Tasks so no new metrics will be added to the Monitor</span>
     <span class="k">if</span> <span class="n">revoked</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>

@@ -516,7 +516,7 @@ instanciate the producer. Default kstreams.Producer</p></td>
         <tr>
           <td><code>monitor</code></td>
           <td>
-                <code><a class="autorefs autorefs-internal" href="../#kstreams">kstreams</a>.<span title="kstreams.PrometheusMonitor">PrometheusMonitor</span></code>
+                <code><a class="autorefs autorefs-internal" href="../#kstreams">kstreams</a>.<a class="autorefs autorefs-internal" title="kstreams.PrometheusMonitor" href="../monitoring/#kstreams.PrometheusMonitor">PrometheusMonitor</a></code>
           </td>
           <td><p>Prometheus monitor that holds
 the <a href="https://kpn.github.io/kstreams/metrics/">metrics</a></p></td>
@@ -900,7 +900,7 @@ To override it per Stream, you can provide one per Stream</p></td>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_streams</span><span class="p">()</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_producer</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">stop_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Waiting Producer to STOP....&quot;</span><span class="p">)</span>
