@@ -36,7 +36,6 @@ class TestStreamClient:
     async def start(self) -> None:
         self.setup_mocks()
         await self.stream_engine.start()
-        self.stream_engine.monitor.stop()
 
     async def stop(self) -> None:
         # If there are streams, we must wait until all the messages are consumed

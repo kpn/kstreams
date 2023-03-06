@@ -6,68 +6,68 @@ from prometheus_client import Gauge
 
 from kstreams.clients import ConsumerType
 
-from .singleton import Singleton
-
 logger = logging.getLogger(__name__)
 
 PrometheusMonitorType = TypeVar("PrometheusMonitorType", bound="PrometheusMonitor")
 
 
-class PrometheusMonitor(metaclass=Singleton):
+class PrometheusMonitor:
     """
-    Functionality for Producers to generate Prometheus metrics
+    Metrics monitor to keep track of Producers and Consumers.
     """
+
+    # Producer metrics
+    MET_OFFSETS = Gauge(
+        "topic_partition_offsets", "help producer offsets", ["topic", "partition"]
+    )
+
+    # Consumer metrics
+    MET_COMMITTED = Gauge(
+        "consumer_committed",
+        "help consumer committed",
+        ["topic", "partition", "consumer_group"],
+    )
+    MET_POSITION = Gauge(
+        "consumer_position",
+        "help consumer position",
+        ["topic", "partition", "consumer_group"],
+    )
+    MET_HIGHWATER = Gauge(
+        "consumer_highwater",
+        "help consumer highwater",
+        ["topic", "partition", "consumer_group"],
+    )
+    MET_LAG = Gauge(
+        "consumer_lag",
+        "help consumer lag",
+        ["topic", "partition", "consumer_group"],
+    )
 
     def __init__(self):
         self._producer = None
         self._streams = []
         self._task: Optional[asyncio.Task] = None
 
-        # Producer metrics
-        self.met_offsets = Gauge(
-            "topic_partition_offsets", "help producer offsets", ["topic", "partition"]
-        )
-
-        # Consumer metrics
-        self.met_committed = Gauge(
-            "consumer_committed",
-            "help consumer committed",
-            ["topic", "partition", "consumer_group"],
-        )
-        self.met_position = Gauge(
-            "consumer_position",
-            "help consumer position",
-            ["topic", "partition", "consumer_group"],
-        )
-        self.met_highwater = Gauge(
-            "consumer_highwater",
-            "help consumer highwater",
-            ["topic", "partition", "consumer_group"],
-        )
-        self.met_lag = Gauge(
-            "consumer_lag",
-            "help consumer lag",
-            ["topic", "partition", "consumer_group"],
-        )
-
     def start(self) -> None:
         logger.info("Starting Prometheus metrics...")
         self._task = asyncio.create_task(self._metrics_task())
 
-    def stop(self) -> None:
+    async def stop(self) -> None:
         logger.info("Stoping Prometheus metrics...")
         if self._task is not None:
             self._task.cancel()
+
+            # we need to make sure that the task is cancelled
+            # to clean up properly
+            while not self._task.cancelled():
+                await asyncio.sleep(0.1)
+
         self._clean_consumer_metrics()
 
     def add_topic_partition_offset(
         self, topic: str, partition: int, offset: int
     ) -> None:
-        """
-        Add a simple metric to metric dict. Useful for debugging.
-        If Prometheus is enabled, this metrics will be collected
-        """
-        self.met_offsets.labels(topic=topic, partition=partition).set(offset)
+        self.MET_OFFSETS.labels(topic=topic, partition=partition).set(offset)
 
     def _add_consumer_metrics(self, metrics_dict: Dict):
         for topic, partitions_metadata in metrics_dict.items():
@@ -79,16 +79,16 @@ class PrometheusMonitor(metaclass=Singleton):
             highwater = partitions_metadata["highwater"]
             lag = partitions_metadata["lag"]
 
-            self.met_committed.labels(
+            self.MET_COMMITTED.labels(
                 topic=topic, partition=partition, consumer_group=group_id
             ).set(committed or 0)
-            self.met_position.labels(
+            self.MET_POSITION.labels(
                 topic=topic, partition=partition, consumer_group=group_id
             ).set(position or -1)
-            self.met_highwater.labels(
+            self.MET_HIGHWATER.labels(
                 topic=topic, partition=partition, consumer_group=group_id
             ).set(highwater or 0)
-            self.met_lag.labels(
+            self.MET_LAG.labels(
                 topic=topic, partition=partition, consumer_group=group_id
             ).set(lag or 0)
 
@@ -99,10 +99,10 @@ class PrometheusMonitor(metaclass=Singleton):
         new metrics will be generated per consumer based on the
         consumer assigments
         """
-        self.met_lag.clear()
-        self.met_committed.clear()
-        self.met_position.clear()
-        self.met_highwater.clear()
+        self.MET_LAG.clear()
+        self.MET_COMMITTED.clear()
+        self.MET_POSITION.clear()
+        self.MET_HIGHWATER.clear()
 
     def add_producer(self, producer):
         self._producer = producer
