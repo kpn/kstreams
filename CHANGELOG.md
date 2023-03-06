@@ -1,3 +1,9 @@
+## 0.10.1 (2023-03-06)
+
+### Fix
+
+- Singlenton removed from PrometheusMonitor (#105)
+
 ## 0.10.0 (2023-03-02)
 
 ### Feat
