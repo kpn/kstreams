@@ -49,7 +49,10 @@ class MockConsumer(Base):
         self.topics: Optional[Tuple[str]] = None
         self._group_id = group_id
         if assigments is None:
-            self._assigments = [TopicPartition(topic="my-topic", partition=1)]
+            self._assigments = [
+                TopicPartition(topic="my-topic", partition=0),
+                TopicPartition(topic="my-topic", partition=1),
+            ]
 
     def subscribe(
         self,

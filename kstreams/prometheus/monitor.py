@@ -1,14 +1,16 @@
 import asyncio
 import logging
-from typing import Any, DefaultDict, Dict, Optional, TypeVar
+from typing import DefaultDict, Dict, Optional, TypeVar
 
 from prometheus_client import Gauge
 
+from kstreams import TopicPartition
 from kstreams.clients import ConsumerType
 
 logger = logging.getLogger(__name__)
 
 PrometheusMonitorType = TypeVar("PrometheusMonitorType", bound="PrometheusMonitor")
+MetricsType = Dict[TopicPartition, Dict[str, Optional[int]]]
 
 
 class PrometheusMonitor:
@@ -39,7 +41,12 @@ class PrometheusMonitor:
     )
     MET_LAG = Gauge(
         "consumer_lag",
-        "help consumer lag",
+        "help consumer lag calculated using the last commited offset",
+        ["topic", "partition", "consumer_group"],
+    )
+    MET_POSITION_LAG = Gauge(
+        "position_lag",
+        "help consumer position lag calculated using the consumer position",
         ["topic", "partition", "consumer_group"],
     )
 
@@ -69,28 +76,40 @@ class PrometheusMonitor:
     ) -> None:
         self.MET_OFFSETS.labels(topic=topic, partition=partition).set(offset)
 
-    def _add_consumer_metrics(self, metrics_dict: Dict):
-        for topic, partitions_metadata in metrics_dict.items():
-            partition = partitions_metadata["partition"]
+    def _add_consumer_metrics(self, metrics_dict: MetricsType):
+        for topic_partition, partitions_metadata in metrics_dict.items():
             group_id = partitions_metadata["group_id"]
-
             position = partitions_metadata["position"]
             committed = partitions_metadata["committed"]
             highwater = partitions_metadata["highwater"]
             lag = partitions_metadata["lag"]
+            position_lag = partitions_metadata["position_lag"]
 
             self.MET_COMMITTED.labels(
-                topic=topic, partition=partition, consumer_group=group_id
+                topic=topic_partition.topic,
+                partition=topic_partition.partition,
+                consumer_group=group_id,
             ).set(committed or 0)
             self.MET_POSITION.labels(
-                topic=topic, partition=partition, consumer_group=group_id
+                topic=topic_partition.topic,
+                partition=topic_partition.partition,
+                consumer_group=group_id,
             ).set(position or -1)
             self.MET_HIGHWATER.labels(
-                topic=topic, partition=partition, consumer_group=group_id
+                topic=topic_partition.topic,
+                partition=topic_partition.partition,
+                consumer_group=group_id,
             ).set(highwater or 0)
             self.MET_LAG.labels(
-                topic=topic, partition=partition, consumer_group=group_id
+                topic=topic_partition.topic,
+                partition=topic_partition.partition,
+                consumer_group=group_id,
             ).set(lag or 0)
+            self.MET_POSITION_LAG.labels(
+                topic=topic_partition.topic,
+                partition=topic_partition.partition,
+                consumer_group=group_id,
+            ).set(position_lag or 0)
 
     def _clean_consumer_metrics(self) -> None:
         """
@@ -100,6 +119,7 @@ class PrometheusMonitor:
         consumer assigments
         """
         self.MET_LAG.clear()
+        self.MET_POSITION_LAG.clear()
         self.MET_COMMITTED.clear()
         self.MET_POSITION.clear()
         self.MET_HIGHWATER.clear()
@@ -110,7 +130,7 @@ class PrometheusMonitor:
     def add_streams(self, streams):
         self._streams = streams
 
-    async def _generate_consumer_metrics(self, consumer: ConsumerType):
+    async def generate_consumer_metrics(self, consumer: ConsumerType):
         """
         Generate Consumer Metrics for Prometheus
 
@@ -119,27 +139,27 @@ class PrometheusMonitor:
                 "topic-1": {
                     "1": (
                         [topic-1, partition-number, 'group-id-1'],
-                        committed, position, highwater, lag
+                        committed, position, highwater, lag, position_lag
                     )
                     "2": (
                         [topic-1, partition-number, 'group-id-1'],
-                        committed, position, highwater, lag
+                        committed, position, highwater, lag, position_lag
                     )
                 },
                 ...
                 "topic-n": {
                     "1": (
                         [topic-n, partition-number, 'group-id-n'],
-                        committed, position, highwater, lag
+                        committed, position, highwater, lag, position_lag
                     )
                     "2": (
                         [topic-n, partition-number, 'group-id-n'],
-                        committed, position, highwater, lag
+                        committed, position, highwater, lag, position_lag
                     )
                 }
             }
         """
-        metrics: DefaultDict[Any, dict] = DefaultDict(dict)
+        metrics: MetricsType = DefaultDict(dict)
 
         topic_partitions = consumer.assignment()
 
@@ -148,17 +168,18 @@ class PrometheusMonitor:
             position = await consumer.position(topic_partition)
             highwater = consumer.highwater(topic_partition)
 
-            lag = None
+            lag = position_lag = None
             if highwater:
-                lag = highwater - position
+                lag = highwater - committed
+                position_lag = highwater - position
 
-            metrics[topic_partition.topic] = {
-                "partition": topic_partition.partition,
+            metrics[topic_partition] = {
                 "group_id": consumer._group_id,
                 "committed": committed,
                 "position": position,
                 "highwater": highwater,
                 "lag": lag,
+                "position_lag": position_lag,
             }
 
         self._add_consumer_metrics(metrics)
@@ -172,4 +193,4 @@ class PrometheusMonitor:
             await asyncio.sleep(3)
             for stream in self._streams:
                 if stream.consumer is not None:
-                    await self._generate_consumer_metrics(stream.consumer)
+                    await self.generate_consumer_metrics(stream.consumer)
