@@ -483,7 +483,8 @@
 <li><code>consumer_committed</code>: <code>Gauge</code> of consumer commited per <code>topic/partition</code> in a <code>consumer group</code></li>
 <li><code>consumer_position</code>: <code>Gauge</code> of consumer <code>current position</code> per <code>topic/partition</code> in a <code>consumer group</code></li>
 <li><code>consumer_highwater</code>: <code>Gauge</code> of consumer <code>highwater</code> per <code>topic/partition</code> in a <code>consumer group</code></li>
-<li><code>consumer_lag</code>: <code>Gauge</code> of current consumer <code>lag</code> per <code>topic/partition</code> in a <code>consumer group</code></li>
+<li><code>consumer_lag</code>: <code>Gauge</code> of current consumer <code>lag</code> per <code>topic/partition</code> in a <code>consumer group</code> calculated with the last commited offset</li>
+<li><code>position_lag</code>: <code>Gauge</code> of current consumer <code>position_lag</code> per <code>topic/partition</code> in a <code>consumer group</code> calculated using the consumer position</li>
 </ul>
 
               
