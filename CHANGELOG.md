@@ -1,3 +1,9 @@
+## 0.11.0 (2023-04-19)
+
+### Feat
+
+- position_lag metric added. consumer_lag now is based on last commited offset rather than consumer position (#106)
+
 ## 0.10.1 (2023-03-06)
 
 ### Fix
