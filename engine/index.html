@@ -778,7 +778,8 @@ To override it per Stream, you can provide one per Stream</p></td>
 <span class="normal">228</span>
 <span class="normal">229</span>
 <span class="normal">230</span>
-<span class="normal">231</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
+<span class="normal">231</span>
+<span class="normal">232</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        backend kstreams.backends.Kafka: Backend to connect. Default `Kafka`</span>
@@ -963,6 +964,7 @@ To override it per Stream, you can provide one per Stream</p></td>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">remove_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_streams</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">clean_stream_consumer_metrics</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
