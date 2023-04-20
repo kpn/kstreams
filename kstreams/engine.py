@@ -204,6 +204,7 @@ class StreamEngine:
     async def remove_stream(self, stream: Stream) -> None:
         await stream.stop()
         self._streams.remove(stream)
+        self.monitor.clean_stream_consumer_metrics(stream)
 
     def stream(
         self,
