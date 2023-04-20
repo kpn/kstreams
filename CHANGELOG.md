@@ -1,3 +1,9 @@
+## 0.11.1 (2023-04-20)
+
+### Fix
+
+- remove metrics for removed stream
+
 ## 0.11.0 (2023-04-19)
 
 ### Feat
