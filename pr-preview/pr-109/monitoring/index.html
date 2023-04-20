@@ -829,7 +829,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">MET_POSITION</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">MET_HIGHWATER</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_clean_stream_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">clean_stream_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">topic_partitions</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">assignment</span><span class="p">()</span>
             <span class="n">group_id</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">_group_id</span>
