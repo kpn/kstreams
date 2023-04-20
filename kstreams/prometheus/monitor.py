@@ -6,6 +6,7 @@ from prometheus_client import Gauge
 
 from kstreams import TopicPartition
 from kstreams.clients import ConsumerType
+from kstreams.streams import Stream
 
 logger = logging.getLogger(__name__)
 
@@ -123,6 +124,19 @@ class PrometheusMonitor:
         self.MET_COMMITTED.clear()
         self.MET_POSITION.clear()
         self.MET_HIGHWATER.clear()
+
+    def clean_stream_consumer_metrics(self, stream: Stream) -> None:
+        if stream.consumer is not None:
+            topic_partitions = stream.consumer.assignment()
+            group_id = stream.consumer._group_id
+            for topic_partition in topic_partitions:
+                topic = topic_partition.topic
+                partition = topic_partition.partition
+                self.MET_LAG.remove(topic, partition, group_id)
+                self.MET_POSITION_LAG.remove(topic, partition, group_id)
+                self.MET_COMMITTED.remove(topic, partition, group_id)
+                self.MET_POSITION.remove(topic, partition, group_id)
+                self.MET_HIGHWATER.remove(topic, partition, group_id)
 
     def add_producer(self, producer):
         self._producer = producer
