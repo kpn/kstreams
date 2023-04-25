@@ -202,3 +202,26 @@ async def test_clean_stream_consumer_metrics(
     assert len(stream_engine.monitor.MET_POSITION_LAG.collect()[0].samples) == 2
     await stream_engine.remove_stream(stream)
     assert len(stream_engine.monitor.MET_POSITION_LAG.collect()[0].samples) == 0
+
+
+@pytest.mark.asyncio
+async def test_skip_clean_stream_consumer_metrics(
+    mock_consumer_class, stream_engine: StreamEngine, caplog
+):
+    async def my_coroutine(_):
+        pass
+
+    backend = Kafka()
+    stream = Stream(
+        "local--hello-kpn",
+        name="my-stream-name",
+        backend=backend,
+        consumer_class=mock_consumer_class,
+        func=my_coroutine,
+    )
+    stream_engine.add_stream(stream=stream)
+    await stream.start()
+
+    assert len(stream_engine.monitor.MET_POSITION_LAG.collect()[0].samples) == 0
+    await stream_engine.remove_stream(stream)
+    assert "Metrics for stream: my-stream-name not found" in caplog.text

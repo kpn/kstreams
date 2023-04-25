@@ -132,11 +132,24 @@ class PrometheusMonitor:
             for topic_partition in topic_partitions:
                 topic = topic_partition.topic
                 partition = topic_partition.partition
-                self.MET_LAG.remove(topic, partition, group_id)
-                self.MET_POSITION_LAG.remove(topic, partition, group_id)
-                self.MET_COMMITTED.remove(topic, partition, group_id)
-                self.MET_POSITION.remove(topic, partition, group_id)
-                self.MET_HIGHWATER.remove(topic, partition, group_id)
+
+                metrics_found = False
+                for sample in self.MET_LAG.collect()[0].samples:
+                    if {
+                        "topic": topic,
+                        "partition": str(partition),
+                        "consumer_group": group_id,
+                    } == sample.labels:
+                        metrics_found = True
+
+                if metrics_found:
+                    self.MET_LAG.remove(topic, partition, group_id)
+                    self.MET_POSITION_LAG.remove(topic, partition, group_id)
+                    self.MET_COMMITTED.remove(topic, partition, group_id)
+                    self.MET_POSITION.remove(topic, partition, group_id)
+                    self.MET_HIGHWATER.remove(topic, partition, group_id)
+                else:
+                    logger.debug(f"Metrics for stream: {stream.name} not found")
 
     def add_producer(self, producer):
         self._producer = producer
