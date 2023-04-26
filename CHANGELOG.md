@@ -1,3 +1,9 @@
+## 0.11.2 (2023-04-26)
+
+### Fix
+
+- skips removing metric if metrics dont exist
+
 ## 0.11.1 (2023-04-20)
 
 ### Fix
