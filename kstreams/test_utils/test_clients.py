@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, Coroutine, Dict, List, Optional, Set, Tuple
 
-from kstreams import ConsumerRecord, TopicPartition
+from kstreams import ConsumerRecord, RebalanceListener, TopicPartition
 from kstreams.clients import Consumer, Producer
 from kstreams.serializers import Serializer
 from kstreams.types import Headers
@@ -79,6 +79,7 @@ class TestConsumer(Base, Consumer):
         self,
         *,
         topics: Tuple[str],
+        listener: RebalanceListener,
         **kwargs,
     ) -> None:
         self.topics = topics
@@ -96,6 +97,9 @@ class TestConsumer(Base, Consumer):
                 self._assignment.append(
                     TopicPartition(topic=topic_name, partition=partition_number)
                 )
+
+        if listener.stream is not None:
+            listener.stream.seek_to_initial_offsets()
 
     def assignment(self) -> List[TopicPartition]:
         return self._assignment
