@@ -1,3 +1,9 @@
+## 0.11.4 (2023-05-09)
+
+### Fix
+
+- call seek_to_initial_offsets  method after TestConsumer is subscribed (#112)
+
 ## 0.11.3 (2023-05-09)
 
 ### Fix
