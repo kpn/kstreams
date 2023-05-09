@@ -1,3 +1,9 @@
+## 0.11.3 (2023-05-09)
+
+### Fix
+
+- seek to initial offsets using the rebalance listener (#111)
+
 ## 0.11.2 (2023-04-26)
 
 ### Fix
