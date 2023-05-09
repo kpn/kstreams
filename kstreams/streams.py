@@ -107,6 +107,7 @@ class Stream:
         self.deserializer = deserializer
         self.running = False
         self.initial_offsets = initial_offsets
+        self.seeked_initial_offsets = False
         self.rebalance_listener = rebalance_listener
 
         # aiokafka expects topic names as arguments, meaning that
@@ -158,7 +159,6 @@ class Stream:
                 )
 
         await self._subscribe()
-        self._seek_to_initial_offsets()
 
         func = self.func(self)
         if inspect.isasyncgen(func):
@@ -169,24 +169,29 @@ class Stream:
             self._consumer_task = asyncio.create_task(func_wrapper(func))
             return None
 
-    def _seek_to_initial_offsets(self):
-        assignments: Set[TopicPartition] = self.consumer.assignment()
-        if self.initial_offsets is not None:
-            topicPartitionOffset: TopicPartitionOffset
-            for topicPartitionOffset in self.initial_offsets:
-                tp = TopicPartition(
-                    topic=topicPartitionOffset.topic,
-                    partition=topicPartitionOffset.partition,
-                )
-                if tp in assignments:
-                    self.consumer.seek(partition=tp, offset=topicPartitionOffset.offset)
-                else:
-                    logger.warning(
-                        f"""You are attempting to seek on an TopicPartitionOffset that isn't in the
-                    consumer assignments. The code will simply ignore the seek request
-                    on this partition. {tp} is not in the partition assignment.
-                    The partition assignment is {assignments}."""
+    def seek_to_initial_offsets(self):
+        if not self.seeked_initial_offsets:
+            assignments: Set[TopicPartition] = self.consumer.assignment()
+            if self.initial_offsets is not None:
+                topicPartitionOffset: TopicPartitionOffset
+                for topicPartitionOffset in self.initial_offsets:
+                    tp = TopicPartition(
+                        topic=topicPartitionOffset.topic,
+                        partition=topicPartitionOffset.partition,
                     )
+                    if tp in assignments:
+                        self.consumer.seek(
+                            partition=tp, offset=topicPartitionOffset.offset
+                        )
+                    else:
+                        logger.warning(
+                            "You are attempting to seek on an TopicPartitionOffset "
+                            "that isn't in the consumer assignments. "
+                            "The code will simply ignore the seek request "
+                            f"on this partition. {tp} is not in the partition "
+                            f"assignment. The partition assignment is {assignments}."
+                        )
+            self.seeked_initial_offsets = True
 
     async def __aenter__(self) -> AsyncGenerator:
         """

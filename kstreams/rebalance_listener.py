@@ -130,6 +130,10 @@ class MetricsRebalanceListener(RebalanceListener):
             async with asyncio.Lock():
                 self.engine.monitor.start()
 
+                stream = self.stream
+                if stream is not None:
+                    stream.seek_to_initial_offsets()
+
 
 class ManualCommitRebalanceListener(MetricsRebalanceListener):
     async def on_partitions_revoked(self, revoked: Set[TopicPartition]) -> None:
