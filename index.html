@@ -548,7 +548,7 @@
     <span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-        <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">create_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Message sent: </span><span class="si">{</span><span class="n">metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
