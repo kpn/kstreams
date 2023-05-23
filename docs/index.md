@@ -41,7 +41,7 @@ async def produce():
     payload = b'{"message": "Hello world!"}'
 
     for i in range(5):
-        metadata = await create_engine.send("local--kstreams", value=payload)
+        metadata = await stream_engine.send("local--kstreams", value=payload)
         print(f"Message sent: {metadata}")
 
 
