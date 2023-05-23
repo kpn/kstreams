@@ -32,6 +32,7 @@ class TestProducer(Base, Producer):
         topic, _ = TopicManager.get_or_create(topic_name)
         timestamp_ms = timestamp_ms or datetime.now().timestamp()
         total_partition_events = topic.offset(partition=partition)
+        partition = partition or 0
 
         consumer_record = ConsumerRecord(
             topic=topic_name,
