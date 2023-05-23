@@ -1,3 +1,9 @@
+## 0.11.6 (2023-05-23)
+
+### Fix
+
+- set default partition when producing with engine (#116)
+
 ## 0.11.5 (2023-05-23)
 
 ### Fix
