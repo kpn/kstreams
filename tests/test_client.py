@@ -268,9 +268,10 @@ async def test_e2e_example():
     client = TestStreamClient(stream_engine)
 
     async with client:
-        await produce()
+        metadata = await produce()
 
     assert event_store.total == 5
+    assert metadata.partition == 0
 
     # check that all events has been consumed
     assert TopicManager.all_messages_consumed()

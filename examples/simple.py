@@ -39,8 +39,10 @@ async def produce():
     payload = b'{"message": "Hello world!"}'
 
     for _ in range(5):
-        await stream_engine.send(topic, value=payload, key="1")
+        metadata = await stream_engine.send(topic, value=payload, key="1")
         await asyncio.sleep(2)
+
+    return metadata
 
 
 async def start():
