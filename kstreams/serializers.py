@@ -20,14 +20,18 @@ class Deserializer(Protocol):
 
     class JsonDeserializer:
 
-        async def deserialize(self, consumer_record: ConsumerRecord, **kwargs) -> Any:
+        async def deserialize(
+            self, consumer_record: ConsumerRecord, **kwargs
+        ) -> ConsumerRecord:
             data = json.loads(consumer_record.value.decode())
             consumer_record.value = data
             return consumer_record
     ```
     """
 
-    async def deserialize(self, consumer_record: ConsumerRecord, **kwargs) -> Any:
+    async def deserialize(
+        self, consumer_record: ConsumerRecord, **kwargs
+    ) -> ConsumerRecord:
         """
         Implement this method to deserialize the data received from the topic.
         """
