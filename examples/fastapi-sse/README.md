@@ -21,7 +21,7 @@ poetry install
     INFO:     127.0.0.1:51060 - "GET /topics/local--sse/group-1/ HTTP/1.1" 200 OK
     Client connected Address(host='127.0.0.1', port=51060)
    ```
-4. From a different terminal you can send events to the topic and they should be return to the frontend via `fastapi-sse`. From the `kstreams` project root  execute `./scripts/cluster/events/send local-sse`
+4. From a different terminal you can send events to the topic and they should be return to the frontend via `fastapi-sse`. From the `kstreams` project root  execute `./scripts/cluster/events/send local--sse`
    ```bash
    >Hi SSE
    ```
