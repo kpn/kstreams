@@ -65,13 +65,16 @@ class MockConsumer(Base):
     def assignment(self):
         return self._assigments
 
-    def last_stable_offset(self, topic_partition: TopicPartition):
+    def last_stable_offset(self, _: TopicPartition):
         return 10
 
-    async def position(self, topic_partition: TopicPartition):
+    async def position(self, _: TopicPartition):
         return 10
 
-    def highwater(self, topic_partition: TopicPartition):
+    def highwater(self, _: TopicPartition):
+        return 10
+
+    async def committed(self, _: TopicPartition):
         return 10
 
 
