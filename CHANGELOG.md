@@ -1,3 +1,9 @@
+## 0.11.9 (2023-07-20)
+
+### Fix
+
+- consumer committed metrics should use committed and not last_stable_offset (#120)
+
 ## 0.11.8 (2023-07-18)
 
 ### Fix
