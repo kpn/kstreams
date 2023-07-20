@@ -150,7 +150,7 @@ class TestConsumer(Base, Consumer):
         return None
 
     async def committed(self, topic_partition: TopicPartition) -> Optional[int]:
-        return self.partitions_committed.get(topic_partition)
+        return self.partitions_committed.get(topic_partition, 0)
 
     async def end_offsets(
         self, partitions: List[TopicPartition]

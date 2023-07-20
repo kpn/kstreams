@@ -191,7 +191,7 @@ class PrometheusMonitor:
         topic_partitions = consumer.assignment()
 
         for topic_partition in topic_partitions:
-            committed = consumer.last_stable_offset(topic_partition)
+            committed = await consumer.committed(topic_partition) or 0
             position = await consumer.position(topic_partition)
             highwater = consumer.highwater(topic_partition)
 

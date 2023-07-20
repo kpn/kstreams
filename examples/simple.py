@@ -32,6 +32,7 @@ event_store = EventStore()
 @stream_engine.stream(topic, group_id="example-group")
 async def consume(stream: Stream):
     async for cr in stream:
+        print(cr)
         event_store.add(cr)
 
 
