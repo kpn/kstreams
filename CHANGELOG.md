@@ -1,3 +1,10 @@
+## 0.11.11 (2023-07-25)
+
+### Fix
+
+- race condition when creating metrics at the same time that a stream is removed (#121)
+- consumer committed metrics should use committed and not last_stable_offset (#120)
+
 ## 0.11.10 (2023-07-25)
 
 ### Fix
