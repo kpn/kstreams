@@ -82,7 +82,7 @@ async def test_consumer_metrics(mock_consumer_class, stream_engine: StreamEngine
         )
 
         consumer_position = await consumer.position(topic_partition)
-        commited_position = consumer.last_stable_offset(topic_partition)
+        commited_position = await consumer.committed(topic_partition)
 
         assert met_committed == commited_position
         assert met_position == consumer_position
@@ -189,7 +189,7 @@ async def test_clean_stream_consumer_metrics(
         )
 
         consumer_position = await consumer.position(topic_partition)
-        commited_position = consumer.last_stable_offset(topic_partition)
+        commited_position = await consumer.committed(topic_partition)
 
         assert met_committed == commited_position
         assert met_position == consumer_position
