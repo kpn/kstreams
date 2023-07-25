@@ -32,13 +32,13 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          poetry install
+          poetry install --only dev
 
       - name: Build docs
         run: |
           poetry run mkdocs build
 
       - name: Deploy preview
-        uses: rossjrw/pr-preview-action@v1.3.0
+        uses: rossjrw/pr-preview-action@v1
         with:
           source-dir: ./site/
