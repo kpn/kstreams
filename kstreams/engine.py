@@ -202,8 +202,8 @@ class StreamEngine:
         stream.rebalance_listener.engine = self  # type: ignore
 
     async def remove_stream(self, stream: Stream) -> None:
-        await stream.stop()
         self._streams.remove(stream)
+        await stream.stop()
         self.monitor.clean_stream_consumer_metrics(stream)
 
     def stream(
