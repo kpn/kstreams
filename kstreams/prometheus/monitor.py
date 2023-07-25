@@ -220,4 +220,10 @@ class PrometheusMonitor:
             await asyncio.sleep(3)
             for stream in self._streams:
                 if stream.consumer is not None:
-                    await self.generate_consumer_metrics(stream.consumer)
+                    try:
+                        await self.generate_consumer_metrics(stream.consumer)
+                    except RuntimeError:
+                        logger.debug(
+                            f"Metrics for stream {stream.name} can not be generated "
+                            "probably because it has been removed"
+                        )
