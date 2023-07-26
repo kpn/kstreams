@@ -1,3 +1,9 @@
+## 0.11.12 (2023-07-26)
+
+### Fix
+
+- Prometheus scrape metrics task fixed in order to have a proper shutdown (#124)
+
 ## 0.11.11 (2023-07-25)
 
 ### Fix
