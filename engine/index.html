@@ -934,9 +934,9 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_streams</span><span class="p">()</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_producer</span><span class="p">()</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_producer</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_streams</span><span class="p">()</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">stop_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Waiting Producer to STOP....&quot;</span><span class="p">)</span>

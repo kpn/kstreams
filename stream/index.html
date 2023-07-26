@@ -1197,7 +1197,11 @@ callbacks when partition are assigned or revoked</p>
 <span class="normal">241</span>
 <span class="normal">242</span>
 <span class="normal">243</span>
-<span class="normal">244</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        name str: Stream name</span>
@@ -1266,7 +1270,7 @@ callbacks when partition are assigned or revoked</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">consumer_class</span> <span class="o">=</span> <span class="n">consumer_class</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">ConsumerType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ConsumerType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Task</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
@@ -1282,7 +1286,7 @@ callbacks when partition are assigned or revoked</p>
         <span class="c1"># so we always create a list and then we expand it with *topics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">topics</span> <span class="o">=</span> <span class="p">[</span><span class="n">topics</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">topics</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">topics</span>
 
-    <span class="k">def</span> <span class="nf">_create_consumer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">ConsumerType</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_create_consumer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConsumerType</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">BackendNotSet</span><span class="p">(</span><span class="s2">&quot;A backend has not been set for this stream&quot;</span><span class="p">)</span>
         <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">}</span>
@@ -1302,10 +1306,14 @@ callbacks when partition are assigned or revoked</p>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Always create a consumer on stream.start</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_consumer</span><span class="p">()</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">topics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="p">,</span> <span class="n">listener</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="p">)</span>
+        <span class="c1"># add the chech tp avoid `mypy` complains</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span>
+                <span class="n">topics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="p">,</span> <span class="n">listener</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offsets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">offsets</span><span class="o">=</span><span class="n">offsets</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
@@ -1459,11 +1467,7 @@ callbacks when partition are assigned or revoked</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/streams.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">200</span>
 <span class="normal">201</span>
 <span class="normal">202</span>
 <span class="normal">203</span>
@@ -1480,7 +1484,11 @@ callbacks when partition are assigned or revoked</p>
 <span class="normal">214</span>
 <span class="normal">215</span>
 <span class="normal">216</span>
-<span class="normal">217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">:</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Start the kafka Consumer and return an `async_gen` so it can be iterated</span>
 
