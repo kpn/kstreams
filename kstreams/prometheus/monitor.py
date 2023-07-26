@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import DefaultDict, Dict, Optional, TypeVar
+from typing import DefaultDict, Dict, List, Optional, TypeVar
 
 from prometheus_client import Gauge
 
@@ -17,6 +17,10 @@ MetricsType = Dict[TopicPartition, Dict[str, Optional[int]]]
 class PrometheusMonitor:
     """
     Metrics monitor to keep track of Producers and Consumers.
+
+     Attributes:
+        metrics_scrape_time float: Amount of seconds that the monitor
+            will wait until next scrape iteration
     """
 
     # Producer metrics
@@ -51,23 +55,26 @@ class PrometheusMonitor:
         ["topic", "partition", "consumer_group"],
     )
 
-    def __init__(self):
+    def __init__(self, metrics_scrape_time: float = 3):
+        self.metrics_scrape_time = metrics_scrape_time
+        self.running = False
         self._producer = None
-        self._streams = []
+        self._streams: List[Stream] = []
         self._task: Optional[asyncio.Task] = None
 
     def start(self) -> None:
         logger.info("Starting Prometheus metrics...")
+        self.running = True
         self._task = asyncio.create_task(self._metrics_task())
 
     async def stop(self) -> None:
         logger.info("Stoping Prometheus metrics...")
-        if self._task is not None:
-            self._task.cancel()
+        self.running = False
 
-            # we need to make sure that the task is cancelled
+        if self._task is not None:
+            # we need to make sure that the task is `done`
             # to clean up properly
-            while not self._task.cancelled():
+            while not self._task.done():
                 await asyncio.sleep(0.1)
 
         self._clean_consumer_metrics()
@@ -214,10 +221,13 @@ class PrometheusMonitor:
     async def _metrics_task(self) -> None:
         """
         Asyncio Task that runs in `backgroud` to generate
-        consumer metrics
+        consumer metrics.
+
+        When self.running is False the task will finish and it
+        will be safe to stop consumers and producers.
         """
-        while True:
-            await asyncio.sleep(3)
+        while self.running:
+            await asyncio.sleep(self.metrics_scrape_time)
             for stream in self._streams:
                 if stream.consumer is not None:
                     try:
