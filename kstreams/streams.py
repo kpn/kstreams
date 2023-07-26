@@ -99,7 +99,7 @@ class Stream:
         self.func = func
         self.backend = backend
         self.consumer_class = consumer_class
-        self.consumer: Optional[Type[ConsumerType]] = None
+        self.consumer: Optional[ConsumerType] = None
         self.config = config or {}
         self._consumer_task: Optional[asyncio.Task] = None
         self.name = name or str(uuid.uuid4())
@@ -115,7 +115,7 @@ class Stream:
         # so we always create a list and then we expand it with *topics
         self.topics = [topics] if isinstance(topics, str) else topics
 
-    def _create_consumer(self) -> Type[ConsumerType]:
+    def _create_consumer(self) -> ConsumerType:
         if self.backend is None:
             raise BackendNotSet("A backend has not been set for this stream")
         config = {**self.backend.dict(), **self.config}
@@ -135,10 +135,14 @@ class Stream:
     async def _subscribe(self) -> None:
         # Always create a consumer on stream.start
         self.consumer = self._create_consumer()
-        await self.consumer.start()
-        self.running = True
 
-        self.consumer.subscribe(topics=self.topics, listener=self.rebalance_listener)
+        # add the chech tp avoid `mypy` complains
+        if self.consumer is not None:
+            await self.consumer.start()
+            self.consumer.subscribe(
+                topics=self.topics, listener=self.rebalance_listener
+            )
+            self.running = True
 
     async def commit(self, offsets: Optional[Dict[TopicPartition, int]] = None):
         await self.consumer.commit(offsets=offsets)  # type: ignore

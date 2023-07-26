@@ -139,9 +139,9 @@ class StreamEngine:
         self.monitor.start()
 
     async def stop(self) -> None:
-        await self.stop_streams()
-        await self.stop_producer()
         await self.monitor.stop()
+        await self.stop_producer()
+        await self.stop_streams()
 
     async def stop_producer(self):
         logger.info("Waiting Producer to STOP....")
