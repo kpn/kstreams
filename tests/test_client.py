@@ -31,9 +31,18 @@ async def test_engine_clients(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
-async def test_send_event_with_test_client(stream_engine: StreamEngine):
+@pytest.mark.parametrize(
+    "monitoring_enabled",
+    (
+        True,
+        False,
+    ),
+)
+async def test_send_event_with_test_client(
+    stream_engine: StreamEngine, monitoring_enabled: bool
+):
     topic = "local--kstreams"
-    client = TestStreamClient(stream_engine)
+    client = TestStreamClient(stream_engine, monitoring_enabled=monitoring_enabled)
 
     async with client:
         metadata = await client.send(
@@ -278,11 +287,18 @@ async def test_e2e_example():
 
 
 @pytest.mark.asyncio
-async def test_e2e_consume_multiple_topics():
+@pytest.mark.parametrize(
+    "monitoring_enabled",
+    (
+        True,
+        False,
+    ),
+)
+async def test_e2e_consume_multiple_topics(monitoring_enabled):
     from examples.consume_multiple_topics import produce, stream_engine, topics
 
     total_events = 2
-    client = TestStreamClient(stream_engine)
+    client = TestStreamClient(stream_engine, monitoring_enabled=monitoring_enabled)
 
     async with client:
         await produce(total_events)

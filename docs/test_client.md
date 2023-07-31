@@ -257,3 +257,13 @@ async def test_event_produced():
     it shows what to do when the `procuder code` is encapsulated in other functions,
     for example a `FastAPI` view.
     Then you don't want to use `client.send` directly, just called the function that contains `stream_engine.send(...)`
+
+## Disabling monitoring during testing
+
+Monitoring streams and producers is vital for streaming application but it requires extra effort. Sometimes during testing,
+monitoring is not required as we only want to focus on testing the buisness logic. In order to disable monitoring
+during testing use:
+
+```python
+client = TestStreamClient(stream_engine, monitoring_enabled=False)
+```
