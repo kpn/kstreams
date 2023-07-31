@@ -1,3 +1,9 @@
+## 0.12.0 (2023-07-31)
+
+### Feat
+
+- option to disable monitoring during testing added (#125)
+
 ## 0.11.12 (2023-07-26)
 
 ### Fix
