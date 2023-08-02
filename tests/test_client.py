@@ -230,9 +230,9 @@ async def test_end_offsets(stream_engine: StreamEngine):
 
         stream = stream_engine.get_stream("my-stream")
         assert (await stream.consumer.end_offsets(topic_partitions)) == {
-            TopicPartition(topic="local--kstreams", partition=0): 1,
-            TopicPartition(topic="local--kstreams", partition=2): 0,
-            TopicPartition(topic="local--kstreams", partition=10): 0,
+            TopicPartition(topic="local--kstreams", partition=0): 2,
+            TopicPartition(topic="local--kstreams", partition=2): 1,
+            TopicPartition(topic="local--kstreams", partition=10): 1,
         }
 
 

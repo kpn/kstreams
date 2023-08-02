@@ -158,7 +158,7 @@ class TestConsumer(Base, Consumer):
     ) -> Dict[TopicPartition, int]:
         topic = TopicManager.get(partitions[0].topic)
         end_offsets = {
-            topic_partition: topic.offset(partition=topic_partition.partition)
+            topic_partition: topic.offset(partition=topic_partition.partition) + 1
             for topic_partition in partitions
         }
         return end_offsets
