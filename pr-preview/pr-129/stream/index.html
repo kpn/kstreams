@@ -1778,9 +1778,9 @@ meaning that the lag will increase.</p>
 <span class="sd">                to the consumer on the last rebalance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># lock all asyncio Tasks so no new metrics will be added to the Monitor</span>
-        <span class="k">if</span> <span class="n">revoked</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
-                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="c1"># if revoked and self.engine is not None:</span>
+        <span class="c1">#     async with asyncio.Lock():</span>
+        <span class="c1">#         await self.engine.monitor.stop()</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_assigned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assigned</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1796,7 +1796,7 @@ meaning that the lag will increase.</p>
         <span class="c1"># lock all asyncio Tasks so no new metrics will be added to the Monitor</span>
         <span class="k">if</span> <span class="n">assigned</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+                <span class="c1"># self.engine.monitor.start()</span>
 
                 <span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span>
                 <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1898,7 +1898,7 @@ consumer (may include partitions that were previously assigned)</p>
     <span class="c1"># lock all asyncio Tasks so no new metrics will be added to the Monitor</span>
     <span class="k">if</span> <span class="n">assigned</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="c1"># self.engine.monitor.start()</span>
 
             <span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span>
             <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1969,11 +1969,7 @@ to the consumer on the last rebalance</p>
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Coroutine to be called *before* a rebalance operation starts and</span>
 <span class="sd">    *after* the consumer stops fetching data.</span>
@@ -1984,10 +1980,6 @@ to the consumer on the last rebalance</p>
 <span class="sd">        revoked Set[TopicPartitions]: Partitions that were assigned</span>
 <span class="sd">            to the consumer on the last rebalance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># lock all asyncio Tasks so no new metrics will be added to the Monitor</span>
-    <span class="k">if</span> <span class="n">revoked</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
