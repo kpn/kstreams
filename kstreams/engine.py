@@ -9,7 +9,6 @@ from kstreams.structs import TopicPartitionOffset
 from .backends.kafka import Kafka
 from .clients import ConsumerType, ProducerType
 from .exceptions import DuplicateStreamException, EngineNotStartedException
-from .prometheus.monitor import PrometheusMonitor
 from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import Deserializer, Serializer
 from .streams import Stream, StreamFunc, stream
@@ -61,7 +60,6 @@ class StreamEngine:
         backend: Kafka,
         consumer_class: Type[ConsumerType],
         producer_class: Type[ProducerType],
-        monitor: PrometheusMonitor,
         title: Optional[str] = None,
         deserializer: Optional[Deserializer] = None,
         serializer: Optional[Serializer] = None,
@@ -72,7 +70,6 @@ class StreamEngine:
         self.producer_class = producer_class
         self.deserializer = deserializer
         self.serializer = serializer
-        self.monitor = monitor
         self._producer: Optional[Type[ProducerType]] = None
         self._streams: List[Stream] = []
 
@@ -123,9 +120,9 @@ class StreamEngine:
             headers=encoded_headers,
         )
         metadata: RecordMetadata = await fut
-        self.monitor.add_topic_partition_offset(
-            topic, metadata.partition, metadata.offset
-        )
+        # self.monitor.add_topic_partition_offset(
+        #     topic, metadata.partition, metadata.offset
+        # )
 
         return metadata
 
@@ -133,13 +130,13 @@ class StreamEngine:
         await self.start_producer()
         await self.start_streams()
 
-        # add the producer and streams to the Monitor
-        self.monitor.add_producer(self._producer)
-        self.monitor.add_streams(self._streams)
-        self.monitor.start()
+        # # add the producer and streams to the Monitor
+        # self.monitor.add_producer(self._producer)
+        # self.monitor.add_streams(self._streams)
+        # self.monitor.start()
 
     async def stop(self) -> None:
-        await self.monitor.stop()
+        # await self.monitor.stop()
         await self.stop_producer()
         await self.stop_streams()
 
@@ -203,8 +200,8 @@ class StreamEngine:
 
     async def remove_stream(self, stream: Stream) -> None:
         self._streams.remove(stream)
-        await stream.stop()
-        self.monitor.clean_stream_consumer_metrics(stream)
+        del stream
+        # self.monitor.clean_stream_consumer_metrics(stream)
 
     def stream(
         self,
