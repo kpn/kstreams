@@ -917,9 +917,9 @@ To override it per Stream, you can provide one per Stream</p>
             <span class="n">headers</span><span class="o">=</span><span class="n">encoded_headers</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">metadata</span><span class="p">:</span> <span class="n">RecordMetadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">fut</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">add_topic_partition_offset</span><span class="p">(</span>
-            <span class="n">topic</span><span class="p">,</span> <span class="n">metadata</span><span class="o">.</span><span class="n">partition</span><span class="p">,</span> <span class="n">metadata</span><span class="o">.</span><span class="n">offset</span>
-        <span class="p">)</span>
+        <span class="c1"># self.monitor.add_topic_partition_offset(</span>
+        <span class="c1">#     topic, metadata.partition, metadata.offset</span>
+        <span class="c1"># )</span>
 
         <span class="k">return</span> <span class="n">metadata</span>
 
@@ -927,13 +927,13 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_producer</span><span class="p">()</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_streams</span><span class="p">()</span>
 
-        <span class="c1"># add the producer and streams to the Monitor</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">add_producer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">add_streams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_streams</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="c1"># # add the producer and streams to the Monitor</span>
+        <span class="c1"># self.monitor.add_producer(self._producer)</span>
+        <span class="c1"># self.monitor.add_streams(self._streams)</span>
+        <span class="c1"># self.monitor.start()</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="c1"># await self.monitor.stop()</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_producer</span><span class="p">()</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_streams</span><span class="p">()</span>
 
@@ -997,7 +997,7 @@ To override it per Stream, you can provide one per Stream</p>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">remove_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_streams</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">clean_stream_consumer_metrics</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+        <span class="c1"># self.monitor.clean_stream_consumer_metrics(stream)</span>
 
     <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1260,9 +1260,9 @@ encode the event</p>
         <span class="n">headers</span><span class="o">=</span><span class="n">encoded_headers</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">metadata</span><span class="p">:</span> <span class="n">RecordMetadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">fut</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">add_topic_partition_offset</span><span class="p">(</span>
-        <span class="n">topic</span><span class="p">,</span> <span class="n">metadata</span><span class="o">.</span><span class="n">partition</span><span class="p">,</span> <span class="n">metadata</span><span class="o">.</span><span class="n">offset</span>
-    <span class="p">)</span>
+    <span class="c1"># self.monitor.add_topic_partition_offset(</span>
+    <span class="c1">#     topic, metadata.partition, metadata.offset</span>
+    <span class="c1"># )</span>
 
     <span class="k">return</span> <span class="n">metadata</span>
 </code></pre></div></td></tr></table></div>
