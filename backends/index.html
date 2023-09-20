@@ -685,7 +685,8 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
 <span class="normal">110</span>
 <span class="normal">111</span>
 <span class="normal">112</span>
-<span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Kafka</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">113</span>
+<span class="normal">114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Kafka</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The `Kafka` backend validates the given attributes.</span>
 
@@ -728,6 +729,7 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
 
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
         <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="nd">@root_validator</span>
     <span class="k">def</span> <span class="nf">protocols_validation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
