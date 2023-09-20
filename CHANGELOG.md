@@ -1,3 +1,9 @@
+## 0.12.2 (2023-09-20)
+
+### Fix
+
+- **Kafka backend**: use enum values when represent kafka backend as dict. Close #130 (#131)
+
 ## 0.12.1 (2023-08-02)
 
 ### Fix
