@@ -63,6 +63,7 @@ class Kafka(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
+        use_enum_values = True
 
     @root_validator
     def protocols_validation(cls, values):

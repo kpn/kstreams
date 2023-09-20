@@ -99,3 +99,21 @@ def test_sasl_ssl_fail_missing_ssl_context():
             sasl_plain_password=password,
         )
     assert "ssl_context" in str(e.value.args[0])
+
+
+def test_backend_to_dict():
+    kafka_backend = Kafka(
+        security_protocol=SecurityProtocol.SASL_PLAINTEXT,
+        sasl_plain_username="username",
+        sasl_plain_password="pwd",
+    )
+    assert kafka_backend.security_protocol == SecurityProtocol.SASL_PLAINTEXT
+    assert kafka_backend.dict() == {
+        "bootstrap_servers": ["localhost:9092"],
+        "security_protocol": "SASL_PLAINTEXT",
+        "ssl_context": None,
+        "sasl_mechanism": "PLAIN",
+        "sasl_plain_username": "username",
+        "sasl_plain_password": "pwd",
+        "sasl_oauth_token_provider": None,
+    }
