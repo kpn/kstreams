@@ -11,7 +11,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-8.5.10">
     
     
       
@@ -452,6 +452,7 @@ with the backend.</p>
 
 
 
+
 <h2 id="kstreams.backends.kafka.Kafka" class="doc doc-heading">
           <code>kstreams.backends.kafka.Kafka</code>
 
@@ -511,7 +512,7 @@ with the backend.</p>
         <tr>
           <td><code>ssl_context</code></td>
           <td>
-                <code><span title="typing.Optional">Optional</span>[ssl.<span title="ssl.SSLContext">SSLContext</span>]</code>
+                <code><span title="typing.Optional">Optional</span>[<span title="ssl.SSLContext">SSLContext</span>]</code>
           </td>
           <td>
             <div class="doc-md-description">
@@ -720,7 +721,7 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
     <span class="n">bootstrap_servers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;localhost:9092&quot;</span><span class="p">]</span>
     <span class="n">security_protocol</span><span class="p">:</span> <span class="n">SecurityProtocol</span> <span class="o">=</span> <span class="n">SecurityProtocol</span><span class="o">.</span><span class="n">PLAINTEXT</span>
 
-    <span class="n">ssl_context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">]</span>
+    <span class="n">ssl_context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">sasl_mechanism</span><span class="p">:</span> <span class="n">SaslMechanism</span> <span class="o">=</span> <span class="n">SaslMechanism</span><span class="o">.</span><span class="n">PLAIN</span>
     <span class="n">sasl_plain_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -731,7 +732,7 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
         <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="nd">@root_validator</span>
+    <span class="nd">@root_validator</span><span class="p">(</span><span class="n">skip_on_failure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">protocols_validation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
         <span class="n">security_protocol</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;security_protocol&quot;</span><span class="p">]</span>
 

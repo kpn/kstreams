@@ -11,7 +11,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-8.5.10">
     
     
       
@@ -402,14 +402,14 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kstreams.rebalance_listener.MetricsRebalanceListener.on_partitions_assigned" class="md-nav__link">
+  <a href="#kstreams.MetricsRebalanceListener.on_partitions_assigned" class="md-nav__link">
     on_partitions_assigned()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#kstreams.rebalance_listener.MetricsRebalanceListener.on_partitions_revoked" class="md-nav__link">
+  <a href="#kstreams.MetricsRebalanceListener.on_partitions_revoked" class="md-nav__link">
     on_partitions_revoked()
   </a>
   
@@ -436,7 +436,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kstreams.rebalance_listener.ManualCommitRebalanceListener.on_partitions_revoked" class="md-nav__link">
+  <a href="#kstreams.ManualCommitRebalanceListener.on_partitions_revoked" class="md-nav__link">
     on_partitions_revoked()
   </a>
   
@@ -463,14 +463,14 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kstreams.rebalance_listener.RebalanceListener.on_partitions_assigned" class="md-nav__link">
+  <a href="#kstreams.RebalanceListener.on_partitions_assigned" class="md-nav__link">
     on_partitions_assigned()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#kstreams.rebalance_listener.RebalanceListener.on_partitions_revoked" class="md-nav__link">
+  <a href="#kstreams.RebalanceListener.on_partitions_revoked" class="md-nav__link">
     on_partitions_revoked()
   </a>
   
@@ -723,14 +723,14 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kstreams.rebalance_listener.MetricsRebalanceListener.on_partitions_assigned" class="md-nav__link">
+  <a href="#kstreams.MetricsRebalanceListener.on_partitions_assigned" class="md-nav__link">
     on_partitions_assigned()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#kstreams.rebalance_listener.MetricsRebalanceListener.on_partitions_revoked" class="md-nav__link">
+  <a href="#kstreams.MetricsRebalanceListener.on_partitions_revoked" class="md-nav__link">
     on_partitions_revoked()
   </a>
   
@@ -757,7 +757,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kstreams.rebalance_listener.ManualCommitRebalanceListener.on_partitions_revoked" class="md-nav__link">
+  <a href="#kstreams.ManualCommitRebalanceListener.on_partitions_revoked" class="md-nav__link">
     on_partitions_revoked()
   </a>
   
@@ -784,14 +784,14 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kstreams.rebalance_listener.RebalanceListener.on_partitions_assigned" class="md-nav__link">
+  <a href="#kstreams.RebalanceListener.on_partitions_assigned" class="md-nav__link">
     on_partitions_assigned()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#kstreams.rebalance_listener.RebalanceListener.on_partitions_revoked" class="md-nav__link">
+  <a href="#kstreams.RebalanceListener.on_partitions_revoked" class="md-nav__link">
     on_partitions_revoked()
   </a>
   
@@ -828,6 +828,7 @@
 
 
 <div class="doc doc-object doc-class">
+
 
 
 
@@ -879,7 +880,7 @@
         <tr>
           <td><code>backend</code></td>
           <td>
-                <code><a class="autorefs autorefs-internal" href="../#kstreams">kstreams</a>.<span title="kstreams.backends">backends</span>.<a class="autorefs autorefs-internal" title="kstreams.backends.Kafka" href="../backends/#kstreams.backends.kafka.Kafka">Kafka</a></code>
+                <code><a class="autorefs autorefs-internal" title="kstreams.backends.Kafka" href="../backends/#kstreams.backends.kafka.Kafka">Kafka</a></code>
           </td>
           <td>
             <div class="doc-md-description">
@@ -916,7 +917,7 @@ can be passed in the dictionary</p>
         <tr>
           <td><code>deserializer</code></td>
           <td>
-                <code><a class="autorefs autorefs-internal" href="../#kstreams">kstreams</a>.<span title="kstreams.serializers">serializers</span>.<a class="autorefs autorefs-internal" title="kstreams.serializers.Deserializer" href="../serialization/#kstreams.serializers.Deserializer">Deserializer</a></code>
+                <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Deserializer" href="../serialization/#kstreams.serializers.Deserializer">Deserializer</a></code>
           </td>
           <td>
             <div class="doc-md-description">
@@ -928,7 +929,7 @@ when an event is consumed</p>
         <tr>
           <td><code>initial_offsets</code></td>
           <td>
-                <code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="../#kstreams">kstreams</a>.<span title="kstreams.TopicPartitionOffset">TopicPartitionOffset</span>]</code>
+                <code><span title="typing.List">List</span>[<span title="kstreams.TopicPartitionOffset">TopicPartitionOffset</span>]</code>
           </td>
           <td>
             <div class="doc-md-description">
@@ -940,7 +941,7 @@ TopicPartitionOffset that will <code>seek</code> the initial offsets to</p>
         <tr>
           <td><code>rebalance_listener</code></td>
           <td>
-                <code><a class="autorefs autorefs-internal" href="../#kstreams">kstreams</a>.<span title="kstreams.rebalance_listener">rebalance_listener</span>.<a class="autorefs autorefs-internal" title="kstreams.rebalance_listener.RebalanceListener" href="#kstreams.RebalanceListener">RebalanceListener</a></code>
+                <code><a class="autorefs autorefs-internal" title="kstreams.rebalance_listener.RebalanceListener" href="#kstreams.RebalanceListener">RebalanceListener</a></code>
           </td>
           <td>
             <div class="doc-md-description">
@@ -1437,8 +1438,9 @@ callbacks when partition are assigned or revoked</p>
 
 
 
+
 <h3 id="kstreams.streams.Stream.__aenter__" class="doc doc-heading">
-<code class="highlight language-python"><span class="fm">__aenter__</span><span class="p">()</span></code>
+          <code class="highlight language-python"><span class="fm">__aenter__</span><span class="p">()</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
@@ -1718,6 +1720,7 @@ meaning that the lag will increase.</p>
 
 
 
+
 <h2 id="kstreams.MetricsRebalanceListener" class="doc doc-heading">
           <code>kstreams.MetricsRebalanceListener</code>
 
@@ -1821,8 +1824,9 @@ meaning that the lag will increase.</p>
 
 
 
-<h3 id="kstreams.rebalance_listener.MetricsRebalanceListener.on_partitions_assigned" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">on_partitions_assigned</span><span class="p">(</span><span class="n">assigned</span><span class="p">)</span></code>
+
+<h3 id="kstreams.MetricsRebalanceListener.on_partitions_assigned" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">on_partitions_assigned</span><span class="p">(</span><span class="n">assigned</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
@@ -1914,8 +1918,9 @@ consumer (may include partitions that were previously assigned)</p>
 
 
 
-<h3 id="kstreams.rebalance_listener.MetricsRebalanceListener.on_partitions_revoked" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
+
+<h3 id="kstreams.MetricsRebalanceListener.on_partitions_revoked" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
@@ -2010,6 +2015,7 @@ manual <code>commit</code></p>
 
 
 
+
 <h2 id="kstreams.ManualCommitRebalanceListener" class="doc doc-heading">
           <code>kstreams.ManualCommitRebalanceListener</code>
 
@@ -2095,8 +2101,9 @@ manual <code>commit</code></p>
 
 
 
-<h3 id="kstreams.rebalance_listener.ManualCommitRebalanceListener.on_partitions_revoked" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
+
+<h3 id="kstreams.ManualCommitRebalanceListener.on_partitions_revoked" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
@@ -2214,6 +2221,7 @@ to the consumer on the last rebalance</p>
 
 
 <div class="doc doc-object doc-class">
+
 
 
 
@@ -2444,8 +2452,9 @@ when the set of partitions are assigned or revoked to the <code>Stream</code>.</
 
 
 
-<h3 id="kstreams.rebalance_listener.RebalanceListener.on_partitions_assigned" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">on_partitions_assigned</span><span class="p">(</span><span class="n">assigned</span><span class="p">)</span></code>
+
+<h3 id="kstreams.RebalanceListener.on_partitions_assigned" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">on_partitions_assigned</span><span class="p">(</span><span class="n">assigned</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
@@ -2554,8 +2563,9 @@ consumer (may include partitions that were previously assigned)</p>
 
 
 
-<h3 id="kstreams.rebalance_listener.RebalanceListener.on_partitions_revoked" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
+
+<h3 id="kstreams.RebalanceListener.on_partitions_revoked" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
