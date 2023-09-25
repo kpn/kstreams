@@ -50,7 +50,7 @@ def test_sasl_plain_fail_missing_pass():
             security_protocol=SecurityProtocol.SASL_PLAINTEXT,
             sasl_plain_username=username,
         )
-    assert "sasl_plain_password" in str(e.value.args[0])
+    assert "sasl_plain_password" in str(e.value)
 
 
 def test_sasl_plain_fail_missing_username():
@@ -61,7 +61,7 @@ def test_sasl_plain_fail_missing_username():
             security_protocol=SecurityProtocol.SASL_PLAINTEXT,
             sasl_plain_password=password,
         )
-    assert "sasl_plain_username" in str(e.value.args[0])
+    assert "sasl_plain_username" in str(e.value)
 
 
 def test_sasl_ssl_fail_missing_pass(ssl_context):
@@ -73,7 +73,7 @@ def test_sasl_ssl_fail_missing_pass(ssl_context):
             ssl_context=ssl_context,
             sasl_plain_username=username,
         )
-    assert "sasl_plain_password" in str(e.value.args[0])
+    assert "sasl_plain_password" in str(e.value)
 
 
 def test_sasl_ssl_fail_missing_username(ssl_context):
@@ -85,7 +85,7 @@ def test_sasl_ssl_fail_missing_username(ssl_context):
             ssl_context=ssl_context,
             sasl_plain_password=password,
         )
-    assert "sasl_plain_username" in str(e.value.args[0])
+    assert "sasl_plain_username" in str(e.value)
 
 
 def test_sasl_ssl_fail_missing_ssl_context():
@@ -98,7 +98,7 @@ def test_sasl_ssl_fail_missing_ssl_context():
             sasl_plain_username=username,
             sasl_plain_password=password,
         )
-    assert "ssl_context" in str(e.value.args[0])
+    assert "ssl_context" in str(e.value)
 
 
 def test_backend_to_dict():

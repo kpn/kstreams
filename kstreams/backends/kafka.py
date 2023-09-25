@@ -54,7 +54,7 @@ class Kafka(BaseModel):
     bootstrap_servers: List[str] = ["localhost:9092"]
     security_protocol: SecurityProtocol = SecurityProtocol.PLAINTEXT
 
-    ssl_context: Optional[ssl.SSLContext]
+    ssl_context: Optional[ssl.SSLContext] = None
 
     sasl_mechanism: SaslMechanism = SaslMechanism.PLAIN
     sasl_plain_username: Optional[str] = None
@@ -65,7 +65,7 @@ class Kafka(BaseModel):
         arbitrary_types_allowed = True
         use_enum_values = True
 
-    @root_validator
+    @root_validator(skip_on_failure=True)
     def protocols_validation(cls, values):
         security_protocol = values["security_protocol"]
 
