@@ -1,3 +1,9 @@
+## 0.12.3 (2023-09-25)
+
+### Refactor
+
+- **pydantic**: add support for pydantic v2 (#132)
+
 ## 0.12.2 (2023-09-20)
 
 ### Fix
