@@ -68,7 +68,7 @@ class PrometheusMonitor:
         self._task = asyncio.create_task(self._metrics_task())
 
     async def stop(self) -> None:
-        logger.info("Stoping Prometheus metrics...")
+        logger.info("Stopping Prometheus metrics...")
         self.running = False
 
         if self._task is not None:
