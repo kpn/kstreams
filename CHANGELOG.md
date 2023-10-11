@@ -1,3 +1,9 @@
+## 0.12.4 (2023-10-11)
+
+### Fix
+
+- spelling mistake in log message (#133)
+
 ## 0.12.3 (2023-09-25)
 
 ### Refactor
