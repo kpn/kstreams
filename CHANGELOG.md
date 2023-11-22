@@ -1,3 +1,9 @@
+## 0.12.5 (2023-11-22)
+
+### Fix
+
+- increase total events also when using sync testing (#136)
+
 ## 0.12.4 (2023-10-11)
 
 ### Fix
