@@ -1,4 +1,4 @@
-from unittest.mock import Mock, call, patch
+from unittest.mock import Mock, call
 
 import pytest
 
@@ -316,56 +316,53 @@ async def test_streams_consume_events_with_initial_offsets(stream_engine: Stream
         tp2,
     )
 
-    with patch("kstreams.test_utils.test_clients.TestConsumer.seek") as client_seek:
-        async with client:
-            await client.send(topic, value=event1, partition=0)
-            await client.send(topic, value=event1, partition=0)
-            await client.send(topic, value=event1, partition=0)
-            await client.send(topic, value=event2, partition=1)
+    async with client:
+        await client.send(topic, value=event1, partition=0)
+        await client.send(topic, value=event1, partition=0)
+        await client.send(topic, value=event1, partition=0)
+        await client.send(topic, value=event2, partition=1)
 
-            async def func_stream(consumer: Stream):
-                async for cr in consumer:
-                    process(cr.value)
+        assert TopicManager.get(name=topic).size() == 4
 
-            stream: Stream = Stream(
-                topics=topic,
-                consumer_class=TestConsumer,
-                name="my-stream",
-                func=func_stream,
-                initial_offsets=[
-                    # initial topic offset is -1
-                    TopicPartitionOffset(topic=topic, partition=0, offset=1),
-                    TopicPartitionOffset(topic=topic, partition=1, offset=0),
-                    TopicPartitionOffset(topic=topic, partition=2, offset=10),
-                ],
-            )
-            stream_engine.add_stream(stream)
-            await stream.start()
+        async def func_stream(consumer: Stream):
+            async for cr in consumer:
+                process(cr.value)
 
-            # simulate partitions assigned on rebalance
-            await stream.rebalance_listener.on_partitions_assigned(assigned=assignments)
+        stream: Stream = Stream(
+            topics=topic,
+            consumer_class=TestConsumer,
+            name="my-stream",
+            func=func_stream,
+            initial_offsets=[
+                # initial topic offset is -1
+                TopicPartitionOffset(topic=topic, partition=0, offset=1),
+                TopicPartitionOffset(topic=topic, partition=1, offset=0),
+                TopicPartitionOffset(topic=topic, partition=2, offset=10),
+            ],
+        )
+        stream_engine.add_stream(stream)
+        await stream.start()
 
-            assert stream.consumer.assignment() == [tp0, tp1, tp2]
+        # simulate partitions assigned on rebalance
+        await stream.rebalance_listener.on_partitions_assigned(assigned=assignments)
 
-            assert stream.consumer.last_stable_offset(tp0) == 2
-            assert stream.consumer.highwater(tp0) == 3
-            assert await stream.consumer.position(tp0) == 3
+        assert stream.consumer.assignment() == [tp0, tp1, tp2]
 
-            assert stream.consumer.last_stable_offset(tp1) == 0
-            assert stream.consumer.highwater(tp1) == 1
-            assert await stream.consumer.position(tp1) == 1
+        assert stream.consumer.last_stable_offset(tp0) == 2
+        assert stream.consumer.highwater(tp0) == 3
+        assert await stream.consumer.position(tp0) == 3
 
-            # the position will be 0 as the offset 10 does not exist
-            assert stream.consumer.last_stable_offset(tp2) == -1
-            assert stream.consumer.highwater(tp2) == 0
-            assert await stream.consumer.position(tp2) == 0
+        assert stream.consumer.last_stable_offset(tp1) == 0
+        assert stream.consumer.highwater(tp1) == 1
+        assert await stream.consumer.position(tp1) == 1
 
-    client_seek.assert_has_calls(
-        [
-            call(partition=tp0, offset=1),
-            call(partition=tp1, offset=0),
-            call(partition=tp2, offset=10),
-        ],
-        any_order=True,
-    )
+        # the position will be 0 as the offset 10 does not exist
+        assert stream.consumer.last_stable_offset(tp2) == -1
+        assert stream.consumer.highwater(tp2) == 0
+        assert await stream.consumer.position(tp2) == 0
+
+        # We moved to offset 1 on partition 0, then there are
+        # 3 events in the Queue rather than 4
+        assert TopicManager.get(name=topic).size() == 3
+
     process.assert_has_calls([call(event1), call(event1), call(event2)], any_order=True)

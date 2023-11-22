@@ -21,10 +21,7 @@ class Topic:
 
     async def put(self, event: ConsumerRecord) -> None:
         await self.queue.put(event)
-
-        # keep track of the amount of events per topic partition
-        self.total_partition_events[event.partition] += 1
-        self.total_events += 1
+        self._inc_amount(event)
 
     async def get(self) -> ConsumerRecord:
         return await self.queue.get()
@@ -33,7 +30,13 @@ class Topic:
         return self.queue.get_nowait()
 
     def put_nowait(self, *, event: ConsumerRecord) -> None:
-        return self.queue.put_nowait(event)
+        self.queue.put_nowait(event)
+        self._inc_amount(event)
+
+    def _inc_amount(self, event: ConsumerRecord) -> None:
+        # keep track of the amount of events per topic partition
+        self.total_partition_events[event.partition] += 1
+        self.total_events += 1
 
     def task_done(self) -> None:
         self.queue.task_done()
