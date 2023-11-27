@@ -1,3 +1,9 @@
+## 0.12.6 (2023-11-27)
+
+### Fix
+
+- **TestClient**: call task_done after the topic has consumed the cr (#138)
+
 ## 0.12.5 (2023-11-22)
 
 ### Fix
