@@ -7,7 +7,7 @@ from kstreams.serializers import Serializer
 from kstreams.types import Headers
 
 from .structs import RecordMetadata
-from .topics import Topic, TopicManager
+from .topics import TopicManager
 
 
 class Base:
@@ -69,7 +69,6 @@ class TestConsumer(Base, Consumer):
         self.topics: Optional[Tuple[str]] = None
         self._group_id: Optional[str] = group_id
         self._assignment: List[TopicPartition] = []
-        self._previous_topic: Optional[Topic] = None
         self.partitions_committed: Dict[TopicPartition, int] = {}
 
         # Called to make sure that has all the kafka attributes like _coordinator
@@ -177,11 +176,6 @@ class TestConsumer(Base, Consumer):
     async def getone(
         self,
     ) -> Optional[ConsumerRecord]:  # The return type must be fixed later on
-        if self._previous_topic:
-            # Assumes previous record retrieved through getone was completed
-            self._previous_topic.task_done()
-            self._previous_topic = None
-
         topic = None
         for topic_partition in self._assignment:
             topic = TopicManager.get(topic_partition.topic)
@@ -192,7 +186,6 @@ class TestConsumer(Base, Consumer):
         if topic is not None:
             consumer_record = await topic.get()
             self._check_partition_assignments(consumer_record)
-            self._previous_topic = topic
             return consumer_record
 
         return None
