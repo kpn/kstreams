@@ -27,7 +27,9 @@ class Topic:
         self.total_events += 1
 
     async def get(self) -> ConsumerRecord:
-        return await self.queue.get()
+        cr = await self.queue.get()
+        self.task_done()
+        return cr
 
     def get_nowait(self) -> ConsumerRecord:
         return self.queue.get_nowait()
