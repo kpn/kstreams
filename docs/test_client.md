@@ -58,9 +58,8 @@ event_store = EventStore()
 
 
 @stream_engine.stream(topic, group_id="example-group")
-async def consume(stream: Stream):
-    async for cr in stream:
-        event_store.add(cr)
+async def consume(cr: ConsumerRecord):
+    event_store.add(cr)
 
 
 async def produce():
@@ -129,7 +128,7 @@ In some cases your stream will commit, in this situation checking the commited p
 ```python
 import pytest
 from kstreams.test_utils import TestStreamClient
-from kstreams import TopicPartition
+from kstreams import ConsumerRecord, Stream, TopicPartition
 
 from .example import produce, stream_engine
 
@@ -145,10 +144,9 @@ tp = TopicPartition(
 total_events = 10
 
 @stream_engine.stream(topic_name, name=name)
-async def my_stream(stream: Stream):
-    async for cr in stream:
-        # commit every time that an event arrives
-        await stream.consumer.commit({tp: cr.offset})
+async def my_stream(cr: ConsumerRecord, stream: Stream):
+    # commit every time that an event arrives
+    await stream.commit({tp: cr.offset})
 
 
 # test the code
@@ -162,7 +160,7 @@ async def test_consumer_commit(stream_engine: StreamEngine):
 
         # check that everything was commited
         stream = stream_engine.get_stream(name)
-        assert (await stream.consumer.committed(tp)) == total_events
+        assert (await stream.committed(tp)) == total_events
 ```
 
 ### E2E test

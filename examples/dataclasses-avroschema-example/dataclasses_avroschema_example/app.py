@@ -2,7 +2,7 @@ import asyncio
 
 import aiorun
 
-from kstreams import Stream, create_engine
+from kstreams import ConsumerRecord, create_engine
 
 from . import serializers
 from .models import Address, User
@@ -17,17 +17,15 @@ stream_engine = create_engine(
 
 
 @stream_engine.stream(user_topic, deserializer=serializers.AvroDeserializer(model=User))
-async def user_stream(stream: Stream):
-    async for cr in stream:
-        print(f"Event consumed on topic {user_topic}. The user is {cr.value}")
+async def user_stream(cr: ConsumerRecord):
+    print(f"Event consumed on topic {user_topic}. The user is {cr.value}")
 
 
 @stream_engine.stream(
     address_topic, deserializer=serializers.AvroDeserializer(model=Address)
 )
-async def address_stream(stream: Stream):
-    async for cr in stream:
-        print(f"Event consumed on topic {address_topic}. The Address is {cr.value}")
+async def address_stream(cr: ConsumerRecord):
+    print(f"Event consumed on topic {address_topic}. The Address is {cr.value}")
 
 
 async def produce():

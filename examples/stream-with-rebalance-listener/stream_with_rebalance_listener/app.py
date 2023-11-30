@@ -25,11 +25,10 @@ class MyListener(kstreams.RebalanceListener):
     group_id="example-group",
     rebalance_listener=MyListener(),
 )
-async def consume(stream):
+async def consume(cr: kstreams.ConsumerRecord):
     print("Consumer started")
     try:
-        async for cr in stream:
-            print(f"Event consumed: headers: {cr.headers}, payload: {cr}")
+        print(f"Event consumed: headers: {cr.headers}, payload: {cr}")
     finally:
         # Terminate the program if something fails. (aiorun will cath this signal and properly shutdown this program.)
         signal.alarm(signal.SIGTERM)

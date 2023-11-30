@@ -49,15 +49,14 @@ rebalance_listener = MyListener(batch_processor=batch_processor)
     enable_auto_commit=False,  # it means that we need to call commit
     rebalance_listener=rebalance_listener,
 )
-async def consume(stream):
-    async for event in stream:
-        # Not need to catch the error `CommitFailedError`
-        # as the steam rebalance listener is the
-        # default one KstreamsRebalanceListener
-        batch_processor.add_event(event)
-        if batch_processor.should_process():
-            await batch_processor.process()
-            await stream.commit()
+async def consume(cr: kstreams.ConsumerRecord, stream: kstreams.Stream):
+    # Not need to catch the error `CommitFailedError`
+    # as the steam rebalance listener is the
+    # default one KstreamsRebalanceListener
+    batch_processor.add_event(cr)
+    if batch_processor.should_process():
+        await batch_processor.process()
+        await stream.commit()
 
 
 async def start():
