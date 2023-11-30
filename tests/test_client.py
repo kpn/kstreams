@@ -1,8 +1,10 @@
+import asyncio
+from typing import Set
 from unittest.mock import Mock, call
 
 import pytest
 
-from kstreams import StreamEngine, TopicPartition, TopicPartitionOffset
+from kstreams import ConsumerRecord, StreamEngine, TopicPartition, TopicPartitionOffset
 from kstreams.streams import Stream
 from kstreams.test_utils import (
     TestConsumer,
@@ -114,6 +116,59 @@ async def test_stream_consume_events_as_generator(stream_engine: StreamEngine):
 
     # check that the event was consumed
     save_to_db.assert_called_once_with(event)
+
+
+@pytest.mark.asyncio
+async def test_stream_func_with_cr(stream_engine: StreamEngine):
+    client = TestStreamClient(stream_engine)
+    event = b'{"message": "Hello world!"}'
+    save_to_db = Mock()
+
+    @stream_engine.stream(topic, name="my-stream")
+    async def my_stream(cr: ConsumerRecord):
+        save_to_db(cr.value)
+
+    async with client:
+        await client.send(topic, value=event, key="1")
+        await client.send(topic, value=event, key="1")
+
+    # check that the event was consumed
+    save_to_db.assert_has_calls(
+        [
+            call(b'{"message": "Hello world!"}'),
+            call(b'{"message": "Hello world!"}'),
+        ]
+    )
+
+
+@pytest.mark.asyncio
+async def test_stream_func_with_cr_and_stream(stream_engine: StreamEngine):
+    tp = TopicPartition(topic=topic, partition=0)
+    client = TestStreamClient(stream_engine)
+    event = b'{"message": "Hello world!"}'
+    save_to_db = Mock()
+
+    @stream_engine.stream(topic, name="my-stream", enable_auto_commit=False)
+    async def my_stream(cr: ConsumerRecord, stream: Stream):
+        save_to_db(cr.value)
+        # commit 100, just because we can
+        await stream.commit({tp: 100})
+
+    async with client:
+        await client.send(topic, value=event, key="1")
+        await client.send(topic, value=event, key="1")
+
+        # give some time so the `commit` can finished
+        await asyncio.sleep(1)
+        assert await my_stream.consumer.committed(tp) == 100
+
+    # check that the event was consumed
+    save_to_db.assert_has_calls(
+        [
+            call(b'{"message": "Hello world!"}'),
+            call(b'{"message": "Hello world!"}'),
+        ]
+    )
 
 
 @pytest.mark.asyncio
@@ -347,8 +402,6 @@ async def test_streams_consume_events_with_initial_offsets(stream_engine: Stream
     tp0 = TopicPartition(topic=topic, partition=0)
     tp1 = TopicPartition(topic=topic, partition=1)
     tp2 = TopicPartition(topic=topic, partition=2)
-
-    from typing import Set
 
     assignments: Set[TopicPartition] = set()
     assignments.update(

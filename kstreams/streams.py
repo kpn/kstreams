@@ -26,6 +26,7 @@ from .backends.kafka import Kafka
 from .clients import Consumer, ConsumerType
 from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
+from .streams_utils import UDFType, inspect_udf
 
 logger = logging.getLogger(__name__)
 
@@ -52,16 +53,15 @@ class Stream:
     !!! Example
         ```python title="Usage"
         import aiorun
-        from kstreams import create_engine
+        from kstreams import create_engine, ConsumerRecord
 
         stream_engine = create_engine(title="my-stream-engine")
 
 
         # here you can add any other AIOKafkaConsumer config
         @stream_engine.stream("local--kstreams", group_id="de-my-partition")
-        async def stream(stream: Stream) -> None:
-            async for cr in stream:
-                print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
+        async def stream(cr: ConsumerRecord) -> None:
+            print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
 
 
         async def start():
@@ -86,7 +86,7 @@ class Stream:
         self,
         topics: Union[List[str], str],
         *,
-        func: Callable[["Stream"], Awaitable[Any]],
+        func: Callable[..., Awaitable[Any]],
         backend: Optional[Kafka] = None,
         consumer_class: Type[ConsumerType] = Consumer,
         name: Optional[str] = None,
@@ -147,31 +147,65 @@ class Stream:
     async def commit(self, offsets: Optional[Dict[TopicPartition, int]] = None):
         await self.consumer.commit(offsets=offsets)  # type: ignore
 
+    async def getone(self) -> ConsumerRecord:
+        consumer_record: ConsumerRecord = await self.consumer.getone()  # type: ignore
+
+        # call deserializer if there is one regarless consumer_record.value
+        # as the end user might want to do something extra with headers or metadata
+        if self.deserializer is not None:
+            return await self.deserializer.deserialize(consumer_record)
+
+        return consumer_record
+
     async def start(self) -> Optional[AsyncGenerator]:
         if self.running:
             return None
 
-        async def func_wrapper(func):
-            try:
-                # await for the end user coroutine
-                # we do this to show a better error message to the user
-                # when the coroutine fails
-                await func
-            except Exception as e:
-                logger.exception(
-                    f"CRASHED Stream!!! Task {self._consumer_task} \n\n {e}"
-                )
-
         await self._subscribe()
+        udf_type = inspect_udf(self.func, Stream)
 
-        func = self.func(self)
-        if inspect.isasyncgen(func):
-            return func
+        if udf_type == UDFType.NO_TYPING:
+            # normal use case
+            func = self.func(self)
+            if inspect.isasyncgen(func):
+                return func
+            else:
+                # It is not an async_generator so we need to
+                # create an asyncio.Task with func
+                logging.warning(
+                    "The `async for in` loop approach might be deprecate in the future."
+                    " Consider migrating to a typing approach."
+                )
+                self._consumer_task = asyncio.create_task(self.func_wrapper(func))
         else:
-            # It is not an async_generator so we need to
-            # create an asyncio.Task with func
-            self._consumer_task = asyncio.create_task(func_wrapper(func))
-            return None
+            self._consumer_task = asyncio.create_task(
+                self.func_wrapper_with_typing(udf_type)
+            )
+        return None
+
+    async def func_wrapper(self, func: Awaitable) -> None:
+        try:
+            # await for the end user coroutine
+            # we do this to show a better error message to the user
+            # when the coroutine fails
+            await func
+        except Exception as e:
+            logger.exception(f"CRASHED Stream!!! Task {self._consumer_task} \n\n {e}")
+
+    async def func_wrapper_with_typing(self, calling_type: UDFType) -> None:
+        try:
+            # await for the end user coroutine
+            # we do this to show a better error message to the user
+            # when the coroutine fails
+            while True:
+                cr = await self.getone()
+                if calling_type == UDFType.CR_ONLY_TYPING:
+                    await self.func(cr)
+                else:
+                    # typing with cr and stream
+                    await self.func(cr, self)
+        except Exception as e:
+            logger.exception(f"CRASHED Stream!!! Task {self._consumer_task} \n\n {e}")
 
     def seek_to_initial_offsets(self):
         if not self.seeked_initial_offsets:
@@ -205,7 +239,7 @@ class Stream:
             ```python title="Usage"
             @stream_engine.stream(topic, group_id=group_id, ...)
             async def stream(consumer):
-                async for cr, value, headers in consumer:
+                async for cr in consumer:
                     yield value
 
 
@@ -233,17 +267,7 @@ class Stream:
             await self.start()
 
         try:
-            # value is a ConsumerRecord, which is a dataclass
-            consumer_record: ConsumerRecord = (
-                await self.consumer.getone()  # type: ignore
-            )
-
-            # call deserializer if there is one regarless consumer_record.value
-            # as the end user might want to do something extra with headers or metadata
-            if self.deserializer is not None:
-                return await self.deserializer.deserialize(consumer_record)
-
-            return consumer_record
+            return await self.getone()
         except errors.ConsumerStoppedError:
             raise StopAsyncIteration  # noqa: F821
 

@@ -51,11 +51,10 @@ stream_engine = create_engine(
 
 ```python
 @stream_engine.stream(topic, deserializer=JsonDeserializer())
-    async def hello_stream(stream: Stream):
-        async for event in stream:
-            # remember event.value is now a dict
-            print(event.value["message"])
-            save_to_db(event)
+    async def hello_stream(cr: ConsumerRecord):
+        # remember event.value is now a dict
+        print(cr.value["message"])
+        save_to_db(cr)
 ```
 
 ```python

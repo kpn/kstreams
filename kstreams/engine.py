@@ -46,9 +46,8 @@ class StreamEngine:
         )
 
         @kstreams.stream("local--hello-world", group_id="example-group")
-        async def consume(stream: kstreams.Stream) -> None:
-            async for cr in stream:
-                print(f"showing bytes: {cr.value}")
+        async def consume(stream: kstreams.ConsumerRecord) -> None:
+            print(f"showing bytes: {cr.value}")
 
 
         await stream_engine.start()
