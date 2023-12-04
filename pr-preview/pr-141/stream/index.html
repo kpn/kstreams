@@ -1585,24 +1585,31 @@ callbacks when partition are assigned or revoked</p>
 
 </div><h2 id="dependency-injection-and-typing">Dependency Injection and typing</h2>
 <p>The old way to itereate over a stream is with the <code>async for _ in stream</code> loop. The iterable approach works but in most cases end users are interested only in the <code>ConsumerRecord</code> and not in the <code>stream</code>, for this reason now it is possible to remove the <code>loop</code> and every time that a new event is in the stream the <code>coroutine</code> function defined by the end user will ba <code>awaited</code>. If the <code>stream</code> is also needed, for example because <code>manual</code> commit is enabled then you can also add the <code>stream</code> as an argument in the coroutine.</p>
-<p>=== "Use only the ConsumerRecord"
-    <div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">)</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Use only the ConsumerRecord</label><label for="__tabbed_1_2">Use ConsumerRecord and Stream</label><label for="__tabbed_1_3">Old fashion</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
     <span class="n">save_to_db</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-</code></pre></div></p>
-<p>=== "Use ConsumerRecord and Stream"
-    <div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
     <span class="n">save_to_db</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-</code></pre></div></p>
-<p>=== "Old fashion"
-    <div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>  <span class="c1"># you can specify the type but it will be the same result</span>
     <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
         <span class="n">save_to_db</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="c1"># you can do something with the stream as well!!</span>
-</code></pre></div></p>
+</code></pre></div>
+</div>
+</div>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>A proper typing is required in order to remove the <code>async for in</code> loop. The argument order is also important, this might change in the future.</p>
