@@ -1379,9 +1379,9 @@ callbacks when partition are assigned or revoked</p>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># It is not an async_generator so we need to</span>
                 <span class="c1"># create an asyncio.Task with func</span>
-                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;The `async for in` loop approach might be deprecate in the future.&quot;</span>
-                    <span class="s2">&quot; Consider migrating to a typing approach.&quot;</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;Streams with `async for in` loop approach might be deprecate. &quot;</span>
+                    <span class="s2">&quot;Consider migrating to a typing approach.&quot;</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func_wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
