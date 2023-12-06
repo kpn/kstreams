@@ -28,15 +28,14 @@ pip install aiorun
 
 ```python
 import aiorun
-from kstreams import create_engine, Stream
+from kstreams import create_engine, ConsumerRecord
 
 
 stream_engine = create_engine(title="my-stream-engine")
 
 @stream_engine.stream("local--kstream")
-async def consume(stream: Stream):
-    async for cr in stream:
-        print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
+async def consume(cr: ConsumerRecord):
+    print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
 
 
 async def produce():

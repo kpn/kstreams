@@ -10,6 +10,40 @@ Consuming can be done using `kstreams.Stream`. You only need to decorate a `coro
         docstring_section_style: table
         show_signature_annotations: false
 
+## Dependency Injection and typing
+
+The old way to itereate over a stream is with the `async for _ in stream` loop. The iterable approach works but in most cases end users are interested only in the `ConsumerRecord` and not in the `stream`, for this reason now it is possible to remove the `loop` and every time that a new event is in the stream the `coroutine` function defined by the end user will ba `awaited`. If the `stream` is also needed, for example because `manual` commit is enabled then you can also add the `stream` as an argument in the coroutine.
+
+=== "Use only the ConsumerRecord"
+    ```python
+    @stream_engine.stream(topic, name="my-stream")
+    async def my_stream(cr: ConsumerRecord):
+        save_to_db(cr.value)
+    ```
+
+=== "Use ConsumerRecord and Stream"
+    ```python
+    @stream_engine.stream(topic, name="my-stream", enable_auto_commit=False)
+    async def my_stream(cr: ConsumerRecord, stream: Stream):
+        save_to_db(cr.value)
+        await stream.commit()
+    ```
+
+=== "Old fashion"
+    ```python
+    @stream_engine.stream(topic, name="my-stream")
+    async def consume(stream):  # you can specify the type but it will be the same result
+        async for cr in stream:
+            save_to_db(cr.value)
+            # you can do something with the stream as well!!
+    ```
+
+!!! note
+    A proper typing is required in order to remove the `async for in` loop. The argument order is also important, this might change in the future.
+
+!!! note
+    It is still possible to use the `async for in` loop, but it might be removed in the future.
+
 ## Creating a Stream instance
 
 If for any reason you need to create `Streams` instances directly, you can do it without using the decorator `stream_engine.stream`.
@@ -27,9 +61,8 @@ class MyDeserializer:
         return consumer_record.value.decode()
 
 
-async def stream(stream: Stream) -> None:
-    async for cr in stream:
-        print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
+async def stream(cr: ConsumerRecord) -> None:
+    print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
 
 
 stream = Stream(
@@ -110,15 +143,14 @@ As an end user you are responsable of deciding what to do. In future version app
 
 ```python title="Crashing example"
 import aiorun
-from kstreams import create_engine
+from kstreams import create_engine, ConsumerRecord
 
 stream_engine = create_engine(title="my-stream-engine")
 
 
 @stream_engine.stream("local--kstreams", group_id="de-my-partition")
-async def stream(stream: Stream) -> None:
-    async for cr in stream:
-        print(f"Event consumed. Payload {cr.payload}")
+async def stream(cr: ConsumerRecord) -> None:
+    print(f"Event consumed. Payload {cr.payload}")
 
 
 async def produce():
@@ -162,9 +194,8 @@ stream_engine = create_engine(title="my-stream-engine")
 
 
 @stream_engine.stream(["local--kstreams", "local--hello-world"], group_id="example-group")
-async def consume(stream: Stream) -> None:
-    async for cr in stream:
-        print(f"Event consumed from topic {cr.topic}: headers: {cr.headers}, payload: {cr.value}")
+async def consume(cr: ConsumerRecord) -> None:
+    print(f"Event consumed from topic {cr.topic}: headers: {cr.headers}, payload: {cr.value}")
 ```
 
 ## Changing consumer behavior
@@ -176,9 +207,8 @@ Most of the time you will only set the `topic` and the `group_id` to the `consum
 # On OffsetOutOfRange errors, the offset will move to the oldest available message (‘earliest’)
 
 @stream_engine.stream("local--kstream", group_id="de-my-partition", session_timeout_ms=500, auto_offset_reset"earliest")
-async def stream(stream: Stream):
-    async for cr in stream:
-        print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
+async def stream(cr: ConsumerRecord):
+    print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
 ```
 
 ## Manual commit
@@ -187,13 +217,12 @@ When processing more sensitive data and you want to be sure that the `kafka offe
 
 ```python title="Manual commit example"
 @stream_engine.stream("local--kstream", group_id="de-my-partition", enable_auto_commit=False)
-async def stream(stream: Stream):
-    async for cr in stream:
-        print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
+async def stream(cr: ConsumerRecord, stream: Stream):
+    print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
 
-        # We need to make sure that the pyalod was stored before commiting the kafka offset
-        await store_in_database(payload)
-        await stream.consumer.commit()  # You need to commit!!!
+    # We need to make sure that the pyalod was stored before commiting the kafka offset
+    await store_in_database(payload)
+    await stream.commit()  # You need to commit!!!
 ```
 
 !!! note

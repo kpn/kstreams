@@ -1,8 +1,8 @@
-## FastAPI webapp example
+# FastAPI webapp example
 
 Simple [`FastAPI`](https://fastapi.tiangolo.com/) example with `kstreams`
 
-### Requirements
+## Requirements
 
 python 3.8+, poetry, docker-compose
 

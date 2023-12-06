@@ -1,7 +1,6 @@
-from kstreams import Stream, stream
+from kstreams import stream, ConsumerRecord
 
 
 @stream("local--hello-world", group_id="example-group")
-async def consume(stream: Stream) -> None:
-    async for cr in stream:
-        print(f"showing bytes: {cr.value}")
+async def consume(cr: ConsumerRecord) -> None:
+    print(f"showing bytes: {cr.value}")

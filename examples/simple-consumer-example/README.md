@@ -1,8 +1,8 @@
-## Simple Consumer Example
+# Simple Consumer Example
 
 Simple consumer example with `kstreams`
 
-### Requirements
+## Requirements
 
 python 3.8+, poetry, docker-compose
 
