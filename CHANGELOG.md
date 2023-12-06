@@ -1,3 +1,9 @@
+## 0.13.1 (2023-12-06)
+
+### Fix
+
+- **typing**: StreamFunc type to match the udf signature. (#142)
+
 ## 0.13.0 (2023-12-06)
 
 ### Feat
