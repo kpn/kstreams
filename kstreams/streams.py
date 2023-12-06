@@ -30,6 +30,9 @@ from .streams_utils import UDFType, inspect_udf
 
 logger = logging.getLogger(__name__)
 
+# Function required by the `stream` decorator
+StreamFunc = Callable[..., Awaitable[Any]]
+
 
 class Stream:
     """
@@ -86,7 +89,7 @@ class Stream:
         self,
         topics: Union[List[str], str],
         *,
-        func: Callable[..., Awaitable[Any]],
+        func: StreamFunc,
         backend: Optional[Kafka] = None,
         consumer_class: Type[ConsumerType] = Consumer,
         name: Optional[str] = None,
@@ -270,10 +273,6 @@ class Stream:
             return await self.getone()
         except errors.ConsumerStoppedError:
             raise StopAsyncIteration  # noqa: F821
-
-
-# Function required by the `stream` decorator
-StreamFunc = Callable[[Stream], Awaitable[Any]]
 
 
 def stream(
