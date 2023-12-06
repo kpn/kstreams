@@ -89,12 +89,11 @@ In our kstreams app, we can:
 stream_engine = create_engine(title="my-engine", monitor=MyAppPrometheusMonitor())
 
 @stream_engine.stream("my-special-orders")
-async def consume_orders_received(consumer):
-    for cr, value, _ in consumer:
-        if value.status == "NEW":
-            stream_engine.monitor.increase_received()
-        elif value.status == "SHIPPED":
-            stream_engine.monitor.increase_shipped()
+async def consume_orders_received(cr: ConsumerRecord):
+    if cr.value.status == "NEW":
+        stream_engine.monitor.increase_received()
+    elif cr.value.status == "SHIPPED":
+        stream_engine.monitor.increase_shipped()
 ```
 
 Your app's prometheus would display this data, which you might utilize to build a stylish ✨dashboard✨ interface.

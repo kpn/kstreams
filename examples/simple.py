@@ -3,7 +3,6 @@ import typing
 from dataclasses import dataclass, field
 
 from kstreams import ConsumerRecord, create_engine
-from kstreams.streams import Stream
 
 topic = "local--kstreams-test"
 
@@ -30,10 +29,9 @@ event_store = EventStore()
 
 
 @stream_engine.stream(topic, group_id="example-group")
-async def consume(stream: Stream):
-    async for cr in stream:
-        print(cr)
-        event_store.add(cr)
+async def consume(cr: ConsumerRecord):
+    print(cr)
+    event_store.add(cr)
 
 
 async def produce():

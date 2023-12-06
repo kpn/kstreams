@@ -6,15 +6,14 @@ You can starting using `kstreams` with simple `producers` and `consumers` and/or
 
 ```python title="Simple use case"
 import asyncio
-from kstreams import create_engine, Stream
+from kstreams import create_engine, ConsumerRecord
 
 stream_engine = create_engine(title="my-stream-engine")
 
 
 @stream_engine.stream("local--py-stream", group_id="de-my-partition")
-async def consume(stream: Stream):
-    async for cr in stream:
-        print(f"Event consumed: headers: {cr.headers}, payload: {value}")
+async def consume(cr: ConsumerRecord):
+    print(f"Event consumed: headers: {cr.headers}, payload: {value}")
 
 
 async def produce():
@@ -54,15 +53,14 @@ so you want have to worry about `set signal handlers`, `shutdown callbacks`, `gr
 
 ```python title="Usage with aiorun"
 import aiorun
-from kstreams import create_engine, Stream
+from kstreams import create_engine, ConsumerRecord
 
 stream_engine = create_engine(title="my-stream-engine")
 
 
 @stream_engine.stream("local--py-stream", group_id="de-my-partition")
-async def consume(stream: Stream):
-    async for cr in stream:
-        print(f"Event consumed: headers: {cr.headers}, payload: {value}")
+async def consume(cr: ConsumerRecord):
+    print(f"Event consumed: headers: {cr.headers}, payload: {value}")
 
 
 async def produce():
@@ -109,13 +107,12 @@ Define the `streams`:
 ```python title="Application stream"
 # streaming.streams.py
 from .engine import stream_engine
-from kstreams import Stream
+from kstreams import ConsumerRecord
 
 
 @stream_engine.stream("local--kstream")
-async def stream(stream: Stream):
-    async for cr in stream:
-        print(f"Event consumed: headers: {cr.headers}, payload: {cr.payload}")
+async def stream(cr: ConsumerRecord):
+    print(f"Event consumed: headers: {cr.headers}, payload: {cr.payload}")
 ```
 
 Create the `FastAPI`:

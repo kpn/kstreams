@@ -1,8 +1,6 @@
-from kstreams import Stream, stream
+from kstreams import ConsumerRecord, stream
 
 
 @stream("local--kstream", group_id="kstreams--group-id")
-async def consume(stream: Stream):
-    print("consuming.....")
-    async for cr in stream:
-        print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
+async def consume(cr: ConsumerRecord):
+    print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")

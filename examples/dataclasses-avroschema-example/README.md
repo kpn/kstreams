@@ -1,8 +1,8 @@
-## Example with dataclasses-avroschema
+# Example with dataclasses-avroschema
 
 [dataclasses-avroschema](https://github.com/marcosschroh/dataclasses-avroschema) example with `kstreams`
 
-### Requirements
+## Requirements
 
 python 3.8+, poetry, docker-compose
 
@@ -81,7 +81,6 @@ class AvroDeserializer:
 
 Then, we inject the `serializers` in the `engine` and `streams` and we are ready to go
 
-
 ```python
 # app.py
 stream_engine = create_engine(
@@ -93,17 +92,15 @@ stream_engine = create_engine(
 @stream_engine.stream(
     user_topic, deserializer=serializers.AvroDeserializer(model=User)
 )
-async def user_stream(stream: Stream):
-    async for cr in stream:
-        print(f"Event consumed on topic {user_topic}. The user is {cr.value}")
+async def user_stream(cr: ConsumerRecord):
+    print(f"Event consumed on topic {user_topic}. The user is {cr.value}")
 
 
 @stream_engine.stream(
     address_topic, deserializer=serializers.AvroDeserializer(model=Address)
 )
-async def address_stream(stream: Stream):
-    async for cr in stream:
-        print(f"Event consumed on topic {address_topic}. The Address is {cr.value}")
+async def address_stream(cr: ConsumerRecord):
+    print(f"Event consumed on topic {address_topic}. The Address is {cr.value}")
 ```
 
 ## Note

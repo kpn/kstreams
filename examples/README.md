@@ -1,8 +1,8 @@
-## Welcome to `kstreams` examples.
+# Welcome to `kstreams` examples
 
 In order to run the examples you need `docker-compose`. In the ptoject root you will find the file `docker-compose.yaml` that contains a mininal setup to run `kafka` and `zookeeper`.
 
-### Steps:
+## Steps
 
 1. Activate your `virtualenv`: `poetry shell`
 2. Create the kafka cluster: `make kafka-cluster`

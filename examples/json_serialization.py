@@ -41,11 +41,10 @@ topic = "local--kstreams-json"
 
 
 @stream_engine.stream(topic)
-async def consume(stream: Stream):
+async def consume(cr: ConsumerRecord, stream: Stream):
     try:
-        async for cr in stream:
-            print(f"Event consumed: headers: {cr.headers}, value: {cr.value}")
-            assert cr.value == data
+        print(f"Event consumed: headers: {cr.headers}, value: {cr.value}")
+        assert cr.value == data
     finally:
         await stream.stop()
 

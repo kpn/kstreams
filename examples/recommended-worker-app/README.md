@@ -1,9 +1,8 @@
-## Recommended usage
+# Recommended usage
 
 This example shows the recommended way to organize your application.
 
-
-### Requirements
+## Requirements
 
 python 3.8+, poetry, docker-compose
 
