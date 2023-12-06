@@ -1,3 +1,9 @@
+## 0.13.0 (2023-12-06)
+
+### Feat
+
+- first steps to add dependency injection. Inspect udf coroutines in order to inject different args on it (#141)
+
 ## 0.12.6 (2023-11-27)
 
 ### Fix
