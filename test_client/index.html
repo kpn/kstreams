@@ -572,9 +572,8 @@
 
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group&quot;</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
-    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
-        <span class="n">event_store</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
+    <span class="n">event_store</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">produce</span><span class="p">():</span>
@@ -637,7 +636,7 @@ This allows to test <code>streams</code> without having producer code in your ap
 <p>In some cases your stream will commit, in this situation checking the commited partitions can be useful.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">from</span> <span class="nn">kstreams.test_utils</span> <span class="kn">import</span> <span class="n">TestStreamClient</span>
-<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">TopicPartition</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">TopicPartition</span>
 
 <span class="kn">from</span> <span class="nn">.example</span> <span class="kn">import</span> <span class="n">produce</span><span class="p">,</span> <span class="n">stream_engine</span>
 
@@ -653,10 +652,9 @@ This allows to test <code>streams</code> without having producer code in your ap
 <span class="n">total_events</span> <span class="o">=</span> <span class="mi">10</span>
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">my_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
-    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
-        <span class="c1"># commit every time that an event arrives</span>
-        <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">commit</span><span class="p">({</span><span class="n">tp</span><span class="p">:</span> <span class="n">cr</span><span class="o">.</span><span class="n">offset</span><span class="p">})</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
+    <span class="c1"># commit every time that an event arrives</span>
+    <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">commit</span><span class="p">({</span><span class="n">tp</span><span class="p">:</span> <span class="n">cr</span><span class="o">.</span><span class="n">offset</span><span class="p">})</span>
 
 
 <span class="c1"># test the code</span>
@@ -670,7 +668,7 @@ This allows to test <code>streams</code> without having producer code in your ap
 
         <span class="c1"># check that everything was commited</span>
         <span class="n">stream</span> <span class="o">=</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">get_stream</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">committed</span><span class="p">(</span><span class="n">tp</span><span class="p">))</span> <span class="o">==</span> <span class="n">total_events</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">committed</span><span class="p">(</span><span class="n">tp</span><span class="p">))</span> <span class="o">==</span> <span class="n">total_events</span>
 </code></pre></div>
 <h3 id="e2e-test">E2E test</h3>
 <p>In the previous code example the application produces to and consumes from the same topic, then <code>TestStreamClient.send</code> is not needed because the <code>engine.send</code> is producing. For those situation you can just use your <code>producer</code> code and check that certain code was called.</p>

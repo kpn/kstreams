@@ -1208,12 +1208,11 @@
 <div class="highlight"><pre><span></span><code><span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-engine&quot;</span><span class="p">,</span> <span class="n">monitor</span><span class="o">=</span><span class="n">MyAppPrometheusMonitor</span><span class="p">())</span>
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;my-special-orders&quot;</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">consume_orders_received</span><span class="p">(</span><span class="n">consumer</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">cr</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">consumer</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;NEW&quot;</span><span class="p">:</span>
-            <span class="n">stream_engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">increase_received</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="n">value</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;SHIPPED&quot;</span><span class="p">:</span>
-            <span class="n">stream_engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">increase_shipped</span><span class="p">()</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">consume_orders_received</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;NEW&quot;</span><span class="p">:</span>
+        <span class="n">stream_engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">increase_received</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;SHIPPED&quot;</span><span class="p">:</span>
+        <span class="n">stream_engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">increase_shipped</span><span class="p">()</span>
 </code></pre></div>
 <p>Your app's prometheus would display this data, which you might utilize to build a stylish ✨dashboard✨ interface.</p>
 <p>For further details, see the <a href="https://github.com/prometheus/client">Prometheus python client</a> documentation.</p>

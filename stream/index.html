@@ -305,6 +305,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#dependency-injection-and-typing" class="md-nav__link">
+    Dependency Injection and typing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#creating-a-stream-instance" class="md-nav__link">
     Creating a Stream instance
   </a>
@@ -622,6 +629,13 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dependency-injection-and-typing" class="md-nav__link">
+    Dependency Injection and typing
+  </a>
   
 </li>
       
@@ -955,16 +969,15 @@ callbacks when partition are assigned or revoked</p>
       <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><span class="filename">Usage</span><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
-<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
 
 
 <span class="c1"># here you can add any other AIOKafkaConsumer config</span>
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
@@ -987,8 +1000,7 @@ callbacks when partition are assigned or revoked</p>
 
             <details class="quote">
               <summary>Source code in <code>kstreams/streams.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 33</span>
-<span class="normal"> 34</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 34</span>
 <span class="normal"> 35</span>
 <span class="normal"> 36</span>
 <span class="normal"> 37</span>
@@ -1202,7 +1214,31 @@ callbacks when partition are assigned or revoked</p>
 <span class="normal">245</span>
 <span class="normal">246</span>
 <span class="normal">247</span>
-<span class="normal">248</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        name str: Stream name</span>
@@ -1224,16 +1260,15 @@ callbacks when partition are assigned or revoked</p>
 <span class="sd">    !!! Example</span>
 <span class="sd">        ```python title=&quot;Usage&quot;</span>
 <span class="sd">        import aiorun</span>
-<span class="sd">        from kstreams import create_engine</span>
+<span class="sd">        from kstreams import create_engine, ConsumerRecord</span>
 
 <span class="sd">        stream_engine = create_engine(title=&quot;my-stream-engine&quot;)</span>
 
 
 <span class="sd">        # here you can add any other AIOKafkaConsumer config</span>
 <span class="sd">        @stream_engine.stream(&quot;local--kstreams&quot;, group_id=&quot;de-my-partition&quot;)</span>
-<span class="sd">        async def stream(stream: Stream) -&gt; None:</span>
-<span class="sd">            async for cr in stream:</span>
-<span class="sd">                print(f&quot;Event consumed: headers: {cr.headers}, payload: {cr.value}&quot;)</span>
+<span class="sd">        async def stream(cr: ConsumerRecord) -&gt; None:</span>
+<span class="sd">            print(f&quot;Event consumed: headers: {cr.headers}, payload: {cr.value}&quot;)</span>
 
 
 <span class="sd">        async def start():</span>
@@ -1258,7 +1293,7 @@ callbacks when partition are assigned or revoked</p>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">topics</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;Stream&quot;</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
         <span class="n">backend</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Kafka</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">consumer_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">ConsumerType</span><span class="p">]</span> <span class="o">=</span> <span class="n">Consumer</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1319,31 +1354,65 @@ callbacks when partition are assigned or revoked</p>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offsets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">offsets</span><span class="o">=</span><span class="n">offsets</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">getone</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConsumerRecord</span><span class="p">:</span>
+        <span class="n">consumer_record</span><span class="p">:</span> <span class="n">ConsumerRecord</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">getone</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+
+        <span class="c1"># call deserializer if there is one regarless consumer_record.value</span>
+        <span class="c1"># as the end user might want to do something extra with headers or metadata</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">consumer_record</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">consumer_record</span>
+
     <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AsyncGenerator</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="k">async</span> <span class="k">def</span> <span class="nf">func_wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="c1"># await for the end user coroutine</span>
-                <span class="c1"># we do this to show a better error message to the user</span>
-                <span class="c1"># when the coroutine fails</span>
-                <span class="k">await</span> <span class="n">func</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;CRASHED Stream!!! Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="si">}</span><span class="s2"> </span><span class="se">\n\n</span><span class="s2"> </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
-
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscribe</span><span class="p">()</span>
+        <span class="n">udf_type</span> <span class="o">=</span> <span class="n">inspect_udf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">Stream</span><span class="p">)</span>
 
-        <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isasyncgen</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">func</span>
+        <span class="k">if</span> <span class="n">udf_type</span> <span class="o">==</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
+            <span class="c1"># normal use case</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isasyncgen</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">func</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># It is not an async_generator so we need to</span>
+                <span class="c1"># create an asyncio.Task with func</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;Streams with `async for in` loop approach might be deprecated. &quot;</span>
+                    <span class="s2">&quot;Consider migrating to a typing approach.&quot;</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func_wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># It is not an async_generator so we need to</span>
-            <span class="c1"># create an asyncio.Task with func</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">func_wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">func_wrapper_with_typing</span><span class="p">(</span><span class="n">udf_type</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">func_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Awaitable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># await for the end user coroutine</span>
+            <span class="c1"># we do this to show a better error message to the user</span>
+            <span class="c1"># when the coroutine fails</span>
+            <span class="k">await</span> <span class="n">func</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CRASHED Stream!!! Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="si">}</span><span class="s2"> </span><span class="se">\n\n</span><span class="s2"> </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">func_wrapper_with_typing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">calling_type</span><span class="p">:</span> <span class="n">UDFType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># await for the end user coroutine</span>
+            <span class="c1"># we do this to show a better error message to the user</span>
+            <span class="c1"># when the coroutine fails</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">cr</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">getone</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">calling_type</span> <span class="o">==</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">CR_ONLY_TYPING</span><span class="p">:</span>
+                    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># typing with cr and stream</span>
+                    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">cr</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CRASHED Stream!!! Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="si">}</span><span class="s2"> </span><span class="se">\n\n</span><span class="s2"> </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">seek_to_initial_offsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeked_initial_offsets</span><span class="p">:</span>
@@ -1376,9 +1445,9 @@ callbacks when partition are assigned or revoked</p>
 <span class="sd">        !!! Example</span>
 <span class="sd">            ```python title=&quot;Usage&quot;</span>
 <span class="sd">            @stream_engine.stream(topic, group_id=group_id, ...)</span>
-<span class="sd">            async def stream(consumer):</span>
-<span class="sd">                async for cr, value, headers in consumer:</span>
-<span class="sd">                    yield value</span>
+<span class="sd">            async def stream(stream):</span>
+<span class="sd">                async for cr in stream:</span>
+<span class="sd">                    yield cr.value</span>
 
 
 <span class="sd">            # Iterate the stream:</span>
@@ -1405,17 +1474,7 @@ callbacks when partition are assigned or revoked</p>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># value is a ConsumerRecord, which is a dataclass</span>
-            <span class="n">consumer_record</span><span class="p">:</span> <span class="n">ConsumerRecord</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">getone</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
-            <span class="p">)</span>
-
-            <span class="c1"># call deserializer if there is one regarless consumer_record.value</span>
-            <span class="c1"># as the end user might want to do something extra with headers or metadata</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">consumer_record</span><span class="p">)</span>
-
-            <span class="k">return</span> <span class="n">consumer_record</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">getone</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">errors</span><span class="o">.</span><span class="n">ConsumerStoppedError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">StopAsyncIteration</span>  <span class="c1"># noqa: F821</span>
 </code></pre></div></td></tr></table></div>
@@ -1455,9 +1514,9 @@ callbacks when partition are assigned or revoked</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><span class="filename">Usage</span><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="n">group_id</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">consumer</span><span class="p">):</span>
-    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">headers</span> <span class="ow">in</span> <span class="n">consumer</span><span class="p">:</span>
-        <span class="k">yield</span> <span class="n">value</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span>
 
 
 <span class="c1"># Iterate the stream:</span>
@@ -1469,37 +1528,37 @@ callbacks when partition are assigned or revoked</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/streams.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">:</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Start the kafka Consumer and return an `async_gen` so it can be iterated</span>
 
 <span class="sd">    !!! Example</span>
 <span class="sd">        ```python title=&quot;Usage&quot;</span>
 <span class="sd">        @stream_engine.stream(topic, group_id=group_id, ...)</span>
-<span class="sd">        async def stream(consumer):</span>
-<span class="sd">            async for cr, value, headers in consumer:</span>
-<span class="sd">                yield value</span>
+<span class="sd">        async def stream(stream):</span>
+<span class="sd">            async for cr in stream:</span>
+<span class="sd">                yield cr.value</span>
 
 
 <span class="sd">        # Iterate the stream:</span>
@@ -1524,7 +1583,42 @@ callbacks when partition are assigned or revoked</p>
 
   </div>
 
-</div><h2 id="creating-a-stream-instance">Creating a Stream instance</h2>
+</div><h2 id="dependency-injection-and-typing">Dependency Injection and typing</h2>
+<p>The old way to itereate over a stream is with the <code>async for _ in stream</code> loop. The iterable approach works but in most cases end users are interested only in the <code>ConsumerRecord</code> and not in the <code>stream</code>, for this reason now it is possible to remove the <code>loop</code> and every time that a new event is in the stream the <code>coroutine</code> function defined by the end user will ba <code>awaited</code>. If the <code>stream</code> is also needed, for example because <code>manual</code> commit is enabled then you can also add the <code>stream</code> as an argument in the coroutine.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Use only the ConsumerRecord</label><label for="__tabbed_1_2">Use ConsumerRecord and Stream</label><label for="__tabbed_1_3">Old fashion</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
+    <span class="n">save_to_db</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
+    <span class="n">save_to_db</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>  <span class="c1"># you can specify the type but it will be the same result</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">save_to_db</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="c1"># you can do something with the stream as well!!</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A proper typing is required in order to remove the <code>async for in</code> loop. The argument order is also important, this might change in the future.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is still possible to use the <code>async for in</code> loop, but it might be removed in the future.</p>
+</div>
+<h2 id="creating-a-stream-instance">Creating a Stream instance</h2>
 <p>If for any reason you need to create <code>Streams</code> instances directly, you can do it without using the decorator <code>stream_engine.stream</code>.</p>
 <div class="highlight"><span class="filename">Stream instance</span><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
@@ -1538,9 +1632,8 @@ callbacks when partition are assigned or revoked</p>
         <span class="k">return</span> <span class="n">consumer_record</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
 
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
 <span class="n">stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
@@ -1606,15 +1699,14 @@ This means that setting intial_offsets to be a hardcoded number might not get th
 <p>If your stream <code>crashes</code> for any reason, the event consumption will stop meaning that non event will be consumed from the <code>topic</code>.
 As an end user you are responsable of deciding what to do. In future version approaches like <code>re-try</code>, <code>stream engine stops on stream crash</code> might be introduced.</p>
 <div class="highlight"><span class="filename">Crashing example</span><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
-<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
 
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed. Payload </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">payload</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed. Payload </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">payload</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">produce</span><span class="p">():</span>
@@ -1652,9 +1744,8 @@ AttributeError:<span class="w"> </span><span class="s1">&#39;ConsumerRecord&#39;
 
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">([</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="s2">&quot;local--hello-world&quot;</span><span class="p">],</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group&quot;</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed from topic </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed from topic </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="changing-consumer-behavior">Changing consumer behavior</h2>
 <p>Most of the time you will only set the <code>topic</code> and the <code>group_id</code> to the <code>consumer</code>, but sometimes you might want more control over it, for example changing the <code>policy for resetting offsets on OffsetOutOfRange errors</code> or <code>session timeout</code>. To do this, you have to use the same <code>kwargs</code> as the <a href="https://aiokafka.readthedocs.io/en/stable/api.html#aiokafkaconsumer-class">aiokafka consumer</a> API</p>
@@ -1662,20 +1753,18 @@ AttributeError:<span class="w"> </span><span class="s1">&#39;ConsumerRecord&#39;
 <span class="c1"># On OffsetOutOfRange errors, the offset will move to the oldest available message (‘earliest’)</span>
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstream&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">,</span> <span class="n">session_timeout_ms</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">auto_offset_reset</span><span class="s2">&quot;earliest&quot;</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
-    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="manual-commit">Manual commit</h2>
 <p>When processing more sensitive data and you want to be sure that the <code>kafka offeset</code> is commited once that you have done your tasks, you can use <code>enable_auto_commit=False</code> mode of Consumer.</p>
 <div class="highlight"><span class="filename">Manual commit example</span><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstream&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
-    <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="c1"># We need to make sure that the pyalod was stored before commiting the kafka offset</span>
-        <span class="k">await</span> <span class="n">store_in_database</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-        <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># You need to commit!!!</span>
+    <span class="c1"># We need to make sure that the pyalod was stored before commiting the kafka offset</span>
+    <span class="k">await</span> <span class="n">store_in_database</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># You need to commit!!!</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
