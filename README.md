@@ -68,6 +68,7 @@ if __name__ == "__main__":
 - [x] Custom Serialization and Deserialization
 - [x] Easy to integrate with any `async` framework. No tied to any library!!
 - [x] Yield events from streams
+- [x] [Opentelemetry Instrumentation](https://github.com/kpn/opentelemetry-instrumentation-kstreams)
 - [ ] Store (kafka streams pattern)
 - [ ] Stream Join
 - [ ] Windowing
@@ -110,3 +111,4 @@ The use of [commitizen](https://commitizen-tools.github.io/commitizen/) is recom
 ```bash
 cz commit
 ```
+
