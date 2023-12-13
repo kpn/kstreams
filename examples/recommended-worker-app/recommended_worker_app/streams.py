@@ -1,4 +1,4 @@
-from kstreams import stream, ConsumerRecord
+from kstreams import ConsumerRecord, stream
 
 
 @stream("local--hello-world", group_id="example-group")

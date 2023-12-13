@@ -190,6 +190,22 @@ class TestConsumer(Base, Consumer):
 
         return None
 
+    async def getmany(
+        self,
+        *partitions: List[TopicPartition],
+        timeout_ms: int = 0,
+        max_records: int = 1,
+    ) -> Dict[TopicPartition, List[ConsumerRecord]]:
+        """
+        Basic getmany implementation.
+        `partitions` and `timeout_ms` could be added to the logic
+        but it seems unnecessary for now; if end users request them we
+        can add it
+        """
+        return {
+            self._assignment[0]: [await self.getone() for _ in range(0, max_records)]
+        }
+
     def seek(self, *, partition: TopicPartition, offset: int) -> None:
         # This method intends to have the same signature as aiokafka but with kwargs
         # rather than positional arguments

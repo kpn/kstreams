@@ -160,6 +160,49 @@ class Stream:
 
         return consumer_record
 
+    async def getmany(
+        self,
+        partitions: Optional[List[TopicPartition]] = None,
+        timeout_ms: int = 0,
+        max_records: Optional[int] = None,
+    ) -> Dict[TopicPartition, List[ConsumerRecord]]:
+        """
+        Get a batch of events from the assigned TopicPartition.
+
+        Prefetched events are returned in batches by topic-partition.
+        If messages is not available in the prefetched buffer this method waits
+        `timeout_ms` milliseconds.
+
+        Attributes:
+            partitions List[TopicPartition] | None: The partitions that need
+                fetching message. If no one partition specified then all
+                subscribed partitions will be used
+            timeout_ms int | None: milliseconds spent waiting if
+                data is not available in the buffer. If 0, returns immediately
+                with any records that are available currently in the buffer,
+                else returns empty. Must not be negative.
+            max_records int | None: The amount of records to fetch.
+                if `timeout_ms` was defined and reached and the fetched records
+                has not reach `max_records` then returns immediately
+                with any records that are available currently in the buffer
+
+        Returns:
+            Topic to list of records
+
+        !!! Example
+            ```python
+            @stream_engine.stream(topic, ...)
+            async def stream(stream: Stream):
+                while True:
+                    data = await stream.getmany(max_records=5)
+                    print(data)
+            ```
+        """
+        partitions = partitions or []
+        return await self.consumer.getmany(  # type: ignore
+            *partitions, timeout_ms=timeout_ms, max_records=max_records
+        )
+
     async def start(self) -> Optional[AsyncGenerator]:
         if self.running:
             return None
