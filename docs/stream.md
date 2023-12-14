@@ -9,6 +9,8 @@ Consuming can be done using `kstreams.Stream`. You only need to decorate a `coro
         show_root_heading: true
         docstring_section_style: table
         show_signature_annotations: false
+        members:
+          -  
 
 ## Dependency Injection and typing
 
@@ -255,6 +257,16 @@ async with stream as stream_flow:  # Use the context manager
 !!! note
     If for some reason you interrupt the "async for in" in the async generator, the Stream will stopped consuming events
     meaning that the lag will increase.
+
+## Get many
+
+::: kstreams.streams.Stream.getmany
+    options:
+        docstring_section_style: table
+        show_signature_annotations: false
+
+!!! warning
+    This approach does not works with `Dependency Injection`.
 
 ## Rebalance Listener
 

@@ -346,6 +346,34 @@ async def test_add_stream_as_generator(
 
 
 @pytest.mark.asyncio
+async def test_stream_getmany(
+    stream_engine: StreamEngine, consumer_record_factory: Callable[..., ConsumerRecord]
+):
+    topic_partition_crs = {
+        TopicPartition(topic="local--hello-kpn", partition=0): [
+            consumer_record_factory(offset=1),
+            consumer_record_factory(offset=2),
+            consumer_record_factory(offset=3),
+        ]
+    }
+
+    save_to_db = mock.Mock()
+
+    @stream_engine.stream("local--hello-kpn")
+    async def stream(stream: Stream):
+        data = await stream.getmany(max_records=3)
+        save_to_db(data)
+
+    async def getmany(*args, **kwargs):
+        return topic_partition_crs
+
+    with mock.patch.multiple(Consumer, start=mock.DEFAULT, getmany=getmany):
+        await stream_engine.start_streams()
+        await asyncio.sleep(0.1)
+        save_to_db.assert_called_once_with(topic_partition_crs)
+
+
+@pytest.mark.asyncio
 async def test_stream_decorator(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
