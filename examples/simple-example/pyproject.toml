@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "simple-example"
+version = "0.1.0"
+description = ""
+authors = ["Marcos Schroh <marcos.schroh@kpn.com>, Santiago Fraire <santiago.fraire@kpn.com>, Alexandre Cirilo <alexandre.cirilo@kpn.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aiorun = "^2022.4.1"
+kstreams = { path = "../../.", develop = true }
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.scripts]
+app = "simple_example.app:main"

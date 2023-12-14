@@ -1,4 +1,5 @@
 import asyncio
+import importlib
 from typing import Set
 from unittest.mock import Mock, call
 
@@ -378,14 +379,16 @@ async def test_e2e_example():
     """
     Test that events are produce by the engine and consumed by the streams
     """
-    from examples.simple import event_store, produce, stream_engine
+    simple_example = importlib.import_module(
+        "examples.simple-example.simple_example.app"
+    )
 
-    client = TestStreamClient(stream_engine)
+    client = TestStreamClient(simple_example.stream_engine)
 
     async with client:
-        metadata = await produce()
+        metadata = await simple_example.produce()
 
-    assert event_store.total == 5
+    assert simple_example.event_store.total == 5
     assert metadata.partition == 0
 
     # check that all events has been consumed
