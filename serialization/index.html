@@ -560,7 +560,7 @@
 
 <p>Kafka's job is to move bytes from producer to consumers, through a topic.</p>
 <p>By default, this is what kstream does.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">stream</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">stream</span>
 
 
 <span class="nd">@stream</span><span class="p">(</span><span class="s2">&quot;local--hello-world&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group&quot;</span><span class="p">)</span>
