@@ -94,6 +94,32 @@ async def test_streams_consume_events(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
+async def test_stream_consume_many(stream_engine: StreamEngine):
+    event = b'{"message": "Hello world!"}'
+    max_records = 2
+    save_to_db = Mock()
+
+    @stream_engine.stream(topic)
+    async def stream(stream: Stream):
+        while True:
+            data = await stream.getmany(max_records=max_records)
+            save_to_db(
+                [
+                    cr.value
+                    for consumer_records_list in data.values()
+                    for cr in consumer_records_list
+                ]
+            )
+
+    client = TestStreamClient(stream_engine)
+    async with client:
+        await client.send(topic, value=event, key="1")
+        await client.send(topic, value=event, key="1")
+
+    save_to_db.assert_called_once_with([event for _ in range(0, max_records)])
+
+
+@pytest.mark.asyncio
 async def test_stream_consume_events_as_generator(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
     event = b'{"message": "Hello world!"}'
