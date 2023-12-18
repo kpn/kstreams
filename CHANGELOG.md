@@ -1,3 +1,9 @@
+## 0.15.0 (2023-12-18)
+
+### Feat
+
+- **TestStreamClient**: add ability to create extra topics before the test cycle starts (#149)
+
 ## 0.14.0 (2023-12-14)
 
 ### Feat
