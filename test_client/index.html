@@ -401,6 +401,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#defining-extra-topics" class="md-nav__link">
+    Defining extra topics
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#disabling-monitoring-during-testing" class="md-nav__link">
     Disabling monitoring during testing
   </a>
@@ -493,6 +500,13 @@
         <li class="md-nav__item">
   <a href="#producer-only" class="md-nav__link">
     Producer only
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defining-extra-topics" class="md-nav__link">
+    Defining extra topics
   </a>
   
 </li>
@@ -753,6 +767,87 @@ it shows what to do when the <code>procuder code</code> is encapsulated in other
 for example a <code>FastAPI</code> view.
 Then you don't want to use <code>client.send</code> directly, just called the function that contains <code>stream_engine.send(...)</code></p>
 </div>
+<h2 id="defining-extra-topics">Defining extra topics</h2>
+<p>For some uses cases is required to produce an event to a topic (<code>target topic</code>) after it was consumed (<code>source topic</code>). We are in control of the <code>source topic</code>
+because it has a <code>stream</code> associated with it and we want to consume events from it, however we might not be in control of the <code>target topic</code>.</p>
+<p>How can we consume an event from the <code>target topic</code> which has not a <code>stream</code> associated and the topic will be created only when a <code>send</code> is reached?
+The answer is to pre define the extra topics before the test cycle has started. Let's take a look an example:</p>
+<p>Let's imagine that we have the following code:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span>
+
+<span class="kn">from</span> <span class="nn">.engine</span> <span class="kn">import</span> <span class="n">stream_engine</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;source-topic&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># do something, for example save to db</span>
+    <span class="k">await</span> <span class="n">save_to_db</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+
+    <span class="c1"># then produce the event to the `target topic`</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;target-topic&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">cr</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+</code></pre></div>
+<p>Here we can test two things:</p>
+<ol>
+<li>Sending an event to the <code>source-topic</code> and check that the event has been consumed and saved to the DB</li>
+<li>Check that the event was send to the <code>target-topic</code></li>
+</ol>
+<p>Testing point <code>1</code> is straightforward:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">kstreams.test_utils</span> <span class="kn">import</span> <span class="n">TestStreamClient</span>
+
+<span class="kn">from</span> <span class="nn">.engine</span> <span class="kn">import</span> <span class="n">stream_engine</span>
+
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">TestStreamClient</span><span class="p">(</span><span class="n">stream_engine</span><span class="p">)</span>
+<span class="n">value</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span>
+<span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;my-key&quot;</span>
+
+<span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="p">:</span>
+    <span class="c1"># produce to the topic that has a stream</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;source-topic&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="c1"># check that the event was saved to the DB</span>
+    <span class="k">assert</span> <span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</code></pre></div>
+<p>However to test the point <code>2</code> we need more effort as the <code>TestStreamClient</code> is not aware of the <code>target topic</code> until it reaches the <code>send</code> inside the <code>consume</code> coroutine.
+If we try to get the <code>target topic</code> event inside the <code>async with</code> context we will have an error:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="p">:</span>
+    <span class="c1"># produce to the topic that has a stream</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;source-topic&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="o">...</span>
+    <span class="c1"># Let&#39;s check if it was received by the target topic</span>
+    <span class="n">event</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_event</span><span class="p">(</span><span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;target-topic&quot;</span><span class="p">)</span>
+
+
+<span class="ne">ValueError</span><span class="p">:</span> <span class="n">You</span> <span class="n">might</span> <span class="n">be</span> <span class="n">trying</span> <span class="n">to</span> <span class="n">get</span> <span class="n">the</span> <span class="n">topic</span> <span class="n">target</span><span class="o">-</span><span class="n">topic</span> <span class="n">outside</span> <span class="n">the</span> <span class="err">`</span><span class="n">client</span> <span class="k">async</span> <span class="n">context</span><span class="err">`</span> <span class="ow">or</span> <span class="n">trying</span> <span class="n">to</span> <span class="n">get</span> <span class="n">an</span> <span class="n">event</span> <span class="kn">from</span> <span class="nn">an</span> <span class="n">empty</span> <span class="n">topic</span> <span class="n">target</span><span class="o">-</span><span class="n">topic</span><span class="o">.</span> <span class="n">Make</span> <span class="n">sure</span> <span class="n">that</span> <span class="n">the</span> <span class="n">code</span> <span class="ow">is</span> <span class="n">inside</span> <span class="n">the</span> <span class="k">async</span> <span class="n">contextand</span> <span class="n">the</span> <span class="n">topic</span> <span class="n">has</span> <span class="n">events</span><span class="o">.</span>
+</code></pre></div>
+<p>We can solve this with a <code>delay</code> (<code>await asyncio.sleep(...)</code>) inside the <code>async with</code> context to give time to the <code>TestStreamClient</code> to create the topic, however if the buisness logic
+inside the <code>consume</code> is slow we need to add more delay, then it will become a <code>race condition</code>.  </p>
+<p>To proper solve it, we can specify to the <code>TestStreamClient</code> the extra topics that we need during the test cycle.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">kstreams.test_utils</span> <span class="kn">import</span> <span class="n">TestStreamClient</span>
+
+<span class="kn">from</span> <span class="nn">.engine</span> <span class="kn">import</span> <span class="n">stream_engine</span>
+
+
+<span class="c1"># tell the client to create the extra topics</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">TestStreamClient</span><span class="p">(</span><span class="n">stream_engine</span><span class="p">,</span> <span class="n">topics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;target-topic&quot;</span><span class="p">])</span>
+<span class="n">value</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span>
+<span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;my-key&quot;</span>
+
+<span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="p">:</span>
+    <span class="c1"># produce to the topic that has a stream</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;source-topic&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="c1"># check that the event was saved to the DB</span>
+    <span class="k">assert</span> <span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="c1"># Let&#39;s check if it was received by the target topic</span>
+    <span class="n">event</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_event</span><span class="p">(</span><span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;target-topic&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">event</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">value</span>
+    <span class="k">assert</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">key</span>
+</code></pre></div>
 <h2 id="disabling-monitoring-during-testing">Disabling monitoring during testing</h2>
 <p>Monitoring streams and producers is vital for streaming application but it requires extra effort. Sometimes during testing,
 monitoring is not required as we only want to focus on testing the buisness logic. In order to disable monitoring
