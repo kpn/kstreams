@@ -40,9 +40,16 @@ class TestStreamClient:
     __test__ = False
 
     def __init__(
-        self, stream_engine: StreamEngine, monitoring_enabled: bool = True
+        self,
+        stream_engine: StreamEngine,
+        monitoring_enabled: bool = True,
+        topics: Optional[List[str]] = None,
     ) -> None:
         self.stream_engine = stream_engine
+
+        # Extra topics' names defined by the end user which must be created
+        # before the cycle test starts
+        self.extra_user_topics = topics
 
         # store the user clients to restore them later
         self.monitor = stream_engine.monitor
@@ -63,8 +70,14 @@ class TestStreamClient:
     def setup_mocks(self) -> None:
         self.mock_streams()
 
+    def create_extra_topics(self) -> None:
+        if self.extra_user_topics is not None:
+            for topic_name in self.extra_user_topics:
+                TopicManager.create(topic_name)
+
     async def start(self) -> None:
         self.setup_mocks()
+        self.create_extra_topics()
         await self.stream_engine.start()
 
     async def stop(self) -> None:
