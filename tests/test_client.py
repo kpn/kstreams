@@ -267,6 +267,35 @@ async def test_get_event_outside_context(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
+async def test_client_create_extra_user_topics(stream_engine: StreamEngine):
+    """
+    Test that the topics defined by the end user are created before
+    the test cycle has started.
+
+    Note: the topics to be created should not have a `stream` associated,
+    otherwise it would not make any sense.
+    """
+    value = b'{"message": "Hello world!"}'
+    key = "my-key"
+    extra_topic = "local--kstreams-statistics-consumer"
+
+    @stream_engine.stream(topic, name="my-stream")
+    async def consume(cr: ConsumerRecord):
+        # produce event to a topic that has not a stream associated
+        await client.send(extra_topic, value=cr.value, key=cr.key)
+
+    client = TestStreamClient(stream_engine, topics=[extra_topic])
+    async with client:
+        # produce to the topic that has a stream. Then, inside the stream
+        await client.send(topic, value=value, key=key)
+
+        # get the event from a topic that has not a `stream`
+        event = await client.get_event(topic_name=extra_topic)
+        assert event.value == value
+        assert event.key == key
+
+
+@pytest.mark.asyncio
 async def test_clean_up_events(stream_engine: StreamEngine):
     topic_name = "local--kstreams-clean-up"
     value = b'{"message": "Hello world!"}'

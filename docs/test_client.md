@@ -256,6 +256,103 @@ async def test_event_produced():
     for example a `FastAPI` view.
     Then you don't want to use `client.send` directly, just called the function that contains `stream_engine.send(...)`
 
+## Defining extra topics
+
+For some uses cases is required to produce an event to a topic (`target topic`) after it was consumed (`source topic`). We are in control of the `source topic`
+because it has a `stream` associated with it and we want to consume events from it, however we might not be in control of the `target topic`.
+
+How can we consume an event from the `target topic` which has not a `stream` associated and the topic will be created only when a `send` is reached?
+The answer is to pre define the extra topics before the test cycle has started. Let's take a look an example:
+
+Let's imagine that we have the following code:
+
+```python
+from kstreams import ConsumerRecord
+
+from .engine import stream_engine
+
+
+@stream_engine.stream("source-topic", name=name)
+async def consume(cr: ConsumerRecord) -> None:
+    # do something, for example save to db
+    await save_to_db(cr)
+
+    # then produce the event to the `target topic`
+    await stream_engine.send("target-topic", value=cr.value, key=cr.key, headers=cr.headers)
+```
+
+Here we can test two things:
+
+1. Sending an event to the `source-topic` and check that the event has been consumed and saved to the DB
+2. Check that the event was send to the `target-topic`
+
+Testing point `1` is straightforward:
+
+```python
+import pytest
+from kstreams.test_utils import TestStreamClient
+
+from .engine import stream_engine
+
+
+client = TestStreamClient(stream_engine)
+value = b'{"message": "Hello world!"}'
+key = "my-key"
+
+async with client:
+    # produce to the topic that has a stream
+    await client.send("source-topic", value=value, key=key)
+
+    # check that the event was saved to the DB
+    assert await db.get(...)
+```
+
+However to test the point `2` we need more effort as the `TestStreamClient` is not aware of the `target topic` until it reaches the `send` inside the `consume` coroutine.
+If we try to get the `target topic` event inside the `async with` context we will have an error:
+
+```python
+async with client:
+    # produce to the topic that has a stream
+    await client.send("source-topic", value=value, key=key)
+
+    ...
+    # Let's check if it was received by the target topic
+    event = await client.get_event(topic_name="target-topic")
+
+
+ValueError: You might be trying to get the topic target-topic outside the `client async context` or trying to get an event from an empty topic target-topic. Make sure that the code is inside the async contextand the topic has events.
+```
+
+We can solve this with a `delay` (`await asyncio.sleep(...)`) inside the `async with` context to give time to the `TestStreamClient` to create the topic, however if the buisness logic
+inside the `consume` is slow we need to add more delay, then it will become a `race condition`.  
+
+To proper solve it, we can specify to the `TestStreamClient` the extra topics that we need during the test cycle.
+
+```python
+import pytest
+from kstreams.test_utils import TestStreamClient
+
+from .engine import stream_engine
+
+
+# tell the client to create the extra topics
+client = TestStreamClient(stream_engine, topics=["target-topic"])
+value = b'{"message": "Hello world!"}'
+key = "my-key"
+
+async with client:
+    # produce to the topic that has a stream
+    await client.send("source-topic", value=value, key=key)
+
+    # check that the event was saved to the DB
+    assert await db.get(...)
+
+    # Let's check if it was received by the target topic
+    event = await client.get_event(topic_name="target-topic")
+    assert event.value == value
+    assert event.key == key
+```
+
 ## Disabling monitoring during testing
 
 Monitoring streams and producers is vital for streaming application but it requires extra effort. Sometimes during testing,
