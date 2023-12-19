@@ -34,12 +34,17 @@ nav:
   - Monitoring: 'monitoring.md'
   - Serialization: 'serialization.md'
   - Testing: 'test_client.md'
+  - Middleware: 'middleware.md'
   - Utils: 'utils.md'
 
 markdown_extensions:
   - pymdownx.highlight
   - pymdownx.inlinehilite
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.snippets
   - pymdownx.critic
   - pymdownx.caret
