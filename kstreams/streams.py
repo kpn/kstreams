@@ -250,6 +250,8 @@ class Stream:
                 else:
                     # typing with cr and stream
                     await self.func(cr, self)
+        except errors.ConsumerStoppedError:
+            return
         except Exception as e:
             logger.exception(f"CRASHED Stream!!! Task {self._consumer_task} \n\n {e}")
 
