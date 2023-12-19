@@ -1,3 +1,9 @@
+## 0.15.1 (2023-12-19)
+
+### Fix
+
+- **Stream**: handle errors.ConsumerStoppedError exception for the new consumtion way (#150)
+
 ## 0.15.0 (2023-12-18)
 
 ### Feat
