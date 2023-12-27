@@ -433,16 +433,21 @@ async def test_e2e_example():
     ),
 )
 async def test_e2e_consume_multiple_topics(monitoring_enabled):
-    from examples.consume_multiple_topics import produce, stream_engine, topics
+    consume_multiple_topics_example = importlib.import_module(
+        "examples.consume-multiple-topics-example.consume_multiple_topics_example.app"
+    )
 
     total_events = 2
-    client = TestStreamClient(stream_engine, monitoring_enabled=monitoring_enabled)
+    client = TestStreamClient(
+        consume_multiple_topics_example.stream_engine,
+        monitoring_enabled=monitoring_enabled,
+    )
 
     async with client:
-        await produce(total_events)
+        await consume_multiple_topics_example.produce(total_events)
 
-        topic_1 = TopicManager.get(topics[0])
-        topic_2 = TopicManager.get(topics[1])
+        topic_1 = TopicManager.get(consume_multiple_topics_example.topics[0])
+        topic_2 = TopicManager.get(consume_multiple_topics_example.topics[1])
 
         assert topic_1.total_events == total_events
         assert topic_2.total_events == total_events
