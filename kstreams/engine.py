@@ -12,7 +12,7 @@ from .exceptions import DuplicateStreamException, EngineNotStartedException
 from .prometheus.monitor import PrometheusMonitor
 from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import Deserializer, Serializer
-from .streams import Stream, StreamFunc, stream
+from .streams import Stream, StreamFunc, stream as stream_func
 from .types import Headers
 from .utils import encode_headers
 
@@ -216,7 +216,7 @@ class StreamEngine:
         **kwargs,
     ) -> Callable[[StreamFunc], Stream]:
         def decorator(func: StreamFunc) -> Stream:
-            stream_from_func = stream(
+            stream_from_func = stream_func(
                 topics,
                 name=name,
                 deserializer=deserializer,
