@@ -6,7 +6,5 @@ if [ -d '.venv' ] ; then
 fi
 
 ${PREFIX}pytest -x --cov-report term-missing --cov-report=xml:coverage.xml --cov=kstreams ${1-"./tests"} $2
-${PREFIX}black kstreams tests --check --diff
-${PREFIX}flake8 kstreams/ tests/
-${PREFIX}isort --check-only kstreams tests
+${PREFIX}ruff kstreams tests
 ${PREFIX}mypy kstreams/
