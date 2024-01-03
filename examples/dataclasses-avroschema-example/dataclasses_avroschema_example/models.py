@@ -7,6 +7,7 @@ from dataclasses_avroschema import AvroModel
 @dataclass
 class User(AvroModel):
     "An User"
+
     name: str
     age: int
     pets: typing.List[str]
@@ -25,6 +26,7 @@ class User(AvroModel):
 @dataclass
 class Address(AvroModel):
     "An Address"
+
     street: str
     street_number: int
 
