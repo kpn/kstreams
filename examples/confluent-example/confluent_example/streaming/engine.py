@@ -1,6 +1,6 @@
-from confluent_example import serializers
 from schema_registry.client import AsyncSchemaRegistryClient
 
+from confluent_example import serializers
 from kstreams import create_engine
 
 client = AsyncSchemaRegistryClient("http://localhost:8081")

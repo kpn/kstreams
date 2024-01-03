@@ -18,7 +18,6 @@ def test_plaintext_ok():
 
 
 def test_ssl_ok(ssl_context):
-
     kafka_backend = Kafka(
         security_protocol=SecurityProtocol.SSL, ssl_context=ssl_context
     )

@@ -7,4 +7,5 @@ fi
 
 set -x
 
+${PREFIX}ruff format .
 ${PREFIX}ruff kstreams tests --fix
