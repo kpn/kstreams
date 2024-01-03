@@ -16,7 +16,6 @@ def create_engine(
     deserializer: Optional[Deserializer] = None,
     monitor: Optional[PrometheusMonitor] = None,
 ) -> StreamEngine:
-
     if monitor is None:
         monitor = PrometheusMonitor()
 

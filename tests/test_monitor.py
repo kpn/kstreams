@@ -24,7 +24,6 @@ async def test_consumer_metrics(mock_consumer_class, stream_engine: StreamEngine
     consumer = stream.consumer
 
     for topic_partition in consumer.assignment():
-
         # super ugly notation but for now is the only way to get the metrics
         met_committed = (
             stream_engine.monitor.MET_COMMITTED.labels(

@@ -16,6 +16,7 @@ class Consumer(aiokafka.AIOKafkaConsumer):
         self.config = kwargs
 
         if key_deserializer is None:
+
             def key_deserializer(key):
                 if key is not None:
                     return key.decode()
@@ -33,6 +34,7 @@ class Producer(aiokafka.AIOKafkaProducer):
         self.config = kwargs
 
         if key_serializer is None:
+
             def key_serializer(key):
                 if key is not None:
                     return key.encode("utf-8")

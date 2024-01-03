@@ -96,7 +96,7 @@ Run test:
 ./scripts/test
 ```
 
-Run code formatting (`black` and `isort`)
+Run code formatting with ruff:
 
 ```bash
 ./scripts/format
