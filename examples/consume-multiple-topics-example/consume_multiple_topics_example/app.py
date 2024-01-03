@@ -25,11 +25,20 @@ async def produce(events_per_topic: int = 5, delay_seconds: int = 1) -> None:
             await asyncio.sleep(delay_seconds)
 
 
-async def main():
+async def start():
     await stream_engine.start()
     await produce()
+
+
+async def shutdown():
     await stream_engine.stop()
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+def main():
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(start())
+        loop.run_forever()
+    finally:
+        loop.run_until_complete(shutdown())
+        loop.close()
