@@ -612,7 +612,11 @@
 
   </div>
 
-</div><h2 id="creating-a-middleware">Creating a middleware</h2>
+</div><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Middlewares only work with the new <a href="https://kpn.github.io/kstreams/stream/#dependency-injection-and-typing">Dependency Injection approach</a></p>
+</div>
+<h2 id="creating-a-middleware">Creating a middleware</h2>
 <p>To create a middleware you have to create a class that inherits from <code>BaseMiddleware</code>. Then, the method <code>async def __call__</code> must be defined. Let's consider that we want to save the CR to <code>elastic</code> before it is processed:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">middleware</span>
 
