@@ -543,13 +543,14 @@
 
 <h1 id="middleware">Middleware</h1>
 <p>Kstreams allows you to include middlewares for adding behavior to streams. </p>
-<p>A "middleware" is a <code>callable</code> that works with every <code>ConsumerRecord</code> (CR) before it is processed by a specific <code>stream</code>. <code>Middlewares</code> also have access to the <code>stream</code>, <code>send</code> function.</p>
+<p>A "middleware" is a <code>callable</code> that works with every <code>ConsumerRecord</code> (CR) before it is processed by a specific <code>stream</code>.  Also after the <code>CR</code> has been handled <code>Middlewares</code> also have access to the <code>stream</code>, <code>send</code> function.</p>
 <ul>
 <li>It takes each <code>CR</code> that arrives to a topic.</li>
 <li>It can then do something to the <code>CR</code> or run any needed code.</li>
 <li>Then it passes the <code>CR</code> to be processed by the specific stream.</li>
+<li>Once the <code>CR</code> is processed by the stream, the chain is "completed".</li>
+<li>If there is code after the <code>self.next_call(cr)</code> then it will be executed.</li>
 </ul>
-<p>Once the <code>CR</code> is processed by the stream, the chain is completed. For now middleware works in one direction but in the future they might be able to run also after the <code>CR</code> has been handled.</p>
 <p>Kstreams <code>Middleware</code> have the following protocol:</p>
 
 
@@ -764,7 +765,89 @@
   </div>
 
 </div><h2 id="middleware-chain">Middleware chain</h2>
+<p>It is possible to add as many middlewares as you want in order to split and reuse buisness logic, howewer the downside is that extra compleciti is added and the code might become slower. Also, there are some points to take into account:</p>
+<ul>
+<li>The order when adding middlewares is important. </li>
+<li>If middlewares are added to a <code>stream</code> and <code>stream_engine</code>, then the middleware stack is build first with <code>stream</code> middlewares and then with the <code>stream_engines</code> middlewares. This means the first the <code>stream</code> middlewares are evaluated first.</li>
+</ul>
+<p>In the example we are adding three middelwares in the following order: <code>DLQMiddleware</code>, <code>ElasticMiddleware</code>, and <code>S3Middleware</code>. It means that firts the code execution will be:</p>
+<p><code>topic event</code> --&gt; <code>ExceptionMiddleware</code> --&gt; <code>DLQMiddleware</code> --&gt; <code>ElasticMiddleware</code> --&gt; <code>S3Middleware</code> --&gt; <code>processor</code></p>
+<div class="highlight"><span class="filename">Multiple middlewares example</span><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">middleware</span>
+
+
+<span class="k">class</span> <span class="nc">DLQMiddleware</span><span class="p">(</span><span class="n">middleware</span><span class="o">.</span><span class="n">BaseMiddleware</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_call</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">dlq</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ElasticMiddleware</span><span class="p">(</span><span class="n">middleware</span><span class="o">.</span><span class="n">BaseMiddleware</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">save_to_elastic</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_call</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">S3Middleware</span><span class="p">(</span><span class="n">middleware</span><span class="o">.</span><span class="n">BaseMiddleware</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">backup_to_s3</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_call</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+
+
+<span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">middleware</span><span class="o">.</span><span class="n">MiddlewareFactory</span><span class="p">(</span><span class="n">DLQMiddleware</span><span class="p">),</span>
+    <span class="n">middleware</span><span class="o">.</span><span class="n">MiddlewareFactory</span><span class="p">(</span><span class="n">ElasticMiddleware</span><span class="p">),</span>
+    <span class="n">middleware</span><span class="o">.</span><span class="n">MiddlewareFactory</span><span class="p">(</span><span class="n">S3Middleware</span><span class="p">),</span>
+<span class="p">]</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;kstreams-topic&quot;</span><span class="p">,</span> <span class="n">middlewares</span><span class="o">=</span><span class="n">middlewares</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">processor</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">event_2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error from stream...&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">save_to_db</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In this example we can see that always the cr will be save into <code>elastic</code> and <code>s3</code> regardless an error</p>
+</div>
 <h2 id="executing-code-after-the-cr-was-processed">Executing Code after the CR was processed</h2>
+<p>As mentioned in the introduction, it is possible to execute code after the <code>CR</code> is handled. To do this, we need to place code after <code>next_call</code> is called:</p>
+<div class="highlight"><span class="filename">Execute code after CR is handled</span><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">middleware</span>
+
+
+<span class="k">class</span> <span class="nc">DLQMiddleware</span><span class="p">(</span><span class="n">middleware</span><span class="o">.</span><span class="n">BaseMiddleware</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_call</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">dlq</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ElasticMiddleware</span><span class="p">(</span><span class="n">middleware</span><span class="o">.</span><span class="n">BaseMiddleware</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_call</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+        <span class="c1"># This will be called after the whole chain has finished</span>
+        <span class="k">await</span> <span class="n">save_to_elastic</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+
+<span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">middleware</span><span class="o">.</span><span class="n">MiddlewareFactory</span><span class="p">(</span><span class="n">DLQMiddleware</span><span class="p">),</span>
+    <span class="n">middleware</span><span class="o">.</span><span class="n">MiddlewareFactory</span><span class="p">(</span><span class="n">ElasticMiddleware</span><span class="p">),</span>
+<span class="p">]</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;kstreams-topic&quot;</span><span class="p">,</span> <span class="n">middlewares</span><span class="o">=</span><span class="n">middlewares</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">processor</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">event_2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error from stream...&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">save_to_db</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the previous example we can see that only the event is save to elastic if there are not any errors</p>
+</div>
 
 
 
