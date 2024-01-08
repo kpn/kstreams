@@ -543,7 +543,7 @@
 
 <h1 id="middleware">Middleware</h1>
 <p>Kstreams allows you to include middlewares for adding behavior to streams. </p>
-<p>A "middleware" is a <code>callable</code> that works with every <code>ConsumerRecord</code> (CR) before it is processed by a specific <code>stream</code>.  Also after the <code>CR</code> has been handled <code>Middlewares</code> also have access to the <code>stream</code>, <code>send</code> function.</p>
+<p>A <em>middleware</em> is a <code>callable</code> that works with every <code>ConsumerRecord</code> (CR) <em>before</em> it is processed by a specific <code>stream</code>.  Also <em>after</em> the <code>CR</code> has been handled <code>Middlewares</code> also have access to the <code>stream</code>, <code>send</code> function.</p>
 <ul>
 <li>It takes each <code>CR</code> that arrives to a topic.</li>
 <li>It can then do something to the <code>CR</code> or run any needed code.</li>
@@ -810,7 +810,7 @@
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>In this example we can see that always the cr will be save into <code>elastic</code> and <code>s3</code> regardless an error</p>
+<p>In the example we can see that always the <code>cr</code> will be save into <code>elastic</code> and <code>s3</code> regardless an error</p>
 </div>
 <h2 id="executing-code-after-the-cr-was-processed">Executing Code after the CR was processed</h2>
 <p>As mentioned in the introduction, it is possible to execute code after the <code>CR</code> is handled. To do this, we need to place code after <code>next_call</code> is called:</p>
@@ -846,7 +846,7 @@
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>In the previous example we can see that only the event is save to elastic if there are not any errors</p>
+<p>In the example we can see that only if there is not an <code>error</code> the event is saved to <code>elastic</code></p>
 </div>
 
 
