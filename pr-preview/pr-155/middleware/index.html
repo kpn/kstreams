@@ -663,7 +663,7 @@
 </div>
 <h2 id="adding-options-to-the-middleware">Adding options to the middleware</h2>
 <p>If you want to provide configuration options to the middleware class you should override the <strong>init</strong> method, ensuring that is contains the keywargs <code>next_call</code>, <code>send</code> and <code>stream</code>, then any remaining are optional keyword arguments.</p>
-<p>Let's consider that we want to send an event to a spcific topid when a <code>ValueError</code> is raised inside a <code>stream</code> (Dead Letter Queue)</p>
+<p>Let's consider that we want to send an event to a spcific topic when a <code>ValueError</code> is raised inside a <code>stream</code> (Dead Letter Queue)</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">Stream</span>
 
 
@@ -701,7 +701,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Joker received...&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="middleware-by-default">Middleware by default</h2>
-<p>Kstreams includes one middleware by default, <code>ExceptionMiddleware</code>. This middleware adds exception handlers, for particular types of expected exception cases, for example when the <code>Consumer</code> stops (kafka disconnects), user presses <code>CRT+C</code> or any other exception that could cause the <code>stream</code> to crash.</p>
+<p>Kstreams includes one middleware by default, <code>ExceptionMiddleware</code>. This middleware adds exception handlers, for particular types of expected exception cases, for example when the <code>Consumer</code> stops (kafka disconnects), user presses <code>CTRL+C</code> or any other exception that could cause the <code>stream</code> to crash.</p>
 
 
 <div class="doc doc-object doc-class">
@@ -765,12 +765,12 @@
   </div>
 
 </div><h2 id="middleware-chain">Middleware chain</h2>
-<p>It is possible to add as many middlewares as you want in order to split and reuse buisness logic, howewer the downside is that extra compleciti is added and the code might become slower. Also, there are some points to take into account:</p>
+<p>It is possible to add as many middlewares as you want in order to split and reuse business logic, however the downside is extra complexity and the code might become slower. Also, there are some points to take into account:</p>
 <ul>
 <li>The order when adding middlewares is important. </li>
 <li>If middlewares are added to a <code>stream</code> and <code>stream_engine</code>, then the middleware stack is build first with <code>stream</code> middlewares and then with the <code>stream_engines</code> middlewares. This means the first the <code>stream</code> middlewares are evaluated first.</li>
 </ul>
-<p>In the example we are adding three middelwares in the following order: <code>DLQMiddleware</code>, <code>ElasticMiddleware</code>, and <code>S3Middleware</code>. It means that firts the code execution will be:</p>
+<p>In the example we are adding three middelwares in the following order: <code>DLQMiddleware</code>, <code>ElasticMiddleware</code>, and <code>S3Middleware</code>. The code chain execution will be:</p>
 <p><code>topic event</code> --&gt; <code>ExceptionMiddleware</code> --&gt; <code>DLQMiddleware</code> --&gt; <code>ElasticMiddleware</code> --&gt; <code>S3Middleware</code> --&gt; <code>processor</code></p>
 <div class="highlight"><span class="filename">Multiple middlewares example</span><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">middleware</span>
 
