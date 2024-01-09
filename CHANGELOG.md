@@ -1,3 +1,9 @@
+## 0.15.2 (2024-01-09)
+
+### Refactor
+
+- Updated code to Pydantic 2.0 (get rid of deprecation warnings) (#156)
+
 ## 0.15.1 (2023-12-19)
 
 ### Fix
