@@ -2,7 +2,7 @@ import ssl
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, root_validator
+from pydantic import BaseModel, ConfigDict, model_validator
 
 
 class SecurityProtocol(str, Enum):
@@ -60,53 +60,51 @@ class Kafka(BaseModel):
     sasl_plain_username: Optional[str] = None
     sasl_plain_password: Optional[str] = None
     sasl_oauth_token_provider: Optional[str] = None
+    model_config = ConfigDict(arbitrary_types_allowed=True, use_enum_values=True)
 
-    class Config:
-        arbitrary_types_allowed = True
-        use_enum_values = True
-
-    @root_validator(skip_on_failure=True)
+    @model_validator(mode="after")
+    @classmethod
     def protocols_validation(cls, values):
-        security_protocol = values["security_protocol"]
+        security_protocol = values.security_protocol
 
         if security_protocol == SecurityProtocol.PLAINTEXT:
             return values
         elif security_protocol == SecurityProtocol.SSL:
-            if values["ssl_context"] is None:
+            if values.ssl_context is None:
                 raise ValueError("`ssl_context` is required")
             return values
         elif security_protocol == SecurityProtocol.SASL_PLAINTEXT:
-            if values["sasl_mechanism"] is SaslMechanism.OAUTHBEARER:
+            if values.sasl_mechanism is SaslMechanism.OAUTHBEARER:
                 # We don't perform a username and password check if OAUTHBEARER
                 return values
             if (
-                values["sasl_mechanism"] is SaslMechanism.PLAIN
-                and values["sasl_plain_username"] is None
+                values.sasl_mechanism is SaslMechanism.PLAIN
+                and values.sasl_plain_username is None
             ):
                 raise ValueError(
                     "`sasl_plain_username` is required when using SASL_PLAIN"
                 )
             if (
-                values["sasl_mechanism"] is SaslMechanism.PLAIN
-                and values["sasl_plain_password"] is None
+                values.sasl_mechanism is SaslMechanism.PLAIN
+                and values.sasl_plain_password is None
             ):
                 raise ValueError(
                     "`sasl_plain_password` is required when using SASL_PLAIN"
                 )
             return values
         elif security_protocol == SecurityProtocol.SASL_SSL:
-            if values["ssl_context"] is None:
+            if values.ssl_context is None:
                 raise ValueError("`ssl_context` is required")
             if (
-                values["sasl_mechanism"] is SaslMechanism.PLAIN
-                and values["sasl_plain_username"] is None
+                values.sasl_mechanism is SaslMechanism.PLAIN
+                and values.sasl_plain_username is None
             ):
                 raise ValueError(
                     "`sasl_plain_username` is required when using SASL_PLAIN"
                 )
             if (
-                values["sasl_mechanism"] is SaslMechanism.PLAIN
-                and values["sasl_plain_password"] is None
+                values.sasl_mechanism is SaslMechanism.PLAIN
+                and values.sasl_plain_password is None
             ):
                 raise ValueError(
                     "`sasl_plain_password` is required when using SASL_PLAIN"

@@ -29,7 +29,7 @@ async def test_consumer():
 @pytest.mark.asyncio
 async def test_consumer_with_ssl(ssl_context):
     backend = Kafka(security_protocol="SSL", ssl_context=ssl_context)
-    consumer = Consumer(**backend.dict())
+    consumer = Consumer(**backend.model_dump())
     assert consumer._client._ssl_context
 
 
