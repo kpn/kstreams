@@ -685,9 +685,7 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Kafka</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Kafka</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The `Kafka` backend validates the given attributes.</span>
 
@@ -727,53 +725,51 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
     <span class="n">sasl_plain_username</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">sasl_plain_password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">sasl_oauth_token_provider</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_enum_values</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-        <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="nd">@root_validator</span><span class="p">(</span><span class="n">skip_on_failure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">protocols_validation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-        <span class="n">security_protocol</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;security_protocol&quot;</span><span class="p">]</span>
+        <span class="n">security_protocol</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">security_protocol</span>
 
         <span class="k">if</span> <span class="n">security_protocol</span> <span class="o">==</span> <span class="n">SecurityProtocol</span><span class="o">.</span><span class="n">PLAINTEXT</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">values</span>
         <span class="k">elif</span> <span class="n">security_protocol</span> <span class="o">==</span> <span class="n">SecurityProtocol</span><span class="o">.</span><span class="n">SSL</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;ssl_context&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">ssl_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`ssl_context` is required&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">values</span>
         <span class="k">elif</span> <span class="n">security_protocol</span> <span class="o">==</span> <span class="n">SecurityProtocol</span><span class="o">.</span><span class="n">SASL_PLAINTEXT</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;sasl_mechanism&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="n">SaslMechanism</span><span class="o">.</span><span class="n">OAUTHBEARER</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">sasl_mechanism</span> <span class="ow">is</span> <span class="n">SaslMechanism</span><span class="o">.</span><span class="n">OAUTHBEARER</span><span class="p">:</span>
                 <span class="c1"># We don&#39;t perform a username and password check if OAUTHBEARER</span>
                 <span class="k">return</span> <span class="n">values</span>
             <span class="k">if</span> <span class="p">(</span>
-                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;sasl_mechanism&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="n">SaslMechanism</span><span class="o">.</span><span class="n">PLAIN</span>
-                <span class="ow">and</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;sasl_plain_username&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">sasl_mechanism</span> <span class="ow">is</span> <span class="n">SaslMechanism</span><span class="o">.</span><span class="n">PLAIN</span>
+                <span class="ow">and</span> <span class="n">values</span><span class="o">.</span><span class="n">sasl_plain_username</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;`sasl_plain_username` is required when using SASL_PLAIN&quot;</span>
                 <span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span>
-                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;sasl_mechanism&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="n">SaslMechanism</span><span class="o">.</span><span class="n">PLAIN</span>
-                <span class="ow">and</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;sasl_plain_password&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">sasl_mechanism</span> <span class="ow">is</span> <span class="n">SaslMechanism</span><span class="o">.</span><span class="n">PLAIN</span>
+                <span class="ow">and</span> <span class="n">values</span><span class="o">.</span><span class="n">sasl_plain_password</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;`sasl_plain_password` is required when using SASL_PLAIN&quot;</span>
                 <span class="p">)</span>
             <span class="k">return</span> <span class="n">values</span>
         <span class="k">elif</span> <span class="n">security_protocol</span> <span class="o">==</span> <span class="n">SecurityProtocol</span><span class="o">.</span><span class="n">SASL_SSL</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;ssl_context&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">ssl_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`ssl_context` is required&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span>
-                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;sasl_mechanism&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="n">SaslMechanism</span><span class="o">.</span><span class="n">PLAIN</span>
-                <span class="ow">and</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;sasl_plain_username&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">sasl_mechanism</span> <span class="ow">is</span> <span class="n">SaslMechanism</span><span class="o">.</span><span class="n">PLAIN</span>
+                <span class="ow">and</span> <span class="n">values</span><span class="o">.</span><span class="n">sasl_plain_username</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;`sasl_plain_username` is required when using SASL_PLAIN&quot;</span>
                 <span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span>
-                <span class="n">values</span><span class="p">[</span><span class="s2">&quot;sasl_mechanism&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="n">SaslMechanism</span><span class="o">.</span><span class="n">PLAIN</span>
-                <span class="ow">and</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;sasl_plain_password&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">sasl_mechanism</span> <span class="ow">is</span> <span class="n">SaslMechanism</span><span class="o">.</span><span class="n">PLAIN</span>
+                <span class="ow">and</span> <span class="n">values</span><span class="o">.</span><span class="n">sasl_plain_password</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;`sasl_plain_password` is required when using SASL_PLAIN&quot;</span>
