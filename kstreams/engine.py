@@ -151,7 +151,7 @@ class StreamEngine:
     async def start_producer(self, **kwargs) -> None:
         if self.producer_class is None:
             return None
-        config = {**self.backend.dict(), **kwargs}
+        config = {**self.backend.model_dump(), **kwargs}
         self._producer = self.producer_class(**config)
         if self._producer is None:
             return None

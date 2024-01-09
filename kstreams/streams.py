@@ -121,7 +121,7 @@ class Stream:
     def _create_consumer(self) -> ConsumerType:
         if self.backend is None:
             raise BackendNotSet("A backend has not been set for this stream")
-        config = {**self.backend.dict(), **self.config}
+        config = {**self.backend.model_dump(), **self.config}
         return self.consumer_class(**config)
 
     async def stop(self) -> None:
@@ -218,7 +218,7 @@ class Stream:
             else:
                 # It is not an async_generator so we need to
                 # create an asyncio.Task with func
-                logging.warn(
+                logging.warning(
                     "Streams with `async for in` loop approach might be deprecated. "
                     "Consider migrating to a typing approach."
                 )
