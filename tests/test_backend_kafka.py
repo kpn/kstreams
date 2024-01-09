@@ -107,7 +107,7 @@ def test_backend_to_dict():
         sasl_plain_password="pwd",
     )
     assert kafka_backend.security_protocol == SecurityProtocol.SASL_PLAINTEXT
-    assert kafka_backend.dict() == {
+    assert kafka_backend.model_dump() == {
         "bootstrap_servers": ["localhost:9092"],
         "security_protocol": "SASL_PLAINTEXT",
         "ssl_context": None,

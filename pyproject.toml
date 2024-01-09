@@ -75,7 +75,7 @@ update_changelog_on_bump = true
 major_version_zero = true
 
 [tool.pytest.ini_options]
-timeout = 300
+asyncio_mode = "auto"
 log_level = "DEBUG"
 
 [[tool.mypy.overrides]]
