@@ -242,9 +242,8 @@ To facilitate the process, we have `context manager` that makes sure of the `sta
 ```python title="Yield example"
 # Create your stream
 @stream_engine.stream("local--kstream")
-async def stream(stream: Stream):
-    async for cr in stream:
-        yield cr.value
+async def stream(cr: ConsumerRecord, stream: Stream):
+    yield cr.value
 
 
 # Consume the stream:
@@ -257,6 +256,9 @@ async with stream as stream_flow:  # Use the context manager
 !!! note
     If for some reason you interrupt the "async for in" in the async generator, the Stream will stopped consuming events
     meaning that the lag will increase.
+
+!!! note
+    Yield from a stream only works with the [typing approach](https://kpn.github.io/kstreams/stream/#dependency-injection-and-typing)
 
 ## Get many
 

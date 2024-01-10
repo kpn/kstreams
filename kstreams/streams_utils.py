@@ -9,7 +9,7 @@ class UDFType(str, enum.Enum):
     ALL_TYPING = "ALL_TYPING"
 
 
-def inspect_udf(func: Callable[..., Any], a_type: Any) -> UDFType:
+def inspect_udf(func: Callable, a_type: Any) -> UDFType:
     """
     Inspect the user defined function (coroutine) to get the  proper way to call it
 

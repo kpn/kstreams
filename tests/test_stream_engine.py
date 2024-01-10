@@ -317,35 +317,6 @@ async def test_add_stream_custom_conf(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
-async def test_add_stream_as_generator(
-    stream_engine: StreamEngine, consumer_record_factory: Callable[..., ConsumerRecord]
-):
-    @stream_engine.stream("local--hello-kpn")
-    async def stream(consumer):
-        async for cr in consumer:
-            yield cr
-
-    assert stream == stream_engine._streams[0]
-    assert not stream.running
-
-    cr = consumer_record_factory()
-
-    async def getone(_):
-        return cr
-
-    with mock.patch.multiple(Consumer, start=mock.DEFAULT, getone=getone):
-        async with stream as stream_flow:
-            # Now the stream should be running as we are in the context
-            assert stream.running
-            async for value in stream_flow:
-                assert value == cr
-                break
-
-    # Now the stream is stopped because we left the context
-    assert not stream.running
-
-
-@pytest.mark.asyncio
 async def test_stream_getmany(
     stream_engine: StreamEngine, consumer_record_factory: Callable[..., ConsumerRecord]
 ):
