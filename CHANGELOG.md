@@ -1,3 +1,9 @@
+## 0.16.0 (2024-01-11)
+
+### BREAKING CHANGE
+
+- **AsyncGenerator**: Stream as async generators (yield from stream) are only available with the new typing approach (#157)
+
 ## 0.15.2 (2024-01-09)
 
 ### Refactor
