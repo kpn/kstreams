@@ -2,7 +2,8 @@ import logging
 
 import uvicorn
 
-if __name__ == "__main__":
+
+def main():
     uvicorn.run(
         app="fastapi_sse.app:app",
         host="localhost",
@@ -11,3 +12,7 @@ if __name__ == "__main__":
         reload=True,
         debug=True,
     )
+
+
+if __name__ == "__main__":
+    main()
