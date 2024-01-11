@@ -5,7 +5,6 @@ import uuid
 from functools import update_wrapper
 from typing import (
     Any,
-    AsyncGenerator,
     Awaitable,
     Callable,
     Dict,
@@ -30,8 +29,7 @@ from .streams_utils import UDFType, inspect_udf
 
 logger = logging.getLogger(__name__)
 
-# Function required by the `stream` decorator
-StreamFunc = Callable[..., Awaitable[Any]]
+StreamFunc = Callable
 
 
 class Stream:
@@ -112,6 +110,7 @@ class Stream:
         self.initial_offsets = initial_offsets
         self.seeked_initial_offsets = False
         self.rebalance_listener = rebalance_listener
+        self.udf_type = inspect_udf(func, Stream)
 
         # aiokafka expects topic names as arguments, meaning that
         # can receive N topics -> N arguments,
@@ -203,30 +202,29 @@ class Stream:
             *partitions, timeout_ms=timeout_ms, max_records=max_records
         )
 
-    async def start(self) -> Optional[AsyncGenerator]:
+    async def start(self) -> None:
         if self.running:
             return None
 
         await self._subscribe()
-        udf_type = inspect_udf(self.func, Stream)
 
-        if udf_type == UDFType.NO_TYPING:
+        if self.udf_type == UDFType.NO_TYPING:
             # normal use case
-            func = self.func(self)
-            if inspect.isasyncgen(func):
-                return func
-            else:
-                # It is not an async_generator so we need to
-                # create an asyncio.Task with func
-                logging.warning(
-                    "Streams with `async for in` loop approach might be deprecated. "
-                    "Consider migrating to a typing approach."
-                )
-                self._consumer_task = asyncio.create_task(self.func_wrapper(func))
-        else:
-            self._consumer_task = asyncio.create_task(
-                self.func_wrapper_with_typing(udf_type)
+            logging.warn(
+                "Streams with `async for in` loop approach might be deprecated. "
+                "Consider migrating to a typing approach."
             )
+
+            func = self.func(self)
+            # create an asyncio.Task with func
+            self._consumer_task = asyncio.create_task(self.func_wrapper(func))
+        else:
+            # Typing cases
+            if not inspect.isasyncgenfunction(self.func):
+                # Is not an async_generator, then create an asyncio.Task with func
+                self._consumer_task = asyncio.create_task(
+                    self.func_wrapper_with_typing()
+                )
         return None
 
     async def func_wrapper(self, func: Awaitable) -> None:
@@ -238,14 +236,14 @@ class Stream:
         except Exception as e:
             logger.exception(f"CRASHED Stream!!! Task {self._consumer_task} \n\n {e}")
 
-    async def func_wrapper_with_typing(self, calling_type: UDFType) -> None:
+    async def func_wrapper_with_typing(self) -> None:
         try:
             # await for the end user coroutine
             # we do this to show a better error message to the user
             # when the coroutine fails
             while True:
                 cr = await self.getone()
-                if calling_type == UDFType.CR_ONLY_TYPING:
+                if self.udf_type == UDFType.CR_ONLY_TYPING:
                     await self.func(cr)
                 else:
                     # typing with cr and stream
@@ -279,7 +277,7 @@ class Stream:
                         )
             self.seeked_initial_offsets = True
 
-    async def __aenter__(self) -> AsyncGenerator:
+    async def __aenter__(self) -> "Stream":
         """
         Start the kafka Consumer and return an `async_gen` so it can be iterated
 
@@ -287,8 +285,7 @@ class Stream:
             ```python title="Usage"
             @stream_engine.stream(topic, group_id=group_id, ...)
             async def stream(stream):
-                async for cr in stream:
-                    yield cr.value
+                yield cr.value
 
 
             # Iterate the stream:
@@ -298,9 +295,8 @@ class Stream:
             ```
         """
         logger.info("Starting async_gen Stream....")
-        async_gen = await self.start()
-        # For now ignoring the typing issue. The start method might be splited
-        return async_gen  # type: ignore
+        await self.start()
+        return self
 
     async def __aexit__(self, exc_type, exc, tb) -> None:
         logger.info("Stopping async_gen Stream....")
@@ -310,12 +306,15 @@ class Stream:
         return self
 
     async def __anext__(self) -> ConsumerRecord:
-        # This will be used only with async generators
-        if not self.running:
-            await self.start()
-
         try:
-            return await self.getone()
+            cr = await self.getone()
+
+            if self.udf_type == UDFType.NO_TYPING:
+                return cr
+            elif self.udf_type == UDFType.CR_ONLY_TYPING:
+                return await anext(self.func(cr))
+            else:
+                return await anext(self.func(cr, self))
         except errors.ConsumerStoppedError:
             raise StopAsyncIteration  # noqa: F821
 

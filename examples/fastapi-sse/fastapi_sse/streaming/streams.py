@@ -1,14 +1,15 @@
-from kstreams import Stream
+from typing import Optional
+
+from kstreams import ConsumerRecord, Stream
 
 from .engine import stream_engine
 
 
 def stream_factory(
-    *, topic: str, group_id: str = None, auto_offset_reset: str = "latest"
+    *, topic: str, group_id: Optional[str] = None, auto_offset_reset: str = "latest"
 ):
-    async def stream_func(stream: Stream):
-        async for cr in stream:
-            yield cr.value
+    async def stream_func(cr: ConsumerRecord):
+        yield cr.value
 
     s = Stream(
         topic,

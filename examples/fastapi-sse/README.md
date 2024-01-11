@@ -15,7 +15,7 @@ poetry install
 ## Usage
 
 1. Start the kafka cluster: From `kstreams` project root execute `./scripts/cluster/start`
-2. Start the `FastAPI webserver`. Inside the `fastapi-sse` folder execute `poetry run python -m fastapi_sse`
+2. Start the `FastAPI webserver`. Inside the `fastapi-sse` folder execute `poetry run app`
 3. Consume events from the topic with `fastapi-sse`: `curl http://localhost:8000/topics/local--sse/group-1/`. If everything worked, you should see a log similar to the following one where the `webserever` is running:
    ```bash
     INFO:     127.0.0.1:51060 - "GET /topics/local--sse/group-1/ HTTP/1.1" 200 OK
