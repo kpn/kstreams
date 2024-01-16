@@ -666,8 +666,8 @@
 <p>The <code>Middleware</code> concept also applies for <code>async generators</code> (yield from a stream)</p>
 </div>
 <h2 id="adding-extra-configuration-to-middlewares">Adding extra configuration to middlewares</h2>
-<p>If you want to provide extra configuration to middleware you should override the <strong>init</strong> method, ensuring that is contains the keywargs <code>next_call</code>, <code>send</code> and <code>stream</code>, then any remaining are optional <code>keywargs</code>.</p>
-<p>Let's consider that we want to send an event to a spcific topic when a <code>ValueError</code> is raised inside a <code>stream</code> (Dead Letter Queue)</p>
+<p>If you want to provide extra configuration to middleware you should override the <strong>init</strong> method with the extra options as <code>keywargs</code> and then call <code>super().__init__(**kwargs)</code></p>
+<p>Let's consider that we want to send an event to a spcific <code>topic</code> when a <code>ValueError</code> is raised inside a <code>stream</code> (Dead Letter Queue)</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">middleware</span>
 
 
