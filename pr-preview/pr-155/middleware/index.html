@@ -545,9 +545,9 @@
 <p>Kstreams allows you to include middlewares for adding behavior to streams. </p>
 <p>A <em>middleware</em> is a <code>callable</code> that works with every <code>ConsumerRecord</code> (CR) <em>before</em> and <em>after</em> it is processed by a specific <code>stream</code>. <code>Middlewares</code> also have access to the <code>stream</code> and <code>send</code> function.</p>
 <ul>
-<li>It takes each <code>CR</code> that arrives to a topic.</li>
-<li>It can then do something to the <code>CR</code> or run any needed code.</li>
-<li>Then it passes the <code>CR</code> to be processed by the specific stream.</li>
+<li>It takes each <code>CR</code> that arrives to a <code>kafka topic</code>.</li>
+<li>Then it can do something to the <code>CR</code> or run any needed code.</li>
+<li>Then it passes the <code>CR</code> to be processed by another <code>callable</code> (other middleware or stream).</li>
 <li>Once the <code>CR</code> is processed by the stream, the chain is "completed".</li>
 <li>If there is code after the <code>self.next_call(cr)</code> then it will be executed.</li>
 </ul>
