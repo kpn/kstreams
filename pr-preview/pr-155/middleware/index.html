@@ -543,7 +543,7 @@
 
 <h1 id="middleware">Middleware</h1>
 <p>Kstreams allows you to include middlewares for adding behavior to streams. </p>
-<p>A <em>middleware</em> is a <code>callable</code> that works with every <code>ConsumerRecord</code> (CR) <em>before</em> it is processed by a specific <code>stream</code>.  Also <em>after</em> the <code>CR</code> has been handled <code>Middlewares</code> also have access to the <code>stream</code>, <code>send</code> function.</p>
+<p>A <em>middleware</em> is a <code>callable</code> that works with every <code>ConsumerRecord</code> (CR) <em>before</em> and <em>after</em> it is processed by a specific <code>stream</code>. <code>Middlewares</code> also have access to the <code>stream</code>, <code>send</code> function.</p>
 <ul>
 <li>It takes each <code>CR</code> that arrives to a topic.</li>
 <li>It can then do something to the <code>CR</code> or run any needed code.</li>
@@ -560,37 +560,27 @@
 
 <a id="kstreams.middleware.middleware.Middleware"></a>
   <div class="doc doc-contents first">
-          <p class="doc doc-class-bases">
-            Bases: <code><span title="typing.Protocol">Protocol</span></code></p>
 
 
             <details class="quote">
               <summary>Source code in <code>kstreams/middleware/middleware.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span>
-<span class="normal">27</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Middleware</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Protocol</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Middleware</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">next_call</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">NextMiddlewareCall</span><span class="p">,</span>
-        <span class="n">send</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">Send</span><span class="p">,</span>
-        <span class="n">stream</span><span class="p">:</span> <span class="s2">&quot;Stream&quot;</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">middleware</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">MiddlewareProtocol</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="o">...</span>  <span class="c1">#  pragma: no cover</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">middleware</span> <span class="o">=</span> <span class="n">middleware</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
-        <span class="o">...</span>  <span class="c1">#  pragma: no cover</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterator</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">middleware</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
 
@@ -647,7 +637,7 @@
 <span class="kn">from</span> <span class="nn">.engine</span> <span class="kn">import</span> <span class="n">stream_engine</span>
 
 
-<span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span><span class="n">middleware</span><span class="o">.</span><span class="n">MiddlewareFactory</span><span class="p">(</span><span class="n">ElasticMiddleware</span><span class="p">)]</span>
+<span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span><span class="n">middleware</span><span class="o">.</span><span class="n">Middleware</span><span class="p">(</span><span class="n">ElasticMiddleware</span><span class="p">)]</span>
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;kstreams-topic&quot;</span><span class="p">,</span> <span class="n">middlewares</span><span class="o">=</span><span class="n">middlewares</span><span class="p">)</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">processor</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
@@ -657,7 +647,7 @@
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">middleware</span><span class="p">,</span> <span class="n">create</span>
 
-<span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span><span class="n">middleware</span><span class="o">.</span><span class="n">MiddlewareFactory</span><span class="p">(</span><span class="n">ElasticMiddleware</span><span class="p">)]</span>
+<span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span><span class="n">middleware</span><span class="o">.</span><span class="n">Middleware</span><span class="p">(</span><span class="n">ElasticMiddleware</span><span class="p">)]</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">kstreams</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">,</span>
@@ -678,21 +668,12 @@
 <h2 id="adding-extra-configuration-to-middlewares">Adding extra configuration to middlewares</h2>
 <p>If you want to provide extra configuration to middleware you should override the <strong>init</strong> method, ensuring that is contains the keywargs <code>next_call</code>, <code>send</code> and <code>stream</code>, then any remaining are optional <code>keywargs</code>.</p>
 <p>Let's consider that we want to send an event to a spcific topic when a <code>ValueError</code> is raised inside a <code>stream</code> (Dead Letter Queue)</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">Stream</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">middleware</span>
 
 
-<span class="k">class</span> <span class="nc">DLQMiddleware</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">next_call</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">NextMiddlewareCall</span><span class="p">,</span>
-        <span class="n">send</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">Send</span><span class="p">,</span>
-        <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span>
-        <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">next_call</span> <span class="o">=</span> <span class="n">next_call</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">send</span> <span class="o">=</span> <span class="n">send</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>
+<span class="k">class</span> <span class="nc">DLQMiddleware</span><span class="p">(</span><span class="n">middleware</span><span class="o">.</span><span class="n">BaseMiddleware</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">topic</span> <span class="o">=</span> <span class="n">topic</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
@@ -704,7 +685,7 @@
 
 <span class="c1"># Create the middlewares</span>
 <span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">middleware</span><span class="o">.</span><span class="n">MiddlewareFactory</span><span class="p">(</span>
+    <span class="n">middleware</span><span class="o">.</span><span class="n">Middleware</span><span class="p">(</span>
         <span class="n">DLQMiddleware</span><span class="p">,</span> <span class="n">topic</span><span class="o">=</span><span class="s2">&quot;kstreams-dlq-topic&quot;</span>
     <span class="p">)</span>
 <span class="p">]</span>
@@ -789,7 +770,22 @@
 <li>If middlewares are added to a <code>stream</code> and <code>stream_engine</code>, then the middleware stack is build first with <code>stream</code> middlewares and then with the <code>stream_engines</code> middlewares. This means the first the <code>stream</code> middlewares are evaluated first.</li>
 </ul>
 <p>In the example we are adding three middelwares in the following order: <code>DLQMiddleware</code>, <code>ElasticMiddleware</code>, and <code>S3Middleware</code>. The code chain execution will be:</p>
-<p><code>topic event</code> --&gt; <code>ExceptionMiddleware</code> --&gt; <code>DLQMiddleware</code> --&gt; <code>ElasticMiddleware</code> --&gt; <code>S3Middleware</code> --&gt; <code>processor</code></p>
+<pre class="mermaid"><code>sequenceDiagram
+    autonumber
+    ExceptionMiddleware-&gt;&gt;DLQMiddleware: 
+    Note left of ExceptionMiddleware: Event received
+    alt No Processing Error
+    DLQMiddleware-&gt;&gt;ElasticMiddleware: 
+    Note right of ElasticMiddleware: Store CR on Elastic
+    ElasticMiddleware-&gt;&gt;S3Middleware: 
+    Note right of S3Middleware: Store CR on S3
+    S3Middleware-&gt;&gt;Stream: 
+    Note right of Stream: CR processed
+    Stream--&gt;&gt;S3Middleware: 
+    S3Middleware--&gt;&gt;ElasticMiddleware: 
+    ElasticMiddleware--&gt;&gt;DLQMiddleware: 
+    DLQMiddleware--&gt;&gt;ExceptionMiddleware: 
+    end</code></pre>
 <div class="highlight"><span class="filename">Multiple middlewares example</span><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">middleware</span>
 
 
@@ -814,9 +810,9 @@
 
 
 <span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">middleware</span><span class="o">.</span><span class="n">MiddlewareFactory</span><span class="p">(</span><span class="n">DLQMiddleware</span><span class="p">),</span>
-    <span class="n">middleware</span><span class="o">.</span><span class="n">MiddlewareFactory</span><span class="p">(</span><span class="n">ElasticMiddleware</span><span class="p">),</span>
-    <span class="n">middleware</span><span class="o">.</span><span class="n">MiddlewareFactory</span><span class="p">(</span><span class="n">S3Middleware</span><span class="p">),</span>
+    <span class="n">middleware</span><span class="o">.</span><span class="n">Middleware</span><span class="p">(</span><span class="n">DLQMiddleware</span><span class="p">),</span>
+    <span class="n">middleware</span><span class="o">.</span><span class="n">Middleware</span><span class="p">(</span><span class="n">ElasticMiddleware</span><span class="p">),</span>
+    <span class="n">middleware</span><span class="o">.</span><span class="n">Middleware</span><span class="p">(</span><span class="n">S3Middleware</span><span class="p">),</span>
 <span class="p">]</span>
 
 
@@ -851,8 +847,8 @@
 
 
 <span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">middleware</span><span class="o">.</span><span class="n">MiddlewareFactory</span><span class="p">(</span><span class="n">DLQMiddleware</span><span class="p">),</span>
-    <span class="n">middleware</span><span class="o">.</span><span class="n">MiddlewareFactory</span><span class="p">(</span><span class="n">ElasticMiddleware</span><span class="p">),</span>
+    <span class="n">middleware</span><span class="o">.</span><span class="n">Middleware</span><span class="p">(</span><span class="n">DLQMiddleware</span><span class="p">),</span>
+    <span class="n">middleware</span><span class="o">.</span><span class="n">Middleware</span><span class="p">(</span><span class="n">ElasticMiddleware</span><span class="p">),</span>
 <span class="p">]</span>
 
 

@@ -849,9 +849,7 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="normal">252</span>
 <span class="normal">253</span>
 <span class="normal">254</span>
-<span class="normal">255</span>
-<span class="normal">256</span>
-<span class="normal">257</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
+<span class="normal">255</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        backend kstreams.backends.Kafka: Backend to connect. Default `Kafka`</span>
@@ -893,7 +891,7 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="n">consumer_class</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">ConsumerType</span><span class="p">],</span>
         <span class="n">producer_class</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">ProducerType</span><span class="p">],</span>
         <span class="n">monitor</span><span class="p">:</span> <span class="n">PrometheusMonitor</span><span class="p">,</span>
-        <span class="n">middlewares</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">MiddlewareFactory</span><span class="p">],</span>
+        <span class="n">middlewares</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">Middleware</span><span class="p">],</span>
         <span class="n">title</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">deserializer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Deserializer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">serializer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Serializer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1041,9 +1039,7 @@ To override it per Stream, you can provide one per Stream</p>
     <span class="k">def</span> <span class="nf">build_stream_middleware_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NextMiddlewareCall</span><span class="p">:</span>
         <span class="n">udf_handler</span> <span class="o">=</span> <span class="n">UdfHandler</span><span class="p">(</span><span class="n">handler</span><span class="o">=</span><span class="n">stream</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
         <span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">[</span><span class="n">MiddlewareFactory</span><span class="p">(</span><span class="n">ExceptionMiddleware</span><span class="p">)]</span>
-            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">middlewares</span>
-            <span class="o">+</span> <span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span>
+            <span class="p">[</span><span class="n">Middleware</span><span class="p">(</span><span class="n">ExceptionMiddleware</span><span class="p">)]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">middlewares</span> <span class="o">+</span> <span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span>
         <span class="p">)</span>
 
         <span class="n">next_call</span> <span class="o">=</span> <span class="n">udf_handler</span>
@@ -1066,7 +1062,7 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="n">deserializer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Deserializer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">initial_offsets</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">rebalance_listener</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">RebalanceListener</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">middlewares</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">MiddlewareFactory</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">middlewares</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">Middleware</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[</span><span class="n">StreamFunc</span><span class="p">],</span> <span class="n">Stream</span><span class="p">]:</span>
         <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">StreamFunc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stream</span><span class="p">:</span>
