@@ -543,7 +543,7 @@
 
 <h1 id="middleware">Middleware</h1>
 <p>Kstreams allows you to include middlewares for adding behavior to streams. </p>
-<p>A <em>middleware</em> is a <code>callable</code> that works with every <code>ConsumerRecord</code> (CR) <em>before</em> and <em>after</em> it is processed by a specific <code>stream</code>. <code>Middlewares</code> also have access to the <code>stream</code>, <code>send</code> function.</p>
+<p>A <em>middleware</em> is a <code>callable</code> that works with every <code>ConsumerRecord</code> (CR) <em>before</em> and <em>after</em> it is processed by a specific <code>stream</code>. <code>Middlewares</code> also have access to the <code>stream</code> and <code>send</code> function.</p>
 <ul>
 <li>It takes each <code>CR</code> that arrives to a topic.</li>
 <li>It can then do something to the <code>CR</code> or run any needed code.</li>
