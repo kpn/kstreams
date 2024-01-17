@@ -777,7 +777,7 @@
 <p>It is possible to add as many middlewares as you want in order to split and reuse business logic, however the downside is extra complexity and the code might become slower. Also, there are some points to take into account:</p>
 <ul>
 <li>The order when adding middlewares is important. </li>
-<li>If middlewares are added to a <code>stream</code> and <code>stream_engine</code>, then the middleware stack is build first with <code>stream</code> middlewares and then with the <code>stream_engines</code> middlewares. This means the first the <code>stream</code> middlewares are evaluated first.</li>
+<li>If middlewares are added to the <code>stream_engine</code> and <code>stream</code> at the sam time, then the middleware stack is build first with <code>stream_engine</code> middlewares and then with <code>stream</code> middlewares. This means that <code>stream_engine</code> middlewares are evaluated first.</li>
 </ul>
 <p>In the example we are adding three middelwares in the following order: <code>DLQMiddleware</code>, <code>ElasticMiddleware</code>, and <code>S3Middleware</code>. The code chain execution will be:</p>
 <pre class="mermaid"><code>sequenceDiagram
