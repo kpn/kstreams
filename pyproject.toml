@@ -24,7 +24,7 @@ aiokafka = "<1.0"
 prometheus-client = "<1.0"
 future = "^0.18.2"
 PyYAML = ">=5.4,<7.0.0"
-pydantic = "<3.0.0"
+pydantic = ">=2.0.0,<3.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.1"
