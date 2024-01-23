@@ -1,3 +1,9 @@
+## 0.16.2 (2024-01-23)
+
+### Fix
+
+- **pyproject.toml**: Lock pydantic on > 2.0 because it is not compatible with 1.x since v0.15.2 (#160)
+
 ## 0.16.1 (2024-01-23)
 
 ### Fix
