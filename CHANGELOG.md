@@ -1,3 +1,9 @@
+## 0.16.1 (2024-01-23)
+
+### Fix
+
+- coroutine anext introduced for python versions lower than 3.10 (#161)
+
 ## 0.16.0 (2024-01-11)
 
 ### BREAKING CHANGE
