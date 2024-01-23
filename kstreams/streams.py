@@ -1,10 +1,12 @@
 import asyncio
 import inspect
 import logging
+import sys
 import uuid
 from functools import update_wrapper
 from typing import (
     Any,
+    AsyncGenerator,
     Awaitable,
     Callable,
     Dict,
@@ -30,6 +32,12 @@ from .streams_utils import UDFType, inspect_udf
 logger = logging.getLogger(__name__)
 
 StreamFunc = Callable
+
+
+if sys.version_info < (3, 10):
+
+    async def anext(async_gen: AsyncGenerator):
+        return await async_gen.__anext__()
 
 
 class Stream:
