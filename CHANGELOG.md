@@ -1,3 +1,9 @@
+## 0.17.0 (2024-01-24)
+
+### Feat
+
+- Middleware capability introduced (#155)
+
 ## 0.16.2 (2024-01-23)
 
 ### Fix
