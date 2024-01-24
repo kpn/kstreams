@@ -1,4 +1,4 @@
-from aiokafka.structs import ConsumerRecord, TopicPartition
+from aiokafka.structs import ConsumerRecord, RecordMetadata, TopicPartition
 
 from .clients import Consumer, ConsumerType, Producer, ProducerType
 from .create import StreamEngine, create_engine
@@ -27,6 +27,7 @@ __all__ = [
     "Stream",
     "stream",
     "ConsumerRecord",
+    "RecordMetadata",
     "TestStreamClient",
     "TopicPartition",
     "TopicPartitionOffset",

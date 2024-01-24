@@ -69,6 +69,7 @@ if __name__ == "__main__":
 - [x] Easy to integrate with any `async` framework. No tied to any library!!
 - [x] Yield events from streams
 - [x] [Opentelemetry Instrumentation](https://github.com/kpn/opentelemetry-instrumentation-kstreams)
+- [x] Middlewares
 - [ ] Store (kafka streams pattern)
 - [ ] Stream Join
 - [ ] Windowing
