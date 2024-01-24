@@ -2,20 +2,9 @@ import asyncio
 import inspect
 import logging
 import sys
+import typing
 import uuid
 from functools import update_wrapper
-from typing import (
-    Any,
-    AsyncGenerator,
-    Awaitable,
-    Callable,
-    Dict,
-    List,
-    Optional,
-    Set,
-    Type,
-    Union,
-)
 
 from aiokafka import errors
 
@@ -25,18 +14,18 @@ from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
 from .clients import Consumer, ConsumerType
+from .middleware import Middleware
 from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
 from .streams_utils import UDFType, inspect_udf
+from .types import StreamFunc
 
 logger = logging.getLogger(__name__)
-
-StreamFunc = Callable
 
 
 if sys.version_info < (3, 10):
 
-    async def anext(async_gen: AsyncGenerator):
+    async def anext(async_gen: typing.AsyncGenerator):
         return await async_gen.__anext__()
 
 
@@ -93,32 +82,32 @@ class Stream:
 
     def __init__(
         self,
-        topics: Union[List[str], str],
+        topics: typing.Union[typing.List[str], str],
         *,
         func: StreamFunc,
-        backend: Optional[Kafka] = None,
-        consumer_class: Type[ConsumerType] = Consumer,
-        name: Optional[str] = None,
-        config: Optional[Dict] = None,
-        model: Optional[Any] = None,
-        deserializer: Optional[Deserializer] = None,
-        initial_offsets: Optional[List[TopicPartitionOffset]] = None,
-        rebalance_listener: Optional[RebalanceListener] = None,
+        backend: typing.Optional[Kafka] = None,
+        consumer_class: typing.Type[ConsumerType] = Consumer,
+        name: typing.Optional[str] = None,
+        config: typing.Optional[typing.Dict] = None,
+        deserializer: typing.Optional[Deserializer] = None,
+        initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
+        rebalance_listener: typing.Optional[RebalanceListener] = None,
+        middlewares: typing.Optional[typing.List[Middleware]] = None,
     ) -> None:
         self.func = func
         self.backend = backend
         self.consumer_class = consumer_class
-        self.consumer: Optional[ConsumerType] = None
+        self.consumer: typing.Optional[ConsumerType] = None
         self.config = config or {}
-        self._consumer_task: Optional[asyncio.Task] = None
+        self._consumer_task: typing.Optional[asyncio.Task] = None
         self.name = name or str(uuid.uuid4())
-        self.model = model
         self.deserializer = deserializer
         self.running = False
         self.initial_offsets = initial_offsets
         self.seeked_initial_offsets = False
         self.rebalance_listener = rebalance_listener
         self.udf_type = inspect_udf(func, Stream)
+        self.middlewares = middlewares or []
 
         # aiokafka expects topic names as arguments, meaning that
         # can receive N topics -> N arguments,
@@ -154,7 +143,9 @@ class Stream:
             )
             self.running = True
 
-    async def commit(self, offsets: Optional[Dict[TopicPartition, int]] = None):
+    async def commit(
+        self, offsets: typing.Optional[typing.Dict[TopicPartition, int]] = None
+    ):
         await self.consumer.commit(offsets=offsets)  # type: ignore
 
     async def getone(self) -> ConsumerRecord:
@@ -169,10 +160,10 @@ class Stream:
 
     async def getmany(
         self,
-        partitions: Optional[List[TopicPartition]] = None,
+        partitions: typing.Optional[typing.List[TopicPartition]] = None,
         timeout_ms: int = 0,
-        max_records: Optional[int] = None,
-    ) -> Dict[TopicPartition, List[ConsumerRecord]]:
+        max_records: typing.Optional[int] = None,
+    ) -> typing.Dict[TopicPartition, typing.List[ConsumerRecord]]:
         """
         Get a batch of events from the assigned TopicPartition.
 
@@ -235,7 +226,7 @@ class Stream:
                 )
         return None
 
-    async def func_wrapper(self, func: Awaitable) -> None:
+    async def func_wrapper(self, func: typing.Awaitable) -> None:
         try:
             # await for the end user coroutine
             # we do this to show a better error message to the user
@@ -245,25 +236,13 @@ class Stream:
             logger.exception(f"CRASHED Stream!!! Task {self._consumer_task} \n\n {e}")
 
     async def func_wrapper_with_typing(self) -> None:
-        try:
-            # await for the end user coroutine
-            # we do this to show a better error message to the user
-            # when the coroutine fails
-            while True:
-                cr = await self.getone()
-                if self.udf_type == UDFType.CR_ONLY_TYPING:
-                    await self.func(cr)
-                else:
-                    # typing with cr and stream
-                    await self.func(cr, self)
-        except errors.ConsumerStoppedError:
-            return
-        except Exception as e:
-            logger.exception(f"CRASHED Stream!!! Task {self._consumer_task} \n\n {e}")
+        while True:
+            cr = await self.getone()
+            await self.func(cr)
 
     def seek_to_initial_offsets(self):
         if not self.seeked_initial_offsets:
-            assignments: Set[TopicPartition] = self.consumer.assignment()
+            assignments: typing.Set[TopicPartition] = self.consumer.assignment()
             if self.initial_offsets is not None:
                 topicPartitionOffset: TopicPartitionOffset
                 for topicPartitionOffset in self.initial_offsets:
@@ -319,23 +298,68 @@ class Stream:
 
             if self.udf_type == UDFType.NO_TYPING:
                 return cr
-            elif self.udf_type == UDFType.CR_ONLY_TYPING:
-                return await anext(self.func(cr))
-            else:
-                return await anext(self.func(cr, self))
+            return await self.func(cr)
         except errors.ConsumerStoppedError:
             raise StopAsyncIteration  # noqa: F821
 
 
+class UdfHandler:
+    def __init__(
+        self,
+        *,
+        handler: StreamFunc,
+        stream: Stream,
+    ) -> None:
+        self.handler = handler
+        self.stream = stream
+        self.udf_type = inspect_udf(self.handler, Stream)
+
+    def get_udf_params(self, cr: ConsumerRecord) -> typing.Tuple:
+        if self.udf_type == UDFType.CR_ONLY_TYPING:
+            return (cr,)
+        return (
+            cr,
+            self.stream,
+        )
+
+    async def __call__(self, cr: ConsumerRecord) -> typing.Any:
+        """
+        Call the coroutine `async def my_function(...)` defined by the end user
+        in a proper way according to its parameters. The `handler` is the
+        coroutine defined by the user.
+
+        Use cases:
+            1. UDFType.CR_ONLY_TYPING: Only ConsumerRecord with typing
+
+            @stream_engine.stream(topic, name="my-stream")
+                async def consume(cr: ConsumerRecord):
+                    ...
+
+            2. UDFType.ALL_TYPING: ConsumerRecord and Stream with typing.
+                The order is important as they are arguments and not kwargs
+
+            @stream_engine.stream(topic, name="my-stream")
+                async def consume(cr: ConsumerRecord, stream: Stream):
+                    ...
+
+        """
+        params = self.get_udf_params(cr)
+
+        if inspect.isasyncgenfunction(self.handler):
+            return await anext(self.handler(*params))
+        return await self.handler(*params)
+
+
 def stream(
-    topics: Union[List[str], str],
+    topics: typing.Union[typing.List[str], str],
     *,
-    name: Optional[str] = None,
-    deserializer: Optional[Deserializer] = None,
-    initial_offsets: Optional[List[TopicPartitionOffset]] = None,
-    rebalance_listener: Optional[RebalanceListener] = None,
+    name: typing.Optional[str] = None,
+    deserializer: typing.Optional[Deserializer] = None,
+    initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
+    rebalance_listener: typing.Optional[RebalanceListener] = None,
+    middlewares: typing.Optional[typing.List[Middleware]] = None,
     **kwargs,
-) -> Callable[[StreamFunc], Stream]:
+) -> typing.Callable[[StreamFunc], Stream]:
     def decorator(func: StreamFunc) -> Stream:
         s = Stream(
             topics=topics,
@@ -344,6 +368,7 @@ def stream(
             deserializer=deserializer,
             initial_offsets=initial_offsets,
             rebalance_listener=rebalance_listener,
+            middlewares=middlewares,
             config=kwargs,
         )
         update_wrapper(s, func)

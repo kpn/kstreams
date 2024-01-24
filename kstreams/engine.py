@@ -1,6 +1,6 @@
 import inspect
 import logging
-from typing import Any, Callable, Dict, List, Optional, Type, Union
+import typing
 
 from aiokafka.structs import RecordMetadata
 
@@ -9,12 +9,14 @@ from kstreams.structs import TopicPartitionOffset
 from .backends.kafka import Kafka
 from .clients import ConsumerType, ProducerType
 from .exceptions import DuplicateStreamException, EngineNotStartedException
+from .middleware import ExceptionMiddleware, Middleware
 from .prometheus.monitor import PrometheusMonitor
 from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import Deserializer, Serializer
-from .streams import Stream, StreamFunc
+from .streams import Stream, StreamFunc, UdfHandler
 from .streams import stream as stream_func
-from .types import Headers
+from .streams_utils import UDFType, inspect_udf
+from .types import Headers, NextMiddlewareCall
 from .utils import encode_headers
 
 logger = logging.getLogger(__name__)
@@ -59,12 +61,12 @@ class StreamEngine:
         self,
         *,
         backend: Kafka,
-        consumer_class: Type[ConsumerType],
-        producer_class: Type[ProducerType],
+        consumer_class: typing.Type[ConsumerType],
+        producer_class: typing.Type[ProducerType],
         monitor: PrometheusMonitor,
-        title: Optional[str] = None,
-        deserializer: Optional[Deserializer] = None,
-        serializer: Optional[Serializer] = None,
+        title: typing.Optional[str] = None,
+        deserializer: typing.Optional[Deserializer] = None,
+        serializer: typing.Optional[Serializer] = None,
     ) -> None:
         self.title = title
         self.backend = backend
@@ -73,19 +75,19 @@ class StreamEngine:
         self.deserializer = deserializer
         self.serializer = serializer
         self.monitor = monitor
-        self._producer: Optional[Type[ProducerType]] = None
-        self._streams: List[Stream] = []
+        self._producer: typing.Optional[typing.Type[ProducerType]] = None
+        self._streams: typing.List[Stream] = []
 
     async def send(
         self,
         topic: str,
-        value: Any = None,
-        key: Any = None,
-        partition: Optional[int] = None,
-        timestamp_ms: Optional[int] = None,
-        headers: Optional[Headers] = None,
-        serializer: Optional[Serializer] = None,
-        serializer_kwargs: Optional[Dict] = None,
+        value: typing.Any = None,
+        key: typing.Any = None,
+        partition: typing.Optional[int] = None,
+        timestamp_ms: typing.Optional[int] = None,
+        headers: typing.Optional[Headers] = None,
+        serializer: typing.Optional[Serializer] = None,
+        serializer_kwargs: typing.Optional[typing.Dict] = None,
     ):
         """
         Attributes:
@@ -180,7 +182,7 @@ class StreamEngine:
         stream = self.get_stream(name)
         return True if stream is not None else False
 
-    def get_stream(self, name: str) -> Optional[Stream]:
+    def get_stream(self, name: str) -> typing.Optional[Stream]:
         stream = next((stream for stream in self._streams if stream.name == name), None)
 
         return stream
@@ -201,6 +203,21 @@ class StreamEngine:
         stream.rebalance_listener.stream = stream  # type: ignore
         stream.rebalance_listener.engine = self  # type: ignore
 
+        udf_type = inspect_udf(stream.func, Stream)
+        if udf_type != UDFType.NO_TYPING:
+            stream.func = self.build_stream_middleware_stack(stream)
+
+    def build_stream_middleware_stack(self, stream: Stream) -> NextMiddlewareCall:
+        udf_handler = UdfHandler(handler=stream.func, stream=stream)
+        stream.middlewares = [Middleware(ExceptionMiddleware)] + stream.middlewares
+
+        next_call = udf_handler
+        for middleware, options in reversed(stream.middlewares):
+            next_call = middleware(
+                next_call=next_call, send=self.send, stream=stream, **options
+            )
+        return next_call
+
     async def remove_stream(self, stream: Stream) -> None:
         self._streams.remove(stream)
         await stream.stop()
@@ -208,14 +225,15 @@ class StreamEngine:
 
     def stream(
         self,
-        topics: Union[List[str], str],
+        topics: typing.Union[typing.List[str], str],
         *,
-        name: Optional[str] = None,
-        deserializer: Optional[Deserializer] = None,
-        initial_offsets: Optional[List[TopicPartitionOffset]] = None,
-        rebalance_listener: Optional[RebalanceListener] = None,
+        name: typing.Optional[str] = None,
+        deserializer: typing.Optional[Deserializer] = None,
+        initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
+        rebalance_listener: typing.Optional[RebalanceListener] = None,
+        middlewares: typing.Optional[typing.List[Middleware]] = None,
         **kwargs,
-    ) -> Callable[[StreamFunc], Stream]:
+    ) -> typing.Callable[[StreamFunc], Stream]:
         def decorator(func: StreamFunc) -> Stream:
             stream_from_func = stream_func(
                 topics,
@@ -223,6 +241,7 @@ class StreamEngine:
                 deserializer=deserializer,
                 initial_offsets=initial_offsets,
                 rebalance_listener=rebalance_listener,
+                middlewares=middlewares,
                 **kwargs,
             )(func)
             self.add_stream(stream_from_func)
