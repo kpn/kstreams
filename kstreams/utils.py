@@ -1,7 +1,7 @@
 import contextlib
 import ssl
 from tempfile import NamedTemporaryFile
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from aiokafka.helpers import create_ssl_context as aiokafka_create_ssl_context
 
@@ -53,13 +53,13 @@ def create_ssl_context_from_mem(
 
 def create_ssl_context(
     *,
-    cafile: str = None,
-    capath: str = None,
-    cadata: Union[str, bytes] = None,
-    certfile: str = None,
-    keyfile: str = None,
-    password: str = None,
-    crlfile=None,
+    cafile: Optional[str] = None,
+    capath: Optional[str] = None,
+    cadata: Union[str, bytes, None] = None,
+    certfile: Optional[str] = None,
+    keyfile: Optional[str] = None,
+    password: Optional[str] = None,
+    crlfile: Any = None,
 ):
     """Wrapper of [aiokafka.helpers.create_ssl_context](
         https://aiokafka.readthedocs.io/en/stable/api.html#helpers

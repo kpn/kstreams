@@ -13,7 +13,7 @@ from kstreams.exceptions import BackendNotSet
 from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
-from .clients import Consumer, ConsumerType
+from .clients import Consumer
 from .middleware import Middleware
 from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
@@ -86,7 +86,7 @@ class Stream:
         *,
         func: StreamFunc,
         backend: typing.Optional[Kafka] = None,
-        consumer_class: typing.Type[ConsumerType] = Consumer,
+        consumer_class: typing.Type[Consumer] = Consumer,
         name: typing.Optional[str] = None,
         config: typing.Optional[typing.Dict] = None,
         deserializer: typing.Optional[Deserializer] = None,
@@ -97,7 +97,7 @@ class Stream:
         self.func = func
         self.backend = backend
         self.consumer_class = consumer_class
-        self.consumer: typing.Optional[ConsumerType] = None
+        self.consumer: typing.Optional[Consumer] = None
         self.config = config or {}
         self._consumer_task: typing.Optional[asyncio.Task] = None
         self.name = name or str(uuid.uuid4())
@@ -114,7 +114,7 @@ class Stream:
         # so we always create a list and then we expand it with *topics
         self.topics = [topics] if isinstance(topics, str) else topics
 
-    def _create_consumer(self) -> ConsumerType:
+    def _create_consumer(self) -> Consumer:
         if self.backend is None:
             raise BackendNotSet("A backend has not been set for this stream")
         config = {**self.backend.model_dump(), **self.config}
@@ -240,8 +240,8 @@ class Stream:
             cr = await self.getone()
             await self.func(cr)
 
-    def seek_to_initial_offsets(self):
-        if not self.seeked_initial_offsets:
+    def seek_to_initial_offsets(self) -> None:
+        if not self.seeked_initial_offsets and self.consumer is not None:
             assignments: typing.Set[TopicPartition] = self.consumer.assignment()
             if self.initial_offsets is not None:
                 topicPartitionOffset: TopicPartitionOffset
