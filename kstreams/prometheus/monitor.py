@@ -5,7 +5,7 @@ from typing import DefaultDict, Dict, List, Optional, TypeVar
 from prometheus_client import Gauge
 
 from kstreams import TopicPartition
-from kstreams.clients import ConsumerType
+from kstreams.clients import Consumer
 from kstreams.streams import Stream
 
 logger = logging.getLogger(__name__)
@@ -164,7 +164,7 @@ class PrometheusMonitor:
     def add_streams(self, streams):
         self._streams = streams
 
-    async def generate_consumer_metrics(self, consumer: ConsumerType):
+    async def generate_consumer_metrics(self, consumer: Consumer):
         """
         Generate Consumer Metrics for Prometheus
 

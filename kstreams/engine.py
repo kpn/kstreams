@@ -7,7 +7,7 @@ from aiokafka.structs import RecordMetadata
 from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
-from .clients import ConsumerType, ProducerType
+from .clients import Consumer, Producer
 from .exceptions import DuplicateStreamException, EngineNotStartedException
 from .middleware import ExceptionMiddleware, Middleware
 from .prometheus.monitor import PrometheusMonitor
@@ -61,8 +61,8 @@ class StreamEngine:
         self,
         *,
         backend: Kafka,
-        consumer_class: typing.Type[ConsumerType],
-        producer_class: typing.Type[ProducerType],
+        consumer_class: typing.Type[Consumer],
+        producer_class: typing.Type[Producer],
         monitor: PrometheusMonitor,
         title: typing.Optional[str] = None,
         deserializer: typing.Optional[Deserializer] = None,
@@ -75,7 +75,7 @@ class StreamEngine:
         self.deserializer = deserializer
         self.serializer = serializer
         self.monitor = monitor
-        self._producer: typing.Optional[typing.Type[ProducerType]] = None
+        self._producer: typing.Optional[typing.Type[Producer]] = None
         self._streams: typing.List[Stream] = []
 
     async def send(
