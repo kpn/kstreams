@@ -1,5 +1,5 @@
 import logging
-from typing import Callable, Optional, TypeVar
+from typing import Callable, Optional
 
 import aiokafka
 
@@ -40,7 +40,3 @@ class Producer(aiokafka.AIOKafkaProducer):
                     return key.encode("utf-8")
 
         super().__init__(*args, key_serializer=key_serializer, **self.config)
-
-
-ConsumerType = TypeVar("ConsumerType", bound=Consumer)
-ProducerType = TypeVar("ProducerType", bound=Producer)

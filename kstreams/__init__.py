@@ -1,6 +1,6 @@
 from aiokafka.structs import ConsumerRecord, RecordMetadata, TopicPartition
 
-from .clients import Consumer, ConsumerType, Producer, ProducerType
+from .clients import Consumer, Producer
 from .create import StreamEngine, create_engine
 from .prometheus.monitor import PrometheusMonitor, PrometheusMonitorType
 from .rebalance_listener import (
@@ -14,9 +14,7 @@ from .test_utils import TestStreamClient
 
 __all__ = [
     "Consumer",
-    "ConsumerType",
     "Producer",
-    "ProducerType",
     "StreamEngine",
     "create_engine",
     "PrometheusMonitor",
