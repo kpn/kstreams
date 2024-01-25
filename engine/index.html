@@ -884,8 +884,8 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">backend</span><span class="p">:</span> <span class="n">Kafka</span><span class="p">,</span>
-        <span class="n">consumer_class</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">ConsumerType</span><span class="p">],</span>
-        <span class="n">producer_class</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">ProducerType</span><span class="p">],</span>
+        <span class="n">consumer_class</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Consumer</span><span class="p">],</span>
+        <span class="n">producer_class</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Producer</span><span class="p">],</span>
         <span class="n">monitor</span><span class="p">:</span> <span class="n">PrometheusMonitor</span><span class="p">,</span>
         <span class="n">title</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">deserializer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Deserializer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -898,7 +898,7 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span> <span class="o">=</span> <span class="n">deserializer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">serializer</span> <span class="o">=</span> <span class="n">serializer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="o">=</span> <span class="n">monitor</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">ProducerType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Producer</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_streams</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">Stream</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">send</span><span class="p">(</span>

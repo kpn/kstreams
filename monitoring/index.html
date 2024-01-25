@@ -921,7 +921,7 @@
     <span class="k">def</span> <span class="nf">add_streams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">streams</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_streams</span> <span class="o">=</span> <span class="n">streams</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">generate_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer</span><span class="p">:</span> <span class="n">ConsumerType</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">generate_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer</span><span class="p">:</span> <span class="n">Consumer</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate Consumer Metrics for Prometheus</span>
 
@@ -1109,7 +1109,7 @@
 <span class="normal">216</span>
 <span class="normal">217</span>
 <span class="normal">218</span>
-<span class="normal">219</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">generate_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer</span><span class="p">:</span> <span class="n">ConsumerType</span><span class="p">):</span>
+<span class="normal">219</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">generate_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer</span><span class="p">:</span> <span class="n">Consumer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate Consumer Metrics for Prometheus</span>
 
