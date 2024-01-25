@@ -1,3 +1,9 @@
+## 0.17.2 (2024-01-25)
+
+### Fix
+
+- mypy updated from version 0.9 to 1.8.0. Some typing fixed. Closes #159 (#165)
+
 ## 0.17.1 (2024-01-24)
 
 ### Fix
