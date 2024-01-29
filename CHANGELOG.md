@@ -1,3 +1,9 @@
+## 0.18.0 (2024-01-29)
+
+### Feat
+
+- **TestStreamClient**: support custom classes for test consumers and producers
+
 ## 0.17.2 (2024-01-25)
 
 ### Fix
