@@ -29,8 +29,8 @@ async def test_engine_clients(stream_engine: StreamEngine):
         assert stream_engine.producer_class is TestProducer
 
     # after leaving the context, everything should go to normal
-    assert client.stream_engine.consumer_class is client.consumer_class
-    assert client.stream_engine.producer_class is client.producer_class
+    assert client.stream_engine.consumer_class is client.engine_consumer_class
+    assert client.stream_engine.producer_class is client.engine_producer_class
 
 
 @pytest.mark.asyncio
