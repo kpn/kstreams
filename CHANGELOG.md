@@ -1,3 +1,9 @@
+## 0.18.1 (2024-01-31)
+
+### Fix
+
+- make sure that there is not an asyncio.Task when udf is an  async generators. Middleware __repr__ added. (#167)
+
 ## 0.18.0 (2024-01-29)
 
 ### Feat
