@@ -1365,8 +1365,8 @@ callbacks when partition are assigned or revoked</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">initial_offsets</span> <span class="o">=</span> <span class="n">initial_offsets</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seeked_initial_offsets</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span> <span class="o">=</span> <span class="n">rebalance_listener</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">udf_type</span> <span class="o">=</span> <span class="n">inspect_udf</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">Stream</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">middlewares</span> <span class="o">=</span> <span class="n">middlewares</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span> <span class="o">=</span> <span class="n">UdfHandler</span><span class="p">(</span><span class="n">handler</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="c1"># aiokafka expects topic names as arguments, meaning that</span>
         <span class="c1"># can receive N topics -&gt; N arguments,</span>
@@ -1466,19 +1466,19 @@ callbacks when partition are assigned or revoked</p>
 
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscribe</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">udf_type</span> <span class="o">==</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
             <span class="c1"># normal use case</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="s2">&quot;Streams with `async for in` loop approach might be deprecated. &quot;</span>
                 <span class="s2">&quot;Consider migrating to a typing approach.&quot;</span>
             <span class="p">)</span>
 
-            <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
             <span class="c1"># create an asyncio.Task with func</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func_wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Typing cases</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isasyncgenfunction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isasyncgenfunction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">handler</span><span class="p">):</span>
                 <span class="c1"># Is not an async_generator, then create an asyncio.Task with func</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">func_wrapper_with_typing</span><span class="p">()</span>
@@ -1555,7 +1555,7 @@ callbacks when partition are assigned or revoked</p>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">cr</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">getone</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">udf_type</span> <span class="o">==</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">cr</span>
             <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">errors</span><span class="o">.</span><span class="n">ConsumerStoppedError</span><span class="p">:</span>

@@ -843,9 +843,7 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="normal">246</span>
 <span class="normal">247</span>
 <span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
+<span class="normal">249</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        backend kstreams.backends.Kafka: Backend to connect. Default `Kafka`</span>
@@ -1026,15 +1024,13 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="n">stream</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>  <span class="c1"># type: ignore</span>
         <span class="n">stream</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span>  <span class="c1"># type: ignore</span>
 
-        <span class="n">udf_type</span> <span class="o">=</span> <span class="n">inspect_udf</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">Stream</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">udf_type</span> <span class="o">!=</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
             <span class="n">stream</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_stream_middleware_stack</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">build_stream_middleware_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NextMiddlewareCall</span><span class="p">:</span>
-        <span class="n">udf_handler</span> <span class="o">=</span> <span class="n">UdfHandler</span><span class="p">(</span><span class="n">handler</span><span class="o">=</span><span class="n">stream</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
         <span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span><span class="n">Middleware</span><span class="p">(</span><span class="n">ExceptionMiddleware</span><span class="p">)]</span> <span class="o">+</span> <span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span>
 
-        <span class="n">next_call</span> <span class="o">=</span> <span class="n">udf_handler</span>
+        <span class="n">next_call</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span>
         <span class="k">for</span> <span class="n">middleware</span><span class="p">,</span> <span class="n">options</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span><span class="p">):</span>
             <span class="n">next_call</span> <span class="o">=</span> <span class="n">middleware</span><span class="p">(</span>
                 <span class="n">next_call</span><span class="o">=</span><span class="n">next_call</span><span class="p">,</span> <span class="n">send</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span>
