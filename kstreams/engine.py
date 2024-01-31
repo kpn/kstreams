@@ -13,9 +13,9 @@ from .middleware import ExceptionMiddleware, Middleware
 from .prometheus.monitor import PrometheusMonitor
 from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import Deserializer, Serializer
-from .streams import Stream, StreamFunc, UdfHandler
+from .streams import Stream, StreamFunc
 from .streams import stream as stream_func
-from .streams_utils import UDFType, inspect_udf
+from .streams_utils import UDFType
 from .types import Headers, NextMiddlewareCall
 from .utils import encode_headers
 
@@ -203,15 +203,13 @@ class StreamEngine:
         stream.rebalance_listener.stream = stream  # type: ignore
         stream.rebalance_listener.engine = self  # type: ignore
 
-        udf_type = inspect_udf(stream.func, Stream)
-        if udf_type != UDFType.NO_TYPING:
+        if stream.udf_handler.type != UDFType.NO_TYPING:
             stream.func = self.build_stream_middleware_stack(stream)
 
     def build_stream_middleware_stack(self, stream: Stream) -> NextMiddlewareCall:
-        udf_handler = UdfHandler(handler=stream.func, stream=stream)
         stream.middlewares = [Middleware(ExceptionMiddleware)] + stream.middlewares
 
-        next_call = udf_handler
+        next_call = stream.udf_handler
         for middleware, options in reversed(stream.middlewares):
             next_call = middleware(
                 next_call=next_call, send=self.send, stream=stream, **options

@@ -106,8 +106,8 @@ class Stream:
         self.initial_offsets = initial_offsets
         self.seeked_initial_offsets = False
         self.rebalance_listener = rebalance_listener
-        self.udf_type = inspect_udf(func, Stream)
         self.middlewares = middlewares or []
+        self.udf_handler = UdfHandler(handler=func, stream=self)
 
         # aiokafka expects topic names as arguments, meaning that
         # can receive N topics -> N arguments,
@@ -207,19 +207,19 @@ class Stream:
 
         await self._subscribe()
 
-        if self.udf_type == UDFType.NO_TYPING:
+        if self.udf_handler.type == UDFType.NO_TYPING:
             # normal use case
             logging.warn(
                 "Streams with `async for in` loop approach might be deprecated. "
                 "Consider migrating to a typing approach."
             )
 
-            func = self.func(self)
+            func = self.udf_handler.handler(self)
             # create an asyncio.Task with func
             self._consumer_task = asyncio.create_task(self.func_wrapper(func))
         else:
             # Typing cases
-            if not inspect.isasyncgenfunction(self.func):
+            if not inspect.isasyncgenfunction(self.udf_handler.handler):
                 # Is not an async_generator, then create an asyncio.Task with func
                 self._consumer_task = asyncio.create_task(
                     self.func_wrapper_with_typing()
@@ -296,7 +296,7 @@ class Stream:
         try:
             cr = await self.getone()
 
-            if self.udf_type == UDFType.NO_TYPING:
+            if self.udf_handler.type == UDFType.NO_TYPING:
                 return cr
             return await self.func(cr)
         except errors.ConsumerStoppedError:
@@ -312,10 +312,10 @@ class UdfHandler:
     ) -> None:
         self.handler = handler
         self.stream = stream
-        self.udf_type = inspect_udf(self.handler, Stream)
+        self.type = inspect_udf(self.handler, Stream)
 
     def get_udf_params(self, cr: ConsumerRecord) -> typing.Tuple:
-        if self.udf_type == UDFType.CR_ONLY_TYPING:
+        if self.type == UDFType.CR_ONLY_TYPING:
             return (cr,)
         return (
             cr,
