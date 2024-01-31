@@ -29,6 +29,9 @@ async def test_add_stream_as_generator(
 
         # Now the stream should be running as we are in the context
         assert stream.running
+
+        # It is an async generator so it should not be an asyncio.Task
+        assert not stream._consumer_task
         async for value in stream:
             assert value == cr
             break
@@ -52,6 +55,9 @@ async def test_stream_consume_events_as_generator_cr_typing(
         await client.send(topic, value=event, key="1")
 
         async with stream as stream_flow:
+            # It is an async generator so it should not be an asyncio.Task
+            assert not stream._consumer_task
+
             async for cr in stream_flow:
                 assert cr.value == event
                 break
@@ -83,6 +89,9 @@ async def test_stream_consume_events_as_generator_all_typing(
         await client.send(topic, value=event, key="1")
 
         async with my_stream as stream_flow:
+            # It is an async generator so it should not be an asyncio.Task
+            assert not my_stream._consumer_task
+
             async for cr in stream_flow:
                 assert cr.value == event
                 break

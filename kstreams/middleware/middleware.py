@@ -37,6 +37,11 @@ class Middleware:
     def __iter__(self) -> typing.Iterator:
         return iter((self.middleware, self.kwargs))
 
+    def __repr__(self) -> str:
+        middleware_name = self.middleware.__name__
+        extra_options = [f"{key}={value!r}" for key, value in self.kwargs.items()]
+        return f"{middleware_name}({extra_options})"
+
 
 class BaseMiddleware:
     def __init__(
