@@ -10,7 +10,7 @@ python = "^3.8"
 sse-starlette = "^1.8.2"
 kstreams = { path = "../../.", develop = true }
 uvicorn = "^0.18.2"
-fastapi = "^0.108.0"
+fastapi = "^0.109.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
