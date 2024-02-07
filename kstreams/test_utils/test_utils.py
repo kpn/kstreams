@@ -17,8 +17,7 @@ class TestMonitor(PrometheusMonitor):
     __test__ = False
 
     def start(self, *args, **kwargs) -> None:
-        print("herte....")
-        # ...
+        ...
 
     async def stop(self, *args, **kwargs) -> None:
         ...

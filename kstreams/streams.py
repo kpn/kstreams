@@ -103,6 +103,7 @@ class Stream:
         self.name = name or str(uuid.uuid4())
         self.deserializer = deserializer
         self.running = False
+        self.is_processing = asyncio.Lock()
         self.initial_offsets = initial_offsets
         self.seeked_initial_offsets = False
         self.rebalance_listener = rebalance_listener
@@ -121,15 +122,18 @@ class Stream:
         return self.consumer_class(**config)
 
     async def stop(self) -> None:
-        if not self.running:
-            return None
-
-        if self.consumer is not None:
-            await self.consumer.stop()
+        if self.running:
+            # Don't run anymore to prevent new events comming
             self.running = False
 
-        if self._consumer_task is not None:
-            self._consumer_task.cancel()
+            async with self.is_processing:
+                # Only enter this block when all the events have been
+                # proccessed in the middleware chain
+                if self.consumer is not None:
+                    await self.consumer.stop()
+
+                if self._consumer_task is not None:
+                    self._consumer_task.cancel()
 
     async def _subscribe(self) -> None:
         # Always create a consumer on stream.start
@@ -141,7 +145,6 @@ class Stream:
             self.consumer.subscribe(
                 topics=self.topics, listener=self.rebalance_listener
             )
-            self.running = True
 
     async def commit(
         self, offsets: typing.Optional[typing.Dict[TopicPartition, int]] = None
@@ -206,6 +209,7 @@ class Stream:
             return None
 
         await self._subscribe()
+        self.running = True
 
         if self.udf_handler.type == UDFType.NO_TYPING:
             # normal use case
@@ -236,9 +240,10 @@ class Stream:
             logger.exception(f"CRASHED Stream!!! Task {self._consumer_task} \n\n {e}")
 
     async def func_wrapper_with_typing(self) -> None:
-        while True:
+        while self.running:
             cr = await self.getone()
-            await self.func(cr)
+            async with self.is_processing:
+                await self.func(cr)
 
     def seek_to_initial_offsets(self) -> None:
         if not self.seeked_initial_offsets and self.consumer is not None:
