@@ -1,3 +1,9 @@
+## 0.18.2 (2024-02-08)
+
+### Fix
+
+- **StreamEngine**: graceful shutdown must wait for all events to be processed before Streams are stopped. Related to #162 (#171)
+
 ## 0.18.1 (2024-01-31)
 
 ### Fix
