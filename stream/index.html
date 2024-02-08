@@ -1288,7 +1288,12 @@ callbacks when partition are assigned or revoked</p>
 <span class="normal">300</span>
 <span class="normal">301</span>
 <span class="normal">302</span>
-<span class="normal">303</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        name str: Stream name</span>
@@ -1362,6 +1367,7 @@ callbacks when partition are assigned or revoked</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span> <span class="o">=</span> <span class="n">deserializer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_processing</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initial_offsets</span> <span class="o">=</span> <span class="n">initial_offsets</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seeked_initial_offsets</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span> <span class="o">=</span> <span class="n">rebalance_listener</span>
@@ -1380,15 +1386,18 @@ callbacks when partition are assigned or revoked</p>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer_class</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="c1"># Don&#39;t run anymore to prevent new events comming</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_processing</span><span class="p">:</span>
+                <span class="c1"># Only enter this block when all the events have been</span>
+                <span class="c1"># proccessed in the middleware chain</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Always create a consumer on stream.start</span>
@@ -1400,7 +1409,6 @@ callbacks when partition are assigned or revoked</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span>
                 <span class="n">topics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="p">,</span> <span class="n">listener</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">offsets</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1465,6 +1473,7 @@ callbacks when partition are assigned or revoked</p>
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscribe</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
             <span class="c1"># normal use case</span>
@@ -1495,9 +1504,10 @@ callbacks when partition are assigned or revoked</p>
             <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CRASHED Stream!!! Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="si">}</span><span class="s2"> </span><span class="se">\n\n</span><span class="s2"> </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">func_wrapper_with_typing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
             <span class="n">cr</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">getone</span><span class="p">()</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_processing</span><span class="p">:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">seek_to_initial_offsets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeked_initial_offsets</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1901,10 +1911,7 @@ with any records that are available currently in the buffer</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/streams.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">164</span>
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span>
@@ -1942,7 +1949,10 @@ with any records that are available currently in the buffer</p>
 <span class="normal">199</span>
 <span class="normal">200</span>
 <span class="normal">201</span>
-<span class="normal">202</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">getmany</span><span class="p">(</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">getmany</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">partitions</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">timeout_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
