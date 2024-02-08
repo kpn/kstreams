@@ -265,6 +265,39 @@ async def test_start_stop_streaming(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
+async def test_wait_for_streams_before_stop(
+    stream_engine: StreamEngine, consumer_record_factory: Callable[..., ConsumerRecord]
+):
+    topic = "local--hello-kpn"
+    value = b"Hello world"
+    save_to_db = mock.AsyncMock()
+
+    async def getone(_):
+        return consumer_record_factory(value=value)
+
+    @stream_engine.stream(topic)
+    async def stream(cr: ConsumerRecord):
+        # Use 5 seconds sleep to simulate a super slow event processing
+        await asyncio.sleep(5)
+        await save_to_db(cr.value)
+
+    with mock.patch.multiple(
+        Consumer,
+        start=mock.DEFAULT,
+        stop=mock.DEFAULT,
+        getone=getone,
+    ), mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
+        await stream_engine.start()
+        await asyncio.sleep(0)  # Allow stream coroutine to run once
+
+        # stop engine immediately, this should not break the streams
+        # and it should wait until the event is processed.
+        await stream_engine.stop()
+        Consumer.stop.assert_awaited()
+        save_to_db.assert_awaited_once_with(value)
+
+
+@pytest.mark.asyncio
 async def test_recreate_consumer_on_re_start_stream(stream_engine: StreamEngine):
     with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"):
         topic_name = "local--kstreams"
