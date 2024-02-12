@@ -586,9 +586,7 @@
 <p>In order to keep your code pythonic, we provide a mechanism to serialize/deserialize
 these bytes, into something more useful.
 This way, you can work with other data structures, like a <code>dict</code> or <code>dataclasses</code>.</p>
-<p>Sometimes it is easier to work with a <code>dict</code> in your app, give it to <code>kstreams</code>, and let it transform it into <code>bytes</code> to be delivered to Kafka. For this situations, you need to implement <code>kstreams.serializers.Serializer</code>.</p>
-<p>The other situation is when you consume from Kafka (or other brokers). Instead of dealing with <code>bytes</code>,
-you may want to receive in your function the <code>dict</code> ready to be used. For those cases, implement <code>kstreams.serializers.Deserializer</code></p>
+<p>Sometimes it is easier to work with a <code>dict</code> in your app, give it to <code>kstreams</code>, and let it transform it into <code>bytes</code> to be delivered to Kafka. For this situation, you need to implement <code>kstreams.serializers.Serializer</code>.</p>
 
 
 <div class="doc doc-object doc-class">
@@ -777,7 +775,20 @@ you just have to comply with the Protocol.</p>
 
   </div>
 
-</div>
+</div><p>The other situation is when you consume from Kafka (or other brokers). Instead of dealing with <code>bytes</code>,
+you may want to receive in your function the <code>dict</code> ready to be used. For those cases, we need to use <a href="https://kpn.github.io/kstreams/middleware/">middleware</a>. For example, we can implement a <code>JsonMiddleware</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">middleware</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
+
+
+<span class="k">class</span> <span class="nc">JsonDeserializerMiddleware</span><span class="p">(</span><span class="n">middleware</span><span class="o">.</span><span class="n">BaseMiddleware</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+            <span class="n">cr</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_call</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+</code></pre></div>
+<p>It is also possble to use <code>kstreams.serializers.Deserializer</code> for deserialization, but this will be deprecated</p>
+
 
 <div class="doc doc-object doc-class">
 
@@ -936,7 +947,11 @@ you just have to comply with the Protocol.</p>
 
   </div>
 
-</div><h2 id="usage">Usage</h2>
+</div><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code>kstreams.serializers.Deserializer</code> will be deprecated, use <a href="https://kpn.github.io/kstreams/middleware/">middlewares</a> instead</p>
+</div>
+<h2 id="usage">Usage</h2>
 <p>Once you have written your serializer or deserializer, there are 2 ways of using them, in a
 generic fashion or per stream.</p>
 <h3 id="initialize-the-engine-with-your-serializers">Initialize the engine with your serializers</h3>
@@ -944,11 +959,13 @@ generic fashion or per stream.</p>
 <div class="highlight"><pre><span></span><code><span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
     <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">,</span>
     <span class="n">serializer</span><span class="o">=</span><span class="n">JsonSerializer</span><span class="p">(),</span>
-    <span class="n">deserializer</span><span class="o">=</span><span class="n">JsonDeserializer</span><span class="p">(),</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="initilize-streams-with-a-deserializer-and-produce-events-with-serializers">Initilize <code>streams</code> with a <code>deserializer</code> and produce events with <code>serializers</code></h3>
-<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">deserializer</span><span class="o">=</span><span class="n">JsonDeserializer</span><span class="p">())</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">middleware</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">middlewares</span><span class="o">=</span><span class="p">[</span><span class="n">middleware</span><span class="o">.</span><span class="n">Middleware</span><span class="p">(</span><span class="n">JsonDeserializerMiddleware</span><span class="p">)])</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">hello_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
         <span class="c1"># remember event.value is now a dict</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">])</span>
@@ -959,7 +976,6 @@ generic fashion or per stream.</p>
     <span class="n">value</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">}</span>
     <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;content-type&quot;</span><span class="p">:</span> <span class="n">consts</span><span class="o">.</span><span class="n">APPLICATION_JSON</span><span class="p">,}</span>
     <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
-    <span class="n">serializer</span><span class="o">=</span><span class="n">JsonSerializer</span><span class="p">(),</span>
 <span class="p">)</span>
 </code></pre></div>
 

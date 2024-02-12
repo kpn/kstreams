@@ -423,6 +423,27 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#deserialization" class="md-nav__link">
+    Deserialization
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples.dataclasses-avroschema-example.dataclasses_avroschema_example.middlewares.AvroDeserializerMiddleware" class="md-nav__link">
+    AvroDeserializerMiddleware
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples.confluent-example.confluent_example.middlewares.ConfluentMiddlewareDeserializer" class="md-nav__link">
+    ConfluentMiddlewareDeserializer
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -517,6 +538,27 @@
         <li class="md-nav__item">
   <a href="#executing-code-after-the-cr-was-processed" class="md-nav__link">
     Executing Code after the CR was processed
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deserialization" class="md-nav__link">
+    Deserialization
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples.dataclasses-avroschema-example.dataclasses_avroschema_example.middlewares.AvroDeserializerMiddleware" class="md-nav__link">
+    AvroDeserializerMiddleware
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples.confluent-example.confluent_example.middlewares.ConfluentMiddlewareDeserializer" class="md-nav__link">
+    ConfluentMiddlewareDeserializer
   </a>
   
 </li>
@@ -846,6 +888,149 @@
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In the example we can see that only if there is not an <code>error</code> the event is saved to <code>elastic</code></p>
+</div>
+<h2 id="deserialization">Deserialization</h2>
+<p>To <code>deserialize</code> bytes into a different structure like <code>dict</code> middlewares are the preferred way to it. Examples:</p>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="examples.dataclasses-avroschema-example.dataclasses_avroschema_example.middlewares.AvroDeserializerMiddleware"></a>
+  <div class="doc doc-contents first">
+
+
+            <details class="quote">
+              <summary>Source code in <code>examples/dataclasses-avroschema-example/dataclasses_avroschema_example/middlewares.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AvroDeserializerMiddleware</span><span class="p">(</span><span class="n">middleware</span><span class="o">.</span><span class="n">BaseMiddleware</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">AvroModel</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deserialize a payload to an AvroModel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">cr</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_call</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="examples.confluent-example.confluent_example.middlewares.ConfluentMiddlewareDeserializer"></a>
+  <div class="doc doc-contents first">
+
+
+            <details class="quote">
+              <summary>Source code in <code>examples/confluent-example/confluent_example/middlewares.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ConfluentMiddlewareDeserializer</span><span class="p">(</span>
+    <span class="n">middleware</span><span class="o">.</span><span class="n">BaseMiddleware</span><span class="p">,</span> <span class="n">AsyncAvroMessageSerializer</span>
+<span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">schema_registry_client</span><span class="p">:</span> <span class="n">AsyncSchemaRegistryClient</span><span class="p">,</span>
+        <span class="n">reader_schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">schema</span><span class="o">.</span><span class="n">AvroSchema</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">return_record_name</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schemaregistry_client</span> <span class="o">=</span> <span class="n">schema_registry_client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader_schema</span> <span class="o">=</span> <span class="n">reader_schema</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_record_name</span> <span class="o">=</span> <span class="n">return_record_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id_to_decoder_func</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id_to_writers</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deserialize the event to a dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode_message</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">cr</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_call</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  </div>
+
 </div>
 
 

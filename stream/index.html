@@ -1293,7 +1293,11 @@ callbacks when partition are assigned or revoked</p>
 <span class="normal">305</span>
 <span class="normal">306</span>
 <span class="normal">307</span>
-<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        name str: Stream name</span>
@@ -1421,6 +1425,10 @@ callbacks when partition are assigned or revoked</p>
         <span class="c1"># call deserializer if there is one regarless consumer_record.value</span>
         <span class="c1"># as the end user might want to do something extra with headers or metadata</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Deserializers will be deprecated in the future, &quot;</span>
+                <span class="s2">&quot;use middlewares instead: https://kpn.github.io/kstreams/middleware/&quot;</span>
+            <span class="p">)</span>
             <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">consumer_record</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">consumer_record</span>
@@ -1911,11 +1919,7 @@ with any records that are available currently in the buffer</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/streams.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
 <span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
@@ -1952,7 +1956,11 @@ with any records that are available currently in the buffer</p>
 <span class="normal">202</span>
 <span class="normal">203</span>
 <span class="normal">204</span>
-<span class="normal">205</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">getmany</span><span class="p">(</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">getmany</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">partitions</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">timeout_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
