@@ -1,3 +1,9 @@
+## 0.18.3 (2024-02-12)
+
+### Fix
+
+- deserializer deprecation warning added. Examples with deserialization updated to middlewares (#172)
+
 ## 0.18.2 (2024-02-08)
 
 ### Fix
