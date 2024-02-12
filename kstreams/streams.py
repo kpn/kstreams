@@ -157,6 +157,10 @@ class Stream:
         # call deserializer if there is one regarless consumer_record.value
         # as the end user might want to do something extra with headers or metadata
         if self.deserializer is not None:
+            logger.warn(
+                "Deserializers will be deprecated in the future, "
+                "use middlewares instead: https://kpn.github.io/kstreams/middleware/"
+            )
             return await self.deserializer.deserialize(consumer_record)
 
         return consumer_record
