@@ -2,7 +2,7 @@ import asyncio
 import json
 from typing import Any, Dict, Optional
 
-from kstreams import ConsumerRecord, Stream, consts, create_engine
+from kstreams import ConsumerRecord, Stream, consts, create_engine, middleware
 from kstreams.types import Headers
 
 
@@ -20,33 +20,31 @@ class JsonSerializer:
         return value.encode()
 
 
-class JsonDeserializer:
-    async def deserialize(
-        self, consumer_record: ConsumerRecord, **kwargs
-    ) -> ConsumerRecord:
-        if consumer_record.value is not None:
-            data = json.loads(consumer_record.value.decode())
-            consumer_record.value = data
-        return consumer_record
+class JsonDeserializerMiddleware(middleware.BaseMiddleware):
+    async def __call__(self, cr: ConsumerRecord):
+        if cr.value is not None:
+            data = json.loads(cr.value.decode())
+            cr.value = data
+        return await self.next_call(cr)
 
 
 stream_engine = create_engine(
     title="my-stream-engine",
     serializer=JsonSerializer(),
-    deserializer=JsonDeserializer(),
 )
 
 data = {"message": "Hello world!"}
 topic = "local--kstreams-json"
 
 
-@stream_engine.stream(topic)
+@stream_engine.stream(
+    topic,
+    group_id="my-group",
+    middlewares=[middleware.Middleware(JsonDeserializerMiddleware)],
+)
 async def consume(cr: ConsumerRecord, stream: Stream):
-    try:
-        print(f"Event consumed: headers: {cr.headers}, value: {cr.value}")
-        assert cr.value == data
-    finally:
-        await stream.stop()
+    print(f"Event consumed: headers: {cr.headers}, value: {cr.value}")
+    assert cr.value == data
 
 
 async def produce():

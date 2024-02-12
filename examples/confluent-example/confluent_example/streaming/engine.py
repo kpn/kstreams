@@ -1,12 +1,11 @@
 from schema_registry.client import AsyncSchemaRegistryClient
 
-from confluent_example import serializers
+from confluent_example.serializers import AvroSerializer
 from kstreams import create_engine
 
-client = AsyncSchemaRegistryClient("http://localhost:8081")
+schema_registry_client = AsyncSchemaRegistryClient("http://localhost:8081")
 
 stream_engine = create_engine(
     title="my-stream-engine",
-    serializer=serializers.AvroSerializer(client),
-    deserializer=serializers.AvroDeserializer(client),
+    serializer=AvroSerializer(schema_registry_client),
 )

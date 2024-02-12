@@ -2,27 +2,32 @@ import asyncio
 
 import aiorun
 
-from kstreams import ConsumerRecord, create_engine
+from kstreams import ConsumerRecord, create_engine, middleware
 
-from . import serializers
+from .middlewares import AvroDeserializerMiddleware
 from .models import Address, User
+from .serializers import AvroSerializer
 
 user_topic = "local--avro-user"
 address_topic = "local--avro-address"
 
 stream_engine = create_engine(
     title="my-stream-engine",
-    serializer=serializers.AvroSerializer(),
+    serializer=AvroSerializer(),
 )
 
 
-@stream_engine.stream(user_topic, deserializer=serializers.AvroDeserializer(model=User))
+@stream_engine.stream(
+    user_topic,
+    middlewares=[middleware.Middleware(AvroDeserializerMiddleware, model=User)],
+)
 async def user_stream(cr: ConsumerRecord):
     print(f"Event consumed on topic {user_topic}. The user is {cr.value}")
 
 
 @stream_engine.stream(
-    address_topic, deserializer=serializers.AvroDeserializer(model=Address)
+    address_topic,
+    middlewares=[middleware.Middleware(AvroDeserializerMiddleware, model=Address)],
 )
 async def address_stream(cr: ConsumerRecord):
     print(f"Event consumed on topic {address_topic}. The Address is {cr.value}")

@@ -205,3 +205,19 @@ async def processor(cr: ConsumerRecord):
 
 !!! note
     In the example we can see that only if there is not an `error` the event is saved to `elastic`
+
+## Deserialization
+
+To `deserialize` bytes into a different structure like `dict` middlewares are the preferred way to it. Examples:
+
+::: examples.dataclasses-avroschema-example.dataclasses_avroschema_example.middlewares.AvroDeserializerMiddleware
+    options:
+        show_bases: false
+        members:
+         -  
+
+::: examples.confluent-example.confluent_example.middlewares.ConfluentMiddlewareDeserializer
+    options:
+        show_bases: false
+        members:
+         -  
