@@ -58,10 +58,9 @@ jobs:
         ./scripts/test
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v4.4.0
       with:
         file: ./coverage.xml
-        flags: unittests
         name: kstreams
         fail_ci_if_error: true
         token: ${{secrets.CODECOV_TOKEN}}
