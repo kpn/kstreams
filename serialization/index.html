@@ -966,10 +966,10 @@ generic fashion or per stream.</p>
 
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">middlewares</span><span class="o">=</span><span class="p">[</span><span class="n">middleware</span><span class="o">.</span><span class="n">Middleware</span><span class="p">(</span><span class="n">JsonDeserializerMiddleware</span><span class="p">)])</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">hello_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
-        <span class="c1"># remember event.value is now a dict</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">])</span>
-        <span class="n">save_to_db</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">hello_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
+    <span class="c1"># remember event.value is now a dict</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">])</span>
+    <span class="n">save_to_db</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
     <span class="n">topic</span><span class="p">,</span>
