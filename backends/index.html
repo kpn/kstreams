@@ -482,10 +482,37 @@ with the backend.</p>
 <p>It uses pydantic internally.</p>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams.backends.kafka</span> <span class="kn">import</span> <span class="n">Kafka</span>
+<div class="highlight"><span class="filename">Backend with PLAINTEXT</span><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams.backends.kafka</span> <span class="kn">import</span> <span class="n">Kafka</span>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Stream</span>
 
-<span class="n">backend</span> <span class="o">=</span> <span class="n">Kafka</span><span class="p">(</span><span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;localhost:8082&quot;</span><span class="p">])</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">Kafka</span><span class="p">(</span><span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;localhost:9092&quot;</span><span class="p">])</span>
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><span class="filename">Backend with SSL</span><pre><span></span><code><span class="kn">import</span> <span class="nn">ssl</span>
+
+<span class="kn">from</span> <span class="nn">kstreams.backends.kafka</span> <span class="kn">import</span> <span class="n">Kafka</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">Stream</span>
+
+
+<span class="k">def</span> <span class="nf">get_ssl_context</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">:</span>
+    <span class="c1"># SSL context can also be created from mem:</span>
+    <span class="c1"># https://kpn.github.io/kstreams/utils/#kstreams.utils.create_ssl_context_from_mem</span>
+    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">create_ssl_context</span><span class="p">(</span>
+        <span class="n">certdata</span><span class="o">=</span><span class="s2">&quot;path/to/client-certificate&quot;</span><span class="p">,</span>
+        <span class="n">keydata</span><span class="o">=</span><span class="s2">&quot;path/to/client-private-key&quot;</span><span class="p">,</span>
+        <span class="n">cadata</span><span class="o">=</span><span class="s2">&quot;path/to/ca-bundle&quot;</span><span class="p">,</span>  <span class="c1"># Default None</span>
+        <span class="n">password</span><span class="o">=</span><span class="s2">&quot;password-to-load-certificate-chain&quot;</span>  <span class="c1"># Default None</span>
+    <span class="p">)</span>
+
+<span class="n">backend</span> <span class="o">=</span> <span class="n">Kafka</span><span class="p">(</span>
+    <span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;localhost:9094&quot;</span><span class="p">],</span>
+    <span class="n">security_protocol</span><span class="o">=</span><span class="s2">&quot;SSL&quot;</span><span class="p">,</span>
+    <span class="n">ssl_context</span><span class="o">=</span><span class="n">get_ssl_context</span><span class="p">(),</span>
+<span class="p">)</span>
+
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
 </code></pre></div>
 </div>
@@ -700,18 +727,72 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
-<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Kafka</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Kafka</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The `Kafka` backend validates the given attributes.</span>
 
 <span class="sd">    It uses pydantic internally.</span>
 
 <span class="sd">    !!! Example</span>
-<span class="sd">        ```python</span>
+<span class="sd">        ```python title=&quot;Backend with PLAINTEXT&quot;</span>
 <span class="sd">        from kstreams.backends.kafka import Kafka</span>
 <span class="sd">        from kstreams import create_engine, Stream</span>
 
-<span class="sd">        backend = Kafka(bootstrap_servers=[&quot;localhost:8082&quot;])</span>
+<span class="sd">        backend = Kafka(bootstrap_servers=[&quot;localhost:9092&quot;])</span>
+<span class="sd">        stream_engine = create_engine(title=&quot;my-stream-engine&quot;, backend=backend)</span>
+<span class="sd">        ```</span>
+
+<span class="sd">    !!! Example</span>
+<span class="sd">        ```python title=&quot;Backend with SSL&quot;</span>
+<span class="sd">        import ssl</span>
+
+<span class="sd">        from kstreams.backends.kafka import Kafka</span>
+<span class="sd">        from kstreams import create_engine, utils, Stream</span>
+
+
+<span class="sd">        def get_ssl_context() -&gt; ssl.SSLContext:</span>
+<span class="sd">            # SSL context can also be created from mem:</span>
+<span class="sd">            # https://kpn.github.io/kstreams/utils/#kstreams.utils.create_ssl_context_from_mem</span>
+<span class="sd">            return utils.create_ssl_context(</span>
+<span class="sd">                certdata=&quot;path/to/client-certificate&quot;,</span>
+<span class="sd">                keydata=&quot;path/to/client-private-key&quot;,</span>
+<span class="sd">                cadata=&quot;path/to/ca-bundle&quot;,  # Default None</span>
+<span class="sd">                password=&quot;password-to-load-certificate-chain&quot;  # Default None</span>
+<span class="sd">            )</span>
+
+<span class="sd">        backend = Kafka(</span>
+<span class="sd">            bootstrap_servers=[&quot;localhost:9094&quot;],</span>
+<span class="sd">            security_protocol=&quot;SSL&quot;,</span>
+<span class="sd">            ssl_context=get_ssl_context(),</span>
+<span class="sd">        )</span>
+
 <span class="sd">        stream_engine = create_engine(title=&quot;my-stream-engine&quot;, backend=backend)</span>
 <span class="sd">        ```</span>
 
