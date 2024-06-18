@@ -27,11 +27,38 @@ class Kafka(BaseModel):
     It uses pydantic internally.
 
     !!! Example
-        ```python
+        ```python title="Backend with PLAINTEXT"
         from kstreams.backends.kafka import Kafka
         from kstreams import create_engine, Stream
 
-        backend = Kafka(bootstrap_servers=["localhost:8082"])
+        backend = Kafka(bootstrap_servers=["localhost:9092"])
+        stream_engine = create_engine(title="my-stream-engine", backend=backend)
+        ```
+    
+    !!! Example
+        ```python title="Backend with SSL"
+        import ssl
+
+        from kstreams.backends.kafka import Kafka
+        from kstreams import create_engine, utils, Stream
+
+
+        def get_ssl_context() -> ssl.SSLContext:
+            # SSL context can also be created from mem:
+            # https://kpn.github.io/kstreams/utils/#kstreams.utils.create_ssl_context_from_mem
+            return utils.create_ssl_context(
+                certdata="path/to/client-certificate",
+                keydata="path/to/client-private-key",
+                cadata="path/to/ca-bundle",  # Default None
+                password="password-to-load-certificate-chain"  # Default None
+            )
+
+        backend = Kafka(
+            bootstrap_servers=["localhost:9094"],
+            security_protocol="SSL",
+            ssl_context=get_ssl_context(),
+        )
+
         stream_engine = create_engine(title="my-stream-engine", backend=backend)
         ```
 
