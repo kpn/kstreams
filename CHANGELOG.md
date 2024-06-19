@@ -1,3 +1,9 @@
+## 0.18.4 (2024-05-14)
+
+### Fix
+
+- log possible error in the typed handler wrapper (#181)
+
 ## 0.18.3 (2024-02-12)
 
 ### Fix
