@@ -71,10 +71,10 @@ from kstreams import middleware, ConsumerRecord
 
 
 @stream_engine.stream(topic, middlewares=[middleware.Middleware(JsonDeserializerMiddleware)])
-    async def hello_stream(cr: ConsumerRecord):
-        # remember event.value is now a dict
-        print(cr.value["message"])
-        save_to_db(cr)
+async def hello_stream(cr: ConsumerRecord):
+    # remember event.value is now a dict
+    print(cr.value["message"])
+    save_to_db(cr)
 ```
 
 ```python
