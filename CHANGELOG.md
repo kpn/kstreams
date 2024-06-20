@@ -1,3 +1,9 @@
+## 0.18.5 (2024-06-20)
+
+### Fix
+
+- stop properly a stream when it crashes from ExceptionMiddleware (#189)
+
 ## 0.18.4 (2024-05-14)
 
 ### Fix
