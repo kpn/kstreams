@@ -1,11 +1,13 @@
 import asyncio
+import logging
 import typing
 from dataclasses import dataclass, field
 
 from kstreams import ConsumerRecord, create_engine
 
-topic = "local--kstreams-test"
+logger = logging.getLogger(__name__)
 
+topic = "local--kstreams-test"
 stream_engine = create_engine(title="my-stream-engine")
 
 
@@ -30,7 +32,7 @@ event_store = EventStore()
 
 @stream_engine.stream(topic, group_id="example-group")
 async def consume(cr: ConsumerRecord):
-    print(cr)
+    logger.info(f"Event consumed: {cr} \n")
     event_store.add(cr)
 
 
@@ -54,6 +56,7 @@ async def shutdown():
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(start())

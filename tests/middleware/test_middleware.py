@@ -181,6 +181,7 @@ async def test_base_middleware_exception(stream_engine: StreamEngine):
         await client.send(topic, value=b"test")
 
     assert not my_stream.running
+    assert my_stream.consumer._closed
 
 
 @pytest.mark.asyncio
@@ -199,3 +200,4 @@ async def test_exception_middleware_consumer_stops(stream_engine: StreamEngine):
         await client.send(topic, value=b"test")
 
     assert not my_stream.running
+    assert my_stream.consumer._closed

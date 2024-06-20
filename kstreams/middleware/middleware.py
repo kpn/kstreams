@@ -1,4 +1,5 @@
 import logging
+import sys
 import typing
 
 from aiokafka import errors
@@ -64,14 +65,27 @@ class ExceptionMiddleware(BaseMiddleware):
         try:
             return await self.next_call(cr)
         except errors.ConsumerStoppedError as exc:
-            logger.exception(
-                f"Stream consuming from topics {self.stream.topics} has stopped!!! \n\n"
-            )
-            await self.stream.stop()
+            await self.cleanup_policy()
             raise exc
         except Exception as exc:
             logger.exception(
+                "Unhandled error occurred while listening to the stream. "
                 f"Stream consuming from topics {self.stream.topics} CRASHED!!! \n\n "
             )
-            await self.stream.stop()
+            if sys.version_info >= (3, 11):
+                exc.add_note(f"Task: {self.stream._consumer_task}")
+                exc.add_note(f"Handler: {self.stream.func}")
+                exc.add_note(f"Topics: {self.stream.topics}")
+
+            await self.cleanup_policy()
             raise exc
+
+    async def cleanup_policy(self) -> None:
+        # always release the asyncio.Lock `is_processing` to
+        # stop properly the `stream`
+        self.stream.is_processing.release()
+        await self.stream.stop()
+
+        # acquire the asyncio.Lock `is_processing` again to resume the processing
+        # and avoid `RuntimeError: Lock is not acquired.`
+        await self.stream.is_processing.acquire()
