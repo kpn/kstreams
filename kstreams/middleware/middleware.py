@@ -73,7 +73,6 @@ class ExceptionMiddleware(BaseMiddleware):
                 f"Stream consuming from topics {self.stream.topics} CRASHED!!! \n\n "
             )
             if sys.version_info >= (3, 11):
-                exc.add_note(f"Task: {self.stream._consumer_task}")
                 exc.add_note(f"Handler: {self.stream.func}")
                 exc.add_note(f"Topics: {self.stream.topics}")
 

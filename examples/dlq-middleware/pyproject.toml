@@ -9,6 +9,7 @@ packages = [{include = "dlq_middleware"}]
 [tool.poetry.dependencies]
 python = "^3.8"
 kstreams = { path = "../../.", develop = true }
+aiorun = "^2024.5.1"
 
 [build-system]
 requires = ["poetry-core"]

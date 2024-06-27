@@ -1,9 +1,14 @@
 import asyncio
 import json
+import logging
 from typing import Any, Dict, Optional
+
+import aiorun
 
 from kstreams import ConsumerRecord, Stream, consts, create_engine, middleware
 from kstreams.types import Headers
+
+logger = logging.getLogger(__name__)
 
 
 class JsonSerializer:
@@ -43,7 +48,7 @@ topic = "local--kstreams-json"
     middlewares=[middleware.Middleware(JsonDeserializerMiddleware)],
 )
 async def consume(cr: ConsumerRecord, stream: Stream):
-    print(f"Event consumed: headers: {cr.headers}, value: {cr.value}")
+    logger.info(f"Event consumed: headers: {cr.headers}, value: {cr.value}")
     assert cr.value == data
 
 
@@ -57,15 +62,19 @@ async def produce():
                 "content-type": consts.APPLICATION_JSON,
             },
         )
-        print(f"Message sent: {metadata}")
+        logger.info(f"Message sent: {metadata}")
         await asyncio.sleep(3)
 
 
 async def main():
     await stream_engine.start()
     await produce()
+
+
+async def shutdown(loop: asyncio.AbstractEventLoop):
     await stream_engine.stop()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    logging.basicConfig(level=logging.INFO)
+    aiorun.run(main(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)

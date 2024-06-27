@@ -8,7 +8,7 @@ authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
 python = "^3.8"
 kstreams = { path = "../../.", develop = true }
 python-schema-registry-client = "^2.4.0"
-aiorun = "^2022.4.1"
+aiorun = "^2024.5.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -99,7 +99,6 @@ class Stream:
         self.consumer_class = consumer_class
         self.consumer: typing.Optional[Consumer] = None
         self.config = config or {}
-        self._consumer_task: typing.Optional[asyncio.Task] = None
         self.name = name or str(uuid.uuid4())
         self.deserializer = deserializer
         self.running = False
@@ -132,20 +131,14 @@ class Stream:
                 if self.consumer is not None:
                     await self.consumer.stop()
 
-                if self._consumer_task is not None:
-                    self._consumer_task.cancel()
+                logger.info(
+                    f"Stream consuming from topics {self.topics} has stopped!!! \n\n"
+                )
 
-            logger.info(
-                f"Stream consuming from topics {self.topics} has stopped!!! \n\n"
-            )
-
-    async def _subscribe(self) -> None:
-        # Always create a consumer on stream.start
-        self.consumer = self._create_consumer()
-
-        # add the chech tp avoid `mypy` complains
-        if self.consumer is not None:
-            await self.consumer.start()
+    def subscribe(self) -> None:
+        if self.consumer is None:
+            # Always create a consumer on stream.start
+            self.consumer = self._create_consumer()
             self.consumer.subscribe(
                 topics=self.topics, listener=self.rebalance_listener
             )
@@ -216,36 +209,28 @@ class Stream:
         if self.running:
             return None
 
-        await self._subscribe()
-        self.running = True
+        self.subscribe()
 
-        if self.udf_handler.type == UDFType.NO_TYPING:
-            # normal use case
-            logging.warn(
-                "Streams with `async for in` loop approach might be deprecated. "
-                "Consider migrating to a typing approach."
-            )
+        if self.consumer is not None:
+            await self.consumer.start()
+            self.running = True
 
-            func = self.udf_handler.handler(self)
-            # create an asyncio.Task with func
-            self._consumer_task = asyncio.create_task(self.func_wrapper(func))
-        else:
-            # Typing cases
-            if not inspect.isasyncgenfunction(self.udf_handler.handler):
-                # Is not an async_generator, then create an asyncio.Task with func
-                self._consumer_task = asyncio.create_task(
-                    self.func_wrapper_with_typing()
+            if self.udf_handler.type == UDFType.NO_TYPING:
+                # normal use case
+                logging.warn(
+                    "Streams with `async for in` loop approach might be deprecated. "
+                    "Consider migrating to a typing approach."
                 )
-        return None
 
-    async def func_wrapper(self, func: typing.Awaitable) -> None:
-        try:
-            # await for the end user coroutine
-            # we do this to show a better error message to the user
-            # when the coroutine fails
-            await func
-        except Exception as e:
-            logger.exception(f"CRASHED Stream!!! Task {self._consumer_task} \n\n {e}")
+                func = self.udf_handler.handler(self)
+                await func
+            else:
+                # Typing cases
+                if not inspect.isasyncgenfunction(self.udf_handler.handler):
+                    # Is not an async_generator, then create `await` the func
+                    await self.func_wrapper_with_typing()
+
+        return None
 
     async def func_wrapper_with_typing(self) -> None:
         while self.running:

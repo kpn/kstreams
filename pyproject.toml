@@ -29,6 +29,8 @@ pydantic = ">=2.0.0,<3.0.0"
 [tool.poetry.dev-dependencies]
 pytest = "^6.1"
 mypy = "^1.8.0"
+ruff = "^0.1.9"
+aiorun = "^2024.5.1"
 pytest-httpserver = "<1.0"
 pytest-cov = "^2.11.1"
 jedi = "0.17.2"
@@ -41,9 +43,6 @@ mkdocs-material = "^8.3.9"
 starlette-prometheus = "^0.9.0"
 codecov = "^2.1.12"
 mkdocstrings = {version = "^0.22.0", extras = ["python"]}
-
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.1.9"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

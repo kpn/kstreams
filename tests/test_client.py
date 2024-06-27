@@ -1,5 +1,6 @@
 import asyncio
 import importlib
+import sys
 from typing import Set
 from unittest.mock import Mock, call
 
@@ -13,6 +14,11 @@ from kstreams.test_utils import (
     TestStreamClient,
     TopicManager,
 )
+
+if sys.version_info < (3, 11):
+    TimeoutErrorException = asyncio.TimeoutError
+else:
+    TimeoutErrorException = TimeoutError
 
 topic = "local--kstreams-consumer"
 tp0 = TopicPartition(topic=topic, partition=0)
@@ -473,11 +479,16 @@ async def test_streams_consume_events_with_initial_offsets(stream_engine: Stream
             ],
         )
         stream_engine.add_stream(stream)
-        await stream.start()
+
+        try:
+            # now it is possible to run a stream directly, so we need
+            # to stop the `forever` consumetion
+            await asyncio.wait_for(stream.start(), timeout=1.0)
+        except TimeoutErrorException:
+            ...
 
         # simulate partitions assigned on rebalance
         await stream.rebalance_listener.on_partitions_assigned(assigned=assignments)
-
         assert stream.consumer.assignment() == [tp0, tp1, tp2]
 
         assert stream.consumer.last_stable_offset(tp0) == 2
@@ -493,8 +504,7 @@ async def test_streams_consume_events_with_initial_offsets(stream_engine: Stream
         assert stream.consumer.highwater(tp2) == 0
         assert await stream.consumer.position(tp2) == 0
 
-        # We moved to offset 1 on partition 0, then there are
-        # 3 events in the Queue rather than 4
-        assert TopicManager.get(name=topic).size() == 3
+        # Checl all the events were consumed
+        assert not TopicManager.get(name=topic).size()
 
     process.assert_has_calls([call(event1), call(event1), call(event2)], any_order=True)

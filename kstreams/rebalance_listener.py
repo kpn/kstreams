@@ -112,7 +112,8 @@ class MetricsRebalanceListener(RebalanceListener):
         # lock all asyncio Tasks so no new metrics will be added to the Monitor
         if revoked and self.engine is not None:
             async with asyncio.Lock():
-                await self.engine.monitor.stop()
+                if self.stream is not None:
+                    self.engine.monitor.clean_stream_consumer_metrics(self.stream)
 
     async def on_partitions_assigned(self, assigned: Set[TopicPartition]) -> None:
         """
@@ -128,11 +129,8 @@ class MetricsRebalanceListener(RebalanceListener):
         # lock all asyncio Tasks so no new metrics will be added to the Monitor
         if assigned and self.engine is not None:
             async with asyncio.Lock():
-                self.engine.monitor.start()
-
-                stream = self.stream
-                if stream is not None:
-                    stream.seek_to_initial_offsets()
+                if self.stream is not None:
+                    self.stream.seek_to_initial_offsets()
 
 
 class ManualCommitRebalanceListener(MetricsRebalanceListener):

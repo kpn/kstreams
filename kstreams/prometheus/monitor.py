@@ -60,24 +60,16 @@ class PrometheusMonitor:
         self.running = False
         self._producer = None
         self._streams: List[Stream] = []
-        self._task: Optional[asyncio.Task] = None
 
-    def start(self) -> None:
-        logger.info("Starting Prometheus metrics...")
+    async def start(self) -> None:
         self.running = True
-        self._task = asyncio.create_task(self._metrics_task())
+        logger.info("Starting Prometheus Monitoring started...")
+        await self._metrics_task()
 
     async def stop(self) -> None:
-        logger.info("Stopping Prometheus metrics...")
         self.running = False
-
-        if self._task is not None:
-            # we need to make sure that the task is `done`
-            # to clean up properly
-            while not self._task.done():
-                await asyncio.sleep(0.1)
-
         self._clean_consumer_metrics()
+        logger.info("Prometheus Monitoring stopped...")
 
     def add_topic_partition_offset(
         self, topic: str, partition: int, offset: int
@@ -220,7 +212,7 @@ class PrometheusMonitor:
 
     async def _metrics_task(self) -> None:
         """
-        Asyncio Task that runs in `backgroud` to generate
+        Task that runs in `backgroud` to generate
         consumer metrics.
 
         When self.running is False the task will finish and it

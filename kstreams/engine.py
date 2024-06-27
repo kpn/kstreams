@@ -1,3 +1,4 @@
+import asyncio
 import inspect
 import logging
 import typing
@@ -132,13 +133,12 @@ class StreamEngine:
         return metadata
 
     async def start(self) -> None:
-        await self.start_producer()
-        await self.start_streams()
-
         # add the producer and streams to the Monitor
         self.monitor.add_producer(self._producer)
         self.monitor.add_streams(self._streams)
-        self.monitor.start()
+
+        await self.start_producer()
+        await self.start_streams()
 
     async def stop(self) -> None:
         await self.monitor.stop()
@@ -146,9 +146,9 @@ class StreamEngine:
         await self.stop_streams()
 
     async def stop_producer(self):
-        logger.info("Waiting Producer to STOP....")
         if self._producer is not None:
             await self._producer.stop()
+        logger.info("Producer has STOPPED....")
 
     async def start_producer(self, **kwargs) -> None:
         if self.producer_class is None:
@@ -166,13 +166,23 @@ class StreamEngine:
             for stream in self._streams
             if not inspect.isasyncgenfunction(stream.func)
         ]
+
+        await self._start_streams_on_background_mode(streams)
+
+    async def _start_streams_on_background_mode(
+        self, streams: typing.List[Stream]
+    ) -> None:
+        # start all the streams
         for stream in streams:
-            await stream.start()
+            asyncio.create_task(stream.start())
+
+        # start monitoring
+        asyncio.create_task(self.monitor.start())
 
     async def stop_streams(self) -> None:
-        logger.info("Waiting for Streams to STOP....")
         for stream in self._streams:
             await stream.stop()
+        logger.info("Streams have STOPPED....")
 
     async def clean_streams(self):
         await self.stop_streams()

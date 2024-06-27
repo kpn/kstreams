@@ -34,7 +34,7 @@ class Kafka(BaseModel):
         backend = Kafka(bootstrap_servers=["localhost:9092"])
         stream_engine = create_engine(title="my-stream-engine", backend=backend)
         ```
-    
+
     !!! Example
         ```python title="Backend with SSL"
         import ssl
