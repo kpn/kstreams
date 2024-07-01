@@ -184,9 +184,14 @@ class TestConsumer(Base, Consumer):
                 break
 
         if topic is not None:
-            consumer_record = await topic.get()
-            self._check_partition_assignments(consumer_record)
-            return consumer_record
+            try:
+                consumer_record = await topic.get()
+                self._check_partition_assignments(consumer_record)
+                return consumer_record
+            except RuntimeError:
+                # Scenario when the event loop was closed in the end user test
+                # and the current coroutine gets cancelled in the `getone`
+                ...
 
         return None
 

@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "simple-consumer-example"
+name = "graceful-shutdown-example"
 version = "0.1.0"
 description = ""
 authors = ["Reid Meyer <reid.meyer@kpn.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-aiorun = "^2022.4.1"
+aiorun = "^2024.5.1"
 kstreams = { path = "../../.", develop = true }
 
 [tool.poetry.dev-dependencies]
@@ -17,4 +17,4 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poetry.scripts]
-app = "simple_consumer_example.app:main"
+app = "graceful_shutdown_example.app:main"

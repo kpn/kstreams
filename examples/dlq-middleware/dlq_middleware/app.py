@@ -1,3 +1,5 @@
+import asyncio
+
 import aiorun
 
 from kstreams import ConsumerRecord, create_engine, middleware
@@ -35,7 +37,7 @@ async def start():
     await stream_engine.start()
 
 
-async def shutdown(loop):
+async def shutdown(loop: asyncio.AbstractEventLoop):
     await stream_engine.stop()
 
 

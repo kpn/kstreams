@@ -3,6 +3,8 @@ import logging
 import typing
 from dataclasses import dataclass, field
 
+import aiorun
+
 from kstreams import ConsumerRecord, create_engine
 
 logger = logging.getLogger(__name__)
@@ -35,6 +37,8 @@ async def consume(cr: ConsumerRecord):
     logger.info(f"Event consumed: {cr} \n")
     event_store.add(cr)
 
+    await stream_engine.send("local--hello-world", value=cr.value)
+
 
 async def produce():
     payload = b'{"message": "Hello world!"}'
@@ -51,16 +55,10 @@ async def start():
     await produce()
 
 
-async def shutdown():
+async def stop(loop: asyncio.AbstractEventLoop):
     await stream_engine.stop()
 
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(start())
-        loop.run_forever()
-    finally:
-        loop.run_until_complete(shutdown())
-        loop.close()
+    aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=stop)
