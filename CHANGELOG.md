@@ -1,3 +1,9 @@
+## 0.19.0 (2024-07-01)
+
+### Feat
+
+- **structured-concurrency**: first step to introduce structured concurrency paradigm. Now StreamEngine will stop on a Stream crash (only when running with aiorun). Closes #60 due to the use of flag `stop_on_unhandled_errors` with aiorun. Related to #162 (#190)
+
 ## 0.18.5 (2024-06-20)
 
 ### Fix
