@@ -1286,22 +1286,7 @@ callbacks when partition are assigned or revoked</p>
 <span class="normal">298</span>
 <span class="normal">299</span>
 <span class="normal">300</span>
-<span class="normal">301</span>
-<span class="normal">302</span>
-<span class="normal">303</span>
-<span class="normal">304</span>
-<span class="normal">305</span>
-<span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span>
-<span class="normal">309</span>
-<span class="normal">310</span>
-<span class="normal">311</span>
-<span class="normal">312</span>
-<span class="normal">313</span>
-<span class="normal">314</span>
-<span class="normal">315</span>
-<span class="normal">316</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
+<span class="normal">301</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        name str: Stream name</span>
@@ -1371,7 +1356,6 @@ callbacks when partition are assigned or revoked</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">consumer_class</span> <span class="o">=</span> <span class="n">consumer_class</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Consumer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Task</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span> <span class="o">=</span> <span class="n">deserializer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1404,20 +1388,14 @@ callbacks when partition are assigned or revoked</p>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Stream consuming from topics </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="si">}</span><span class="s2"> has stopped!!! </span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Stream consuming from topics </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="si">}</span><span class="s2"> has stopped!!! </span><span class="se">\n\n</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># Always create a consumer on stream.start</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_consumer</span><span class="p">()</span>
-
-        <span class="c1"># add the chech tp avoid `mypy` complains</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Always create a consumer on stream.start</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_consumer</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span>
                 <span class="n">topics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="p">,</span> <span class="n">listener</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span>
             <span class="p">)</span>
@@ -1488,36 +1466,28 @@ callbacks when partition are assigned or revoked</p>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscribe</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscribe</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
-            <span class="c1"># normal use case</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Streams with `async for in` loop approach might be deprecated. &quot;</span>
-                <span class="s2">&quot;Consider migrating to a typing approach.&quot;</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
 
-            <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-            <span class="c1"># create an asyncio.Task with func</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func_wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Typing cases</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isasyncgenfunction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">handler</span><span class="p">):</span>
-                <span class="c1"># Is not an async_generator, then create an asyncio.Task with func</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">func_wrapper_with_typing</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
+                <span class="c1"># normal use case</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;Streams with `async for in` loop approach might be deprecated. &quot;</span>
+                    <span class="s2">&quot;Consider migrating to a typing approach.&quot;</span>
                 <span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">func_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Awaitable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># await for the end user coroutine</span>
-            <span class="c1"># we do this to show a better error message to the user</span>
-            <span class="c1"># when the coroutine fails</span>
-            <span class="k">await</span> <span class="n">func</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CRASHED Stream!!! Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="si">}</span><span class="s2"> </span><span class="se">\n\n</span><span class="s2"> </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="k">await</span> <span class="n">func</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Typing cases</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isasyncgenfunction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">handler</span><span class="p">):</span>
+                    <span class="c1"># Is not an async_generator, then create `await` the func</span>
+                    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_wrapper_with_typing</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">func_wrapper_with_typing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
@@ -1927,7 +1897,14 @@ with any records that are available currently in the buffer</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/streams.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">172</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
 <span class="normal">173</span>
 <span class="normal">174</span>
 <span class="normal">175</span>
@@ -1961,14 +1938,7 @@ with any records that are available currently in the buffer</p>
 <span class="normal">203</span>
 <span class="normal">204</span>
 <span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">getmany</span><span class="p">(</span>
+<span class="normal">206</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">getmany</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">partitions</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">timeout_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -2080,9 +2050,7 @@ with any records that are available currently in the buffer</p>
 <span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MetricsRebalanceListener</span><span class="p">(</span><span class="n">RebalanceListener</span><span class="p">):</span>
+<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MetricsRebalanceListener</span><span class="p">(</span><span class="n">RebalanceListener</span><span class="p">):</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Coroutine to be called *before* a rebalance operation starts and</span>
@@ -2097,7 +2065,8 @@ with any records that are available currently in the buffer</p>
         <span class="c1"># lock all asyncio Tasks so no new metrics will be added to the Monitor</span>
         <span class="k">if</span> <span class="n">revoked</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
-                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">clean_stream_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_assigned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assigned</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2113,11 +2082,8 @@ with any records that are available currently in the buffer</p>
         <span class="c1"># lock all asyncio Tasks so no new metrics will be added to the Monitor</span>
         <span class="k">if</span> <span class="n">assigned</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-
-                <span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span>
-                <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">stream</span><span class="o">.</span><span class="n">seek_to_initial_offsets</span><span class="p">()</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">seek_to_initial_offsets</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
 
@@ -2184,8 +2150,7 @@ consumer (may include partitions that were previously assigned)</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">117</span>
-<span class="normal">118</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">118</span>
 <span class="normal">119</span>
 <span class="normal">120</span>
 <span class="normal">121</span>
@@ -2200,9 +2165,7 @@ consumer (may include partitions that were previously assigned)</p>
 <span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_assigned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assigned</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_assigned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assigned</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Coroutine to be called *after* partition re-assignment completes</span>
 <span class="sd">    and *before* the consumer starts fetching data again.</span>
@@ -2216,11 +2179,8 @@ consumer (may include partitions that were previously assigned)</p>
     <span class="c1"># lock all asyncio Tasks so no new metrics will be added to the Monitor</span>
     <span class="k">if</span> <span class="n">assigned</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-
-            <span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span>
-            <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">stream</span><span class="o">.</span><span class="n">seek_to_initial_offsets</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">seek_to_initial_offsets</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -2292,7 +2252,8 @@ to the consumer on the last rebalance</p>
 <span class="normal">112</span>
 <span class="normal">113</span>
 <span class="normal">114</span>
-<span class="normal">115</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">115</span>
+<span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Coroutine to be called *before* a rebalance operation starts and</span>
 <span class="sd">    *after* the consumer stops fetching data.</span>
@@ -2306,7 +2267,8 @@ to the consumer on the last rebalance</p>
     <span class="c1"># lock all asyncio Tasks so no new metrics will be added to the Monitor</span>
     <span class="k">if</span> <span class="n">revoked</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">():</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">clean_stream_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -2342,7 +2304,9 @@ manual <code>commit</code></p>
 
             <details class="quote">
               <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">138</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
 <span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
@@ -2366,9 +2330,7 @@ manual <code>commit</code></p>
 <span class="normal">159</span>
 <span class="normal">160</span>
 <span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ManualCommitRebalanceListener</span><span class="p">(</span><span class="n">MetricsRebalanceListener</span><span class="p">):</span>
+<span class="normal">162</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ManualCommitRebalanceListener</span><span class="p">(</span><span class="n">MetricsRebalanceListener</span><span class="p">):</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Coroutine to be called *before* a rebalance operation starts and</span>
@@ -2463,7 +2425,9 @@ to the consumer on the last rebalance</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">139</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
 <span class="normal">142</span>
@@ -2486,9 +2450,7 @@ to the consumer on the last rebalance</p>
 <span class="normal">159</span>
 <span class="normal">160</span>
 <span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">162</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_partitions_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">revoked</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Coroutine to be called *before* a rebalance operation starts and</span>
 <span class="sd">    *after* the consumer stops fetching data.</span>
