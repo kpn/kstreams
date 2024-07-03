@@ -1,3 +1,9 @@
+## 0.19.1 (2024-07-03)
+
+### Fix
+
+- always subscribe to topics when a Stream is started. Multiple calls to subscribe do not affect the consumer even though it was already subscribed. (#191)
+
 ## 0.19.0 (2024-07-01)
 
 ### Feat
