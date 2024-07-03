@@ -406,6 +406,66 @@ async def test_e2e_example():
 
 
 @pytest.mark.asyncio
+async def test_repeat_e2e_example():
+    """
+    This test is to show that the same Stream can be tested multiple
+    times and that all the resources must start from scratch on every unittest:
+        1. There must not be events in topics from previous tests
+        2. All extra partitions should be removed from Topics
+        3. Streams on new test must have only the default partitions (0, 1, 2)
+        4. Total events per Topic (asyncio.Queue) must be 0
+    """
+    simple_example = importlib.import_module(
+        "examples.simple-example.simple_example.app"
+    )
+
+    topic_name = simple_example.topic
+    client = TestStreamClient(simple_example.stream_engine)
+
+    # From the previous test, we have produced 5 events
+    # which still they are on memory. This is the application
+    # logic
+    assert simple_example.event_store.total == 5
+
+    # clean the application store
+    simple_example.event_store.clean()
+    assert simple_example.event_store.total == 0
+
+    async with client:
+        topic = TopicManager.get(topic_name)
+        assert topic.is_empty()
+
+        # Even Though the topic is empty, the counter might be not
+        assert topic.total_events == 0
+
+        # check that all default partitions are empty
+        assert topic.total_partition_events[0] == -1
+        assert topic.total_partition_events[1] == -1
+        assert topic.total_partition_events[2] == -1
+
+        # add 1 event to the store
+        metadata = await client.send(topic=topic_name, value=b"add-event")
+
+        # give some time to process the event
+        await asyncio.sleep(0.1)
+        assert simple_example.event_store.total == 1
+        assert metadata.partition == 0
+
+        # remove 1 event from the store
+        metadata = await client.send(
+            topic=topic_name, value=b"remove-event", partition=1
+        )
+
+        # give some time to process the event
+        await asyncio.sleep(0.1)
+        assert simple_example.event_store.total == 0
+        assert metadata.partition == 1
+
+    # check that all events has been consumed
+    assert TopicManager.all_messages_consumed()
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "monitoring_enabled",
     (

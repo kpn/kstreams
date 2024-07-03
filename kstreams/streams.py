@@ -137,11 +137,10 @@ class Stream:
 
     def subscribe(self) -> None:
         if self.consumer is None:
-            # Always create a consumer on stream.start
+            # Only create a consumer if it was not previously created
             self.consumer = self._create_consumer()
-            self.consumer.subscribe(
-                topics=self.topics, listener=self.rebalance_listener
-            )
+
+        self.consumer.subscribe(topics=self.topics, listener=self.rebalance_listener)
 
     async def commit(
         self, offsets: typing.Optional[typing.Dict[TopicPartition, int]] = None
