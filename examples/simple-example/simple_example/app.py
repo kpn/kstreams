@@ -24,9 +24,15 @@ class EventStore:
     def add(self, event: ConsumerRecord) -> None:
         self.events.append(event)
 
+    def remove(self) -> None:
+        self.events.pop(0)
+
     @property
-    def total(self):
+    def total(self) -> int:
         return len(self.events)
+
+    def clean(self) -> None:
+        self.events = []
 
 
 event_store = EventStore()
@@ -35,7 +41,11 @@ event_store = EventStore()
 @stream_engine.stream(topic, group_id="example-group")
 async def consume(cr: ConsumerRecord):
     logger.info(f"Event consumed: {cr} \n")
-    event_store.add(cr)
+
+    if cr.value == b"remove-event":
+        event_store.remove()
+    else:
+        event_store.add(cr)
 
     await stream_engine.send("local--hello-world", value=cr.value)
 
