@@ -17,8 +17,8 @@ from .serializers import Deserializer, Serializer
 from .streams import Stream, StreamFunc
 from .streams import stream as stream_func
 from .streams_utils import UDFType
-from .types import Headers, NextMiddlewareCall
-from .utils import encode_headers
+from .types import EngineHooks, Headers, NextMiddlewareCall
+from .utils import encode_headers, execute_hooks
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +68,10 @@ class StreamEngine:
         title: typing.Optional[str] = None,
         deserializer: typing.Optional[Deserializer] = None,
         serializer: typing.Optional[Serializer] = None,
+        on_startup: typing.Optional[EngineHooks] = None,
+        on_stop: typing.Optional[EngineHooks] = None,
+        after_startup: typing.Optional[EngineHooks] = None,
+        after_stop: typing.Optional[EngineHooks] = None,
     ) -> None:
         self.title = title
         self.backend = backend
@@ -78,6 +82,10 @@ class StreamEngine:
         self.monitor = monitor
         self._producer: typing.Optional[typing.Type[Producer]] = None
         self._streams: typing.List[Stream] = []
+        self._on_startup = [] if on_startup is None else list(on_startup)
+        self._on_stop = [] if on_stop is None else list(on_stop)
+        self._after_startup = [] if after_startup is None else list(after_startup)
+        self._after_stop = [] if after_stop is None else list(after_stop)
 
     async def send(
         self,
@@ -133,6 +141,9 @@ class StreamEngine:
         return metadata
 
     async def start(self) -> None:
+        # Execute on_startup hooks
+        await execute_hooks(self._on_startup)
+
         # add the producer and streams to the Monitor
         self.monitor.add_producer(self._producer)
         self.monitor.add_streams(self._streams)
@@ -140,10 +151,143 @@ class StreamEngine:
         await self.start_producer()
         await self.start_streams()
 
+        # Execute after_startup hooks
+        await execute_hooks(self._after_startup)
+
+    def on_startup(
+        self,
+        func: typing.Callable[[], typing.Any],
+    ) -> typing.Callable[[], typing.Any]:
+        """
+        A list of callables to run before the engine starts.
+        Handler are callables that do not take any arguments, and may be either
+        standard functions, or async functions.
+
+        Attributes:
+            func typing.Callable[[], typing.Any]: Func to callable before engine starts
+
+        !!! Example
+            ```python title="Engine before startup"
+
+            import kstreams
+
+            stream_engine = kstreams.create_engine(
+                title="my-stream-engine"
+            )
+
+            @stream_engine.on_startup
+            async def init_db() -> None:
+                print("Initializing Database Connections")
+                await init_db()
+
+
+            @stream_engine.on_startup
+            async def start_background_task() -> None:
+                print("Some background task")
+            ```
+        """
+        self._on_startup.append(func)
+        return func
+
+    def on_stop(
+        self,
+        func: typing.Callable[[], typing.Any],
+    ) -> typing.Callable[[], typing.Any]:
+        """
+        A list of callables to run before the engine stops.
+        Handler are callables that do not take any arguments, and may be either
+        standard functions, or async functions.
+
+        Attributes:
+            func typing.Callable[[], typing.Any]: Func to callable before engine stops
+
+        !!! Example
+            ```python title="Engine before stops"
+
+            import kstreams
+
+            stream_engine = kstreams.create_engine(
+                title="my-stream-engine"
+            )
+
+            @stream_engine.on_stop
+            async def close_db() -> None:
+                print("Closing Database Connections")
+                await db_close()
+            ```
+        """
+        self._on_stop.append(func)
+        return func
+
+    def after_startup(
+        self,
+        func: typing.Callable[[], typing.Any],
+    ) -> typing.Callable[[], typing.Any]:
+        """
+        A list of callables to run after the engine starts.
+        Handler are callables that do not take any arguments, and may be either
+        standard functions, or async functions.
+
+        Attributes:
+            func typing.Callable[[], typing.Any]: Func to callable after engine starts
+
+        !!! Example
+            ```python title="Engine after startup"
+
+            import kstreams
+
+            stream_engine = kstreams.create_engine(
+                title="my-stream-engine"
+            )
+
+            @stream_engine.after_startup
+            async def after_startup() -> None:
+                print("Set pod as healthy")
+                await mark_healthy_pod()
+            ```
+        """
+        self._after_startup.append(func)
+        return func
+
+    def after_stop(
+        self,
+        func: typing.Callable[[], typing.Any],
+    ) -> typing.Callable[[], typing.Any]:
+        """
+        A list of callables to run after the engine stops.
+        Handler are callables that do not take any arguments, and may be either
+        standard functions, or async functions.
+
+        Attributes:
+            func typing.Callable[[], typing.Any]: Func to callable after engine stops
+
+        !!! Example
+            ```python title="Engine after stops"
+
+            import kstreams
+
+            stream_engine = kstreams.create_engine(
+                title="my-stream-engine"
+            )
+
+            @stream_engine.after_stop
+            async def after_stop() -> None:
+                print("Finishing backgrpund tasks")
+            ```
+        """
+        self._after_stop.append(func)
+        return func
+
     async def stop(self) -> None:
+        # Execute on_startup hooks
+        await execute_hooks(self._on_stop)
+
         await self.monitor.stop()
         await self.stop_producer()
         await self.stop_streams()
+
+        # Execute after_startup hooks
+        await execute_hooks(self._after_stop)
 
     async def stop_producer(self):
         if self._producer is not None:

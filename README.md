@@ -70,6 +70,7 @@ if __name__ == "__main__":
 - [x] Yield events from streams
 - [x] [Opentelemetry Instrumentation](https://github.com/kpn/opentelemetry-instrumentation-kstreams)
 - [x] Middlewares
+- [x] Hooks (on_startup, on_stop, after_startup, after_stop)
 - [ ] Store (kafka streams pattern)
 - [ ] Stream Join
 - [ ] Windowing

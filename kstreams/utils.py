@@ -1,4 +1,5 @@
 import contextlib
+import inspect
 import ssl
 from tempfile import NamedTemporaryFile
 from typing import Any, Optional, Union
@@ -90,6 +91,14 @@ def create_ssl_context(
         password=password,
         crlfile=crlfile,
     )
+
+
+async def execute_hooks(hooks: types.EngineHooks) -> None:
+    for hook in hooks:
+        if inspect.iscoroutinefunction(hook):
+            await hook()
+        else:
+            hook()
 
 
 __all__ = ["create_ssl_context", "create_ssl_context_from_mem", "encode_headers"]
