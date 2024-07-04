@@ -1,3 +1,9 @@
+## 0.20.0 (2024-07-04)
+
+### Feat
+
+- StreamEngine hooks on_startup, on_stop, after_startup and after_stop added (#193)
+
 ## 0.19.1 (2024-07-03)
 
 ### Fix
