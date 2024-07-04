@@ -284,6 +284,34 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kstreams.engine.StreamEngine.on_startup" class="md-nav__link">
+    on_startup()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.engine.StreamEngine.on_stop" class="md-nav__link">
+    on_stop()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.engine.StreamEngine.after_startup" class="md-nav__link">
+    after_startup()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.engine.StreamEngine.after_stop" class="md-nav__link">
+    after_stop()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -454,6 +482,34 @@
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.send" class="md-nav__link">
     send()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.engine.StreamEngine.on_startup" class="md-nav__link">
+    on_startup()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.engine.StreamEngine.on_stop" class="md-nav__link">
+    on_stop()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.engine.StreamEngine.after_startup" class="md-nav__link">
+    after_startup()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.engine.StreamEngine.after_stop" class="md-nav__link">
+    after_stop()
   </a>
   
 </li>
@@ -852,7 +908,151 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="normal">256</span>
 <span class="normal">257</span>
 <span class="normal">258</span>
-<span class="normal">259</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        backend kstreams.backends.Kafka: Backend to connect. Default `Kafka`</span>
@@ -897,6 +1097,10 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="n">title</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">deserializer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Deserializer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">serializer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Serializer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">on_startup</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">EngineHooks</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">on_stop</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">EngineHooks</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">after_startup</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">EngineHooks</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">after_stop</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">EngineHooks</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span>
@@ -907,6 +1111,10 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="o">=</span> <span class="n">monitor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Producer</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_streams</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">Stream</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_on_startup</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">on_startup</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">on_startup</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_on_stop</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">on_stop</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">on_stop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_after_startup</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">after_startup</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">after_startup</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_after_stop</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">after_stop</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">after_stop</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">send</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -962,6 +1170,9 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="k">return</span> <span class="n">metadata</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Execute on_startup hooks</span>
+        <span class="k">await</span> <span class="n">execute_hooks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_startup</span><span class="p">)</span>
+
         <span class="c1"># add the producer and streams to the Monitor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">add_producer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">add_streams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_streams</span><span class="p">)</span>
@@ -969,10 +1180,143 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_producer</span><span class="p">()</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_streams</span><span class="p">()</span>
 
+        <span class="c1"># Execute after_startup hooks</span>
+        <span class="k">await</span> <span class="n">execute_hooks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_after_startup</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_startup</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A list of callables to run before the engine starts.</span>
+<span class="sd">        Handler are callables that do not take any arguments, and may be either</span>
+<span class="sd">        standard functions, or async functions.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            func typing.Callable[[], typing.Any]: Func to callable before engine starts</span>
+
+<span class="sd">        !!! Example</span>
+<span class="sd">            ```python title=&quot;Engine before startup&quot;</span>
+
+<span class="sd">            import kstreams</span>
+
+<span class="sd">            stream_engine = kstreams.create_engine(</span>
+<span class="sd">                title=&quot;my-stream-engine&quot;</span>
+<span class="sd">            )</span>
+
+<span class="sd">            @stream_engine.on_startup</span>
+<span class="sd">            async def init_db() -&gt; None:</span>
+<span class="sd">                print(&quot;Initializing Database Connections&quot;)</span>
+<span class="sd">                await init_db()</span>
+
+
+<span class="sd">            @stream_engine.on_startup</span>
+<span class="sd">            async def start_background_task() -&gt; None:</span>
+<span class="sd">                print(&quot;Some background task&quot;)</span>
+<span class="sd">            ```</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_on_startup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span>
+
+    <span class="k">def</span> <span class="nf">on_stop</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A list of callables to run before the engine stops.</span>
+<span class="sd">        Handler are callables that do not take any arguments, and may be either</span>
+<span class="sd">        standard functions, or async functions.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            func typing.Callable[[], typing.Any]: Func to callable before engine stops</span>
+
+<span class="sd">        !!! Example</span>
+<span class="sd">            ```python title=&quot;Engine before stops&quot;</span>
+
+<span class="sd">            import kstreams</span>
+
+<span class="sd">            stream_engine = kstreams.create_engine(</span>
+<span class="sd">                title=&quot;my-stream-engine&quot;</span>
+<span class="sd">            )</span>
+
+<span class="sd">            @stream_engine.on_stop</span>
+<span class="sd">            async def close_db() -&gt; None:</span>
+<span class="sd">                print(&quot;Closing Database Connections&quot;)</span>
+<span class="sd">                await db_close()</span>
+<span class="sd">            ```</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_on_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span>
+
+    <span class="k">def</span> <span class="nf">after_startup</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A list of callables to run after the engine starts.</span>
+<span class="sd">        Handler are callables that do not take any arguments, and may be either</span>
+<span class="sd">        standard functions, or async functions.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            func typing.Callable[[], typing.Any]: Func to callable after engine starts</span>
+
+<span class="sd">        !!! Example</span>
+<span class="sd">            ```python title=&quot;Engine after startup&quot;</span>
+
+<span class="sd">            import kstreams</span>
+
+<span class="sd">            stream_engine = kstreams.create_engine(</span>
+<span class="sd">                title=&quot;my-stream-engine&quot;</span>
+<span class="sd">            )</span>
+
+<span class="sd">            @stream_engine.after_startup</span>
+<span class="sd">            async def after_startup() -&gt; None:</span>
+<span class="sd">                print(&quot;Set pod as healthy&quot;)</span>
+<span class="sd">                await mark_healthy_pod()</span>
+<span class="sd">            ```</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_after_startup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span>
+
+    <span class="k">def</span> <span class="nf">after_stop</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A list of callables to run after the engine stops.</span>
+<span class="sd">        Handler are callables that do not take any arguments, and may be either</span>
+<span class="sd">        standard functions, or async functions.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            func typing.Callable[[], typing.Any]: Func to callable after engine stops</span>
+
+<span class="sd">        !!! Example</span>
+<span class="sd">            ```python title=&quot;Engine after stops&quot;</span>
+
+<span class="sd">            import kstreams</span>
+
+<span class="sd">            stream_engine = kstreams.create_engine(</span>
+<span class="sd">                title=&quot;my-stream-engine&quot;</span>
+<span class="sd">            )</span>
+
+<span class="sd">            @stream_engine.after_stop</span>
+<span class="sd">            async def after_stop() -&gt; None:</span>
+<span class="sd">                print(&quot;Finishing backgrpund tasks&quot;)</span>
+<span class="sd">            ```</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_after_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span>
+
     <span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Execute on_startup hooks</span>
+        <span class="k">await</span> <span class="n">execute_hooks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_stop</span><span class="p">)</span>
+
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_producer</span><span class="p">()</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_streams</span><span class="p">()</span>
+
+        <span class="c1"># Execute after_startup hooks</span>
+        <span class="k">await</span> <span class="n">execute_hooks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_after_stop</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">stop_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1226,15 +1570,7 @@ encode the event</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/engine.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 82</span>
-<span class="normal"> 83</span>
-<span class="normal"> 84</span>
-<span class="normal"> 85</span>
-<span class="normal"> 86</span>
-<span class="normal"> 87</span>
-<span class="normal"> 88</span>
-<span class="normal"> 89</span>
-<span class="normal"> 90</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 90</span>
 <span class="normal"> 91</span>
 <span class="normal"> 92</span>
 <span class="normal"> 93</span>
@@ -1277,7 +1613,15 @@ encode the event</p>
 <span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span>
-<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">send</span><span class="p">(</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">send</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1329,6 +1673,510 @@ encode the event</p>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">metadata</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="kstreams.engine.StreamEngine.on_startup" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">on_startup</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>A list of callables to run before the engine starts.
+Handler are callables that do not take any arguments, and may be either
+standard functions, or async functions.</p>
+
+
+
+  <p><strong>Attributes:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>func</code></td>
+          <td>
+                <code><span title="typing.Callable">Callable</span>[[], <span title="typing.Any">Any</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Func to callable before engine starts</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+      <div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><span class="filename">Engine before startup</span><pre><span></span><code><span class="kn">import</span> <span class="nn">kstreams</span>
+
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">kstreams</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span>
+<span class="p">)</span>
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">on_startup</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">init_db</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initializing Database Connections&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">init_db</span><span class="p">()</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">on_startup</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start_background_task</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Some background task&quot;</span><span class="p">)</span>
+</code></pre></div>
+</div>
+
+          <details class="quote">
+            <summary>Source code in <code>kstreams/engine.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_startup</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A list of callables to run before the engine starts.</span>
+<span class="sd">    Handler are callables that do not take any arguments, and may be either</span>
+<span class="sd">    standard functions, or async functions.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        func typing.Callable[[], typing.Any]: Func to callable before engine starts</span>
+
+<span class="sd">    !!! Example</span>
+<span class="sd">        ```python title=&quot;Engine before startup&quot;</span>
+
+<span class="sd">        import kstreams</span>
+
+<span class="sd">        stream_engine = kstreams.create_engine(</span>
+<span class="sd">            title=&quot;my-stream-engine&quot;</span>
+<span class="sd">        )</span>
+
+<span class="sd">        @stream_engine.on_startup</span>
+<span class="sd">        async def init_db() -&gt; None:</span>
+<span class="sd">            print(&quot;Initializing Database Connections&quot;)</span>
+<span class="sd">            await init_db()</span>
+
+
+<span class="sd">        @stream_engine.on_startup</span>
+<span class="sd">        async def start_background_task() -&gt; None:</span>
+<span class="sd">            print(&quot;Some background task&quot;)</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_on_startup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">func</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="kstreams.engine.StreamEngine.on_stop" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">on_stop</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>A list of callables to run before the engine stops.
+Handler are callables that do not take any arguments, and may be either
+standard functions, or async functions.</p>
+
+
+
+  <p><strong>Attributes:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>func</code></td>
+          <td>
+                <code><span title="typing.Callable">Callable</span>[[], <span title="typing.Any">Any</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Func to callable before engine stops</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+      <div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><span class="filename">Engine before stops</span><pre><span></span><code><span class="kn">import</span> <span class="nn">kstreams</span>
+
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">kstreams</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span>
+<span class="p">)</span>
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">on_stop</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">close_db</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Closing Database Connections&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">db_close</span><span class="p">()</span>
+</code></pre></div>
+</div>
+
+          <details class="quote">
+            <summary>Source code in <code>kstreams/engine.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_stop</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A list of callables to run before the engine stops.</span>
+<span class="sd">    Handler are callables that do not take any arguments, and may be either</span>
+<span class="sd">    standard functions, or async functions.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        func typing.Callable[[], typing.Any]: Func to callable before engine stops</span>
+
+<span class="sd">    !!! Example</span>
+<span class="sd">        ```python title=&quot;Engine before stops&quot;</span>
+
+<span class="sd">        import kstreams</span>
+
+<span class="sd">        stream_engine = kstreams.create_engine(</span>
+<span class="sd">            title=&quot;my-stream-engine&quot;</span>
+<span class="sd">        )</span>
+
+<span class="sd">        @stream_engine.on_stop</span>
+<span class="sd">        async def close_db() -&gt; None:</span>
+<span class="sd">            print(&quot;Closing Database Connections&quot;)</span>
+<span class="sd">            await db_close()</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_on_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">func</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="kstreams.engine.StreamEngine.after_startup" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">after_startup</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>A list of callables to run after the engine starts.
+Handler are callables that do not take any arguments, and may be either
+standard functions, or async functions.</p>
+
+
+
+  <p><strong>Attributes:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>func</code></td>
+          <td>
+                <code><span title="typing.Callable">Callable</span>[[], <span title="typing.Any">Any</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Func to callable after engine starts</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+      <div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><span class="filename">Engine after startup</span><pre><span></span><code><span class="kn">import</span> <span class="nn">kstreams</span>
+
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">kstreams</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span>
+<span class="p">)</span>
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">after_startup</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">after_startup</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Set pod as healthy&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">mark_healthy_pod</span><span class="p">()</span>
+</code></pre></div>
+</div>
+
+          <details class="quote">
+            <summary>Source code in <code>kstreams/engine.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">after_startup</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A list of callables to run after the engine starts.</span>
+<span class="sd">    Handler are callables that do not take any arguments, and may be either</span>
+<span class="sd">    standard functions, or async functions.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        func typing.Callable[[], typing.Any]: Func to callable after engine starts</span>
+
+<span class="sd">    !!! Example</span>
+<span class="sd">        ```python title=&quot;Engine after startup&quot;</span>
+
+<span class="sd">        import kstreams</span>
+
+<span class="sd">        stream_engine = kstreams.create_engine(</span>
+<span class="sd">            title=&quot;my-stream-engine&quot;</span>
+<span class="sd">        )</span>
+
+<span class="sd">        @stream_engine.after_startup</span>
+<span class="sd">        async def after_startup() -&gt; None:</span>
+<span class="sd">            print(&quot;Set pod as healthy&quot;)</span>
+<span class="sd">            await mark_healthy_pod()</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_after_startup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">func</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="kstreams.engine.StreamEngine.after_stop" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">after_stop</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>A list of callables to run after the engine stops.
+Handler are callables that do not take any arguments, and may be either
+standard functions, or async functions.</p>
+
+
+
+  <p><strong>Attributes:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>func</code></td>
+          <td>
+                <code><span title="typing.Callable">Callable</span>[[], <span title="typing.Any">Any</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Func to callable after engine stops</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+      <div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><span class="filename">Engine after stops</span><pre><span></span><code><span class="kn">import</span> <span class="nn">kstreams</span>
+
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">kstreams</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span>
+<span class="p">)</span>
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">after_stop</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">after_stop</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finishing backgrpund tasks&quot;</span><span class="p">)</span>
+</code></pre></div>
+</div>
+
+          <details class="quote">
+            <summary>Source code in <code>kstreams/engine.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">after_stop</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A list of callables to run after the engine stops.</span>
+<span class="sd">    Handler are callables that do not take any arguments, and may be either</span>
+<span class="sd">    standard functions, or async functions.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        func typing.Callable[[], typing.Any]: Func to callable after engine stops</span>
+
+<span class="sd">    !!! Example</span>
+<span class="sd">        ```python title=&quot;Engine after stops&quot;</span>
+
+<span class="sd">        import kstreams</span>
+
+<span class="sd">        stream_engine = kstreams.create_engine(</span>
+<span class="sd">            title=&quot;my-stream-engine&quot;</span>
+<span class="sd">        )</span>
+
+<span class="sd">        @stream_engine.after_stop</span>
+<span class="sd">        async def after_stop() -&gt; None:</span>
+<span class="sd">            print(&quot;Finishing backgrpund tasks&quot;)</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_after_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">func</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
