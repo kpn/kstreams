@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "ssl-example"
+version = "0.1.0"
+description = ""
+authors = ["Marcos Schroh <schrohm@gmail.com>"]
+readme = "README.md"
+packages = [{include = "ssl_example"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aiorun = "^2024.5.1"
+kstreams = { path = "../../.", develop = true }
+pydantic-settings = "^2.3.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.scripts]
+app = "ssl_example.app:main"

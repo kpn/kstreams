@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ -d 'certs' ] ; then
+    rm -rf certs
+fi
+
+if [ -d 'kafka-certs' ] ; then
+    rm -rf kafka-certs
+fi
