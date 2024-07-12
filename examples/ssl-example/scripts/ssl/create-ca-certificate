@@ -1,0 +1,18 @@
+#!/bin/sh
+
+STOREPASS=$1
+VALIDITY=$2
+
+# Ensure that the common name (CN) exactly matches the fully qualified domain name (FQDN) of the server.
+# The client compares the CN with the DNS domain name to ensure that it is indeed connecting to the desired server,
+# not a malicious one. The hostname of the server can also be specified in the Subject Alternative Name (SAN).
+# Since the distinguished name is used as the server principal when SSL is used as the inter-broker security protocol,
+# it is useful to have hostname as a SAN rather than the CN.
+SUBJ="/C=NL/ST=SouthHolland/L=Rotterdam/O=Company/OU=MyTeam/CN=ca.company.org"
+
+
+###############################################################
+###### Step 1: CREATE YOUR OWN CERTIFICATE AUTHORITY (CA) #####
+###############################################################
+echo "Generate a CA that is simply a public-private key pair and certificate, and it is intended to sign other certificates.\n"
+openssl req -new -x509 -keyout kafka-certs/ca.key -out kafka-certs/ca.cert -days $VALIDITY -subj $SUBJ -passin pass:$STOREPASS -passout pass:$STOREPASS

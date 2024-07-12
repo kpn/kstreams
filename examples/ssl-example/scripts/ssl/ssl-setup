@@ -1,0 +1,18 @@
+#!/bin/sh
+
+STOREPASS=${1:-"password"}
+VALIDITY=${2:-365}
+
+if [ -d 'kafka-certs' ] ; then
+    echo "Certificates already generated, skipping. \n"
+    echo "To delete the certificates execute: ./scripts/clean \n"
+    echo "To export certificates as ENV variables for admin client execute: . ./scripts/export-env-variables \n"
+else
+    # create directory to store certificates
+    mkdir -p kafka-certs
+
+    ./scripts/ssl/create-ca-certificate $STOREPASS $VALIDITY
+    ./scripts/ssl/create-server-certificate $STOREPASS $VALIDITY
+    ./scripts/ssl/create-client-certificates $STOREPASS $VALIDITY
+fi
+

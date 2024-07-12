@@ -1,0 +1,45 @@
+version: '3'
+services:
+
+  zookeeper:
+    image: "confluentinc/cp-zookeeper:7.3.0"
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - 32181:32181
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=32181
+  kafka:
+    volumes:
+      - ./kafka-certs/server/:/etc/kafka/secrets
+      - ./kafka-certs/admin/client.properties:/etc/kafka/config/client.properties
+    image: "confluentinc/cp-kafka:7.3.0"
+    hostname: kafka
+    container_name: kafka
+    environment:
+      KAFKA_BROKER_ID: "1"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:32181"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      CONFLUENT_METRICS_ENABLE: 'true'
+      CONFLUENT_SUPPORT_CUSTOMER_ID: anonymous
+      # Kafka security
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: SSL:SSL,SSL2:SSL
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SSL
+      KAFKA_ADVERTISED_LISTENERS: SSL://localhost:9092,SSL2://kafka:9093
+      KAFKA_SSL_KEYSTORE_FILENAME: keystore.jks
+      KAFKA_SSL_TRUSTSTORE_FILENAME: truststore.jks
+      KAFKA_SSL_KEY_CREDENTIALS: ssl-key-credentials
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: key-store-credentials
+      KAFKA_SSL_TRUSTSTORE_CREDENTIALS: trust-store-credentials
+      KAFKA_SSL_CLIENT_AUTH: required
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_SSL_PRINCIPAL_MAPPING_RULES: RULE:^.*[Cc][Nn]=([a-zA-Z0-9._-]*).*$$/CN=$$1/,DEFAULT
+      KAFKA_SUPER_USERS: User:CN=localhost;User:CN=admin.client.company.org;
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    depends_on:
+      - zookeeper
+  

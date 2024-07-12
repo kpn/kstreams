@@ -229,3 +229,6 @@ tags
 pyvenv.cfg
 pip-selfcheck.json
 poetry.toml
+
+# local SSL cluster certificates
+kafka-certs/

@@ -1,0 +1,46 @@
+#!/bin/sh
+
+STOREPASS=${1:-"password"}
+VALIDITY=${2:-365}
+SERVERS=${3:-"server"}
+#######################################################
+###### GENERATE SERVER KEYS AND CERTIFICATES ##########
+#######################################################
+
+# Generate the key and the certificate for each Kafka broker in the cluster and clients. Generate the key into a 
+# keystore called keystore so that you can export and sign it later with CA.
+# The keystore file contains the private key of the certificate; therefore, it needs to be kept safely.
+# Java’s keytool utility is used for this process
+
+for i in $SERVERS
+do
+
+CERT_PATH=kafka-certs/${i}
+mkdir -p "${CERT_PATH}"
+
+SAN_SERVER="DNS:localhost"
+DNAME_SERVER="C=NL,ST=SouthHolland,L=Rotterdam,O=Company,OU=MyTeam,CN=localhost"
+
+echo "Generating the key and the certificate for each Kafka broker in the cluster\n"
+keytool -keystore ${CERT_PATH}/keystore.jks -alias ${i} -keyalg RSA -validity $VALIDITY -genkey -storepass $STOREPASS -keypass $STOREPASS -dname $DNAME_SERVER -ext SAN=$SAN_SERVER
+
+echo "Adding the generated CA to the brokers’ truststore so that the brokers can trust this CA\n"
+echo "yes" | keytool -keystore ${CERT_PATH}/truststore.jks -alias CARoot -importcert -file kafka-certs/ca.cert -storepass $STOREPASS
+
+# Sign the certificate
+echo "Generating certificate from the keystore:\n"
+keytool -keystore ${CERT_PATH}/keystore.jks -alias ${i} -certreq -file ${CERT_PATH}/cert.csr -storepass $STOREPASS
+
+echo "Sign it with the CA:\n"
+# In this case for 365 days. Use the same password that was used to create the CA
+openssl x509 -sha256 -req -CA kafka-certs/ca.cert -CAkey kafka-certs/ca.key -in ${CERT_PATH}/cert.csr -out ${CERT_PATH}/signed.cert -days $VALIDITY -CAcreateserial -passin pass:$STOREPASS
+
+echo "Importing both the certificate of the CA and the signed certificate into the broker keystore:\n"
+echo "yes" | keytool -keystore ${CERT_PATH}/keystore.jks -alias CARoot -importcert -file kafka-certs/ca.cert -storepass $STOREPASS
+echo "yes" | keytool -keystore ${CERT_PATH}/keystore.jks -alias ${i} -importcert -file ${CERT_PATH}/signed.cert -storepass $STOREPASS
+
+echo $STOREPASS > ${CERT_PATH}/ssl-key-credentials
+echo $STOREPASS > ${CERT_PATH}/key-store-credentials
+echo $STOREPASS > ${CERT_PATH}/trust-store-credentials
+
+done

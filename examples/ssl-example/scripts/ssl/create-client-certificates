@@ -1,0 +1,70 @@
+#!/bin/sh
+
+
+STOREPASS=${1:-"password"}
+VALIDITY=${2:-365}
+CLIENTS=${3:-"admin"}
+
+#######################################################
+###### GENERATE CLIENT KEYS AND CERTIFICATES #####
+#######################################################
+
+# Generate the key and the certificate for each Kafka broker in the cluster and clients. Generate the key into a
+# keystore called keystore so that you can export and sign it later with CA.
+# The keystore file contains the private key of the certificate; therefore, it needs to be kept safely.
+# Java’s keytool utility is used for this process
+
+for i in $CLIENTS
+do
+
+echo "Generating certificates for client ${i}\n"
+
+CERT_PATH=kafka-certs/${i}
+mkdir -p "${CERT_PATH}"
+
+SAN="DNS:localhost"
+DNAME="C=NL,ST=SouthHolland,L=Rotterdam,O=Company,OU=MyTeam,CN=${i}.client.company.org"
+
+echo "Generating the key and the certificate for client\n"
+keytool -keystore ${CERT_PATH}/keystore.jks -alias ${i} -keyalg RSA -validity $VALIDITY -genkey -storepass $STOREPASS -keypass $STOREPASS -dname $DNAME -ext SAN=$SAN
+
+echo "Adding the generated CA to the truststore so that the brokers can trust in this CA\n"
+echo "yes" | keytool -keystore ${CERT_PATH}/truststore.jks -alias CARoot -importcert -file kafka-certs/ca.cert -storepass $STOREPASS
+
+# Sign the certificate
+echo "Generating certificate from the keystore:\n"
+keytool -keystore ${CERT_PATH}/keystore.jks -alias ${i} -certreq -file ${CERT_PATH}/cert.csr -storepass $STOREPASS
+
+echo "Signing the CSR with the CA:\n"
+openssl x509 -sha256 -req -CA kafka-certs/ca.cert -CAkey kafka-certs/ca.key -in ${CERT_PATH}/cert.csr -out ${CERT_PATH}/signed.cert -days $VALIDITY -CAcreateserial -passin pass:$STOREPASS
+
+echo "Importing both the certificate of the CA and the signed certificate into keystore:\n"
+echo "yes" | keytool -keystore ${CERT_PATH}/keystore.jks -alias CARoot -importcert -file kafka-certs/ca.cert -storepass $STOREPASS
+echo "yes" | keytool -keystore ${CERT_PATH}/keystore.jks -alias ${i} -importcert -file ${CERT_PATH}/signed.cert -storepass $STOREPASS
+
+echo $STOREPASS > ${CERT_PATH}/ssl-key-credentials
+echo $STOREPASS > ${CERT_PATH}/key-store-credentials
+echo $STOREPASS > ${CERT_PATH}/trust-store-credentials
+
+# Export client certificate as pem and as key to use in python (java use jks)
+keytool -export -alias $i -file $i.der -keystore ${CERT_PATH}/keystore.jks -storepass $STOREPASS
+openssl x509 -inform der -in $i.der -out ${CERT_PATH}/certificate.pem
+rm $i.der
+keytool -importkeystore -srckeystore ${CERT_PATH}/keystore.jks -destkeystore keystore.p12 -deststoretype PKCS12 -deststorepass $STOREPASS -srcstorepass $STOREPASS -noprompt
+openssl pkcs12 -in keystore.p12 -nodes -nocerts -out ${CERT_PATH}/certificate.key -passin pass:$STOREPASS
+rm keystore.p12
+
+echo "Generating CA bundle for\n"
+cat ${CERT_PATH}/certificate.pem > ${CERT_PATH}/cabundle.pem
+cat kafka-certs/ca.cert >> ${CERT_PATH}/cabundle.pem
+
+cat <<EOF > ${CERT_PATH}/client.properties
+security.protocol=SSL
+ssl.keystore.location=/etc/kafka/secrets/keystore.jks
+ssl.keystore.password=${STOREPASS}
+ssl.truststore.location=/etc/kafka/secrets/truststore.jks
+ssl.truststore.password=${STOREPASS}
+ssl.key.password=${STOREPASS}
+EOF
+
+done
