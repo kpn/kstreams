@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 from typing import Callable, Set
 from unittest import mock
 
@@ -9,6 +10,115 @@ from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
 from kstreams.streams import stream
 from kstreams.structs import TopicPartitionOffset
+from tests import TimeoutErrorException
+
+
+@pytest.mark.asyncio
+async def test_stream(stream_engine: StreamEngine, consumer_record_factory):
+    topic_name = "local--kstreams"
+    stream_name = "my-stream"
+    value = b"test"
+
+    async def getone(_):
+        return consumer_record_factory(value=value)
+
+    with mock.patch.multiple(
+        Consumer,
+        start=mock.DEFAULT,
+        subscribe=mock.DEFAULT,
+        getone=getone,
+    ):
+
+        @stream_engine.stream(topic_name, name=stream_name)
+        async def stream(cr: ConsumerRecord):
+            assert cr.value == value
+            await asyncio.sleep(0.2)
+
+        assert stream.consumer is None
+        assert stream.topics == [topic_name]
+
+        with contextlib.suppress(TimeoutErrorException):
+            # now it is possible to run a stream directly, so we need
+            # to stop the `forever` consumption
+            await asyncio.wait_for(stream.start(), timeout=0.1)
+
+        assert stream.consumer
+        Consumer.subscribe.assert_called_once_with(
+            topics=[topic_name], listener=stream.rebalance_listener, pattern=None
+        )
+        await stream.stop()
+
+
+@pytest.mark.asyncio
+async def test_stream_multiple_topics(stream_engine: StreamEngine):
+    topics = ["local--hello-kpn", "local--hello-kpn-2"]
+
+    with mock.patch.multiple(
+        Consumer,
+        start=mock.DEFAULT,
+        subscribe=mock.DEFAULT,
+    ):
+
+        @stream_engine.stream(topics, name="my-stream")
+        async def stream(_):
+            ...
+
+        assert stream.topics == topics
+
+        await stream.start()
+        Consumer.subscribe.assert_called_once_with(
+            topics=topics, listener=stream.rebalance_listener, pattern=None
+        )
+
+
+@pytest.mark.asyncio
+async def test_stream_subscribe_topics_pattern(stream_engine: StreamEngine):
+    pattern = "^dev--customer-.*$"
+
+    with mock.patch.multiple(
+        Consumer,
+        start=mock.DEFAULT,
+        subscribe=mock.DEFAULT,
+    ):
+
+        @stream_engine.stream(topics=pattern, subscribe_by_pattern=True)
+        async def stream(_):
+            ...
+
+        assert stream.topics == [pattern]
+        assert stream.subscribe_by_pattern
+
+        await stream.start()
+        Consumer.subscribe.assert_called_once_with(
+            topics=None, listener=stream.rebalance_listener, pattern=pattern
+        )
+
+
+@pytest.mark.asyncio
+async def test_stream_subscribe_topics_only_one_pattern(stream_engine: StreamEngine):
+    """
+    We can use only one pattern, so we use the first one
+    """
+    patterns = ["^dev--customer-.*$", "^acc--customer-.*$"]
+
+    with mock.patch.multiple(
+        Consumer,
+        start=mock.DEFAULT,
+        subscribe=mock.DEFAULT,
+        getone=mock.DEFAULT,
+    ):
+
+        @stream_engine.stream(topics=patterns, subscribe_by_pattern=True)
+        async def stream(_):
+            ...
+
+        assert stream.topics == patterns
+        assert stream.subscribe_by_pattern
+
+        await stream.start()
+        Consumer.subscribe.assert_called_once_with(
+            topics=None, listener=stream.rebalance_listener, pattern=patterns[0]
+        )
 
 
 @pytest.mark.asyncio
@@ -22,17 +132,16 @@ async def test_stream_custom_conf(stream_engine: StreamEngine):
     async def stream(_):
         ...
 
-    stream_instance = stream_engine.get_stream("stream-hello-kpn")
+    with mock.patch.multiple(
+        Consumer, start=mock.DEFAULT, stop=mock.DEFAULT
+    ), mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
+        await stream_engine.start_streams()
 
-    with mock.patch.multiple(Consumer, start=mock.DEFAULT, stop=mock.DEFAULT):
-        with mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
-            await stream_engine.start_streams()
+        # switch the current Task to the one running in background
+        await asyncio.sleep(0.1)
 
-            # switch the current Task to the one running in background
-            await asyncio.sleep(0.1)
-
-            assert stream_instance.consumer._auto_offset_reset == "earliest"
-            assert not stream_instance.consumer._enable_auto_commit
+        assert stream.consumer._auto_offset_reset == "earliest"
+        assert not stream.consumer._enable_auto_commit
 
 
 @pytest.mark.asyncio

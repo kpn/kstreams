@@ -65,6 +65,8 @@ class TestStreamClient:
         if not monitoring_enabled:
             self.stream_engine.monitor = TestMonitor()
 
+        self.create_extra_topics()
+
     def mock_streams(self) -> None:
         streams: List[Stream] = self.stream_engine._streams
         for stream in streams:
@@ -83,7 +85,6 @@ class TestStreamClient:
 
     async def start(self) -> None:
         self.setup_mocks()
-        self.create_extra_topics()
         await self.stream_engine.start()
 
     async def stop(self) -> None:

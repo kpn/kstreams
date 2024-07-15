@@ -63,6 +63,7 @@ if __name__ == "__main__":
 
 - [x] Produce events
 - [x] Consumer events with `Streams`
+- [x] Subscribe to topics by `pattern`
 - [x] `Prometheus` metrics and custom monitoring
 - [x] TestClient
 - [x] Custom Serialization and Deserialization
