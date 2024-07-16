@@ -39,19 +39,6 @@ async def test_add_existing_streams(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
-async def test_add_stream_multiple_topics(stream_engine: StreamEngine):
-    topics = ["local--hello-kpn", "local--hello-kpn-2"]
-
-    @stream_engine.stream(topics, name="my-stream")
-    async def stream(_):
-        pass
-
-    stream_instance = stream_engine.get_stream("my-stream")
-    assert stream_instance == stream
-    assert stream_instance.topics == topics
-
-
-@pytest.mark.asyncio
 async def test_add_stream_as_instance(stream_engine: StreamEngine):
     topics = ["local--hello-kpn", "local--hello-kpn-2"]
 

@@ -1,6 +1,6 @@
 import asyncio
+import contextlib
 import importlib
-import sys
 from typing import Set
 from unittest.mock import Mock, call
 
@@ -14,11 +14,7 @@ from kstreams.test_utils import (
     TestStreamClient,
     TopicManager,
 )
-
-if sys.version_info < (3, 11):
-    TimeoutErrorException = asyncio.TimeoutError
-else:
-    TimeoutErrorException = TimeoutError
+from tests import TimeoutErrorException
 
 topic = "local--kstreams-consumer"
 tp0 = TopicPartition(topic=topic, partition=0)
@@ -202,6 +198,40 @@ async def test_only_consume_topics_with_streams(stream_engine: StreamEngine):
         assert metadata.topic == topic
         assert metadata.partition == 0
         assert metadata.offset == 0
+
+
+@pytest.mark.asyncio
+async def test_consume_events_topics_by_pattern(stream_engine: StreamEngine):
+    """
+    This test shows the possibility to subscribe to multiple topics using a pattern
+    """
+    pattern = "^dev--customer-.*$"
+    customer_invoice_topic = "dev--customer-invoice"
+    customer_profile_topic = "dev--customer-profile"
+    invoice_event = b"invoice-1"
+    profile_event = b"profile-1"
+    customer_id = "1"
+
+    client = TestStreamClient(
+        stream_engine, topics=[customer_invoice_topic, customer_profile_topic]
+    )
+
+    @stream_engine.stream(topics=pattern, subscribe_by_pattern=True)
+    async def stream(cr: ConsumerRecord):
+        if cr.topic == customer_invoice_topic:
+            assert cr.value == invoice_event
+        elif cr.topic == customer_profile_topic:
+            assert cr.value == profile_event
+        else:
+            raise ValueError(f"Invalid topic {cr.topic}")
+
+    async with client:
+        await client.send(customer_invoice_topic, value=invoice_event, key=customer_id)
+        await client.send(customer_profile_topic, value=profile_event, key=customer_id)
+
+        # give some time to consume all the events
+        await asyncio.sleep(0.1)
+        assert TopicManager.all_messages_consumed()
 
 
 @pytest.mark.asyncio
@@ -540,12 +570,10 @@ async def test_streams_consume_events_with_initial_offsets(stream_engine: Stream
         )
         stream_engine.add_stream(stream)
 
-        try:
+        with contextlib.suppress(TimeoutErrorException):
             # now it is possible to run a stream directly, so we need
-            # to stop the `forever` consumetion
+            # to stop the `forever` consumption
             await asyncio.wait_for(stream.start(), timeout=1.0)
-        except TimeoutErrorException:
-            ...
 
         # simulate partitions assigned on rebalance
         await stream.rebalance_listener.on_partitions_assigned(assigned=assignments)
