@@ -1,3 +1,9 @@
+## 0.21.0 (2024-07-16)
+
+### Feat
+
+- subscribe topics by pattern (#199)
+
 ## 0.20.0 (2024-07-04)
 
 ### Feat
