@@ -289,6 +289,33 @@
     Stream
   </a>
   
+    <nav class="md-nav" aria-label="Stream">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.streams.Stream--subscribe-to-a-topic" class="md-nav__link">
+    Subscribe to a topic
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.streams.Stream--subscribe-to-multiple-topics" class="md-nav__link">
+    Subscribe to multiple topics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.streams.Stream--subscribe-to-topics-by-pattern" class="md-nav__link">
+    Subscribe to topics by pattern
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -328,13 +355,6 @@
         <li class="md-nav__item">
   <a href="#stream-crashing" class="md-nav__link">
     Stream crashing
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#consuming-from-multiple-topics" class="md-nav__link">
-    Consuming from multiple topics
   </a>
   
 </li>
@@ -633,6 +653,33 @@
     Stream
   </a>
   
+    <nav class="md-nav" aria-label="Stream">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.streams.Stream--subscribe-to-a-topic" class="md-nav__link">
+    Subscribe to a topic
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.streams.Stream--subscribe-to-multiple-topics" class="md-nav__link">
+    Subscribe to multiple topics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.streams.Stream--subscribe-to-topics-by-pattern" class="md-nav__link">
+    Subscribe to topics by pattern
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -672,13 +719,6 @@
         <li class="md-nav__item">
   <a href="#stream-crashing" class="md-nav__link">
     Stream crashing
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#consuming-from-multiple-topics" class="md-nav__link">
-    Consuming from multiple topics
   </a>
   
 </li>
@@ -909,6 +949,17 @@
           </td>
         </tr>
         <tr>
+          <td><code>subscribe_by_pattern</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Whether subscribe to topics by pattern</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
           <td><code>backend</code></td>
           <td>
                 <code><a class="autorefs autorefs-internal" title="kstreams.backends.Kafka" href="../backends/#kstreams.backends.kafka.Kafka">Kafka</a></code>
@@ -983,23 +1034,22 @@ callbacks when partition are assigned or revoked</p>
         </tr>
     </tbody>
   </table>
-      <div class="admonition example">
+      <h4 id="kstreams.streams.Stream--subscribe-to-a-topic">Subscribe to a topic</h4>
+<div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><span class="filename">Usage</span><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
 
 
-<span class="c1"># here you can add any other AIOKafkaConsumer config</span>
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;my-group-id&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-    <span class="k">await</span> <span class="n">produce</span><span class="p">()</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">loop</span><span class="p">):</span>
@@ -1014,548 +1064,67 @@ callbacks when partition are assigned or revoked</p>
     <span class="p">)</span>
 </code></pre></div>
 </div>
+<h4 id="kstreams.streams.Stream--subscribe-to-multiple-topics">Subscribe to multiple topics</h4>
+<p>Consuming from multiple topics using one <code>stream</code> is possible. A <code>List[str]</code>
+of topics must be provided.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 
-            <details class="quote">
-              <summary>Source code in <code>kstreams/streams.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 32</span>
-<span class="normal"> 33</span>
-<span class="normal"> 34</span>
-<span class="normal"> 35</span>
-<span class="normal"> 36</span>
-<span class="normal"> 37</span>
-<span class="normal"> 38</span>
-<span class="normal"> 39</span>
-<span class="normal"> 40</span>
-<span class="normal"> 41</span>
-<span class="normal"> 42</span>
-<span class="normal"> 43</span>
-<span class="normal"> 44</span>
-<span class="normal"> 45</span>
-<span class="normal"> 46</span>
-<span class="normal"> 47</span>
-<span class="normal"> 48</span>
-<span class="normal"> 49</span>
-<span class="normal"> 50</span>
-<span class="normal"> 51</span>
-<span class="normal"> 52</span>
-<span class="normal"> 53</span>
-<span class="normal"> 54</span>
-<span class="normal"> 55</span>
-<span class="normal"> 56</span>
-<span class="normal"> 57</span>
-<span class="normal"> 58</span>
-<span class="normal"> 59</span>
-<span class="normal"> 60</span>
-<span class="normal"> 61</span>
-<span class="normal"> 62</span>
-<span class="normal"> 63</span>
-<span class="normal"> 64</span>
-<span class="normal"> 65</span>
-<span class="normal"> 66</span>
-<span class="normal"> 67</span>
-<span class="normal"> 68</span>
-<span class="normal"> 69</span>
-<span class="normal"> 70</span>
-<span class="normal"> 71</span>
-<span class="normal"> 72</span>
-<span class="normal"> 73</span>
-<span class="normal"> 74</span>
-<span class="normal"> 75</span>
-<span class="normal"> 76</span>
-<span class="normal"> 77</span>
-<span class="normal"> 78</span>
-<span class="normal"> 79</span>
-<span class="normal"> 80</span>
-<span class="normal"> 81</span>
-<span class="normal"> 82</span>
-<span class="normal"> 83</span>
-<span class="normal"> 84</span>
-<span class="normal"> 85</span>
-<span class="normal"> 86</span>
-<span class="normal"> 87</span>
-<span class="normal"> 88</span>
-<span class="normal"> 89</span>
-<span class="normal"> 90</span>
-<span class="normal"> 91</span>
-<span class="normal"> 92</span>
-<span class="normal"> 93</span>
-<span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span>
-<span class="normal">125</span>
-<span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span>
-<span class="normal">141</span>
-<span class="normal">142</span>
-<span class="normal">143</span>
-<span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
-<span class="normal">153</span>
-<span class="normal">154</span>
-<span class="normal">155</span>
-<span class="normal">156</span>
-<span class="normal">157</span>
-<span class="normal">158</span>
-<span class="normal">159</span>
-<span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span>
-<span class="normal">174</span>
-<span class="normal">175</span>
-<span class="normal">176</span>
-<span class="normal">177</span>
-<span class="normal">178</span>
-<span class="normal">179</span>
-<span class="normal">180</span>
-<span class="normal">181</span>
-<span class="normal">182</span>
-<span class="normal">183</span>
-<span class="normal">184</span>
-<span class="normal">185</span>
-<span class="normal">186</span>
-<span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span>
-<span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
-<span class="normal">227</span>
-<span class="normal">228</span>
-<span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span>
-<span class="normal">233</span>
-<span class="normal">234</span>
-<span class="normal">235</span>
-<span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span>
-<span class="normal">241</span>
-<span class="normal">242</span>
-<span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
-<span class="normal">246</span>
-<span class="normal">247</span>
-<span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
-<span class="normal">255</span>
-<span class="normal">256</span>
-<span class="normal">257</span>
-<span class="normal">258</span>
-<span class="normal">259</span>
-<span class="normal">260</span>
-<span class="normal">261</span>
-<span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span>
-<span class="normal">266</span>
-<span class="normal">267</span>
-<span class="normal">268</span>
-<span class="normal">269</span>
-<span class="normal">270</span>
-<span class="normal">271</span>
-<span class="normal">272</span>
-<span class="normal">273</span>
-<span class="normal">274</span>
-<span class="normal">275</span>
-<span class="normal">276</span>
-<span class="normal">277</span>
-<span class="normal">278</span>
-<span class="normal">279</span>
-<span class="normal">280</span>
-<span class="normal">281</span>
-<span class="normal">282</span>
-<span class="normal">283</span>
-<span class="normal">284</span>
-<span class="normal">285</span>
-<span class="normal">286</span>
-<span class="normal">287</span>
-<span class="normal">288</span>
-<span class="normal">289</span>
-<span class="normal">290</span>
-<span class="normal">291</span>
-<span class="normal">292</span>
-<span class="normal">293</span>
-<span class="normal">294</span>
-<span class="normal">295</span>
-<span class="normal">296</span>
-<span class="normal">297</span>
-<span class="normal">298</span>
-<span class="normal">299</span>
-<span class="normal">300</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Attributes:</span>
-<span class="sd">        name str: Stream name</span>
-<span class="sd">        topics List[str]: List of topics to consume</span>
-<span class="sd">        backend kstreams.backends.Kafka: backend kstreams.backends.kafka.Kafka:</span>
-<span class="sd">            Backend to connect. Default `Kafka`</span>
-<span class="sd">        func Callable[[&quot;Stream&quot;], Awaitable[Any]]: Coroutine fucntion or generator</span>
-<span class="sd">            to be called when an event arrives</span>
-<span class="sd">        config Dict[str, Any]: Stream configuration. Here all the</span>
-<span class="sd">         [properties](https://aiokafka.readthedocs.io/en/stable/api.html#consumer-class)</span>
-<span class="sd">            can be passed in the dictionary</span>
-<span class="sd">        deserializer kstreams.serializers.Deserializer: Deserializer to be used</span>
-<span class="sd">            when an event is consumed</span>
-<span class="sd">        initial_offsets List[kstreams.TopicPartitionOffset]: List of</span>
-<span class="sd">            TopicPartitionOffset that will `seek` the initial offsets to</span>
-<span class="sd">        rebalance_listener kstreams.rebalance_listener.RebalanceListener: Listener</span>
-<span class="sd">            callbacks when partition are assigned or revoked</span>
-
-<span class="sd">    !!! Example</span>
-<span class="sd">        ```python title=&quot;Usage&quot;</span>
-<span class="sd">        import aiorun</span>
-<span class="sd">        from kstreams import create_engine, ConsumerRecord</span>
-
-<span class="sd">        stream_engine = create_engine(title=&quot;my-stream-engine&quot;)</span>
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
 
 
-<span class="sd">        # here you can add any other AIOKafkaConsumer config</span>
-<span class="sd">        @stream_engine.stream(&quot;local--kstreams&quot;, group_id=&quot;de-my-partition&quot;)</span>
-<span class="sd">        async def stream(cr: ConsumerRecord) -&gt; None:</span>
-<span class="sd">            print(f&quot;Event consumed: headers: {cr.headers}, payload: {cr.value}&quot;)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="s2">&quot;local--hello-world&quot;</span><span class="p">],</span>
+    <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;my-group-id&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event from </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<h4 id="kstreams.streams.Stream--subscribe-to-topics-by-pattern">Subscribe to topics by pattern</h4>
+<p>In the following example the stream will subscribe to any topic that matches
+the regex <code>^dev--customer-.*</code>, for example <code>dev--customer-invoice</code> or
+<code>dev--customer-profile</code>. The <code>subscribe_by_pattern</code> flag must be set to <code>True</code>.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
+
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
 
 
-<span class="sd">        async def start():</span>
-<span class="sd">            await stream_engine.start()</span>
-<span class="sd">            await produce()</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span>
+    <span class="n">topics</span><span class="o">=</span><span class="s2">&quot;^dev--customer-.*$&quot;</span><span class="p">,</span>
+    <span class="n">subscribe_by_pattern</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;my-group-id&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="s2">&quot;dev--customer-invoice&quot;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Event from topic dev--customer-invoice&quot;</span>
+    <span class="k">elif</span> <span class="n">cr</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="s2">&quot;dev--customer-profile&quot;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Event from topic dev--customer-profile&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid topic </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
-<span class="sd">        async def shutdown(loop):</span>
-<span class="sd">            await stream_engine.stop()</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">loop</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
 
-<span class="sd">        if __name__ == &quot;__main__&quot;:</span>
-<span class="sd">            aiorun.run(</span>
-<span class="sd">                start(),</span>
-<span class="sd">                stop_on_unhandled_errors=True,</span>
-<span class="sd">                shutdown_callback=shutdown</span>
-<span class="sd">            )</span>
-<span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">start</span><span class="p">(),</span>
+        <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">shutdown</span>
+    <span class="p">)</span>
+</code></pre></div>
+</div>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">topics</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">func</span><span class="p">:</span> <span class="n">StreamFunc</span><span class="p">,</span>
-        <span class="n">backend</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Kafka</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">consumer_class</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Consumer</span><span class="p">]</span> <span class="o">=</span> <span class="n">Consumer</span><span class="p">,</span>
-        <span class="n">name</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">config</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">deserializer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Deserializer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">initial_offsets</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartitionOffset</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">rebalance_listener</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">RebalanceListener</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">middlewares</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">Middleware</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">consumer_class</span> <span class="o">=</span> <span class="n">consumer_class</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Consumer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span> <span class="o">=</span> <span class="n">deserializer</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_processing</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">initial_offsets</span> <span class="o">=</span> <span class="n">initial_offsets</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">seeked_initial_offsets</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span> <span class="o">=</span> <span class="n">rebalance_listener</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">middlewares</span> <span class="o">=</span> <span class="n">middlewares</span> <span class="ow">or</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span> <span class="o">=</span> <span class="n">UdfHandler</span><span class="p">(</span><span class="n">handler</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-
-        <span class="c1"># aiokafka expects topic names as arguments, meaning that</span>
-        <span class="c1"># can receive N topics -&gt; N arguments,</span>
-        <span class="c1"># so we always create a list and then we expand it with *topics</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">topics</span> <span class="o">=</span> <span class="p">[</span><span class="n">topics</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">topics</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">topics</span>
-
-    <span class="k">def</span> <span class="nf">_create_consumer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Consumer</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">BackendNotSet</span><span class="p">(</span><span class="s2">&quot;A backend has not been set for this stream&quot;</span><span class="p">)</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">}</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer_class</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
-            <span class="c1"># Don&#39;t run anymore to prevent new events comming</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
-
-            <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_processing</span><span class="p">:</span>
-                <span class="c1"># Only enter this block when all the events have been</span>
-                <span class="c1"># proccessed in the middleware chain</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Stream consuming from topics </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="si">}</span><span class="s2"> has stopped!!! </span><span class="se">\n\n</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Only create a consumer if it was not previously created</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_consumer</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">topics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="p">,</span> <span class="n">listener</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="p">)</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">offsets</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">):</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">offsets</span><span class="o">=</span><span class="n">offsets</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">getone</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConsumerRecord</span><span class="p">:</span>
-        <span class="n">consumer_record</span><span class="p">:</span> <span class="n">ConsumerRecord</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">getone</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
-
-        <span class="c1"># call deserializer if there is one regarless consumer_record.value</span>
-        <span class="c1"># as the end user might want to do something extra with headers or metadata</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Deserializers will be deprecated in the future, &quot;</span>
-                <span class="s2">&quot;use middlewares instead: https://kpn.github.io/kstreams/middleware/&quot;</span>
-            <span class="p">)</span>
-            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">consumer_record</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">consumer_record</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">getmany</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">partitions</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">timeout_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">max_records</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ConsumerRecord</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get a batch of events from the assigned TopicPartition.</span>
-
-<span class="sd">        Prefetched events are returned in batches by topic-partition.</span>
-<span class="sd">        If messages is not available in the prefetched buffer this method waits</span>
-<span class="sd">        `timeout_ms` milliseconds.</span>
-
-<span class="sd">        Attributes:</span>
-<span class="sd">            partitions List[TopicPartition] | None: The partitions that need</span>
-<span class="sd">                fetching message. If no one partition specified then all</span>
-<span class="sd">                subscribed partitions will be used</span>
-<span class="sd">            timeout_ms int | None: milliseconds spent waiting if</span>
-<span class="sd">                data is not available in the buffer. If 0, returns immediately</span>
-<span class="sd">                with any records that are available currently in the buffer,</span>
-<span class="sd">                else returns empty. Must not be negative.</span>
-<span class="sd">            max_records int | None: The amount of records to fetch.</span>
-<span class="sd">                if `timeout_ms` was defined and reached and the fetched records</span>
-<span class="sd">                has not reach `max_records` then returns immediately</span>
-<span class="sd">                with any records that are available currently in the buffer</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Topic to list of records</span>
-
-<span class="sd">        !!! Example</span>
-<span class="sd">            ```python</span>
-<span class="sd">            @stream_engine.stream(topic, ...)</span>
-<span class="sd">            async def stream(stream: Stream):</span>
-<span class="sd">                while True:</span>
-<span class="sd">                    data = await stream.getmany(max_records=5)</span>
-<span class="sd">                    print(data)</span>
-<span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">partitions</span> <span class="o">=</span> <span class="n">partitions</span> <span class="ow">or</span> <span class="p">[]</span>
-        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">getmany</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
-            <span class="o">*</span><span class="n">partitions</span><span class="p">,</span> <span class="n">timeout_ms</span><span class="o">=</span><span class="n">timeout_ms</span><span class="p">,</span> <span class="n">max_records</span><span class="o">=</span><span class="n">max_records</span>
-        <span class="p">)</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">subscribe</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
-                <span class="c1"># normal use case</span>
-                <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="s2">&quot;Streams with `async for in` loop approach might be deprecated. &quot;</span>
-                    <span class="s2">&quot;Consider migrating to a typing approach.&quot;</span>
-                <span class="p">)</span>
-
-                <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-                <span class="k">await</span> <span class="n">func</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Typing cases</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isasyncgenfunction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">handler</span><span class="p">):</span>
-                    <span class="c1"># Is not an async_generator, then create `await` the func</span>
-                    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_wrapper_with_typing</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">func_wrapper_with_typing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
-            <span class="n">cr</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">getone</span><span class="p">()</span>
-            <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_processing</span><span class="p">:</span>
-                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">seek_to_initial_offsets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeked_initial_offsets</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">assignments</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">assignment</span><span class="p">()</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_offsets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">topicPartitionOffset</span><span class="p">:</span> <span class="n">TopicPartitionOffset</span>
-                <span class="k">for</span> <span class="n">topicPartitionOffset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_offsets</span><span class="p">:</span>
-                    <span class="n">tp</span> <span class="o">=</span> <span class="n">TopicPartition</span><span class="p">(</span>
-                        <span class="n">topic</span><span class="o">=</span><span class="n">topicPartitionOffset</span><span class="o">.</span><span class="n">topic</span><span class="p">,</span>
-                        <span class="n">partition</span><span class="o">=</span><span class="n">topicPartitionOffset</span><span class="o">.</span><span class="n">partition</span><span class="p">,</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">tp</span> <span class="ow">in</span> <span class="n">assignments</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span>
-                            <span class="n">partition</span><span class="o">=</span><span class="n">tp</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">topicPartitionOffset</span><span class="o">.</span><span class="n">offset</span>
-                        <span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="s2">&quot;You are attempting to seek on an TopicPartitionOffset &quot;</span>
-                            <span class="s2">&quot;that isn&#39;t in the consumer assignments. &quot;</span>
-                            <span class="s2">&quot;The code will simply ignore the seek request &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;on this partition. </span><span class="si">{</span><span class="n">tp</span><span class="si">}</span><span class="s2"> is not in the partition &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;assignment. The partition assignment is </span><span class="si">{</span><span class="n">assignments</span><span class="si">}</span><span class="s2">.&quot;</span>
-                        <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">seeked_initial_offsets</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Stream&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Start the kafka Consumer and return an `async_gen` so it can be iterated</span>
-
-<span class="sd">        !!! Example</span>
-<span class="sd">            ```python title=&quot;Usage&quot;</span>
-<span class="sd">            @stream_engine.stream(topic, group_id=group_id, ...)</span>
-<span class="sd">            async def stream(stream):</span>
-<span class="sd">                yield cr.value</span>
-
-
-<span class="sd">            # Iterate the stream:</span>
-<span class="sd">            async with stream as stream_flow:</span>
-<span class="sd">                async for value in stream_flow:</span>
-<span class="sd">                    ...</span>
-<span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting async_gen Stream....&quot;</span><span class="p">)</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="fm">__aexit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stopping async_gen Stream....&quot;</span><span class="p">)</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="fm">__aiter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="fm">__anext__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConsumerRecord</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">cr</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">getone</span><span class="p">()</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">cr</span>
-            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">errors</span><span class="o">.</span><span class="n">ConsumerStoppedError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">StopAsyncIteration</span>  <span class="c1"># noqa: F821</span>
-</code></pre></div></td></tr></table></div>
-            </details>
 
   
 
@@ -1730,15 +1299,6 @@ Traceback<span class="w"> </span><span class="o">(</span>most<span class="w"> </
 <span class="w">    </span>print<span class="o">(</span>f<span class="s2">&quot;Event consumed: headers: {cr.headers}, payload: {cr.payload}&quot;</span><span class="o">)</span>
 AttributeError:<span class="w"> </span><span class="s1">&#39;ConsumerRecord&#39;</span><span class="w"> </span>object<span class="w"> </span>has<span class="w"> </span>no<span class="w"> </span>attribute<span class="w"> </span><span class="s1">&#39;payload&#39;</span>
 </code></pre></div>
-<h2 id="consuming-from-multiple-topics">Consuming from multiple topics</h2>
-<p>Consuming from multiple topics using one <code>stream</code> is possible. A <code>List[str]</code> of topics must be provided.</p>
-<div class="highlight"><span class="filename">Consume from multiple topics</span><pre><span></span><code><span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
-
-
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">([</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="s2">&quot;local--hello-world&quot;</span><span class="p">],</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group&quot;</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed from topic </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</code></pre></div>
 <h2 id="changing-consumer-behavior">Changing consumer behavior</h2>
 <p>Most of the time you will only set the <code>topic</code> and the <code>group_id</code> to the <code>consumer</code>, but sometimes you might want more control over it, for example changing the <code>policy for resetting offsets on OffsetOutOfRange errors</code> or <code>session timeout</code>. To do this, you have to use the same <code>kwargs</code> as the <a href="https://aiokafka.readthedocs.io/en/stable/api.html#aiokafkaconsumer-class">aiokafka consumer</a> API</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># The consumer sends periodic heartbeats every 500 ms</span>
@@ -1895,48 +1455,48 @@ with any records that are available currently in the buffer</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/streams.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span>
-<span class="normal">174</span>
-<span class="normal">175</span>
-<span class="normal">176</span>
-<span class="normal">177</span>
-<span class="normal">178</span>
-<span class="normal">179</span>
-<span class="normal">180</span>
-<span class="normal">181</span>
-<span class="normal">182</span>
-<span class="normal">183</span>
-<span class="normal">184</span>
-<span class="normal">185</span>
-<span class="normal">186</span>
-<span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span>
-<span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span>
-<span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">getmany</span><span class="p">(</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">getmany</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">partitions</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">timeout_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>

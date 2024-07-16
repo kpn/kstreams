@@ -408,6 +408,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#topics-subscribed-by-pattern" class="md-nav__link">
+    Topics subscribed by pattern
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#disabling-monitoring-during-testing" class="md-nav__link">
     Disabling monitoring during testing
   </a>
@@ -522,6 +529,13 @@
         <li class="md-nav__item">
   <a href="#defining-extra-topics" class="md-nav__link">
     Defining extra topics
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#topics-subscribed-by-pattern" class="md-nav__link">
+    Topics subscribed by pattern
   </a>
   
 </li>
@@ -862,6 +876,53 @@ inside the <code>consume</code> is slow we need to add more delay, then it will 
     <span class="n">event</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_event</span><span class="p">(</span><span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;target-topic&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">event</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">value</span>
     <span class="k">assert</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">key</span>
+</code></pre></div>
+<h2 id="topics-subscribed-by-pattern">Topics subscribed by pattern</h2>
+<p>When a <code>Stream</code> is using <code>pattern</code> subscription it is not possible to know before hand how many topics the <code>Stream</code> will consume from.
+To solve this problem the <code>topics</code> must be pre defined using the <code>extra topics</code> features from the <code>TestClient</code>:</p>
+<p>In the following example we have a <code>Stream</code> that will consume from topics that match the regular expression <code>^dev--customer-.*$</code>, for example <code>dev--customer-invoice</code> and <code>dev--customer-profile</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># app.py</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span>
+
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topics</span><span class="o">=</span><span class="s2">&quot;^dev--customer-.*$&quot;</span><span class="p">,</span> <span class="n">subscribe_by_pattern</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="n">customer_invoice_topic</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">invoice_event</span>
+    <span class="k">elif</span> <span class="n">cr</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="n">customer_profile_topic</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">profile_event</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid topic </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Then to test our <code>Stream</code>, we need to pre define the topics:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># test_stream.py</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">kstreams.test_utils</span> <span class="kn">import</span> <span class="n">TestStreamClient</span>
+
+<span class="kn">from</span> <span class="nn">app</span> <span class="kn">import</span> <span class="n">stream_engine</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">test_consume_events_topics_by_pattern</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This test shows the possibility to subscribe to multiple topics using a pattern</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">customer_invoice_topic</span> <span class="o">=</span> <span class="s2">&quot;dev--customer-invoice&quot;</span>
+    <span class="n">customer_profile_topic</span> <span class="o">=</span> <span class="s2">&quot;dev--customer-profile&quot;</span>
+
+    <span class="n">client</span> <span class="o">=</span> <span class="n">TestStreamClient</span><span class="p">(</span>
+        <span class="n">stream_engine</span><span class="p">,</span> <span class="n">topics</span><span class="o">=</span><span class="p">[</span><span class="n">customer_invoice_topic</span><span class="p">,</span> <span class="n">customer_profile_topic</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">customer_invoice_topic</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;invoice-1&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">customer_profile_topic</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;profile-1&quot;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+
+        <span class="c1"># give some time to consume all the events</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">TopicManager</span><span class="o">.</span><span class="n">all_messages_consumed</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="disabling-monitoring-during-testing">Disabling monitoring during testing</h2>
 <p>Monitoring streams and producers is vital for streaming application but it requires extra effort. Sometimes during testing,
