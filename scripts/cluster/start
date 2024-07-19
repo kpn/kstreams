@@ -7,5 +7,7 @@ scripts/cluster/topics/create "local--sse"
 scripts/cluster/topics/create "local--avro-user"
 scripts/cluster/topics/create "local--avro-address"
 scripts/cluster/topics/create "kstreams--dlq-topic"
+scripts/cluster/topics/create "local--customer-invoice"
+scripts/cluster/topics/create "local--customer-profile"
 
 scripts/cluster/logs

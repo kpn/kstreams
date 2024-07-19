@@ -34,6 +34,7 @@ class Stream:
     Attributes:
         name str: Stream name
         topics List[str]: List of topics to consume
+        subscribe_by_pattern bool: Whether subscribe to topics by pattern
         backend kstreams.backends.Kafka: backend kstreams.backends.kafka.Kafka:
             Backend to connect. Default `Kafka`
         func Callable[["Stream"], Awaitable[Any]]: Coroutine fucntion or generator
@@ -48,24 +49,88 @@ class Stream:
         rebalance_listener kstreams.rebalance_listener.RebalanceListener: Listener
             callbacks when partition are assigned or revoked
 
+    ## Subscribe to a topic
+
     !!! Example
-        ```python title="Usage"
+        ```python
         import aiorun
         from kstreams import create_engine, ConsumerRecord
 
         stream_engine = create_engine(title="my-stream-engine")
 
 
-        # here you can add any other AIOKafkaConsumer config
-        @stream_engine.stream("local--kstreams", group_id="de-my-partition")
+        @stream_engine.stream("local--kstreams", group_id="my-group-id")
         async def stream(cr: ConsumerRecord) -> None:
             print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
 
 
         async def start():
             await stream_engine.start()
-            await produce()
 
+
+        async def shutdown(loop):
+            await stream_engine.stop()
+
+
+        if __name__ == "__main__":
+            aiorun.run(
+                start(),
+                stop_on_unhandled_errors=True,
+                shutdown_callback=shutdown
+            )
+        ```
+
+    ## Subscribe to multiple topics
+
+    Consuming from multiple topics using one `stream` is possible. A `List[str]`
+    of topics must be provided.
+
+    !!! Example
+        ```python
+        import aiorun
+        from kstreams import create_engine, ConsumerRecord
+
+        stream_engine = create_engine(title="my-stream-engine")
+
+
+        @stream_engine.stream(
+            ["local--kstreams", "local--hello-world"],
+            group_id="my-group-id",
+        )
+        async def consume(cr: ConsumerRecord) -> None:
+            print(f"Event from {cr.topic}: headers: {cr.headers}, payload: {cr.value}")
+        ```
+
+    ## Subscribe to topics by pattern
+
+    In the following example the stream will subscribe to any topic that matches
+    the regex `^dev--customer-.*`, for example `dev--customer-invoice` or
+    `dev--customer-profile`. The `subscribe_by_pattern` flag must be set to `True`.
+
+    !!! Example
+        ```python
+        import aiorun
+        from kstreams import create_engine, ConsumerRecord
+
+        stream_engine = create_engine(title="my-stream-engine")
+
+
+        @stream_engine.stream(
+            topics="^dev--customer-.*$",
+            subscribe_by_pattern=True,
+            group_id="my-group-id",
+        )
+        async def stream(cr: ConsumerRecord) -> None:
+            if cr.topic == "dev--customer-invoice":
+                print("Event from topic dev--customer-invoice"
+            elif cr.topic == "dev--customer-profile":
+                print("Event from topic dev--customer-profile"
+            else:
+                raise ValueError(f"Invalid topic {cr.topic}")
+
+
+        async def start():
+            await stream_engine.start()
 
         async def shutdown(loop):
             await stream_engine.stop()
@@ -84,6 +149,7 @@ class Stream:
         self,
         topics: typing.Union[typing.List[str], str],
         *,
+        subscribe_by_pattern: bool = False,
         func: StreamFunc,
         backend: typing.Optional[Kafka] = None,
         consumer_class: typing.Type[Consumer] = Consumer,
@@ -108,11 +174,8 @@ class Stream:
         self.rebalance_listener = rebalance_listener
         self.middlewares = middlewares or []
         self.udf_handler = UdfHandler(handler=func, stream=self)
-
-        # aiokafka expects topic names as arguments, meaning that
-        # can receive N topics -> N arguments,
-        # so we always create a list and then we expand it with *topics
         self.topics = [topics] if isinstance(topics, str) else topics
+        self.subscribe_by_pattern = subscribe_by_pattern
 
     def _create_consumer(self) -> Consumer:
         if self.backend is None:
@@ -136,11 +199,49 @@ class Stream:
                 )
 
     def subscribe(self) -> None:
+        """
+        Create Consumer and subscribe to topics
+
+        Subsciptions uses cases:
+
+        Case 1:
+            self.topics Topics is a List, which means that the end user wants to
+            subscribe to multiple topics explicitly:
+
+                Stream(topics=["local--hello-kpn", "local--hello-kpn-2", ...], ...)
+
+        Case 2:
+            self.topics is a string which represents a single topic (explicit)
+            to subscribe:
+
+                Stream(topics="local--hello-kpn", ...)
+
+            It is also possible to use the `subscribe_by_pattern` but in practice
+            it does not have any difference because the pattern will match
+            explicitly the topic name:
+
+                Stream(topics="local--hello-kpn", subscribe_by_pattern=True, ...)
+
+        Case 3:
+            self.topics is a pattern, then we subscribe to N number
+            of topics. The flag `self.subscribe_by_pattern` must be True
+
+                Stream(topics="^dev--customer-.*$", subscribe_by_pattern=True, ...)
+
+        It is important to notice that in `aiokafka` both `topics` and `pattern`
+        can not be used at the same time, so when calling self.consumer.subscribe(...)
+        we set only one of them according to the flag `self.subscribe_by_pattern`.
+        """
+
         if self.consumer is None:
             # Only create a consumer if it was not previously created
             self.consumer = self._create_consumer()
 
-        self.consumer.subscribe(topics=self.topics, listener=self.rebalance_listener)
+        self.consumer.subscribe(
+            topics=self.topics if not self.subscribe_by_pattern else None,
+            listener=self.rebalance_listener,
+            pattern=self.topics[0] if self.subscribe_by_pattern else None,
+        )
 
     async def commit(
         self, offsets: typing.Optional[typing.Dict[TopicPartition, int]] = None
@@ -350,6 +451,7 @@ class UdfHandler:
 def stream(
     topics: typing.Union[typing.List[str], str],
     *,
+    subscribe_by_pattern: bool = False,
     name: typing.Optional[str] = None,
     deserializer: typing.Optional[Deserializer] = None,
     initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
@@ -366,6 +468,7 @@ def stream(
             initial_offsets=initial_offsets,
             rebalance_listener=rebalance_listener,
             middlewares=middlewares,
+            subscribe_by_pattern=subscribe_by_pattern,
             config=kwargs,
         )
         update_wrapper(s, func)

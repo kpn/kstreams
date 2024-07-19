@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Coroutine, Dict, List, Optional, Set, Tuple
+from typing import Any, Coroutine, Dict, List, Optional, Sequence, Set
 
 from kstreams import ConsumerRecord, RebalanceListener, TopicPartition
 from kstreams.clients import Consumer, Producer
@@ -66,7 +66,7 @@ class TestConsumer(Base, Consumer):
 
     def __init__(self, group_id: Optional[str] = None, **kwargs) -> None:
         # copy the aiokafka behavior
-        self.topics: Optional[Tuple[str]] = None
+        self.topics: Optional[Sequence[str]] = None
         self._group_id: Optional[str] = group_id
         self._assignment: List[TopicPartition] = []
         self.partitions_committed: Dict[TopicPartition, int] = {}
@@ -78,11 +78,16 @@ class TestConsumer(Base, Consumer):
     def subscribe(
         self,
         *,
-        topics: Tuple[str],
+        topics: Optional[Sequence[str]] = None,
         listener: RebalanceListener,
-        **kwargs,
+        pattern: Optional[str] = None,
     ) -> None:
         self.topics = topics
+        if topics is None:
+            # then it is a pattern subscription, we need to get the current
+            # topics (pre created) from the topic manager
+            assert pattern
+            topics = TopicManager.get_topics_by_pattern(pattern=pattern)
 
         for topic_name in topics:
             topic, created = TopicManager.get_or_create(topic_name, consumer=self)

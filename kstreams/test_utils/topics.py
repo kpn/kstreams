@@ -1,7 +1,8 @@
 import asyncio
+import re
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import ClassVar, DefaultDict, Dict, Optional, Tuple
+from typing import ClassVar, DefaultDict, Dict, Optional, Sequence, Tuple
 
 from kstreams import ConsumerRecord
 
@@ -89,6 +90,16 @@ class TopicManager:
             "`client async context` or trying to get an event from an empty "
             f"topic {name}. Make sure that the code is inside the async context"
             "and the topic has events."
+        )
+
+    @classmethod
+    def get_topics_by_pattern(cls, pattern: str) -> Sequence[str]:
+        compile_expression = re.compile(pattern)
+
+        return tuple(
+            topic_name
+            for topic_name in cls.topics
+            if compile_expression.match(topic_name)
         )
 
     @classmethod

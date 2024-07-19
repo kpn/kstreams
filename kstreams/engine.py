@@ -384,6 +384,7 @@ class StreamEngine:
         initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
         rebalance_listener: typing.Optional[RebalanceListener] = None,
         middlewares: typing.Optional[typing.List[Middleware]] = None,
+        subscribe_by_pattern: bool = False,
         **kwargs,
     ) -> typing.Callable[[StreamFunc], Stream]:
         def decorator(func: StreamFunc) -> Stream:
@@ -394,6 +395,7 @@ class StreamEngine:
                 initial_offsets=initial_offsets,
                 rebalance_listener=rebalance_listener,
                 middlewares=middlewares,
+                subscribe_by_pattern=subscribe_by_pattern,
                 **kwargs,
             )(func)
             self.add_stream(stream_from_func)
