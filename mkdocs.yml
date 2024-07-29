@@ -62,3 +62,4 @@ markdown_extensions:
 plugins:
   - autorefs
   - mkdocstrings
+  - search
