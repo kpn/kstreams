@@ -16,7 +16,7 @@ from .topics import Topic, TopicManager
 class TestMonitor(PrometheusMonitor):
     __test__ = False
 
-    def start(self, *args, **kwargs) -> None:
+    async def start(self, *args, **kwargs) -> None:
         ...
 
     async def stop(self, *args, **kwargs) -> None:
@@ -65,10 +65,15 @@ class TestStreamClient:
         if not monitoring_enabled:
             self.stream_engine.monitor = TestMonitor()
 
+        self.create_extra_topics()
+
     def mock_streams(self) -> None:
         streams: List[Stream] = self.stream_engine._streams
         for stream in streams:
             stream.consumer_class = self.test_consumer_class
+            # subscribe before entering the test to make sure that the
+            # consumer is created
+            stream.subscribe()
 
     def setup_mocks(self) -> None:
         self.mock_streams()
@@ -80,7 +85,6 @@ class TestStreamClient:
 
     async def start(self) -> None:
         self.setup_mocks()
-        self.create_extra_topics()
         await self.stream_engine.start()
 
     async def stop(self) -> None:

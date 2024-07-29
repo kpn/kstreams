@@ -7,7 +7,7 @@ authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 kstreams = { path = "../../.", develop = true }
-aiorun = "^2023.7.2"
+aiorun = "^2024.5.1"
 dataclasses-avroschema = {version = "^0.56.1", extras = ["faker"]}
 
 [build-system]

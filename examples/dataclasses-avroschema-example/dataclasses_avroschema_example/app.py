@@ -52,7 +52,7 @@ async def start():
     await produce()
 
 
-async def shutdown(loop):
+async def shutdown(loop: asyncio.AbstractEventLoop):
     await stream_engine.stop()
 
 

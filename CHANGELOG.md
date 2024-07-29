@@ -1,3 +1,33 @@
+## 0.21.0 (2024-07-16)
+
+### Feat
+
+- subscribe topics by pattern (#199)
+
+## 0.20.0 (2024-07-04)
+
+### Feat
+
+- StreamEngine hooks on_startup, on_stop, after_startup and after_stop added (#193)
+
+## 0.19.1 (2024-07-03)
+
+### Fix
+
+- always subscribe to topics when a Stream is started. Multiple calls to subscribe do not affect the consumer even though it was already subscribed. (#191)
+
+## 0.19.0 (2024-07-01)
+
+### Feat
+
+- **structured-concurrency**: first step to introduce structured concurrency paradigm. Now StreamEngine will stop on a Stream crash (only when running with aiorun). Closes #60 due to the use of flag `stop_on_unhandled_errors` with aiorun. Related to #162 (#190)
+
+## 0.18.5 (2024-06-20)
+
+### Fix
+
+- stop properly a stream when it crashes from ExceptionMiddleware (#189)
+
 ## 0.18.4 (2024-05-14)
 
 ### Fix

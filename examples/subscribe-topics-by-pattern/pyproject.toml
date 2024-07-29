@@ -1,20 +1,19 @@
 [tool.poetry]
-name = "simple-consumer-example"
+name = "subscribe-topics-by-pattern"
 version = "0.1.0"
 description = ""
-authors = ["Reid Meyer <reid.meyer@kpn.com>"]
+authors = ["Marcos Schroh <schrohm@gmail.com>"]
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-aiorun = "^2022.4.1"
+aiorun = "^2024.5.1"
 kstreams = { path = "../../.", develop = true }
 
-[tool.poetry.dev-dependencies]
-
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 
 [tool.poetry.scripts]
-app = "simple_consumer_example.app:main"
+app = "subscribe_topics_by_pattern.app:main"

@@ -8,7 +8,7 @@ Consuming can be done using `kstreams.Stream`. You only need to decorate a `coro
     options:
         show_root_heading: true
         docstring_section_style: table
-        show_signature_annotations: false
+        show_source: false
         members:
           -  
 
@@ -185,19 +185,6 @@ Traceback (most recent call last):
   File "/Users/Projects/kstreams/examples/fastapi_example/streaming/streams.py", line 9, in stream
     print(f"Event consumed: headers: {cr.headers}, payload: {cr.payload}")
 AttributeError: 'ConsumerRecord' object has no attribute 'payload'
-```
-
-## Consuming from multiple topics
-
-Consuming from multiple topics using one `stream` is possible. A `List[str]` of topics must be provided.
-
-```python title="Consume from multiple topics"
-stream_engine = create_engine(title="my-stream-engine")
-
-
-@stream_engine.stream(["local--kstreams", "local--hello-world"], group_id="example-group")
-async def consume(cr: ConsumerRecord) -> None:
-    print(f"Event consumed from topic {cr.topic}: headers: {cr.headers}, payload: {cr.value}")
 ```
 
 ## Changing consumer behavior

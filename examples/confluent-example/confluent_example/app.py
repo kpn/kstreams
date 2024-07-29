@@ -1,9 +1,12 @@
 import asyncio
+import logging
 
 import aiorun
 
 from .schemas import country_schema, deployment_schema
 from .streaming.streams import stream_engine
+
+logger = logging.getLogger(__name__)
 
 deployment_topic = "local--deployment"
 country_topic = "local--country"
@@ -23,7 +26,7 @@ async def produce():
                 "schema": deployment_schema,
             },
         )
-        print(f"Event produced on topic {deployment_topic}. Metadata: {metadata}")
+        logger.info(f"Event produced on topic {deployment_topic}. Metadata: {metadata}")
 
         metadata = await stream_engine.send(
             country_topic,
@@ -35,7 +38,7 @@ async def produce():
                 "schema": country_schema,
             },
         )
-        print(f"Event produced on topic {country_topic}. Metadata: {metadata}")
+        logger.info(f"Event produced on topic {country_topic}. Metadata: {metadata}")
 
         await asyncio.sleep(3)
 
@@ -45,9 +48,10 @@ async def start():
     await produce()
 
 
-async def shutdown(loop):
+async def shutdown(loop: asyncio.AbstractEventLoop):
     await stream_engine.stop()
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
     aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)

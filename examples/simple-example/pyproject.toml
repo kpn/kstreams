@@ -6,7 +6,7 @@ authors = ["Marcos Schroh <marcos.schroh@kpn.com>, Santiago Fraire <santiago.fra
 
 [tool.poetry.dependencies]
 python = "^3.8"
-aiorun = "^2022.4.1"
+aiorun = "^2024.5.1"
 kstreams = { path = "../../.", develop = true }
 
 [tool.poetry.dev-dependencies]

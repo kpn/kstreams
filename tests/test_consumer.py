@@ -1,3 +1,4 @@
+import asyncio
 from typing import Set
 from unittest import mock
 
@@ -78,13 +79,18 @@ async def test_add_stream_with_rebalance_listener(stream_engine: StreamEngine):
                 ...
 
         await stream_engine.start()
-        await stream_engine.stop()
+
+        # switch the current Task to the one running in background
+        await asyncio.sleep(0.1)
 
         assert my_stream.rebalance_listener == rebalance_listener
         assert rebalance_listener.stream == my_stream
 
         # checking that the subscription has also the rebalance_listener
         assert my_stream.consumer._subscription._listener == rebalance_listener
+
+        await stream_engine.stop()
+        assert not my_stream.running
 
 
 @pytest.mark.asyncio
@@ -95,8 +101,8 @@ async def test_stream_with_default_rebalance_listener():
     with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"), mock.patch(
         "kstreams.clients.aiokafka.AIOKafkaProducer.start"
     ), mock.patch("kstreams.PrometheusMonitor.start") as monitor_start, mock.patch(
-        "kstreams.PrometheusMonitor.stop"
-    ) as monitor_stop:
+        "kstreams.PrometheusMonitor.clean_stream_consumer_metrics"
+    ) as clean_stream_metrics:
         # use this function so we can mock PrometheusMonitor
         stream_engine = create_engine()
 
@@ -106,6 +112,10 @@ async def test_stream_with_default_rebalance_listener():
                 ...
 
         await stream_engine.start()
+
+        # switch the current Task to the one running in background
+        await asyncio.sleep(0.1)
+
         rebalance_listener = my_stream.rebalance_listener
 
         assert isinstance(rebalance_listener, MetricsRebalanceListener)
@@ -118,12 +128,14 @@ async def test_stream_with_default_rebalance_listener():
         await rebalance_listener.on_partitions_revoked(revoked=topic_partitions)
         await rebalance_listener.on_partitions_assigned(assigned=topic_partitions)
 
-        monitor_stop.assert_called_once()
+        # Called once, monitoring should not be stopped on rebalances
+        monitor_start.assert_awaited_once()
 
-        # called twice: When the engine starts and on_partitions_assigned
-        monitor_start.assert_has_calls([mock.call(), mock.call()])
+        # called once on Rebalance with the Stream instance
+        clean_stream_metrics.assert_called_once_with(my_stream)
 
         await stream_engine.stop()
+        assert not my_stream.running
 
 
 @pytest.mark.asyncio
@@ -146,7 +158,9 @@ async def test_stream_manual_commit_rebalance_listener(stream_engine: StreamEngi
                 ...
 
         await stream_engine.start()
-        await stream_engine.stop()
+
+        # switch the current Task to the one running in background
+        await asyncio.sleep(0.1)
 
         rebalance_listener = hello_stream.rebalance_listener
 
@@ -159,4 +173,6 @@ async def test_stream_manual_commit_rebalance_listener(stream_engine: StreamEngi
         await rebalance_listener.on_partitions_revoked(revoked=topic_partitions)
         commit_mock.assert_awaited_once()
 
+        await stream_engine.stop()
         await stream_engine.clean_streams()
+        assert not hello_stream.running

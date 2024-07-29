@@ -132,6 +132,7 @@ async def test_middleware_call_chain_from_stream(
     event_1 = b"batman"
     event_2 = b"joker"
     save_to_db = AsyncMock()
+
     client = TestStreamClient(stream_engine)
 
     middlewares = [
@@ -160,6 +161,8 @@ async def test_middleware_call_chain_from_stream(
     elastic_middleware.call.assert_has_awaits(calls=[call(event_1), call(event_2)])
     s3_middleware.call.assert_has_awaits(calls=[call(event_1), call(event_2)])
 
+    await stream_engine.stop()
+
 
 @pytest.mark.asyncio
 async def test_base_middleware_exception(stream_engine: StreamEngine):
@@ -172,15 +175,14 @@ async def test_base_middleware_exception(stream_engine: StreamEngine):
         name=stream_name,
         middlewares=[middleware.Middleware(middleware.BaseMiddleware)],
     )
-    async def consume(cr: ConsumerRecord):
+    async def stream(cr: ConsumerRecord):
         ...
-
-    my_stream = stream_engine.get_stream(stream_name)
 
     async with client:
         await client.send(topic, value=b"test")
 
-    assert not my_stream.running
+    assert not stream.running
+    assert stream.consumer._closed
 
 
 @pytest.mark.asyncio
@@ -190,12 +192,11 @@ async def test_exception_middleware_consumer_stops(stream_engine: StreamEngine):
     client = TestStreamClient(stream_engine)
 
     @stream_engine.stream(topic, name=stream_name)
-    async def consume(cr: ConsumerRecord):
+    async def stream(cr: ConsumerRecord):
         raise ConsumerStoppedError
-
-    my_stream = stream_engine.get_stream(stream_name)
 
     async with client:
         await client.send(topic, value=b"test")
 
-    assert not my_stream.running
+    assert not stream.running
+    assert stream.consumer._closed

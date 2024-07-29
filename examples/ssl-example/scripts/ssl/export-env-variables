@@ -1,0 +1,9 @@
+#!/bin/sh
+
+echo "Exporting certificates as ENV variables for admin client \n"
+
+export KAFKA_SECURITY_PROTOCOL="SSL"
+export KAFKA_BOOTSTRAP_SERVERS='["localhost:9092"]'
+export KAFKA_SSL_CERT_DATA=$(cat "kafka-certs/admin/certificate.pem")
+export KAFKA_SSL_KEY_DATA=$(cat "kafka-certs/admin/certificate.key")
+export KAFKA_SSL_CABUNDLE_DATA=$(cat "kafka-certs/admin/cabundle.pem")

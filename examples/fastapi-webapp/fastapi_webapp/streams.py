@@ -1,4 +1,8 @@
+import logging
+
 from kstreams import ConsumerRecord, stream
+
+logger = logging.getLogger(__name__)
 
 
 @stream("local--kstream", group_id="kstreams--group-id")

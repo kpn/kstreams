@@ -63,6 +63,7 @@ if __name__ == "__main__":
 
 - [x] Produce events
 - [x] Consumer events with `Streams`
+- [x] Subscribe to topics by `pattern`
 - [x] `Prometheus` metrics and custom monitoring
 - [x] TestClient
 - [x] Custom Serialization and Deserialization
@@ -70,6 +71,7 @@ if __name__ == "__main__":
 - [x] Yield events from streams
 - [x] [Opentelemetry Instrumentation](https://github.com/kpn/opentelemetry-instrumentation-kstreams)
 - [x] Middlewares
+- [x] Hooks (on_startup, on_stop, after_startup, after_stop)
 - [ ] Store (kafka streams pattern)
 - [ ] Stream Join
 - [ ] Windowing

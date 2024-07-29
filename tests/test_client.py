@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import importlib
 from typing import Set
 from unittest.mock import Mock, call
@@ -13,6 +14,7 @@ from kstreams.test_utils import (
     TestStreamClient,
     TopicManager,
 )
+from tests import TimeoutErrorException
 
 topic = "local--kstreams-consumer"
 tp0 = TopicPartition(topic=topic, partition=0)
@@ -196,6 +198,40 @@ async def test_only_consume_topics_with_streams(stream_engine: StreamEngine):
         assert metadata.topic == topic
         assert metadata.partition == 0
         assert metadata.offset == 0
+
+
+@pytest.mark.asyncio
+async def test_consume_events_topics_by_pattern(stream_engine: StreamEngine):
+    """
+    This test shows the possibility to subscribe to multiple topics using a pattern
+    """
+    pattern = "^dev--customer-.*$"
+    customer_invoice_topic = "dev--customer-invoice"
+    customer_profile_topic = "dev--customer-profile"
+    invoice_event = b"invoice-1"
+    profile_event = b"profile-1"
+    customer_id = "1"
+
+    client = TestStreamClient(
+        stream_engine, topics=[customer_invoice_topic, customer_profile_topic]
+    )
+
+    @stream_engine.stream(topics=pattern, subscribe_by_pattern=True)
+    async def stream(cr: ConsumerRecord):
+        if cr.topic == customer_invoice_topic:
+            assert cr.value == invoice_event
+        elif cr.topic == customer_profile_topic:
+            assert cr.value == profile_event
+        else:
+            raise ValueError(f"Invalid topic {cr.topic}")
+
+    async with client:
+        await client.send(customer_invoice_topic, value=invoice_event, key=customer_id)
+        await client.send(customer_profile_topic, value=profile_event, key=customer_id)
+
+        # give some time to consume all the events
+        await asyncio.sleep(0.1)
+        assert TopicManager.all_messages_consumed()
 
 
 @pytest.mark.asyncio
@@ -400,6 +436,66 @@ async def test_e2e_example():
 
 
 @pytest.mark.asyncio
+async def test_repeat_e2e_example():
+    """
+    This test is to show that the same Stream can be tested multiple
+    times and that all the resources must start from scratch on every unittest:
+        1. There must not be events in topics from previous tests
+        2. All extra partitions should be removed from Topics
+        3. Streams on new test must have only the default partitions (0, 1, 2)
+        4. Total events per Topic (asyncio.Queue) must be 0
+    """
+    simple_example = importlib.import_module(
+        "examples.simple-example.simple_example.app"
+    )
+
+    topic_name = simple_example.topic
+    client = TestStreamClient(simple_example.stream_engine)
+
+    # From the previous test, we have produced 5 events
+    # which still they are on memory. This is the application
+    # logic
+    assert simple_example.event_store.total == 5
+
+    # clean the application store
+    simple_example.event_store.clean()
+    assert simple_example.event_store.total == 0
+
+    async with client:
+        topic = TopicManager.get(topic_name)
+        assert topic.is_empty()
+
+        # Even Though the topic is empty, the counter might be not
+        assert topic.total_events == 0
+
+        # check that all default partitions are empty
+        assert topic.total_partition_events[0] == -1
+        assert topic.total_partition_events[1] == -1
+        assert topic.total_partition_events[2] == -1
+
+        # add 1 event to the store
+        metadata = await client.send(topic=topic_name, value=b"add-event")
+
+        # give some time to process the event
+        await asyncio.sleep(0.1)
+        assert simple_example.event_store.total == 1
+        assert metadata.partition == 0
+
+        # remove 1 event from the store
+        metadata = await client.send(
+            topic=topic_name, value=b"remove-event", partition=1
+        )
+
+        # give some time to process the event
+        await asyncio.sleep(0.1)
+        assert simple_example.event_store.total == 0
+        assert metadata.partition == 1
+
+    # check that all events has been consumed
+    assert TopicManager.all_messages_consumed()
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "monitoring_enabled",
     (
@@ -473,11 +569,14 @@ async def test_streams_consume_events_with_initial_offsets(stream_engine: Stream
             ],
         )
         stream_engine.add_stream(stream)
-        await stream.start()
+
+        with contextlib.suppress(TimeoutErrorException):
+            # now it is possible to run a stream directly, so we need
+            # to stop the `forever` consumption
+            await asyncio.wait_for(stream.start(), timeout=1.0)
 
         # simulate partitions assigned on rebalance
         await stream.rebalance_listener.on_partitions_assigned(assigned=assignments)
-
         assert stream.consumer.assignment() == [tp0, tp1, tp2]
 
         assert stream.consumer.last_stable_offset(tp0) == 2
@@ -493,8 +592,7 @@ async def test_streams_consume_events_with_initial_offsets(stream_engine: Stream
         assert stream.consumer.highwater(tp2) == 0
         assert await stream.consumer.position(tp2) == 0
 
-        # We moved to offset 1 on partition 0, then there are
-        # 3 events in the Queue rather than 4
-        assert TopicManager.get(name=topic).size() == 3
+        # Checl all the events were consumed
+        assert not TopicManager.get(name=topic).size()
 
     process.assert_has_calls([call(event1), call(event1), call(event2)], any_order=True)

@@ -9,6 +9,7 @@ Headers = typing.Dict[str, str]
 EncodedHeaders = typing.Sequence[typing.Tuple[str, bytes]]
 StreamFunc = typing.Callable
 NextMiddlewareCall = typing.Callable[[ConsumerRecord], typing.Awaitable[None]]
+EngineHooks = typing.Sequence[typing.Callable[[], typing.Any]]
 
 
 class Send(typing.Protocol):

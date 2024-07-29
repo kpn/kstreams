@@ -353,6 +353,61 @@ async with client:
     assert event.key == key
 ```
 
+## Topics subscribed by pattern
+
+When a `Stream` is using `pattern` subscription it is not possible to know before hand how many topics the `Stream` will consume from.
+To solve this problem the `topics` must be pre defined using the `extra topics` features from the `TestClient`:
+
+In the following example we have a `Stream` that will consume from topics that match the regular expression `^dev--customer-.*$`, for example `dev--customer-invoice` and `dev--customer-profile`.
+
+```python
+# app.py
+from kstreams import ConsumerRecord
+
+stream_engine = create_engine(title="my-stream-engine")
+
+
+@stream_engine.stream(topics="^dev--customer-.*$", subscribe_by_pattern=True)
+async def stream(cr: ConsumerRecord):
+    if cr.topic == customer_invoice_topic:
+        assert cr.value == invoice_event
+    elif cr.topic == customer_profile_topic:
+        assert cr.value == profile_event
+    else:
+        raise ValueError(f"Invalid topic {cr.topic}")
+```
+
+Then to test our `Stream`, we need to pre define the topics:
+
+```python
+# test_stream.py
+import pytest
+from kstreams.test_utils import TestStreamClient
+
+from app import stream_engine
+
+
+@pytest.mark.asyncio
+async def test_consume_events_topics_by_pattern():
+    """
+    This test shows the possibility to subscribe to multiple topics using a pattern
+    """
+    customer_invoice_topic = "dev--customer-invoice"
+    customer_profile_topic = "dev--customer-profile"
+
+    client = TestStreamClient(
+        stream_engine, topics=[customer_invoice_topic, customer_profile_topic]
+    )
+
+    async with client:
+        await client.send(customer_invoice_topic, value=b"invoice-1", key="1")
+        await client.send(customer_profile_topic, value=b"profile-1", key="1")
+
+        # give some time to consume all the events
+        await asyncio.sleep(0.1)
+        assert TopicManager.all_messages_consumed()
+```
+
 ## Disabling monitoring during testing
 
 Monitoring streams and producers is vital for streaming application but it requires extra effort. Sometimes during testing,
