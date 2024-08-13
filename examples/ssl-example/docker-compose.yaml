@@ -2,7 +2,7 @@ version: '3'
 services:
 
   zookeeper:
-    image: "confluentinc/cp-zookeeper:7.3.0"
+    image: "confluentinc/cp-zookeeper:7.7.0"
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -13,7 +13,7 @@ services:
     volumes:
       - ./kafka-certs/server/:/etc/kafka/secrets
       - ./kafka-certs/admin/client.properties:/etc/kafka/config/client.properties
-    image: "confluentinc/cp-kafka:7.3.0"
+    image: "confluentinc/cp-kafka:7.7.0"
     hostname: kafka
     container_name: kafka
     environment:
@@ -42,4 +42,3 @@ services:
       - "29092:29092"
     depends_on:
       - zookeeper
-  
