@@ -11,6 +11,7 @@ from .backends.kafka import Kafka
 from .clients import Consumer, Producer
 from .exceptions import DuplicateStreamException, EngineNotStartedException
 from .middleware import ExceptionMiddleware, Middleware
+from .middleware.udf_middleware import UdfHandler
 from .prometheus.monitor import PrometheusMonitor
 from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import Deserializer, Serializer
@@ -357,10 +358,20 @@ class StreamEngine:
         stream.rebalance_listener.stream = stream  # type: ignore
         stream.rebalance_listener.engine = self  # type: ignore
 
-        if stream.udf_handler.type != UDFType.NO_TYPING:
-            stream.func = self.build_stream_middleware_stack(stream)
+        stream.udf_handler = UdfHandler(
+            next_call=stream.func,
+            send=self.send,
+            stream=stream,
+        )
 
-    def build_stream_middleware_stack(self, stream: Stream) -> NextMiddlewareCall:
+        # NOTE: When `no typing` support is deprecated this check can
+        # be removed
+        if stream.udf_handler.type != UDFType.NO_TYPING:
+            stream.func = self.build_stream_middleware_stack(stream=stream)
+
+    def build_stream_middleware_stack(self, *, stream: Stream) -> NextMiddlewareCall:
+        assert stream.udf_handler, "UdfHandler can not be None"
+
         stream.middlewares = [Middleware(ExceptionMiddleware)] + stream.middlewares
 
         next_call = stream.udf_handler

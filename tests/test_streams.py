@@ -5,7 +5,7 @@ from unittest import mock
 
 import pytest
 
-from kstreams import ConsumerRecord, TopicPartition
+from kstreams import ConsumerRecord, Send, TopicPartition
 from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
 from kstreams.streams import stream
@@ -13,10 +13,10 @@ from kstreams.structs import TopicPartitionOffset
 from tests import TimeoutErrorException
 
 
+# NOTE: remove the test when `no typing` support is deprecated
 @pytest.mark.asyncio
-async def test_stream(stream_engine: StreamEngine, consumer_record_factory):
+async def test_stream_no_typing(stream_engine: StreamEngine, consumer_record_factory):
     topic_name = "local--kstreams"
-    stream_name = "my-stream"
     value = b"test"
 
     async def getone(_):
@@ -29,9 +29,114 @@ async def test_stream(stream_engine: StreamEngine, consumer_record_factory):
         getone=getone,
     ):
 
-        @stream_engine.stream(topic_name, name=stream_name)
+        @stream_engine.stream(topic_name)
+        async def stream(stream_instance):
+            async for cr in stream_instance:
+                assert cr.value == value
+                break
+
+        assert stream.consumer is None
+        assert stream.topics == [topic_name]
+
+        with contextlib.suppress(TimeoutErrorException):
+            # now it is possible to run a stream directly, so we need
+            # to stop the `forever` consumption
+            await asyncio.wait_for(stream.start(), timeout=0.1)
+
+        assert stream.consumer
+        Consumer.subscribe.assert_called_once_with(
+            topics=[topic_name], listener=stream.rebalance_listener, pattern=None
+        )
+        await stream.stop()
+
+
+@pytest.mark.asyncio
+async def test_stream_cr_with_typing(
+    stream_engine: StreamEngine, consumer_record_factory
+):
+    topic_name = "local--kstreams"
+    value = b"test"
+
+    async def getone(_):
+        return consumer_record_factory(value=value)
+
+    with mock.patch.multiple(
+        Consumer,
+        start=mock.DEFAULT,
+        subscribe=mock.DEFAULT,
+        getone=getone,
+    ):
+
+        @stream_engine.stream(topic_name)
         async def stream(cr: ConsumerRecord):
             assert cr.value == value
+            await asyncio.sleep(0.2)
+
+        assert stream.consumer is None
+        assert stream.topics == [topic_name]
+
+        with contextlib.suppress(TimeoutErrorException):
+            # now it is possible to run a stream directly, so we need
+            # to stop the `forever` consumption
+            await asyncio.wait_for(stream.start(), timeout=0.1)
+
+        assert stream.consumer
+        Consumer.subscribe.assert_called_once_with(
+            topics=[topic_name], listener=stream.rebalance_listener, pattern=None
+        )
+        await stream.stop()
+
+
+@pytest.mark.asyncio
+async def test_stream_cr_and_stream_with_typing(
+    stream_engine: StreamEngine, consumer_record_factory
+):
+    value = b"test"
+
+    async def getone(_):
+        return consumer_record_factory(value=value)
+
+    with mock.patch.multiple(
+        Consumer,
+        start=mock.DEFAULT,
+        subscribe=mock.DEFAULT,
+        getone=getone,
+    ):
+
+        @stream_engine.stream("local--kstreams")
+        async def stream(cr: ConsumerRecord, stream: Stream):
+            assert cr.value == value
+            assert isinstance(stream, Stream)
+            await asyncio.sleep(0.2)
+
+        with contextlib.suppress(TimeoutErrorException):
+            # now it is possible to run a stream directly, so we need
+            # to stop the `forever` consumption
+            await asyncio.wait_for(stream.start(), timeout=0.1)
+
+        await stream.stop()
+
+
+@pytest.mark.asyncio
+async def test_stream_all_typing(stream_engine: StreamEngine, consumer_record_factory):
+    topic_name = "local--kstreams"
+    value = b"test"
+
+    async def getone(_):
+        return consumer_record_factory(value=value)
+
+    with mock.patch.multiple(
+        Consumer,
+        start=mock.DEFAULT,
+        subscribe=mock.DEFAULT,
+        getone=getone,
+    ):
+
+        @stream_engine.stream(topic_name)
+        async def stream(cr: ConsumerRecord, send: Send, stream: Stream):
+            assert cr.value == value
+            assert isinstance(stream, Stream)
+            assert send == stream_engine.send
             await asyncio.sleep(0.2)
 
         assert stream.consumer is None

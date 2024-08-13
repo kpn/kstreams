@@ -11,6 +11,7 @@ from .rebalance_listener import (
 from .streams import Stream, stream
 from .structs import TopicPartitionOffset
 from .test_utils import TestStreamClient
+from .types import Send
 
 __all__ = [
     "Consumer",
@@ -22,6 +23,7 @@ __all__ = [
     "MetricsRebalanceListener",
     "ManualCommitRebalanceListener",
     "RebalanceListener",
+    "Send",
     "Stream",
     "stream",
     "ConsumerRecord",

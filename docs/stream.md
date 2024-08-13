@@ -12,39 +12,55 @@ Consuming can be done using `kstreams.Stream`. You only need to decorate a `coro
         members:
           -  
 
-## Dependency Injection and typing
+## Dependency Injection
 
-The old way to itereate over a stream is with the `async for _ in stream` loop. The iterable approach works but in most cases end users are interested only in the `ConsumerRecord` and not in the `stream`, for this reason now it is possible to remove the `loop` and every time that a new event is in the stream the `coroutine` function defined by the end user will ba `awaited`. If the `stream` is also needed, for example because `manual` commit is enabled then you can also add the `stream` as an argument in the coroutine.
+The old way to itereate over a stream is with the `async for _ in stream` loop. The iterable approach works but in most cases end users are interested only in the `ConsumerRecord`,
+for this reason it is possible to remove the `async for loop` using proper `typing hints`. The available `typing hints` are:
 
-=== "Use only the ConsumerRecord"
+- `ConsumerRecord`: The `aiokafka` ConsumerRecord that will be received every time that a new event is in the `Stream`
+- `Stream`: The `Stream` object that is subscribed to the topic/s. Useful when `manual` commit is enabled or when other `Stream` operations are needed
+- `Send`: Coroutine to produce events. The same as `stream_engine.send(...)`
+
+if you use `type hints` then every time that a new event is in the stream the `coroutine` function defined by the end user will ba `awaited` with the specified types
+
+=== "ConsumerRecord"
     ```python
-    @stream_engine.stream(topic, name="my-stream")
+    @stream_engine.stream(topic)
     async def my_stream(cr: ConsumerRecord):
-        save_to_db(cr.value)
+        print(cr.value)
     ```
 
-=== "Use ConsumerRecord and Stream"
+=== "ConsumerRecord and Stream"
     ```python
-    @stream_engine.stream(topic, name="my-stream", enable_auto_commit=False)
+    @stream_engine.stream(topic, enable_auto_commit=False)
     async def my_stream(cr: ConsumerRecord, stream: Stream):
-        save_to_db(cr.value)
+        print(cr.value)
         await stream.commit()
+    ```
+
+=== "ConsumerRecord, Stream and Send"
+    ```python
+    @stream_engine.stream(topic, enable_auto_commit=False)
+    async def my_stream(cr: ConsumerRecord, stream: Stream, send: Send):
+        print(cr.value)
+        await stream.commit()
+        await send("sink-to-elastic-topic", value=cr.value)
     ```
 
 === "Old fashion"
     ```python
-    @stream_engine.stream(topic, name="my-stream")
+    @stream_engine.stream(topic)
     async def consume(stream):  # you can specify the type but it will be the same result
         async for cr in stream:
-            save_to_db(cr.value)
+            print(cr.value)
             # you can do something with the stream as well!!
     ```
 
-!!! note
-    A proper typing is required in order to remove the `async for in` loop. The argument order is also important, this might change in the future.
+!!! Note
+    The type arguments can be in `any` order. This might change in the future.
 
-!!! note
-    It is still possible to use the `async for in` loop, but it might be removed in the future.
+!!! warning
+    It is still possible to use the `async for in` loop, but it might be removed in the future. Migrate to the typing approach
 
 ## Creating a Stream instance
 

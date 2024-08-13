@@ -1,7 +1,6 @@
 import asyncio
 import inspect
 import logging
-import sys
 import typing
 import uuid
 from functools import update_wrapper
@@ -14,25 +13,19 @@ from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
 from .clients import Consumer
-from .middleware import Middleware
+from .middleware import Middleware, udf_middleware
 from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
-from .streams_utils import UDFType, inspect_udf
+from .streams_utils import UDFType
 from .types import StreamFunc
 
 logger = logging.getLogger(__name__)
 
 
-if sys.version_info < (3, 10):
-
-    async def anext(async_gen: typing.AsyncGenerator):
-        return await async_gen.__anext__()
-
-
 class Stream:
     """
     Attributes:
-        name str: Stream name
+        name Optional[str]: Stream name. Default is a generated uuid4
         topics List[str]: List of topics to consume
         subscribe_by_pattern bool: Whether subscribe to topics by pattern
         backend kstreams.backends.Kafka: backend kstreams.backends.kafka.Kafka:
@@ -173,7 +166,7 @@ class Stream:
         self.seeked_initial_offsets = False
         self.rebalance_listener = rebalance_listener
         self.middlewares = middlewares or []
-        self.udf_handler = UdfHandler(handler=func, stream=self)
+        self.udf_handler: typing.Optional[udf_middleware.UdfHandler] = None
         self.topics = [topics] if isinstance(topics, str) else topics
         self.subscribe_by_pattern = subscribe_by_pattern
 
@@ -254,7 +247,7 @@ class Stream:
         # call deserializer if there is one regarless consumer_record.value
         # as the end user might want to do something extra with headers or metadata
         if self.deserializer is not None:
-            logger.warn(
+            logger.warning(
                 "Deserializers will be deprecated in the future, "
                 "use middlewares instead: https://kpn.github.io/kstreams/middleware/"
             )
@@ -315,20 +308,21 @@ class Stream:
             await self.consumer.start()
             self.running = True
 
-            if self.udf_handler.type == UDFType.NO_TYPING:
-                # normal use case
-                logging.warn(
-                    "Streams with `async for in` loop approach might be deprecated. "
-                    "Consider migrating to a typing approach."
-                )
+            if self.udf_handler is not None:
+                if self.udf_handler.type == UDFType.NO_TYPING:
+                    # normal use case
+                    logging.warning(
+                        "Streams with `async for in` loop approach might "
+                        "be deprecated. Consider migrating to a typing approach."
+                    )
 
-                func = self.udf_handler.handler(self)
-                await func
-            else:
-                # Typing cases
-                if not inspect.isasyncgenfunction(self.udf_handler.handler):
-                    # Is not an async_generator, then create `await` the func
-                    await self.func_wrapper_with_typing()
+                    func = self.udf_handler.next_call(self)
+                    await func
+                else:
+                    # Typing cases
+                    if not inspect.isasyncgenfunction(self.udf_handler.next_call):
+                        # Is not an async_generator, then create `await` the func
+                        await self.func_wrapper_with_typing()
 
         return None
 
@@ -394,58 +388,14 @@ class Stream:
         try:
             cr = await self.getone()
 
-            if self.udf_handler.type == UDFType.NO_TYPING:
+            if (
+                self.udf_handler is not None
+                and self.udf_handler.type == UDFType.NO_TYPING
+            ):
                 return cr
             return await self.func(cr)
         except errors.ConsumerStoppedError:
             raise StopAsyncIteration  # noqa: F821
-
-
-class UdfHandler:
-    def __init__(
-        self,
-        *,
-        handler: StreamFunc,
-        stream: Stream,
-    ) -> None:
-        self.handler = handler
-        self.stream = stream
-        self.type = inspect_udf(self.handler, Stream)
-
-    def get_udf_params(self, cr: ConsumerRecord) -> typing.Tuple:
-        if self.type == UDFType.CR_ONLY_TYPING:
-            return (cr,)
-        return (
-            cr,
-            self.stream,
-        )
-
-    async def __call__(self, cr: ConsumerRecord) -> typing.Any:
-        """
-        Call the coroutine `async def my_function(...)` defined by the end user
-        in a proper way according to its parameters. The `handler` is the
-        coroutine defined by the user.
-
-        Use cases:
-            1. UDFType.CR_ONLY_TYPING: Only ConsumerRecord with typing
-
-            @stream_engine.stream(topic, name="my-stream")
-                async def consume(cr: ConsumerRecord):
-                    ...
-
-            2. UDFType.ALL_TYPING: ConsumerRecord and Stream with typing.
-                The order is important as they are arguments and not kwargs
-
-            @stream_engine.stream(topic, name="my-stream")
-                async def consume(cr: ConsumerRecord, stream: Stream):
-                    ...
-
-        """
-        params = self.get_udf_params(cr)
-
-        if inspect.isasyncgenfunction(self.handler):
-            return await anext(self.handler(*params))
-        return await self.handler(*params)
 
 
 def stream(
