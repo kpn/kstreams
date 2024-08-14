@@ -1,7 +1,7 @@
 version: '3'
 services:
   zookeeper:
-    image: "confluentinc/cp-zookeeper:7.0.0"
+    image: "confluentinc/cp-zookeeper:7.7.0"
     hostname: zookeeper
     container_name: kstream_zookeeper
     ports:
@@ -9,7 +9,7 @@ services:
     environment:
       - ZOOKEEPER_CLIENT_PORT=32181
   kafka:
-    image: confluentinc/cp-kafka:7.0.0
+    image: confluentinc/cp-kafka:7.7.0
     hostname: kafka
     container_name: kstream_kafka
     ports:
