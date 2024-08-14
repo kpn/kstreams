@@ -1,3 +1,9 @@
+## 0.22.0 (2024-08-14)
+
+### Feat
+
+- add Send type hint parameter to udf when a Stream is defined (#202)
+
 ## 0.21.0 (2024-07-16)
 
 ### Feat
