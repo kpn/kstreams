@@ -710,8 +710,7 @@ To override it per Stream, you can provide one per Stream</p>
 
             <details class="quote">
               <summary>Source code in <code>kstreams/engine.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 26</span>
-<span class="normal"> 27</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 27</span>
 <span class="normal"> 28</span>
 <span class="normal"> 29</span>
 <span class="normal"> 30</span>
@@ -1089,7 +1088,18 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="normal">402</span>
 <span class="normal">403</span>
 <span class="normal">404</span>
-<span class="normal">405</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        backend kstreams.backends.Kafka: Backend to connect. Default `Kafka`</span>
@@ -1423,10 +1433,20 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="n">stream</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>  <span class="c1"># type: ignore</span>
         <span class="n">stream</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span>  <span class="c1"># type: ignore</span>
 
-        <span class="k">if</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
-            <span class="n">stream</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_stream_middleware_stack</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span> <span class="o">=</span> <span class="n">UdfHandler</span><span class="p">(</span>
+            <span class="n">next_call</span><span class="o">=</span><span class="n">stream</span><span class="o">.</span><span class="n">func</span><span class="p">,</span>
+            <span class="n">send</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">,</span>
+            <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>
+        <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">build_stream_middleware_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NextMiddlewareCall</span><span class="p">:</span>
+        <span class="c1"># NOTE: When `no typing` support is deprecated this check can</span>
+        <span class="c1"># be removed</span>
+        <span class="k">if</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
+            <span class="n">stream</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_stream_middleware_stack</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">build_stream_middleware_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NextMiddlewareCall</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span><span class="p">,</span> <span class="s2">&quot;UdfHandler can not be None&quot;</span>
+
         <span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span><span class="n">Middleware</span><span class="p">(</span><span class="n">ExceptionMiddleware</span><span class="p">)]</span> <span class="o">+</span> <span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span>
 
         <span class="n">next_call</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span>
@@ -1609,8 +1629,7 @@ encode the event</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/engine.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 90</span>
-<span class="normal"> 91</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 91</span>
 <span class="normal"> 92</span>
 <span class="normal"> 93</span>
 <span class="normal"> 94</span>
@@ -1660,7 +1679,8 @@ encode the event</p>
 <span class="normal">138</span>
 <span class="normal">139</span>
 <span class="normal">140</span>
-<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">send</span><span class="p">(</span>
+<span class="normal">141</span>
+<span class="normal">142</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">send</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1783,8 +1803,7 @@ standard functions, or async functions.</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/engine.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">157</span>
-<span class="normal">158</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">158</span>
 <span class="normal">159</span>
 <span class="normal">160</span>
 <span class="normal">161</span>
@@ -1816,7 +1835,8 @@ standard functions, or async functions.</p>
 <span class="normal">187</span>
 <span class="normal">188</span>
 <span class="normal">189</span>
-<span class="normal">190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_startup</span><span class="p">(</span>
+<span class="normal">190</span>
+<span class="normal">191</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_startup</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
@@ -1916,8 +1936,7 @@ standard functions, or async functions.</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/engine.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">192</span>
-<span class="normal">193</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">193</span>
 <span class="normal">194</span>
 <span class="normal">195</span>
 <span class="normal">196</span>
@@ -1944,7 +1963,8 @@ standard functions, or async functions.</p>
 <span class="normal">217</span>
 <span class="normal">218</span>
 <span class="normal">219</span>
-<span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_stop</span><span class="p">(</span>
+<span class="normal">220</span>
+<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_stop</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
@@ -2039,8 +2059,7 @@ standard functions, or async functions.</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/engine.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">222</span>
-<span class="normal">223</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">223</span>
 <span class="normal">224</span>
 <span class="normal">225</span>
 <span class="normal">226</span>
@@ -2067,7 +2086,8 @@ standard functions, or async functions.</p>
 <span class="normal">247</span>
 <span class="normal">248</span>
 <span class="normal">249</span>
-<span class="normal">250</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">after_startup</span><span class="p">(</span>
+<span class="normal">250</span>
+<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">after_startup</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
@@ -2161,8 +2181,7 @@ standard functions, or async functions.</p>
 
           <details class="quote">
             <summary>Source code in <code>kstreams/engine.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">252</span>
-<span class="normal">253</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">253</span>
 <span class="normal">254</span>
 <span class="normal">255</span>
 <span class="normal">256</span>
@@ -2188,7 +2207,8 @@ standard functions, or async functions.</p>
 <span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
-<span class="normal">279</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">after_stop</span><span class="p">(</span>
+<span class="normal">279</span>
+<span class="normal">280</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">after_stop</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
