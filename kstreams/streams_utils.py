@@ -1,15 +1,16 @@
 import enum
 import inspect
-from typing import Any, Callable
+from typing import List
+
+# NOTE: remove this module when Stream with `no typing` support is deprecated
 
 
 class UDFType(str, enum.Enum):
     NO_TYPING = "NO_TYPING"
-    CR_ONLY_TYPING = "CR_ONLY_TYPING"
-    ALL_TYPING = "ALL_TYPING"
+    WITH_TYPING = "WITH_TYPING"
 
 
-def inspect_udf(func: Callable, a_type: Any) -> UDFType:
+def setup_type(params: List[inspect.Parameter]) -> UDFType:
     """
     Inspect the user defined function (coroutine) to get the  proper way to call it
 
@@ -33,33 +34,27 @@ def inspect_udf(func: Callable, a_type: Any) -> UDFType:
                     for cr in stream:
                         ...
 
-        2. Using only the ConsumerRecord (it must be used with typing)
+        2. Using `typing hints`. This can include: ConsumerRecord, Stream and Send.
+            Any combination of the `typing hints` is also possible
 
             @stream_engine.stream(topic, name="my-stream")
-                async def consume(cr: ConsumerRecord):
-                    ...
-
-        3. Using ConsumerRecord and Stream, both with typing.
-            The order is important as they are arguments and not kwargs
+            async def consume(cr: ConsumerRecord):
+                ...
 
             @stream_engine.stream(topic, name="my-stream")
-                async def consume(cr: ConsumerRecord, stream: Stream):
-                    ...
+            async def consume(cr: ConsumerRecord, stream: Stream):
+                ...
+
+            @stream_engine.stream(topic, name="my-stream")
+            async def consume(cr: ConsumerRecord, stream: Stream, send: Send):
+                ...
     """
-    signature = inspect.signature(func)
+    from .streams import Stream
 
-    # order is important as there are not kwargs
-    parameters = list(signature.parameters.values())
+    first_annotation = params[0].annotation
 
-    if len(parameters) == 1:
-        # use case 1 or 2
-        first_parameter = parameters[0]
-        if first_parameter.annotation in (inspect._empty, a_type):
-            # use case 1
-            return UDFType.NO_TYPING
-        else:
-            # use case 2
-            return UDFType.CR_ONLY_TYPING
-    else:
-        # use case 3
-        return UDFType.ALL_TYPING
+    if first_annotation in (inspect._empty, Stream):
+        # use case 1 NO_TYPING
+        return UDFType.NO_TYPING
+    # typing cases
+    return UDFType.WITH_TYPING
