@@ -1,3 +1,9 @@
+## 0.22.1 (2024-08-28)
+
+### Fix
+
+- check whether Stream is running when TestStreamClient is leaving the context. This allows to send more events after a Stream has crashed and still the TestStreamClient will be able to leave the context without hanging (#204)
+
 ## 0.22.0 (2024-08-14)
 
 ### Feat

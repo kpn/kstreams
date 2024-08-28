@@ -657,23 +657,25 @@ files = [
 
 [[package]]
 name = "mkdocstrings"
-version = "0.22.0"
+version = "0.25.2"
 description = "Automatic documentation from sources, for MkDocs."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "mkdocstrings-0.22.0-py3-none-any.whl", hash = "sha256:2d4095d461554ff6a778fdabdca3c00c468c2f1459d469f7a7f622a2b23212ba"},
-    {file = "mkdocstrings-0.22.0.tar.gz", hash = "sha256:82a33b94150ebb3d4b5c73bab4598c3e21468c79ec072eff6931c8f3bfc38256"},
+    {file = "mkdocstrings-0.25.2-py3-none-any.whl", hash = "sha256:9e2cda5e2e12db8bb98d21e3410f3f27f8faab685a24b03b06ba7daa5b92abfc"},
+    {file = "mkdocstrings-0.25.2.tar.gz", hash = "sha256:5cf57ad7f61e8be3111a2458b4e49c2029c9cb35525393b179f9c916ca8042dc"},
 ]
 
 [package.dependencies]
+click = ">=7.0"
 importlib-metadata = {version = ">=4.6", markers = "python_version < \"3.10\""}
 Jinja2 = ">=2.11.1"
 Markdown = ">=3.3"
 MarkupSafe = ">=1.1"
-mkdocs = ">=1.2"
+mkdocs = ">=1.4"
 mkdocs-autorefs = ">=0.3.1"
 mkdocstrings-python = {version = ">=0.5.2", optional = true, markers = "extra == \"python\""}
+platformdirs = ">=2.2.0"
 pymdown-extensions = ">=6.3"
 typing-extensions = {version = ">=4.1", markers = "python_version < \"3.10\""}
 
@@ -1494,4 +1496,4 @@ test = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-it
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "f0d0b6091ee084bb57b0ffd8e3d4efa3b9c7d935e8c90d4b7bfbb92ad448e39b"
+content-hash = "f271532d2420dea58c00431525d5a31ec962486d3daf292e508205e652bdcb3c"
