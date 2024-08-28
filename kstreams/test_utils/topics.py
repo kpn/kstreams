@@ -18,7 +18,7 @@ class Topic:
     )
     total_events: int = 0
     # for now we assumed that 1 streams is connected to 1 topic
-    consumer: Optional["test_clients.Consumer"] = None
+    consumer: Optional[test_clients.Consumer] = None
 
     async def put(self, event: ConsumerRecord) -> None:
         await self.queue.put(event)
@@ -59,9 +59,13 @@ class Topic:
     @property
     def consumed(self) -> bool:
         """
-        We need to check if the Topic has a Consumer and if there are messages in it
+        Check whetner Topic is empty or a Consumer is running
         """
-        return self.consumer is None or self.is_empty()
+        return self.is_empty() or not self.is_consumer_running
+
+    @property
+    def is_consumer_running(self) -> bool:
+        return self.consumer is not None and not self.consumer._closed
 
     def __str__(self) -> str:
         return self.name

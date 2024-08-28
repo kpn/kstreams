@@ -329,6 +329,40 @@ async def test_clean_up_events(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
+async def test_exit_context_after_stream_crashing(stream_engine: StreamEngine):
+    """
+    Check that when a Stream crashes after consuming 1 event it stops,
+    then the TestStreamClient should be able to leave the context even though
+    more events were send to the topic.
+    """
+    topic = "kstreams--local"
+    value = b'{"message": "Hello world!"}'
+    client = TestStreamClient(stream_engine=stream_engine)
+
+    @stream_engine.stream(topic)
+    async def stream(cr: ConsumerRecord):
+        raise ValueError(f"Invalid topic {cr.topic}")
+
+    async with client:
+        topic_instance = TopicManager.get(topic)
+        await client.send(topic, value=value)
+
+        # Allow the event loop to switch context
+        await asyncio.sleep(1e-10)
+        assert topic_instance.size() == 0
+
+        # send another event to the topic, but the
+        # stream is already daed
+        await client.send(topic, value=value)
+        assert topic_instance.size() == 1
+
+    # From TopicManager point of view all events were consumed
+    # because there are not active Streams for the current topic,
+    # even though the topic `kstreams--local` is not empty
+    assert TopicManager.all_messages_consumed()
+
+
+@pytest.mark.asyncio
 async def test_partitions_for_topic(stream_engine: StreamEngine):
     topic_name = "local--kstreams"
     value = b'{"message": "Hello world!"}'
