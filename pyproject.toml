@@ -65,11 +65,8 @@ exclude = '''
 '''
 
 [tool.commitizen]
-version = "0.22.1"
+version_provider = "poetry"
 tag_format = "$version"
-version_files = [
-    "pyproject.toml:version",
-]
 update_changelog_on_bump = true
 major_version_zero = true
 
