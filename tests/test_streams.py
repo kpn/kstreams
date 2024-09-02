@@ -315,7 +315,7 @@ async def test_stream_decorates_properly(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
-async def test_no_recreate_consumer_on_re_start_stream(
+async def test_recreate_consumer_on_re_start_stream(
     stream_engine: StreamEngine, consumer_record_factory
 ):
     topic_name = "local--kstreams"
@@ -340,7 +340,7 @@ async def test_no_recreate_consumer_on_re_start_stream(
         consumer = stream.consumer
         await stream.stop()
         await stream.start()
-        assert consumer is stream.consumer
+        assert consumer is not stream.consumer
 
 
 @pytest.mark.asyncio

@@ -95,11 +95,11 @@ middlewares = [
             raise ValueError("Joker received...")
 ```
 
-## Middleware by default
-
-Kstreams includes one middleware by default, `ExceptionMiddleware`. This middleware adds exception handlers, for particular types of expected exception cases, for example when the `Consumer` stops (kafka disconnects), user presses `CTRL+C` or any other exception that could cause the `stream` to crash.
+## Default Middleware
 
 ::: kstreams.middleware.middleware.ExceptionMiddleware
+    options:
+        show_bases: false
 
 ## Middleware chain
 

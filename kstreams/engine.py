@@ -17,7 +17,7 @@ from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import Deserializer, Serializer
 from .streams import Stream, StreamFunc
 from .streams import stream as stream_func
-from .streams_utils import UDFType
+from .streams_utils import StreamErrorPolicy, UDFType
 from .types import EngineHooks, Headers, NextMiddlewareCall
 from .utils import encode_headers, execute_hooks
 
@@ -342,7 +342,9 @@ class StreamEngine:
 
         return stream
 
-    def add_stream(self, stream: Stream) -> None:
+    def add_stream(
+        self, stream: Stream, error_policy: StreamErrorPolicy = StreamErrorPolicy.STOP
+    ) -> None:
         if self.exist_stream(stream.name):
             raise DuplicateStreamException(name=stream.name)
         stream.backend = self.backend
@@ -367,12 +369,18 @@ class StreamEngine:
         # NOTE: When `no typing` support is deprecated this check can
         # be removed
         if stream.udf_handler.type != UDFType.NO_TYPING:
-            stream.func = self.build_stream_middleware_stack(stream=stream)
+            stream.func = self.build_stream_middleware_stack(
+                stream=stream, error_policy=error_policy
+            )
 
-    def build_stream_middleware_stack(self, *, stream: Stream) -> NextMiddlewareCall:
+    def build_stream_middleware_stack(
+        self, *, stream: Stream, error_policy: StreamErrorPolicy
+    ) -> NextMiddlewareCall:
         assert stream.udf_handler, "UdfHandler can not be None"
 
-        stream.middlewares = [Middleware(ExceptionMiddleware)] + stream.middlewares
+        stream.middlewares = [
+            Middleware(ExceptionMiddleware, engine=self, error_policy=error_policy),
+        ] + stream.middlewares
 
         next_call = stream.udf_handler
         for middleware, options in reversed(stream.middlewares):
@@ -382,9 +390,12 @@ class StreamEngine:
         return next_call
 
     async def remove_stream(self, stream: Stream) -> None:
+        consumer = stream.consumer
         self._streams.remove(stream)
         await stream.stop()
-        self.monitor.clean_stream_consumer_metrics(stream)
+
+        if consumer is not None:
+            self.monitor.clean_stream_consumer_metrics(consumer=consumer)
 
     def stream(
         self,
@@ -396,6 +407,7 @@ class StreamEngine:
         rebalance_listener: typing.Optional[RebalanceListener] = None,
         middlewares: typing.Optional[typing.List[Middleware]] = None,
         subscribe_by_pattern: bool = False,
+        error_policy: StreamErrorPolicy = StreamErrorPolicy.STOP,
         **kwargs,
     ) -> typing.Callable[[StreamFunc], Stream]:
         def decorator(func: StreamFunc) -> Stream:
@@ -409,7 +421,7 @@ class StreamEngine:
                 subscribe_by_pattern=subscribe_by_pattern,
                 **kwargs,
             )(func)
-            self.add_stream(stream_from_func)
+            self.add_stream(stream_from_func, error_policy=error_policy)
 
             return stream_from_func
 

@@ -1,12 +1,15 @@
 import asyncio
 import logging
-from typing import Set
+import typing
 
 from aiokafka.abc import ConsumerRebalanceListener
 
 from kstreams import TopicPartition
 
 logger = logging.getLogger(__name__)
+
+if typing.TYPE_CHECKING:
+    from kstreams import Stream, StreamEngine  # pragma: no cover
 
 
 # Can not use a Protocol here because aiokafka forces to have a concrete instance
@@ -49,11 +52,11 @@ class RebalanceListener(ConsumerRebalanceListener):
     """
 
     def __init__(self) -> None:
-        self.stream = None
+        self.stream: typing.Optional["Stream"] = None
         # engine added so it can react on rebalance events
-        self.engine = None
+        self.engine: typing.Optional["StreamEngine"] = None
 
-    async def on_partitions_revoked(self, revoked: Set[TopicPartition]) -> None:
+    async def on_partitions_revoked(self, revoked: typing.Set[TopicPartition]) -> None:
         """
         Coroutine to be called *before* a rebalance operation starts and
         *after* the consumer stops fetching data.
@@ -74,7 +77,9 @@ class RebalanceListener(ConsumerRebalanceListener):
         """
         ...  # pragma: no cover
 
-    async def on_partitions_assigned(self, assigned: Set[TopicPartition]) -> None:
+    async def on_partitions_assigned(
+        self, assigned: typing.Set[TopicPartition]
+    ) -> None:
         """
         Coroutine to be called *after* partition re-assignment completes
         and *before* the consumer starts fetching data again.
@@ -98,7 +103,7 @@ class RebalanceListener(ConsumerRebalanceListener):
 
 
 class MetricsRebalanceListener(RebalanceListener):
-    async def on_partitions_revoked(self, revoked: Set[TopicPartition]) -> None:
+    async def on_partitions_revoked(self, revoked: typing.Set[TopicPartition]) -> None:
         """
         Coroutine to be called *before* a rebalance operation starts and
         *after* the consumer stops fetching data.
@@ -112,10 +117,14 @@ class MetricsRebalanceListener(RebalanceListener):
         # lock all asyncio Tasks so no new metrics will be added to the Monitor
         if revoked and self.engine is not None:
             async with asyncio.Lock():
-                if self.stream is not None:
-                    self.engine.monitor.clean_stream_consumer_metrics(self.stream)
+                if self.stream is not None and self.stream.consumer is not None:
+                    self.engine.monitor.clean_stream_consumer_metrics(
+                        self.stream.consumer
+                    )
 
-    async def on_partitions_assigned(self, assigned: Set[TopicPartition]) -> None:
+    async def on_partitions_assigned(
+        self, assigned: typing.Set[TopicPartition]
+    ) -> None:
         """
         Coroutine to be called *after* partition re-assignment completes
         and *before* the consumer starts fetching data again.
@@ -134,7 +143,7 @@ class MetricsRebalanceListener(RebalanceListener):
 
 
 class ManualCommitRebalanceListener(MetricsRebalanceListener):
-    async def on_partitions_revoked(self, revoked: Set[TopicPartition]) -> None:
+    async def on_partitions_revoked(self, revoked: typing.Set[TopicPartition]) -> None:
         """
         Coroutine to be called *before* a rebalance operation starts and
         *after* the consumer stops fetching data.
@@ -150,6 +159,7 @@ class ManualCommitRebalanceListener(MetricsRebalanceListener):
         if (
             revoked
             and self.stream is not None
+            and self.stream.consumer is not None
             and not self.stream.consumer._enable_auto_commit
         ):
             logger.info(

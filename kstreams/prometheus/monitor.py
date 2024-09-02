@@ -124,31 +124,33 @@ class PrometheusMonitor:
         self.MET_POSITION.clear()
         self.MET_HIGHWATER.clear()
 
-    def clean_stream_consumer_metrics(self, stream: Stream) -> None:
-        if stream.consumer is not None:
-            topic_partitions = stream.consumer.assignment()
-            group_id = stream.consumer._group_id
-            for topic_partition in topic_partitions:
-                topic = topic_partition.topic
-                partition = topic_partition.partition
+    def clean_stream_consumer_metrics(self, consumer: Consumer) -> None:
+        topic_partitions = consumer.assignment()
+        group_id = consumer._group_id
+        for topic_partition in topic_partitions:
+            topic = topic_partition.topic
+            partition = topic_partition.partition
 
-                metrics_found = False
-                for sample in self.MET_LAG.collect()[0].samples:
-                    if {
-                        "topic": topic,
-                        "partition": str(partition),
-                        "consumer_group": group_id,
-                    } == sample.labels:
-                        metrics_found = True
+            metrics_found = False
+            for sample in self.MET_LAG.collect()[0].samples:
+                if {
+                    "topic": topic,
+                    "partition": str(partition),
+                    "consumer_group": group_id,
+                } == sample.labels:
+                    metrics_found = True
 
-                if metrics_found:
-                    self.MET_LAG.remove(topic, partition, group_id)
-                    self.MET_POSITION_LAG.remove(topic, partition, group_id)
-                    self.MET_COMMITTED.remove(topic, partition, group_id)
-                    self.MET_POSITION.remove(topic, partition, group_id)
-                    self.MET_HIGHWATER.remove(topic, partition, group_id)
-                else:
-                    logger.debug(f"Metrics for stream: {stream.name} not found")
+            if metrics_found:
+                self.MET_LAG.remove(topic, partition, group_id)
+                self.MET_POSITION_LAG.remove(topic, partition, group_id)
+                self.MET_COMMITTED.remove(topic, partition, group_id)
+                self.MET_POSITION.remove(topic, partition, group_id)
+                self.MET_HIGHWATER.remove(topic, partition, group_id)
+            else:
+                logger.debug(
+                    "Metrics for consumer with group-id: "
+                    f"{consumer._group_id} not found"
+                )
 
     def add_producer(self, producer):
         self._producer = producer

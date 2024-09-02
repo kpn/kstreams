@@ -69,11 +69,15 @@ async def test_add_stream_with_rebalance_listener(stream_engine: StreamEngine):
 
     rebalance_listener = MyRebalanceListener()
 
-    with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"), mock.patch(
-        "kstreams.clients.aiokafka.AIOKafkaProducer.start"
-    ):
+    with mock.patch.multiple(
+        Consumer, start=mock.DEFAULT, unsubscribe=mock.DEFAULT
+    ), mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"):
 
-        @stream_engine.stream(topic, rebalance_listener=rebalance_listener)
+        @stream_engine.stream(
+            topic,
+            rebalance_listener=rebalance_listener,
+            group_id="example-group",
+        )
         async def my_stream(stream: Stream):
             async for _ in stream:
                 ...
@@ -98,15 +102,17 @@ async def test_stream_with_default_rebalance_listener():
     topic = "local--hello-kpn"
     topic_partitions = set(TopicPartition(topic=topic, partition=0))
 
-    with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"), mock.patch(
-        "kstreams.clients.aiokafka.AIOKafkaProducer.start"
-    ), mock.patch("kstreams.PrometheusMonitor.start") as monitor_start, mock.patch(
+    with mock.patch.multiple(
+        Consumer, start=mock.DEFAULT, unsubscribe=mock.DEFAULT
+    ), mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"), mock.patch(
+        "kstreams.PrometheusMonitor.start"
+    ) as monitor_start, mock.patch(
         "kstreams.PrometheusMonitor.clean_stream_consumer_metrics"
     ) as clean_stream_metrics:
         # use this function so we can mock PrometheusMonitor
         stream_engine = create_engine()
 
-        @stream_engine.stream(topic)
+        @stream_engine.stream(topic, group_id="example-group")
         async def my_stream(stream: Stream):
             async for _ in stream:
                 ...
@@ -132,7 +138,7 @@ async def test_stream_with_default_rebalance_listener():
         monitor_start.assert_awaited_once()
 
         # called once on Rebalance with the Stream instance
-        clean_stream_metrics.assert_called_once_with(my_stream)
+        clean_stream_metrics.assert_called_once_with(my_stream.consumer)
 
         await stream_engine.stop()
         assert not my_stream.running
@@ -143,9 +149,9 @@ async def test_stream_manual_commit_rebalance_listener(stream_engine: StreamEngi
     topic = "local--hello-kpn"
     topic_partitions = set(TopicPartition(topic=topic, partition=0))
 
-    with mock.patch("kstreams.clients.aiokafka.AIOKafkaConsumer.start"), mock.patch(
-        "kstreams.clients.aiokafka.AIOKafkaConsumer.commit"
-    ) as commit_mock, mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"):
+    with mock.patch.multiple(
+        Consumer, start=mock.DEFAULT, commit=mock.DEFAULT, unsubscribe=mock.DEFAULT
+    ), mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"):
 
         @stream_engine.stream(
             topic,
@@ -171,7 +177,7 @@ async def test_stream_manual_commit_rebalance_listener(stream_engine: StreamEngi
         )
 
         await rebalance_listener.on_partitions_revoked(revoked=topic_partitions)
-        commit_mock.assert_awaited_once()
+        Consumer.commit.assert_awaited_once()
 
         await stream_engine.stop()
         await stream_engine.clean_streams()

@@ -156,52 +156,51 @@ stream = Stream(
 
 ## Stream crashing
 
-If your stream `crashes` for any reason, the event consumption will stop meaning that non event will be consumed from the `topic`.
-As an end user you are responsable of deciding what to do. In future version approaches like `re-try`, `stream engine stops on stream crash` might be introduced.
+If your stream `crashes` for any reason the event consumption is stopped, meaning that non event will be consumed from the `topic`. However, it is possible to set three different `error policies` per stream:
 
-```python title="Crashing example"
-import aiorun
+- `StreamErrorPolicy.STOP` (**default**): Stop the `Stream` when an exception occurs. The exception is raised after the stream is properly stopped.
+- `StreamErrorPolicy.RESTART`: Stop and restart the `Stream` when an exception occurs. The event that caused the exception is skipped. The exception is *NOT raised* because the application should contine working, however `logger.exception()` is used to alert the user.
+- `StreamErrorPolicy.STOP_ENGINE`: Stop the `StreamEngine` when an exception occurs. The exception is raised after *ALL* the Streams were properly stopped.
+
+In the following example, the `StreamErrorPolicy.RESTART` error policy is specifed. If the `Stream` crashed with the `ValueError` exception it is restarted:
+
+```python
 from kstreams import create_engine, ConsumerRecord
+from kstreams.stream_utils import StreamErrorPolicy
 
 stream_engine = create_engine(title="my-stream-engine")
 
 
-@stream_engine.stream("local--kstreams", group_id="de-my-partition")
+@stream_engine.stream(
+    "local--hello-world",
+    group_id="example-group",
+    error_policy=StreamErrorPolicy.RESTART
+)
 async def stream(cr: ConsumerRecord) -> None:
-    print(f"Event consumed. Payload {cr.payload}")
+    if cr.key == b"error":
+        # Stream will be restarted after the ValueError is raised
+        raise ValueError("error....")
 
-
-async def produce():
-    await stream_engine.send(
-        "local--kstreams",
-        value=b"Hi"
-    )
-
-
-async def start():
-    await stream_engine.start()
-    await produce()
-
-
-async def shutdown(loop):
-    await stream_engine.stop()
-
-
-if __name__ == "__main__":
-    aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=shutdown)
+    print(f"Event consumed. Payload {cr.value}")
 ```
+
+We can see the logs:
 
 ```bash
-CRASHED Stream!!! Task <Task pending name='Task-23' coro=<BaseStream.start.<locals>.func_wrapper() running at /Users/Projects/kstreams/kstreams/streams.py:55>>
+ValueError: error....
+INFO:aiokafka.consumer.group_coordinator:LeaveGroup request succeeded
+INFO:aiokafka.consumer.consumer:Unsubscribed all topics or patterns and assigned partitions
+INFO:kstreams.streams:Stream consuming from topics ['local--hello-world'] has stopped!!! 
 
- 'ConsumerRecord' object has no attribute 'payload'
-Traceback (most recent call last):
-  File "/Users/Projects/kstreams/kstreams/streams.py", line 52, in func_wrapper
-    await self.func(self)
-  File "/Users/Projects/kstreams/examples/fastapi_example/streaming/streams.py", line 9, in stream
-    print(f"Event consumed: headers: {cr.headers}, payload: {cr.payload}")
-AttributeError: 'ConsumerRecord' object has no attribute 'payload'
+
+INFO:kstreams.middleware.middleware:Restarting stream <kstreams.streams.Stream object at 0x102d44050>
+INFO:aiokafka.consumer.subscription_state:Updating subscribed topics to: frozenset({'local--hello-world'})
+...
+INFO:aiokafka.consumer.group_coordinator:Setting newly assigned partitions {TopicPartition(topic='local--hello-world', partition=0)} for group example-group
 ```
+
+!!! note
+    If you are using `aiorun` with `stop_on_unhandled_errors=True` and the `error_policy` is `StreamErrorPolicy.RESTART` then the `application` will NOT stop as the exception that caused the `Stream` to `crash` is not `raised`
 
 ## Changing consumer behavior
 
