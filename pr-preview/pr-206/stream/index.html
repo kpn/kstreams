@@ -1313,10 +1313,7 @@ This means that setting intial_offsets to be a hardcoded number might not get th
 <li><code>StreamErrorPolicy.RESTART</code>: Stop and restart the <code>Stream</code> when an exception occurs. The event that caused the exception is skipped. The exception is <em>NOT raised</em> because the application should contine working, however <code>logger.exception()</code> is used to alert the user.</li>
 <li><code>StreamErrorPolicy.STOP_ENGINE</code>: Stop the <code>StreamEngine</code> when an exception occurs. The exception is raised after <em>ALL</em> the Streams were properly stopped.</li>
 </ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The default error policy is <code>StreamErrorPolicy.STOP</code> if not specified, which is compliant with previous <code>kstreams</code> versions</p>
-</div>
+<p>In the following example, the <code>StreamErrorPolicy.RESTART</code> error policy is specifed. If the <code>Stream</code> crashed with the <code>ValueError</code> exception it is restarted:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 <span class="kn">from</span> <span class="nn">kstreams.stream_utils</span> <span class="kn">import</span> <span class="n">StreamErrorPolicy</span>
 
@@ -1324,17 +1321,33 @@ This means that setting intial_offsets to be a hardcoded number might not get th
 
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span>
-    <span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span>
-    <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;my-group-id&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;local--hello-world&quot;</span><span class="p">,</span>
+    <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group&quot;</span><span class="p">,</span>
     <span class="n">error_policy</span><span class="o">=</span><span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">RESTART</span>
 <span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;error&quot;</span><span class="p">:</span>
         <span class="c1"># Stream will be restarted after the ValueError is raised</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid key:)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;error....&quot;</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed. Payload </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
+<p>We can see the logs:</p>
+<div class="highlight"><pre><span></span><code>ValueError:<span class="w"> </span>error....
+INFO:aiokafka.consumer.group_coordinator:LeaveGroup<span class="w"> </span>request<span class="w"> </span>succeeded
+INFO:aiokafka.consumer.consumer:Unsubscribed<span class="w"> </span>all<span class="w"> </span>topics<span class="w"> </span>or<span class="w"> </span>patterns<span class="w"> </span>and<span class="w"> </span>assigned<span class="w"> </span>partitions
+INFO:kstreams.streams:Stream<span class="w"> </span>consuming<span class="w"> </span>from<span class="w"> </span>topics<span class="w"> </span><span class="o">[</span><span class="s1">&#39;local--hello-world&#39;</span><span class="o">]</span><span class="w"> </span>has<span class="w"> </span>stopped!!!<span class="w"> </span>
+
+
+INFO:kstreams.middleware.middleware:Restarting<span class="w"> </span>stream<span class="w"> </span>&lt;kstreams.streams.Stream<span class="w"> </span>object<span class="w"> </span>at<span class="w"> </span>0x102d44050&gt;
+INFO:aiokafka.consumer.subscription_state:Updating<span class="w"> </span>subscribed<span class="w"> </span>topics<span class="w"> </span>to:<span class="w"> </span>frozenset<span class="o">({</span><span class="s1">&#39;local--hello-world&#39;</span><span class="o">})</span>
+...
+INFO:aiokafka.consumer.group_coordinator:Setting<span class="w"> </span>newly<span class="w"> </span>assigned<span class="w"> </span>partitions<span class="w"> </span><span class="o">{</span>TopicPartition<span class="o">(</span><span class="nv">topic</span><span class="o">=</span><span class="s1">&#39;local--hello-world&#39;</span>,<span class="w"> </span><span class="nv">partition</span><span class="o">=</span><span class="m">0</span><span class="o">)}</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>group<span class="w"> </span>example-group
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The default error policy is <code>StreamErrorPolicy.STOP</code> if not specified, which is compliant with previous <code>kstreams</code> versions</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you are using <code>aiorun</code> with <code>stop_on_unhandled_errors=True</code> and the <code>error_policy</code> is <code>StreamErrorPolicy.RESTART</code> then the <code>application</code> will NOT stop as the exception that caused the <code>Stream</code> to <code>crash</code> is not <code>raised</code></p>
