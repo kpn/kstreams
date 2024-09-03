@@ -1312,6 +1312,7 @@ This means that setting intial_offsets to be a hardcoded number might not get th
 <li><code>StreamErrorPolicy.STOP</code> (<strong>default</strong>): Stop the <code>Stream</code> when an exception occurs. The exception is raised after the stream is properly stopped.</li>
 <li><code>StreamErrorPolicy.RESTART</code>: Stop and restart the <code>Stream</code> when an exception occurs. The event that caused the exception is skipped. The exception is <em>NOT raised</em> because the application should contine working, however <code>logger.exception()</code> is used to alert the user.</li>
 <li><code>StreamErrorPolicy.STOP_ENGINE</code>: Stop the <code>StreamEngine</code> when an exception occurs. The exception is raised after <em>ALL</em> the Streams were properly stopped.</li>
+<li><code>StreamErrorPolicy.STOP_APPLICATION</code>: Stop the <code>StreamEngine</code> when an exception occurs and raises <code>signal.SIGTERM</code>. Useful when using <code>kstreams</code> with other libraries such us <code>FastAPI</code>.</li>
 </ul>
 <p>In the following example, the <code>StreamErrorPolicy.RESTART</code> error policy is specifed. If the <code>Stream</code> crashed with the <code>ValueError</code> exception it is restarted:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
