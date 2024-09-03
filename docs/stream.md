@@ -161,6 +161,7 @@ If your stream `crashes` for any reason the event consumption is stopped, meanin
 - `StreamErrorPolicy.STOP` (**default**): Stop the `Stream` when an exception occurs. The exception is raised after the stream is properly stopped.
 - `StreamErrorPolicy.RESTART`: Stop and restart the `Stream` when an exception occurs. The event that caused the exception is skipped. The exception is *NOT raised* because the application should contine working, however `logger.exception()` is used to alert the user.
 - `StreamErrorPolicy.STOP_ENGINE`: Stop the `StreamEngine` when an exception occurs. The exception is raised after *ALL* the Streams were properly stopped.
+- `StreamErrorPolicy.STOP_APPLICATION`: Stop the `StreamEngine` when an exception occurs and raises `signal.SIGTERM`. Useful when using `kstreams` with other libraries such us `FastAPI`.
 
 In the following example, the `StreamErrorPolicy.RESTART` error policy is specifed. If the `Stream` crashed with the `ValueError` exception it is restarted:
 

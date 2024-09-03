@@ -1,4 +1,5 @@
 import logging
+import signal
 import sys
 import typing
 
@@ -62,6 +63,14 @@ class BaseMiddleware:
 
 
 class ExceptionMiddleware(BaseMiddleware):
+    """
+    This is always the first Middleware in the middleware stack
+    to catch any exception that might occur. Any exception raised
+    when consuming events that is not handled by the end user
+    will be handled by this ExceptionMiddleware executing the
+    policy_error that was stablished.
+    """
+
     def __init__(
         self, *, engine: "StreamEngine", error_policy: StreamErrorPolicy, **kwargs
     ) -> None:
@@ -97,9 +106,13 @@ class ExceptionMiddleware(BaseMiddleware):
         elif self.error_policy == StreamErrorPolicy.STOP:
             await self.stream.stop()
             raise exc
-        else:
+        elif self.error_policy == StreamErrorPolicy.STOP_ENGINE:
             await self.engine.stop()
             raise exc
+        else:
+            # STOP_APPLICATION
+            await self.engine.stop()
+            signal.raise_signal(signal.SIGTERM)
 
         # acquire the asyncio.Lock `is_processing` again to resume the processing
         # and avoid `RuntimeError: Lock is not acquired.`

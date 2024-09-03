@@ -14,6 +14,7 @@ class StreamErrorPolicy(str, enum.Enum):
     RESTART = "RESTART"
     STOP = "STOP"
     STOP_ENGINE = "STOP_ENGINE"
+    STOP_APPLICATION = "STOP_APPLICATION"
 
 
 def setup_type(params: List[inspect.Parameter]) -> UDFType:

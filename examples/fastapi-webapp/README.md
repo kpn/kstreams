@@ -37,6 +37,47 @@ After doing a `GET` to `http://localhost:8000/events` you should see the followi
 Event consumed: headers: (), payload: b'{"message": "hello world!"}'
 ```
 
+## Stop FastAPI application
+
+It is possible to stop the `FastAPI` application when a `Stream` crashes using [StreamErrorPolicy.STOP_APPLICATION](https://github.com/kpn/kstreams/blob/master/examples/fastapi-webapp/fastapi_webapp/app.py#L23)
+For this use case, if the event `error` is sent then the `stream` will crash with [ValueError("error....")](https://github.com/kpn/kstreams/blob/master/examples/fastapi-webapp/fastapi_webapp/streams.py#L13)
+
+To this this behaviour execute:
+
+```bash
+./scripts/cluster/events/send "local--kstream"
+```
+
+and type `error`
+
+Then you should see something similar to the following logs:
+
+```bash
+INFO:     Will watch for changes in these directories: ['kstreams/examples/fastapi-webapp']
+INFO:     Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [41292] using StatReload
+INFO:     Started server process [41297]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+Event consumed: headers: (), payload: b'error'
+Unhandled error occurred while listening to the stream. Stream consuming from topics ['local--kstream'] CRASHED!!! 
+
+Traceback (most recent call last):
+  File "kstreams/kstreams/middleware/middleware.py", line 83, in __call__
+    return await self.next_call(cr)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "kstreams/kstreams/middleware/udf_middleware.py", line 59, in __call__
+    return await self.next_call(*params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "kstreams/examples/fastapi-webapp/fastapi_webapp/streams.py", line 13, in consume
+    raise ValueError("error....")
+ValueError: error....
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [41297]
+```
+
 ## Note
 
 If you plan on using this example, pay attention to the `pyproject.toml` dependencies, where
