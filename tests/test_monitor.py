@@ -223,4 +223,4 @@ async def test_skip_clean_stream_consumer_metrics(
 
     assert len(stream_engine.monitor.MET_POSITION_LAG.collect()[0].samples) == 0
     await stream_engine.remove_stream(stream)
-    assert "Metrics for stream: my-stream-name not found" in caplog.text
+    assert "Metrics for consumer with group-id: my-group not found" in caplog.text

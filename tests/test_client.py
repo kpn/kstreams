@@ -370,7 +370,7 @@ async def test_partitions_for_topic(stream_engine: StreamEngine):
     client = TestStreamClient(stream_engine)
 
     @stream_engine.stream(topic_name, name="my-stream")
-    async def consume(stream):
+    async def stream(stream):
         async for cr in stream:
             ...
 
@@ -380,8 +380,8 @@ async def test_partitions_for_topic(stream_engine: StreamEngine):
         await client.send(topic_name, value=value, key=key, partition=2)
         await client.send(topic_name, value=value, key=key, partition=10)
 
-    stream = stream_engine.get_stream("my-stream")
-    assert stream.consumer.partitions_for_topic(topic_name) == set([0, 1, 2, 10])
+        await asyncio.sleep(1e-10)
+        assert stream.consumer.partitions_for_topic(topic_name) == set([0, 1, 2, 10])
 
 
 @pytest.mark.asyncio
@@ -443,9 +443,9 @@ async def test_consumer_commit(stream_engine: StreamEngine):
             )
             assert record_metadata.partition == partition
 
-    # check that everything was commited
-    stream = stream_engine.get_stream(name)
-    assert (await stream.consumer.committed(tp)) == total_events - 1
+        await asyncio.sleep(1e-10)
+        # check that everything was commited
+        assert (await my_stream.consumer.committed(tp)) == total_events - 1
 
 
 @pytest.mark.asyncio

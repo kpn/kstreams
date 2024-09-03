@@ -187,6 +187,11 @@ class Stream:
                 if self.consumer is not None:
                     await self.consumer.stop()
 
+                    # we have to do this operations because aiokafka bug
+                    # https://github.com/aio-libs/aiokafka/issues/1010
+                    self.consumer.unsubscribe()
+                    self.consumer = None
+
                 logger.info(
                     f"Stream consuming from topics {self.topics} has stopped!!! \n\n"
                 )

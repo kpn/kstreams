@@ -10,6 +10,12 @@ class UDFType(str, enum.Enum):
     WITH_TYPING = "WITH_TYPING"
 
 
+class StreamErrorPolicy(str, enum.Enum):
+    RESTART = "RESTART"
+    STOP = "STOP"
+    STOP_ENGINE = "STOP_ENGINE"
+
+
 def setup_type(params: List[inspect.Parameter]) -> UDFType:
     """
     Inspect the user defined function (coroutine) to get the  proper way to call it
