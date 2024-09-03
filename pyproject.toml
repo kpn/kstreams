@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kstreams"
-version = "0.23.0"
+version = "0.24.0"
 description = "Build simple kafka streams applications"
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
 license = "Apache-2.0"

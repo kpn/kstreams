@@ -1,3 +1,9 @@
+## 0.24.0 (2024-09-03)
+
+### Feat
+
+- error policy STOP_APPLICATION added. Closes #162 (#207)
+
 ## 0.23.0 (2024-09-03)
 
 ### Feat
