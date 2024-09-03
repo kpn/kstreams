@@ -431,8 +431,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#middleware-by-default" class="md-nav__link">
-    Middleware by default
+  <a href="#default-middleware" class="md-nav__link">
+    Default Middleware
   </a>
   
 </li>
@@ -550,8 +550,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#middleware-by-default" class="md-nav__link">
-    Middleware by default
+  <a href="#default-middleware" class="md-nav__link">
+    Default Middleware
   </a>
   
 </li>
@@ -761,8 +761,7 @@
         <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;joker&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Joker received...&quot;</span><span class="p">)</span>
 </code></pre></div>
-<h2 id="middleware-by-default">Middleware by default</h2>
-<p>Kstreams includes one middleware by default, <code>ExceptionMiddleware</code>. This middleware adds exception handlers, for particular types of expected exception cases, for example when the <code>Consumer</code> stops (kafka disconnects), user presses <code>CTRL+C</code> or any other exception that could cause the <code>stream</code> to crash.</p>
+<h2 id="default-middleware">Default Middleware</h2>
 
 
 <div class="doc doc-object doc-class">
@@ -771,8 +770,6 @@
 
 <a id="kstreams.middleware.middleware.ExceptionMiddleware"></a>
   <div class="doc doc-contents first">
-          <p class="doc doc-class-bases">
-            Bases: <code><span title="kstreams.middleware.middleware.BaseMiddleware">BaseMiddleware</span></code></p>
 
 
             <details class="quote">

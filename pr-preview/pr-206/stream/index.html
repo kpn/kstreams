@@ -1309,7 +1309,7 @@ This means that setting intial_offsets to be a hardcoded number might not get th
 <h2 id="stream-crashing">Stream crashing</h2>
 <p>If your stream <code>crashes</code> for any reason the event consumption is stopped, meaning that non event will be consumed from the <code>topic</code>. However, it is possible to set three different <code>error policies</code> per stream:</p>
 <ul>
-<li><code>StreamErrorPolicy.STOP</code>: Stop the <code>Stream</code> when an exception occurs. The exception is raised after the stream is properly stopped.</li>
+<li><code>StreamErrorPolicy.STOP</code> (<strong>default</strong>): Stop the <code>Stream</code> when an exception occurs. The exception is raised after the stream is properly stopped.</li>
 <li><code>StreamErrorPolicy.RESTART</code>: Stop and restart the <code>Stream</code> when an exception occurs. The event that caused the exception is skipped. The exception is <em>NOT raised</em> because the application should contine working, however <code>logger.exception()</code> is used to alert the user.</li>
 <li><code>StreamErrorPolicy.STOP_ENGINE</code>: Stop the <code>StreamEngine</code> when an exception occurs. The exception is raised after <em>ALL</em> the Streams were properly stopped.</li>
 </ul>
@@ -1344,10 +1344,6 @@ INFO:aiokafka.consumer.subscription_state:Updating<span class="w"> </span>subscr
 ...
 INFO:aiokafka.consumer.group_coordinator:Setting<span class="w"> </span>newly<span class="w"> </span>assigned<span class="w"> </span>partitions<span class="w"> </span><span class="o">{</span>TopicPartition<span class="o">(</span><span class="nv">topic</span><span class="o">=</span><span class="s1">&#39;local--hello-world&#39;</span>,<span class="w"> </span><span class="nv">partition</span><span class="o">=</span><span class="m">0</span><span class="o">)}</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>group<span class="w"> </span>example-group
 </code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The default error policy is <code>StreamErrorPolicy.STOP</code> if not specified, which is compliant with previous <code>kstreams</code> versions</p>
-</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you are using <code>aiorun</code> with <code>stop_on_unhandled_errors=True</code> and the <code>error_policy</code> is <code>StreamErrorPolicy.RESTART</code> then the <code>application</code> will NOT stop as the exception that caused the <code>Stream</code> to <code>crash</code> is not <code>raised</code></p>
