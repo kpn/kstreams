@@ -1099,7 +1099,19 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="normal">413</span>
 <span class="normal">414</span>
 <span class="normal">415</span>
-<span class="normal">416</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span>
+<span class="normal">420</span>
+<span class="normal">421</span>
+<span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        backend kstreams.backends.Kafka: Backend to connect. Default `Kafka`</span>
@@ -1417,7 +1429,9 @@ To override it per Stream, you can provide one per Stream</p>
 
         <span class="k">return</span> <span class="n">stream</span>
 
-    <span class="k">def</span> <span class="nf">add_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">add_stream</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="p">:</span> <span class="n">StreamErrorPolicy</span> <span class="o">=</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">STOP</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exist_stream</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">DuplicateStreamException</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">stream</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="n">stream</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span>
@@ -1442,12 +1456,18 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="c1"># NOTE: When `no typing` support is deprecated this check can</span>
         <span class="c1"># be removed</span>
         <span class="k">if</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
-            <span class="n">stream</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_stream_middleware_stack</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
+            <span class="n">stream</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_stream_middleware_stack</span><span class="p">(</span>
+                <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="n">error_policy</span>
+            <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">build_stream_middleware_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NextMiddlewareCall</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">build_stream_middleware_stack</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="p">:</span> <span class="n">StreamErrorPolicy</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NextMiddlewareCall</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span><span class="p">,</span> <span class="s2">&quot;UdfHandler can not be None&quot;</span>
 
-        <span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span><span class="n">Middleware</span><span class="p">(</span><span class="n">ExceptionMiddleware</span><span class="p">)]</span> <span class="o">+</span> <span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Middleware</span><span class="p">(</span><span class="n">ExceptionMiddleware</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="n">error_policy</span><span class="p">),</span>
+        <span class="p">]</span> <span class="o">+</span> <span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span>
 
         <span class="n">next_call</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span>
         <span class="k">for</span> <span class="n">middleware</span><span class="p">,</span> <span class="n">options</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span><span class="p">):</span>
@@ -1457,9 +1477,12 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="k">return</span> <span class="n">next_call</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">remove_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">consumer</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_streams</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">clean_stream_consumer_metrics</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">clean_stream_consumer_metrics</span><span class="p">(</span><span class="n">consumer</span><span class="o">=</span><span class="n">consumer</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">stream</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1471,6 +1494,7 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="n">rebalance_listener</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">RebalanceListener</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">middlewares</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">Middleware</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">subscribe_by_pattern</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">error_policy</span><span class="p">:</span> <span class="n">StreamErrorPolicy</span> <span class="o">=</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">STOP</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[</span><span class="n">StreamFunc</span><span class="p">],</span> <span class="n">Stream</span><span class="p">]:</span>
         <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">StreamFunc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stream</span><span class="p">:</span>
@@ -1484,7 +1508,7 @@ To override it per Stream, you can provide one per Stream</p>
                 <span class="n">subscribe_by_pattern</span><span class="o">=</span><span class="n">subscribe_by_pattern</span><span class="p">,</span>
                 <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
             <span class="p">)(</span><span class="n">func</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_stream</span><span class="p">(</span><span class="n">stream_from_func</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_stream</span><span class="p">(</span><span class="n">stream_from_func</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="n">error_policy</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">stream_from_func</span>
 

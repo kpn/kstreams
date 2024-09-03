@@ -798,7 +798,9 @@
 <span class="normal">228</span>
 <span class="normal">229</span>
 <span class="normal">230</span>
-<span class="normal">231</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PrometheusMonitor</span><span class="p">:</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PrometheusMonitor</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Metrics monitor to keep track of Producers and Consumers.</span>
 
@@ -908,31 +910,33 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">MET_POSITION</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">MET_HIGHWATER</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">clean_stream_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">topic_partitions</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">assignment</span><span class="p">()</span>
-            <span class="n">group_id</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">_group_id</span>
-            <span class="k">for</span> <span class="n">topic_partition</span> <span class="ow">in</span> <span class="n">topic_partitions</span><span class="p">:</span>
-                <span class="n">topic</span> <span class="o">=</span> <span class="n">topic_partition</span><span class="o">.</span><span class="n">topic</span>
-                <span class="n">partition</span> <span class="o">=</span> <span class="n">topic_partition</span><span class="o">.</span><span class="n">partition</span>
+    <span class="k">def</span> <span class="nf">clean_stream_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer</span><span class="p">:</span> <span class="n">Consumer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">topic_partitions</span> <span class="o">=</span> <span class="n">consumer</span><span class="o">.</span><span class="n">assignment</span><span class="p">()</span>
+        <span class="n">group_id</span> <span class="o">=</span> <span class="n">consumer</span><span class="o">.</span><span class="n">_group_id</span>
+        <span class="k">for</span> <span class="n">topic_partition</span> <span class="ow">in</span> <span class="n">topic_partitions</span><span class="p">:</span>
+            <span class="n">topic</span> <span class="o">=</span> <span class="n">topic_partition</span><span class="o">.</span><span class="n">topic</span>
+            <span class="n">partition</span> <span class="o">=</span> <span class="n">topic_partition</span><span class="o">.</span><span class="n">partition</span>
 
-                <span class="n">metrics_found</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MET_LAG</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">samples</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="p">{</span>
-                        <span class="s2">&quot;topic&quot;</span><span class="p">:</span> <span class="n">topic</span><span class="p">,</span>
-                        <span class="s2">&quot;partition&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">partition</span><span class="p">),</span>
-                        <span class="s2">&quot;consumer_group&quot;</span><span class="p">:</span> <span class="n">group_id</span><span class="p">,</span>
-                    <span class="p">}</span> <span class="o">==</span> <span class="n">sample</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
-                        <span class="n">metrics_found</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">metrics_found</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MET_LAG</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">samples</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">{</span>
+                    <span class="s2">&quot;topic&quot;</span><span class="p">:</span> <span class="n">topic</span><span class="p">,</span>
+                    <span class="s2">&quot;partition&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">partition</span><span class="p">),</span>
+                    <span class="s2">&quot;consumer_group&quot;</span><span class="p">:</span> <span class="n">group_id</span><span class="p">,</span>
+                <span class="p">}</span> <span class="o">==</span> <span class="n">sample</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+                    <span class="n">metrics_found</span> <span class="o">=</span> <span class="kc">True</span>
 
-                <span class="k">if</span> <span class="n">metrics_found</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">MET_LAG</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">partition</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">MET_POSITION_LAG</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">partition</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">MET_COMMITTED</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">partition</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">MET_POSITION</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">partition</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">MET_HIGHWATER</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">partition</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Metrics for stream: </span><span class="si">{</span><span class="n">stream</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">metrics_found</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">MET_LAG</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">partition</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">MET_POSITION_LAG</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">partition</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">MET_COMMITTED</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">partition</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">MET_POSITION</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">partition</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">MET_HIGHWATER</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">partition</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;Metrics for consumer with group-id: &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">consumer</span><span class="o">.</span><span class="n">_group_id</span><span class="si">}</span><span class="s2"> not found&quot;</span>
+                <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">add_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">producer</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span> <span class="o">=</span> <span class="n">producer</span>
@@ -1076,9 +1080,7 @@
 </details>
           <details class="quote">
             <summary>Source code in <code>kstreams/prometheus/monitor.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">159</span>
-<span class="normal">160</span>
-<span class="normal">161</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">161</span>
 <span class="normal">162</span>
 <span class="normal">163</span>
 <span class="normal">164</span>
@@ -1128,7 +1130,9 @@
 <span class="normal">208</span>
 <span class="normal">209</span>
 <span class="normal">210</span>
-<span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">generate_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer</span><span class="p">:</span> <span class="n">Consumer</span><span class="p">):</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">generate_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer</span><span class="p">:</span> <span class="n">Consumer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate Consumer Metrics for Prometheus</span>
 
