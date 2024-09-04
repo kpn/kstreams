@@ -4,11 +4,11 @@ import logging
 import aiorun
 
 from .resources import stream_engine
-from .streams import consume
+from .streams import my_stream
 
 logger = logging.getLogger(__name__)
 
-stream_engine.add_stream(consume)
+stream_engine.add_stream(my_stream)
 
 
 async def start():

@@ -36,6 +36,7 @@ nav:
   - Testing: 'test_client.md'
   - Middleware: 'middleware.md'
   - Utils: 'utils.md'
+  - Large Projects: 'large_project_structure.md'
 
 markdown_extensions:
   - pymdownx.highlight
