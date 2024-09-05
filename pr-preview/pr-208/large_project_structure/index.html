@@ -574,7 +574,7 @@
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">backends</span><span class="p">,</span> <span class="n">create_engine</span>
 
 <span class="n">backend</span> <span class="o">=</span> <span class="n">backends</span><span class="o">.</span><span class="n">Kafka</span><span class="p">(</span>
-    <span class="n">bootstrap_servers</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">bootstrap_servers</span><span class="p">,</span>
+    <span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;localhost:9092&quot;</span><span class="p">],</span>
     <span class="n">security_protocol</span><span class="o">=</span><span class="n">backends</span><span class="o">.</span><span class="n">kafka</span><span class="o">.</span><span class="n">SecurityProtocol</span><span class="o">.</span><span class="n">PLAINTEXT</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -594,14 +594,18 @@
 <span class="n">my_stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
     <span class="s2">&quot;local--hello-world&quot;</span><span class="p">,</span>
     <span class="n">func</span><span class="o">=</span><span class="n">stream_roster</span><span class="p">,</span>
-    <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group&quot;</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;group_id&quot;</span><span class="p">:</span> <span class="s2">&quot;example-group&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
     <span class="o">...</span>
 <span class="p">)</span>
 
 <span class="n">my_second_stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
     <span class="s2">&quot;local--hello-world-2&quot;</span><span class="p">,</span>
     <span class="n">func</span><span class="o">=</span><span class="n">stream_two_roster</span><span class="p">,</span>
-    <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group-2&quot;</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;group_id&quot;</span><span class="p">:</span> <span class="s2">&quot;example-group-2&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
     <span class="o">...</span>
 <span class="p">)</span>
 
