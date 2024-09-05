@@ -456,6 +456,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#tests" class="md-nav__link">
+    Tests
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -509,6 +516,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#tests" class="md-nav__link">
+    Tests
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -531,13 +545,17 @@
 
   <h1>Large Projects</h1>
 
-<p>If you have multiple a large project with maybe multiple <code>streams</code> we recommend the following project structure:</p>
+<p>If you have a large project with maybe multiple <code>streams</code> we recommend the following project structure:</p>
 <div class="highlight"><pre><span></span><code>├── my-project
 │   ├── my_project
 │   │   ├── __init__.py
 │   │   ├── app.py
 │   │   ├── resources.py
-│   │   └── streams.py
+│   │   ├── streams.py
+│   │   └── streams_roster.py
+│   │── tests
+│   │   ├── __init__.py
+│   │   ├── conftest.py
 │   │── pyproject.toml
 │   │── README.md
 </code></pre></div>
@@ -553,22 +571,51 @@
 </div>
 <h2 id="resources">Resources</h2>
 <p>This python module contains any global resource that will be used later in the application, for example <code>DB connections</code> or the <code>StreamEngine</code>. Typically we will have the following:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">kstreams</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">backends</span><span class="p">,</span> <span class="n">create_engine</span>
 
-<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">kstreams</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">backends</span><span class="o">.</span><span class="n">Kafka</span><span class="p">(</span>
+    <span class="n">bootstrap_servers</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">bootstrap_servers</span><span class="p">,</span>
+    <span class="n">security_protocol</span><span class="o">=</span><span class="n">backends</span><span class="o">.</span><span class="n">kafka</span><span class="o">.</span><span class="n">SecurityProtocol</span><span class="o">.</span><span class="n">PLAINTEXT</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">kstreams</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+<span class="p">)</span>
 </code></pre></div>
-<p>Then later <code>stream_engine</code> can be resused to start the application</p>
+<p>Then later <code>stream_engine</code> can be reused to start the application.</p>
 <h2 id="streams">Streams</h2>
-<p>When starting your project you can have <code>N</code> number of <code>Streams</code>, let's say in <code>streams.py</code> module. All of the <code>Streams</code> will run next to each other and because they are in the same project it is really easy to share common code. However, this comes with a downside of <code>scalability</code> as it is not possible to take the advantages of <code>kafka</code> and scale up <code>Streams</code> individually. In next versions the <code>StreamEngine</code> will be able to select which <code>Stream/s</code> should run to mitigate this issue. Typically, your <code>streams.py</code> will look like:</p>
+<p>When starting your project you can have <code>N</code> number of <code>Streams</code> with its <code>handler</code>, let's say in <code>streams.py</code> module. All of the <code>Streams</code> will run next to each other and because they are in the same project it is really easy to share common code. However, this comes with a downside of <code>scalability</code> as it is not possible to take the advantages of <code>kafka</code> and scale up <code>Streams</code> individually. In next versions the <code>StreamEngine</code> will be able to select which <code>Stream/s</code> should run to mitigate this issue. Typically, your <code>streams.py</code> will look like:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">Stream</span>
+
+<span class="kn">from</span> <span class="nn">.streams_roster</span> <span class="kn">import</span> <span class="n">stream_roster</span><span class="p">,</span> <span class="n">stream_two_roster</span>
+
+
+<span class="n">my_stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
+    <span class="s2">&quot;local--hello-world&quot;</span><span class="p">,</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">stream_roster</span><span class="p">,</span>
+    <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group&quot;</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+
+<span class="n">my_second_stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
+    <span class="s2">&quot;local--hello-world-2&quot;</span><span class="p">,</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">stream_two_roster</span><span class="p">,</span>
+    <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group-2&quot;</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+
+<span class="o">...</span>
+</code></pre></div>
+<p>and <code>streams_roster.py</code> contains all the <code>coroutines</code> that will be executed when an event arrives</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">Send</span><span class="p">,</span> <span class="n">stream</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">Send</span><span class="p">,</span> <span class="n">Stream</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<span class="nd">@stream</span><span class="p">(</span><span class="s2">&quot;local--hello-world&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group&quot;</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream_roster</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;showing bytes: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Event confirmed. </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
 
@@ -577,24 +624,27 @@
         <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
         <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
     <span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream_two_roster</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="o">...</span>
 </code></pre></div>
 <p>It is worth to note three things:</p>
 <ul>
-<li>We create the <code>Stream</code> using the <code>stream</code> factory</li>
+<li>We separate the <code>Stream</code> with its <code>coroutine</code> to be able to test the <code>business logic</code> easily</li>
 <li>If you need to produce events inside a <code>Stream</code> add the <code>send coroutine</code> using <a href="https://kpn.github.io/kstreams/stream/#dependency-injection">dependency-injection</a></li>
 <li>We are not using <code>StreamEngine</code> at all to avoid <code>circular import</code> errors</li>
 </ul>
 <h2 id="application">Application</h2>
 <p>The <code>entrypoint</code> is usually in <code>app.py</code>. The module contains the import of <code>stream_engine</code>, it's <code>hooks</code> and the <code>streams</code> to be added to the <code>engine</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">from</span> <span class="nn">kstreams.stream_utils</span> <span class="kn">import</span> <span class="n">StreamErrorPolicy</span>
 
-<span class="kn">import</span> <span class="nn">aiorun</span>
-
 <span class="kn">from</span> <span class="nn">.resources</span> <span class="kn">import</span> <span class="n">stream_engine</span>
-<span class="kn">from</span> <span class="nn">.streams</span> <span class="kn">import</span> <span class="n">my_stream</span>
+<span class="kn">from</span> <span class="nn">.streams</span> <span class="kn">import</span> <span class="n">my_stream</span><span class="p">,</span> <span class="n">my_second_stream</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -607,6 +657,7 @@
 
 <span class="c1"># add the stream to the stream_engine</span>
 <span class="n">stream_engine</span><span class="o">.</span><span class="n">add_stream</span><span class="p">(</span><span class="n">my_stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">RESTART</span><span class="p">)</span>
+<span class="n">stream_engine</span><span class="o">.</span><span class="n">add_stream</span><span class="p">(</span><span class="n">my_second_stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">STOP_ENGINE</span><span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
@@ -623,6 +674,35 @@
     <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start</span><span class="p">(),</span> <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">stop</span><span class="p">)</span>
 </code></pre></div>
 <p>To run it we recommend <a href="https://github.com/cjrh/aiorun">aiorun</a>. It can be also run with <code>asyncio</code> directly but <code>aiorun</code> does all the boilerplate for us.</p>
+<h2 id="tests">Tests</h2>
+<p>In this module you test your application using the <code>TestStreamClient</code>, usually provided as a <code>fixture</code> thanks to <code>pytest</code>. The package <code>pytest-asyncio</code> is also needed 
+to test <code>async</code> code.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># conftest.py</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">kstreams.test_utils</span> <span class="kn">import</span> <span class="n">TestStreamClient</span>
+
+<span class="kn">from</span> <span class="nn">my_project.resources</span> <span class="kn">import</span> <span class="n">stream_engine</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">stream_client</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">TestStreamClient</span><span class="p">(</span><span class="n">stream_engine</span><span class="o">=</span><span class="n">stream_engine</span><span class="p">)</span>
+</code></pre></div>
+<p>then you can test your streams</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># test_app.py</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">test_my_stream</span><span class="p">(</span><span class="n">stream_client</span><span class="p">):</span>
+    <span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;local--hello-world&quot;</span>  <span class="c1"># Use the same topic as the stream</span>
+    <span class="n">event</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span>
+
+    <span class="k">async</span> <span class="k">with</span> <span class="n">stream_client</span><span class="p">:</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">stream_client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">event</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">metadata</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="n">topic</span>
+</code></pre></div>
 
 
 
