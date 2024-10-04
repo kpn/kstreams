@@ -93,6 +93,7 @@ async def test_stop_application_error_policy(stream_engine: StreamEngine):
     client = TestStreamClient(stream_engine)
 
     with mock.patch("signal.raise_signal"):
+
         @stream_engine.stream(topic, error_policy=StreamErrorPolicy.STOP_APPLICATION)
         async def my_stream(cr: ConsumerRecord):
             raise ValueError("Crashing Stream...")

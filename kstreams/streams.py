@@ -9,6 +9,7 @@ from aiokafka import errors
 
 from kstreams import ConsumerRecord, TopicPartition
 from kstreams.exceptions import BackendNotSet
+from kstreams.middleware.middleware import ExceptionMiddleware
 from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
@@ -16,8 +17,11 @@ from .clients import Consumer
 from .middleware import Middleware, udf_middleware
 from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
-from .streams_utils import UDFType
+from .streams_utils import StreamErrorPolicy, UDFType
 from .types import StreamFunc
+
+if typing.TYPE_CHECKING:
+    from kstreams import StreamEngine
 
 logger = logging.getLogger(__name__)
 
@@ -152,6 +156,7 @@ class Stream:
         initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
         rebalance_listener: typing.Optional[RebalanceListener] = None,
         middlewares: typing.Optional[typing.List[Middleware]] = None,
+        error_policy: StreamErrorPolicy = StreamErrorPolicy.STOP,
     ) -> None:
         self.func = func
         self.backend = backend
@@ -169,12 +174,33 @@ class Stream:
         self.udf_handler: typing.Optional[udf_middleware.UdfHandler] = None
         self.topics = [topics] if isinstance(topics, str) else topics
         self.subscribe_by_pattern = subscribe_by_pattern
+        self.error_policy = error_policy
 
     def _create_consumer(self) -> Consumer:
         if self.backend is None:
             raise BackendNotSet("A backend has not been set for this stream")
         config = {**self.backend.model_dump(), **self.config}
         return self.consumer_class(**config)
+
+    def get_middlewares(self, engine: "StreamEngine") -> typing.Sequence[Middleware]:
+        """
+        Retrieve the list of middlewares for the stream engine.
+
+        Use this instead of the `middlewares` attribute to get the list of middlewares.
+
+        Args:
+            engine: The stream engine instance.
+
+        Returns:
+            A sequence of Middleware instances.
+            Including the ExceptionMiddleware with the specified error policy and any
+            additional middlewares.
+        """
+        return [
+            Middleware(
+                ExceptionMiddleware, engine=engine, error_policy=self.error_policy
+            )
+        ] + self.middlewares
 
     async def stop(self) -> None:
         if self.running:
