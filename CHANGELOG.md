@@ -1,3 +1,9 @@
+## 0.24.1 (2024-10-07)
+
+### Refactor
+
+- expose a Stream.get_middleware function
+
 ## 0.24.0 (2024-09-03)
 
 ### Feat
