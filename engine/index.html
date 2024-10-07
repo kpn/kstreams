@@ -347,6 +347,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kstreams.engine.StreamEngine.add_stream" class="md-nav__link">
+    add_stream()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -560,6 +567,13 @@
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.after_stop" class="md-nav__link">
     after_stop()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kstreams.engine.StreamEngine.add_stream" class="md-nav__link">
+    add_stream()
   </a>
   
 </li>
@@ -1126,7 +1140,29 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="normal">425</span>
 <span class="normal">426</span>
 <span class="normal">427</span>
-<span class="normal">428</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
+<span class="normal">428</span>
+<span class="normal">429</span>
+<span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        backend kstreams.backends.Kafka: Backend to connect. Default `Kafka`</span>
@@ -1445,10 +1481,39 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="k">return</span> <span class="n">stream</span>
 
     <span class="k">def</span> <span class="nf">add_stream</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="p">:</span> <span class="n">StreamErrorPolicy</span> <span class="o">=</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">STOP</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">StreamErrorPolicy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a stream to the engine.</span>
+
+<span class="sd">        This method registers a new stream with the engine, setting up necessary</span>
+<span class="sd">        configurations and handlers. If a stream with the same name already exists,</span>
+<span class="sd">        a DuplicateStreamException is raised.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stream: The stream to be added.</span>
+<span class="sd">            error_policy: An optional error policy to be applied to the stream.</span>
+<span class="sd">                You should probably set directly when instanciating a Stream, not here.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            DuplicateStreamException: If a stream with the same name already exists.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            - If the stream does not have a deserializer, the engine&#39;s deserializer</span>
+<span class="sd">              is assigned to it.</span>
+<span class="sd">            - If the stream does not have a rebalance listener, a default</span>
+<span class="sd">              MetricsRebalanceListener is assigned.</span>
+<span class="sd">            - The stream&#39;s UDF handler is set up with the provided function and</span>
+<span class="sd">              engine&#39;s send method.</span>
+<span class="sd">            - If the stream&#39;s UDF handler type is not NO_TYPING, a middleware stack</span>
+<span class="sd">              is built for the stream&#39;s function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exist_stream</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">DuplicateStreamException</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">stream</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">error_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stream</span><span class="o">.</span><span class="n">error_policy</span> <span class="o">=</span> <span class="n">error_policy</span>
+
         <span class="n">stream</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span>
         <span class="k">if</span> <span class="n">stream</span><span class="o">.</span><span class="n">deserializer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">stream</span><span class="o">.</span><span class="n">deserializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span>
@@ -1459,8 +1524,8 @@ To override it per Stream, you can provide one per Stream</p>
             <span class="c1"># when the callbacks are called</span>
             <span class="n">stream</span><span class="o">.</span><span class="n">rebalance_listener</span> <span class="o">=</span> <span class="n">MetricsRebalanceListener</span><span class="p">()</span>
 
-        <span class="n">stream</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>  <span class="c1"># type: ignore</span>
-        <span class="n">stream</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span>  <span class="c1"># type: ignore</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span>
 
         <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span> <span class="o">=</span> <span class="n">UdfHandler</span><span class="p">(</span>
             <span class="n">next_call</span><span class="o">=</span><span class="n">stream</span><span class="o">.</span><span class="n">func</span><span class="p">,</span>
@@ -1471,21 +1536,14 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="c1"># NOTE: When `no typing` support is deprecated this check can</span>
         <span class="c1"># be removed</span>
         <span class="k">if</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
-            <span class="n">stream</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_stream_middleware_stack</span><span class="p">(</span>
-                <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="n">error_policy</span>
-            <span class="p">)</span>
+            <span class="n">stream</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_stream_middleware_stack</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">build_stream_middleware_stack</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="p">:</span> <span class="n">StreamErrorPolicy</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NextMiddlewareCall</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_build_stream_middleware_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NextMiddlewareCall</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span><span class="p">,</span> <span class="s2">&quot;UdfHandler can not be None&quot;</span>
 
-        <span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">Middleware</span><span class="p">(</span><span class="n">ExceptionMiddleware</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="n">error_policy</span><span class="p">),</span>
-        <span class="p">]</span> <span class="o">+</span> <span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span>
-
+        <span class="n">middlewares</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">get_middlewares</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">next_call</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span>
-        <span class="k">for</span> <span class="n">middleware</span><span class="p">,</span> <span class="n">options</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">middlewares</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">middleware</span><span class="p">,</span> <span class="n">options</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">middlewares</span><span class="p">):</span>
             <span class="n">next_call</span> <span class="o">=</span> <span class="n">middleware</span><span class="p">(</span>
                 <span class="n">next_call</span><span class="o">=</span><span class="n">next_call</span><span class="p">,</span> <span class="n">send</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span>
             <span class="p">)</span>
@@ -2275,6 +2333,228 @@ standard functions, or async functions.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_after_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">func</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="kstreams.engine.StreamEngine.add_stream" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">add_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Add a stream to the engine.</p>
+<p>This method registers a new stream with the engine, setting up necessary
+configurations and handlers. If a stream with the same name already exists,
+a DuplicateStreamException is raised.</p>
+
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>stream</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="kstreams.streams.Stream" href="../stream/#kstreams.streams.Stream">Stream</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The stream to be added.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>error_policy</code></td>
+          <td>
+                <code><span title="typing.Optional">Optional</span>[<span title="kstreams.streams_utils.StreamErrorPolicy">StreamErrorPolicy</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>An optional error policy to be applied to the stream.
+You should probably set directly when instanciating a Stream, not here.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><strong>Raises:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="kstreams.exceptions.DuplicateStreamException">DuplicateStreamException</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>If a stream with the same name already exists.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+<details class="notes" open>
+  <summary>Notes</summary>
+  <ul>
+<li>If the stream does not have a deserializer, the engine's deserializer
+  is assigned to it.</li>
+<li>If the stream does not have a rebalance listener, a default
+  MetricsRebalanceListener is assigned.</li>
+<li>The stream's UDF handler is set up with the provided function and
+  engine's send method.</li>
+<li>If the stream's UDF handler type is not NO_TYPING, a middleware stack
+  is built for the stream's function.</li>
+</ul>
+</details>
+          <details class="quote">
+            <summary>Source code in <code>kstreams/engine.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_stream</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">StreamErrorPolicy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add a stream to the engine.</span>
+
+<span class="sd">    This method registers a new stream with the engine, setting up necessary</span>
+<span class="sd">    configurations and handlers. If a stream with the same name already exists,</span>
+<span class="sd">    a DuplicateStreamException is raised.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stream: The stream to be added.</span>
+<span class="sd">        error_policy: An optional error policy to be applied to the stream.</span>
+<span class="sd">            You should probably set directly when instanciating a Stream, not here.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        DuplicateStreamException: If a stream with the same name already exists.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        - If the stream does not have a deserializer, the engine&#39;s deserializer</span>
+<span class="sd">          is assigned to it.</span>
+<span class="sd">        - If the stream does not have a rebalance listener, a default</span>
+<span class="sd">          MetricsRebalanceListener is assigned.</span>
+<span class="sd">        - The stream&#39;s UDF handler is set up with the provided function and</span>
+<span class="sd">          engine&#39;s send method.</span>
+<span class="sd">        - If the stream&#39;s UDF handler type is not NO_TYPING, a middleware stack</span>
+<span class="sd">          is built for the stream&#39;s function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exist_stream</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">DuplicateStreamException</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">stream</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">error_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">error_policy</span> <span class="o">=</span> <span class="n">error_policy</span>
+
+    <span class="n">stream</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span>
+    <span class="k">if</span> <span class="n">stream</span><span class="o">.</span><span class="n">deserializer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">deserializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deserializer</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_streams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">stream</span><span class="o">.</span><span class="n">rebalance_listener</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># set the stream to the listener to it will be available</span>
+        <span class="c1"># when the callbacks are called</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">rebalance_listener</span> <span class="o">=</span> <span class="n">MetricsRebalanceListener</span><span class="p">()</span>
+
+    <span class="n">stream</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>
+    <span class="n">stream</span><span class="o">.</span><span class="n">rebalance_listener</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span>
+
+    <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span> <span class="o">=</span> <span class="n">UdfHandler</span><span class="p">(</span>
+        <span class="n">next_call</span><span class="o">=</span><span class="n">stream</span><span class="o">.</span><span class="n">func</span><span class="p">,</span>
+        <span class="n">send</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">,</span>
+        <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># NOTE: When `no typing` support is deprecated this check can</span>
+    <span class="c1"># be removed</span>
+    <span class="k">if</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_stream_middleware_stack</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
