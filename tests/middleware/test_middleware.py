@@ -30,13 +30,19 @@ async def test_middleware_stack_from_stream(
         ...
 
     my_stream = stream_engine.get_stream(stream_name)
-    my_stream_local = stream_engine.get_stream(stream_name)
+    if my_stream is None:
+        raise ValueError("Stream not found")
+    my_stream_local = stream_engine.get_stream(stream_name_local)
+    if my_stream_local is None:
+        raise ValueError("Stream not found")
+
     middlewares = [
-        middleware_factory.middleware for middleware_factory in my_stream.middlewares
+        middleware_factory.middleware
+        for middleware_factory in my_stream.get_middlewares(stream_engine)
     ]
     middlewares_stream_local = [
         middleware_factory.middleware
-        for middleware_factory in my_stream_local.middlewares
+        for middleware_factory in my_stream_local.get_middlewares(stream_engine)
     ]
     assert (
         middlewares
@@ -63,8 +69,11 @@ async def test_middleware_stack_order(
         ...
 
     my_stream = stream_engine.get_stream(stream_name)
+    if my_stream is None:
+        raise ValueError("Stream not found")
     middlewares = [
-        middleware_factory.middleware for middleware_factory in my_stream.middlewares
+        middleware_factory.middleware
+        for middleware_factory in my_stream.get_middlewares(stream_engine)
     ]
     assert middlewares == [
         middleware.ExceptionMiddleware,

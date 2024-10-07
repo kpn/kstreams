@@ -10,7 +10,7 @@ from kstreams.structs import TopicPartitionOffset
 from .backends.kafka import Kafka
 from .clients import Consumer, Producer
 from .exceptions import DuplicateStreamException, EngineNotStartedException
-from .middleware import ExceptionMiddleware, Middleware
+from .middleware import Middleware
 from .middleware.udf_middleware import UdfHandler
 from .prometheus.monitor import PrometheusMonitor
 from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
@@ -343,10 +343,39 @@ class StreamEngine:
         return stream
 
     def add_stream(
-        self, stream: Stream, error_policy: StreamErrorPolicy = StreamErrorPolicy.STOP
+        self, stream: Stream, error_policy: typing.Optional[StreamErrorPolicy] = None
     ) -> None:
+        """
+        Add a stream to the engine.
+
+        This method registers a new stream with the engine, setting up necessary
+        configurations and handlers. If a stream with the same name already exists,
+        a DuplicateStreamException is raised.
+
+        Args:
+            stream: The stream to be added.
+            error_policy: An optional error policy to be applied to the stream.
+                You should probably set directly when instanciating a Stream, not here.
+
+        Raises:
+            DuplicateStreamException: If a stream with the same name already exists.
+
+        Notes:
+            - If the stream does not have a deserializer, the engine's deserializer
+              is assigned to it.
+            - If the stream does not have a rebalance listener, a default
+              MetricsRebalanceListener is assigned.
+            - The stream's UDF handler is set up with the provided function and
+              engine's send method.
+            - If the stream's UDF handler type is not NO_TYPING, a middleware stack
+              is built for the stream's function.
+        """
         if self.exist_stream(stream.name):
             raise DuplicateStreamException(name=stream.name)
+
+        if error_policy is not None:
+            stream.error_policy = error_policy
+
         stream.backend = self.backend
         if stream.deserializer is None:
             stream.deserializer = self.deserializer
@@ -357,8 +386,8 @@ class StreamEngine:
             # when the callbacks are called
             stream.rebalance_listener = MetricsRebalanceListener()
 
-        stream.rebalance_listener.stream = stream  # type: ignore
-        stream.rebalance_listener.engine = self  # type: ignore
+        stream.rebalance_listener.stream = stream
+        stream.rebalance_listener.engine = self
 
         stream.udf_handler = UdfHandler(
             next_call=stream.func,
@@ -369,21 +398,14 @@ class StreamEngine:
         # NOTE: When `no typing` support is deprecated this check can
         # be removed
         if stream.udf_handler.type != UDFType.NO_TYPING:
-            stream.func = self.build_stream_middleware_stack(
-                stream=stream, error_policy=error_policy
-            )
+            stream.func = self._build_stream_middleware_stack(stream=stream)
 
-    def build_stream_middleware_stack(
-        self, *, stream: Stream, error_policy: StreamErrorPolicy
-    ) -> NextMiddlewareCall:
+    def _build_stream_middleware_stack(self, *, stream: Stream) -> NextMiddlewareCall:
         assert stream.udf_handler, "UdfHandler can not be None"
 
-        stream.middlewares = [
-            Middleware(ExceptionMiddleware, engine=self, error_policy=error_policy),
-        ] + stream.middlewares
-
+        middlewares = stream.get_middlewares(self)
         next_call = stream.udf_handler
-        for middleware, options in reversed(stream.middlewares):
+        for middleware, options in reversed(middlewares):
             next_call = middleware(
                 next_call=next_call, send=self.send, stream=stream, **options
             )
