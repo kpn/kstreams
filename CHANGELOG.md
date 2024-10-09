@@ -1,3 +1,9 @@
+## 0.24.4 (2024-10-09)
+
+### Fix
+
+- Update DeprecationWarnings
+
 ## 0.24.3 (2024-10-09)
 
 ### Fix
