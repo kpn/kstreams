@@ -18,7 +18,7 @@ from .serializers import Deserializer, Serializer
 from .streams import Stream, StreamFunc
 from .streams import stream as stream_func
 from .streams_utils import StreamErrorPolicy, UDFType
-from .types import EngineHooks, Headers, NextMiddlewareCall
+from .types import Deprecated, EngineHooks, Headers, NextMiddlewareCall
 from .utils import encode_headers, execute_hooks
 
 logger = logging.getLogger(__name__)
@@ -67,7 +67,7 @@ class StreamEngine:
         producer_class: typing.Type[Producer],
         monitor: PrometheusMonitor,
         title: typing.Optional[str] = None,
-        deserializer: typing.Optional[Deserializer] = None,
+        deserializer: Deprecated[typing.Optional[Deserializer]] = None,
         serializer: typing.Optional[Serializer] = None,
         on_startup: typing.Optional[EngineHooks] = None,
         on_stop: typing.Optional[EngineHooks] = None,
@@ -424,7 +424,7 @@ class StreamEngine:
         topics: typing.Union[typing.List[str], str],
         *,
         name: typing.Optional[str] = None,
-        deserializer: typing.Optional[Deserializer] = None,
+        deserializer: Deprecated[typing.Optional[Deserializer]] = None,
         initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
         rebalance_listener: typing.Optional[RebalanceListener] = None,
         middlewares: typing.Optional[typing.List[Middleware]] = None,

@@ -3,6 +3,7 @@ import inspect
 import logging
 import typing
 import uuid
+import warnings
 from functools import update_wrapper
 
 from aiokafka import errors
@@ -18,7 +19,7 @@ from .middleware import Middleware, udf_middleware
 from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
 from .streams_utils import StreamErrorPolicy, UDFType
-from .types import StreamFunc
+from .types import Deprecated, StreamFunc
 
 if typing.TYPE_CHECKING:
     from kstreams import StreamEngine
@@ -152,7 +153,7 @@ class Stream:
         consumer_class: typing.Type[Consumer] = Consumer,
         name: typing.Optional[str] = None,
         config: typing.Optional[typing.Dict] = None,
-        deserializer: typing.Optional[Deserializer] = None,
+        deserializer: Deprecated[typing.Optional[Deserializer]] = None,
         initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
         rebalance_listener: typing.Optional[RebalanceListener] = None,
         middlewares: typing.Optional[typing.List[Middleware]] = None,
@@ -278,10 +279,11 @@ class Stream:
         # call deserializer if there is one regarless consumer_record.value
         # as the end user might want to do something extra with headers or metadata
         if self.deserializer is not None:
-            logger.warning(
-                "Deserializers will be deprecated in the future, "
-                "use middlewares instead: https://kpn.github.io/kstreams/middleware/"
+            msg = (
+                "Deserializers are deprecated and don't have any support.\n"
+                "Use middlewares instead:\nhttps://kpn.github.io/kstreams/middleware/"
             )
+            warnings.warn(msg, DeprecationWarning, stacklevel=2)
             return await self.deserializer.deserialize(consumer_record)
 
         return consumer_record
@@ -341,11 +343,14 @@ class Stream:
 
             if self.udf_handler is not None:
                 if self.udf_handler.type == UDFType.NO_TYPING:
-                    # normal use case
-                    logging.warning(
-                        "Streams with `async for in` loop approach might "
-                        "be deprecated. Consider migrating to a typing approach."
+                    # deprecated use case
+                    msg = (
+                        "Streams with `async for in` loop approach are deprecated.\n"
+                        "Migrate to typed function.\n"
+                        "Read more:\n\n"
+                        "\thttps://kpn.github.io/kstreams/stream/#dependency-injection"
                     )
+                    warnings.warn(msg, DeprecationWarning, stacklevel=2)
 
                     func = self.udf_handler.next_call(self)
                     await func
@@ -441,7 +446,7 @@ def stream(
     *,
     subscribe_by_pattern: bool = False,
     name: typing.Optional[str] = None,
-    deserializer: typing.Optional[Deserializer] = None,
+    deserializer: Deprecated[typing.Optional[Deserializer]] = None,
     initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
     rebalance_listener: typing.Optional[RebalanceListener] = None,
     middlewares: typing.Optional[typing.List[Middleware]] = None,
