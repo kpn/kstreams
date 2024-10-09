@@ -11,7 +11,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-8.5.10">
     
     
       
@@ -370,7 +370,7 @@
         
           <li class="md-nav__item">
   <a href="#kstreams.PrometheusMonitor.generate_consumer_metrics" class="md-nav__link">
-    generate_consumer_metrics()
+    generate_consumer_metrics
   </a>
   
 </li>
@@ -518,7 +518,7 @@
         
           <li class="md-nav__item">
   <a href="#kstreams.PrometheusMonitor.generate_consumer_metrics" class="md-nav__link">
-    generate_consumer_metrics()
+    generate_consumer_metrics
   </a>
   
 </li>
@@ -581,25 +581,24 @@
 
 
 
-
 <h2 id="kstreams.PrometheusMonitor" class="doc doc-heading">
-          <code>kstreams.PrometheusMonitor</code>
+            <code>kstreams.PrometheusMonitor</code>
 
 
 </h2>
 
 
-  <div class="doc doc-contents first">
+    <div class="doc doc-contents first">
 
-  
+
       <p>Metrics monitor to keep track of Producers and Consumers.</p>
 <p>Attributes:
     metrics_scrape_time float: Amount of seconds that the monitor
         will wait until next scrape iteration</p>
 
-            <details class="quote">
-              <summary>Source code in <code>kstreams/prometheus/monitor.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 17</span>
+              <details class="quote">
+                <summary>Source code in <code>kstreams/prometheus/monitor.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 17</span>
 <span class="normal"> 18</span>
 <span class="normal"> 19</span>
 <span class="normal"> 20</span>
@@ -933,7 +932,7 @@
             <span class="n">partition</span> <span class="o">=</span> <span class="n">topic_partition</span><span class="o">.</span><span class="n">partition</span>
 
             <span class="n">metrics_found</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MET_LAG</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">samples</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MET_LAG</span><span class="o">.</span><span class="n">collect</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">samples</span><span class="p">:</span>
                 <span class="k">if</span> <span class="p">{</span>
                     <span class="s2">&quot;topic&quot;</span><span class="p">:</span> <span class="n">topic</span><span class="p">,</span>
                     <span class="s2">&quot;partition&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">partition</span><span class="p">),</span>
@@ -1033,12 +1032,11 @@
                             <span class="s2">&quot;probably because it has been removed&quot;</span>
                         <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-            </details>
+              </details>
 
-  
+
 
   <div class="doc doc-children">
-
 
 
 
@@ -1051,11 +1049,9 @@
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.PrometheusMonitor.generate_consumer_metrics" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">generate_consumer_metrics</span><span class="p">(</span><span class="n">consumer</span><span class="p">)</span></code>
-  
+            <code class="highlight language-python"><span class="n">generate_consumer_metrics</span><span class="p">(</span><span class="n">consumer</span><span class="p">)</span></code>
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
@@ -1063,9 +1059,10 @@
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Generate Consumer Metrics for Prometheus</p>
+
 
 <details class="format" open>
   <summary>Format</summary>
@@ -1093,9 +1090,9 @@
     }
 }</p>
 </details>
-          <details class="quote">
-            <summary>Source code in <code>kstreams/prometheus/monitor.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">161</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/prometheus/monitor.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">161</span>
 <span class="normal">162</span>
 <span class="normal">163</span>
 <span class="normal">164</span>
@@ -1201,8 +1198,8 @@
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_add_consumer_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
@@ -1210,7 +1207,7 @@
 
   </div>
 
-  </div>
+    </div>
 
 </div><h2 id="consumer-metrics">Consumer Metrics</h2>
 <p>We advise including the <code>consumer_lag</code> in your application's grafana dashboard.</p>

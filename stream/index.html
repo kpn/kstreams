@@ -11,7 +11,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-8.5.10">
     
     
       
@@ -466,14 +466,14 @@
         
           <li class="md-nav__item">
   <a href="#kstreams.MetricsRebalanceListener.on_partitions_assigned" class="md-nav__link">
-    on_partitions_assigned()
+    on_partitions_assigned
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.MetricsRebalanceListener.on_partitions_revoked" class="md-nav__link">
-    on_partitions_revoked()
+    on_partitions_revoked
   </a>
   
 </li>
@@ -500,7 +500,7 @@
         
           <li class="md-nav__item">
   <a href="#kstreams.ManualCommitRebalanceListener.on_partitions_revoked" class="md-nav__link">
-    on_partitions_revoked()
+    on_partitions_revoked
   </a>
   
 </li>
@@ -527,14 +527,14 @@
         
           <li class="md-nav__item">
   <a href="#kstreams.RebalanceListener.on_partitions_assigned" class="md-nav__link">
-    on_partitions_assigned()
+    on_partitions_assigned
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.RebalanceListener.on_partitions_revoked" class="md-nav__link">
-    on_partitions_revoked()
+    on_partitions_revoked
   </a>
   
 </li>
@@ -845,14 +845,14 @@
         
           <li class="md-nav__item">
   <a href="#kstreams.MetricsRebalanceListener.on_partitions_assigned" class="md-nav__link">
-    on_partitions_assigned()
+    on_partitions_assigned
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.MetricsRebalanceListener.on_partitions_revoked" class="md-nav__link">
-    on_partitions_revoked()
+    on_partitions_revoked
   </a>
   
 </li>
@@ -879,7 +879,7 @@
         
           <li class="md-nav__item">
   <a href="#kstreams.ManualCommitRebalanceListener.on_partitions_revoked" class="md-nav__link">
-    on_partitions_revoked()
+    on_partitions_revoked
   </a>
   
 </li>
@@ -906,14 +906,14 @@
         
           <li class="md-nav__item">
   <a href="#kstreams.RebalanceListener.on_partitions_assigned" class="md-nav__link">
-    on_partitions_assigned()
+    on_partitions_assigned
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.RebalanceListener.on_partitions_revoked" class="md-nav__link">
-    on_partitions_revoked()
+    on_partitions_revoked
   </a>
   
 </li>
@@ -952,138 +952,136 @@
 
 
 
-
 <h2 id="kstreams.streams.Stream" class="doc doc-heading">
-          <code>kstreams.streams.Stream</code>
+            <code>kstreams.streams.Stream</code>
 
 
 </h2>
 
 
-  <div class="doc doc-contents first">
-
-  
+    <div class="doc doc-contents first">
 
 
 
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>name</code></td>
-          <td>
-                <code>Optional[str]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Stream name. Default is a generated uuid4</p>
-            </div>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-        <tr>
-          <td><code>topics</code></td>
-          <td>
-                <code>List[str]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>List of topics to consume</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>subscribe_by_pattern</code></td>
-          <td>
-                <code>bool</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Whether subscribe to topics by pattern</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>backend</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="kstreams.backends.Kafka" href="../backends/#kstreams.backends.kafka.Kafka">Kafka</a></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>backend kstreams.backends.kafka.Kafka:
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.streams.Stream.name">name</span></code></td>
+            <td>
+                  <code>Optional[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Stream name. Default is a generated uuid4</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.streams.Stream.topics">topics</span></code></td>
+            <td>
+                  <code>List[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>List of topics to consume</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.streams.Stream.subscribe_by_pattern">subscribe_by_pattern</span></code></td>
+            <td>
+                  <code>bool</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Whether subscribe to topics by pattern</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.streams.Stream.backend">backend</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="kstreams.backends.Kafka" href="../backends/#kstreams.backends.kafka.Kafka">Kafka</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>backend kstreams.backends.kafka.Kafka:
 Backend to connect. Default <code>Kafka</code></p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>func</code></td>
-          <td>
-                <code>Callable[[<a class="autorefs autorefs-internal" title="kstreams.streams.Stream" href="#kstreams.streams.Stream">Stream</a>], Awaitable[Any]]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Coroutine fucntion or generator
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.streams.Stream.func">func</span></code></td>
+            <td>
+                  <code>Callable[[<a class="autorefs autorefs-internal" title="kstreams.streams.Stream" href="#kstreams.streams.Stream">Stream</a>], Awaitable[Any]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Coroutine fucntion or generator
 to be called when an event arrives</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>config</code></td>
-          <td>
-                <code>Dict[str, Any]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Stream configuration. Here all the
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.streams.Stream.config">config</span></code></td>
+            <td>
+                  <code>Dict[str, Any]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Stream configuration. Here all the
 <a href="https://aiokafka.readthedocs.io/en/stable/api.html#consumer-class">properties</a>
 can be passed in the dictionary</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>deserializer</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Deserializer" href="../serialization/#kstreams.serializers.Deserializer">Deserializer</a></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Deserializer to be used
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.streams.Stream.deserializer">deserializer</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Deserializer" href="../serialization/#kstreams.serializers.Deserializer">Deserializer</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Deserializer to be used
 when an event is consumed</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>initial_offsets</code></td>
-          <td>
-                <code>List[<span title="kstreams.TopicPartitionOffset">TopicPartitionOffset</span>]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>List of
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.streams.Stream.initial_offsets">initial_offsets</span></code></td>
+            <td>
+                  <code>List[<span title="kstreams.TopicPartitionOffset">TopicPartitionOffset</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>List of
 TopicPartitionOffset that will <code>seek</code> the initial offsets to</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>rebalance_listener</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="kstreams.rebalance_listener.RebalanceListener" href="#kstreams.RebalanceListener">RebalanceListener</a></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Listener
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.streams.Stream.rebalance_listener">rebalance_listener</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="kstreams.rebalance_listener.RebalanceListener" href="#kstreams.RebalanceListener">RebalanceListener</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Listener
 callbacks when partition are assigned or revoked</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
       <h4 id="kstreams.streams.Stream--subscribe-to-a-topic">Subscribe to a topic</h4>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
@@ -1176,7 +1174,7 @@ the regex <code>^dev--customer-.*</code>, for example <code>dev--customer-invoic
 </div>
 
 
-  
+
 
   <div class="doc doc-children">
 
@@ -1192,7 +1190,7 @@ the regex <code>^dev--customer-.*</code>, for example <code>dev--customer-invoic
 
   </div>
 
-  </div>
+    </div>
 
 </div><h2 id="dependency-injection">Dependency Injection</h2>
 <p>The old way to itereate over a stream is with the <code>async for _ in stream</code> loop. The iterable approach works but in most cases end users are interested only in the <code>ConsumerRecord</code>,
@@ -1416,98 +1414,95 @@ meaning that the lag will increase.</p>
 <h2 id="get-many">Get many</h2>
 
 
-
 <div class="doc doc-object doc-function">
 
 
 
 <a id="kstreams.streams.Stream.getmany"></a>
-  <div class="doc doc-contents first">
-  
+    <div class="doc doc-contents first">
+
       <p>Get a batch of events from the assigned TopicPartition.</p>
 <p>Prefetched events are returned in batches by topic-partition.
 If messages is not available in the prefetched buffer this method waits
 <code>timeout_ms</code> milliseconds.</p>
 
 
-
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>partitions</code></td>
-          <td>
-                <code>List[<span title="kstreams.TopicPartition">TopicPartition</span>] | None</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>The partitions that need
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.streams.Stream.getmany.partitions">partitions</span></code></td>
+            <td>
+                  <code>List[<span title="kstreams.TopicPartition">TopicPartition</span>] | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The partitions that need
 fetching message. If no one partition specified then all
 subscribed partitions will be used</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>timeout_ms</code></td>
-          <td>
-                <code>int | None</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>milliseconds spent waiting if
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.streams.Stream.getmany.timeout_ms">timeout_ms</span></code></td>
+            <td>
+                  <code>int | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>milliseconds spent waiting if
 data is not available in the buffer. If 0, returns immediately
 with any records that are available currently in the buffer,
 else returns empty. Must not be negative.</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>max_records</code></td>
-          <td>
-                <code>int | None</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>The amount of records to fetch.
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.streams.Stream.getmany.max_records">max_records</span></code></td>
+            <td>
+                  <code>int | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The amount of records to fetch.
 if <code>timeout_ms</code> was defined and reached and the fetched records
 has not reach <code>max_records</code> then returns immediately
 with any records that are available currently in the buffer</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td>
-                <code><span title="typing.Dict">Dict</span>[<span title="kstreams.TopicPartition">TopicPartition</span>, <span title="typing.List">List</span>[<span title="kstreams.ConsumerRecord">ConsumerRecord</span>]]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Topic to list of records</p>
-            </div>
-          </td>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="typing.Dict">Dict</span>[<span title="kstreams.TopicPartition">TopicPartition</span>, <span title="typing.List">List</span>[<span title="kstreams.ConsumerRecord">ConsumerRecord</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Topic to list of records</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
       <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
@@ -1518,9 +1513,9 @@ with any records that are available currently in the buffer</p>
 </code></pre></div>
 </div>
 
-          <details class="quote">
-            <summary>Source code in <code>kstreams/streams.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">289</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/streams.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">289</span>
 <span class="normal">290</span>
 <span class="normal">291</span>
 <span class="normal">292</span>
@@ -1604,8 +1599,8 @@ with any records that are available currently in the buffer</p>
         <span class="o">*</span><span class="n">partitions</span><span class="p">,</span> <span class="n">timeout_ms</span><span class="o">=</span><span class="n">timeout_ms</span><span class="p">,</span> <span class="n">max_records</span><span class="o">=</span><span class="n">max_records</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div><div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -1627,20 +1622,19 @@ with any records that are available currently in the buffer</p>
 
 
 
-
 <h2 id="kstreams.MetricsRebalanceListener" class="doc doc-heading">
-          <code>kstreams.MetricsRebalanceListener</code>
+            <code>kstreams.MetricsRebalanceListener</code>
 
 
 </h2>
 
 
-  <div class="doc doc-contents first">
+    <div class="doc doc-contents first">
 
 
-            <details class="quote">
-              <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
+              <details class="quote">
+                <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span>
 <span class="normal">108</span>
@@ -1716,12 +1710,11 @@ with any records that are available currently in the buffer</p>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">seek_to_initial_offsets</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
-            </details>
+              </details>
 
-  
+
 
   <div class="doc doc-children">
-
 
 
 
@@ -1734,11 +1727,9 @@ with any records that are available currently in the buffer</p>
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.MetricsRebalanceListener.on_partitions_assigned" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">on_partitions_assigned</span><span class="p">(</span><span class="n">assigned</span><span class="p">)</span></code>
-  
+            <code class="highlight language-python"><span class="n">on_partitions_assigned</span><span class="p">(</span><span class="n">assigned</span><span class="p">)</span></code>
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
@@ -1746,42 +1737,41 @@ with any records that are available currently in the buffer</p>
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Coroutine to be called <em>after</em> partition re-assignment completes
 and <em>before</em> the consumer starts fetching data again.</p>
 <p>This method will start the <code>Prometheus</code> metrics</p>
 
 
-
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>assigned</code></td>
-          <td>
-                <code>Set[<span title="kstreams.TopicPartition">TopicPartition</span>]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Partitions assigned to the
-consumer (may include partitions that were previously assigned)</p>
-            </div>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.MetricsRebalanceListener.on_partitions_assigned.assigned">assigned</span></code></td>
+            <td>
+                  <code>Set[<span title="kstreams.TopicPartition">TopicPartition</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Partitions assigned to the
+consumer (may include partitions that were previously assigned)</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-          <details class="quote">
-            <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">125</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">125</span>
 <span class="normal">126</span>
 <span class="normal">127</span>
 <span class="normal">128</span>
@@ -1817,20 +1807,17 @@ consumer (may include partitions that were previously assigned)</p>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">seek_to_initial_offsets</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.MetricsRebalanceListener.on_partitions_revoked" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
-  
+            <code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
@@ -1838,42 +1825,41 @@ consumer (may include partitions that were previously assigned)</p>
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Coroutine to be called <em>before</em> a rebalance operation starts and
 <em>after</em> the consumer stops fetching data.</p>
 <p>This will method will clean up the <code>Prometheus</code> metrics</p>
 
 
-
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>revoked</code></td>
-          <td>
-                <code>Set[TopicPartitions]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Partitions that were assigned
-to the consumer on the last rebalance</p>
-            </div>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.MetricsRebalanceListener.on_partitions_revoked.revoked">revoked</span></code></td>
+            <td>
+                  <code>Set[TopicPartitions]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Partitions that were assigned
+to the consumer on the last rebalance</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-          <details class="quote">
-            <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">106</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">106</span>
 <span class="normal">107</span>
 <span class="normal">108</span>
 <span class="normal">109</span>
@@ -1909,8 +1895,8 @@ to the consumer on the last rebalance</p>
                     <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">consumer</span>
                 <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
@@ -1918,7 +1904,7 @@ to the consumer on the last rebalance</p>
 
   </div>
 
-  </div>
+    </div>
 
 </div><h3 id="manual-commit_1">Manual Commit</h3>
 <p>If <code>manual</code> commit is enabled, you migh want to use the <code>ManualCommitRebalanceListener</code>. This <code>rebalance listener</code> will call <code>commit</code>
@@ -1930,20 +1916,19 @@ manual <code>commit</code></p>
 
 
 
-
 <h2 id="kstreams.ManualCommitRebalanceListener" class="doc doc-heading">
-          <code>kstreams.ManualCommitRebalanceListener</code>
+            <code>kstreams.ManualCommitRebalanceListener</code>
 
 
 </h2>
 
 
-  <div class="doc doc-contents first">
+    <div class="doc doc-contents first">
 
 
-            <details class="quote">
-              <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
+              <details class="quote">
+                <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
 <span class="normal">146</span>
 <span class="normal">147</span>
 <span class="normal">148</span>
@@ -1999,12 +1984,11 @@ manual <code>commit</code></p>
 
             <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="o">=</span><span class="n">revoked</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-            </details>
+              </details>
 
-  
+
 
   <div class="doc doc-children">
-
 
 
 
@@ -2017,11 +2001,9 @@ manual <code>commit</code></p>
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.ManualCommitRebalanceListener.on_partitions_revoked" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
-  
+            <code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
@@ -2029,8 +2011,8 @@ manual <code>commit</code></p>
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Coroutine to be called <em>before</em> a rebalance operation starts and
 <em>after</em> the consumer stops fetching data.</p>
 <p>If manual commit is enabled, <code>commit</code> is called before the consumers
@@ -2038,35 +2020,34 @@ partitions are revoked to prevent the error <code>CommitFailedError</code>
 and duplicate message delivery after a rebalance.</p>
 
 
-
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>revoked</code></td>
-          <td>
-                <code>Set[TopicPartitions]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Partitions that were assigned
-to the consumer on the last rebalance</p>
-            </div>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.ManualCommitRebalanceListener.on_partitions_revoked.revoked">revoked</span></code></td>
+            <td>
+                  <code>Set[TopicPartitions]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Partitions that were assigned
+to the consumer on the last rebalance</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-          <details class="quote">
-            <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">146</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">146</span>
 <span class="normal">147</span>
 <span class="normal">148</span>
 <span class="normal">149</span>
@@ -2120,8 +2101,8 @@ to the consumer on the last rebalance</p>
 
         <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="o">=</span><span class="n">revoked</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
@@ -2129,7 +2110,7 @@ to the consumer on the last rebalance</p>
 
   </div>
 
-  </div>
+    </div>
 
 </div><div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -2143,17 +2124,16 @@ to the consumer on the last rebalance</p>
 
 
 
-
 <h2 id="kstreams.RebalanceListener" class="doc doc-heading">
-          <code>kstreams.RebalanceListener</code>
+            <code>kstreams.RebalanceListener</code>
 
 
 </h2>
 
 
-  <div class="doc doc-contents first">
+    <div class="doc doc-contents first">
 
-  
+
       <p>A callback interface that the user can implement to trigger custom actions
 when the set of partitions are assigned or revoked to the <code>Stream</code>.</p>
 <div class="admonition example">
@@ -2186,9 +2166,9 @@ when the set of partitions are assigned or revoked to the <code>Stream</code>.</
 </code></pre></div>
 </div>
 
-            <details class="quote">
-              <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 19</span>
+              <details class="quote">
+                <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 19</span>
 <span class="normal"> 20</span>
 <span class="normal"> 21</span>
 <span class="normal"> 22</span>
@@ -2356,12 +2336,11 @@ when the set of partitions are assigned or revoked to the <code>Stream</code>.</
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 </code></pre></div></td></tr></table></div>
-            </details>
+              </details>
 
-  
+
 
   <div class="doc doc-children">
-
 
 
 
@@ -2374,11 +2353,9 @@ when the set of partitions are assigned or revoked to the <code>Stream</code>.</
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.RebalanceListener.on_partitions_assigned" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">on_partitions_assigned</span><span class="p">(</span><span class="n">assigned</span><span class="p">)</span></code>
-  
+            <code class="highlight language-python"><span class="n">on_partitions_assigned</span><span class="p">(</span><span class="n">assigned</span><span class="p">)</span></code>
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
@@ -2386,13 +2363,14 @@ when the set of partitions are assigned or revoked to the <code>Stream</code>.</
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Coroutine to be called <em>after</em> partition re-assignment completes
 and <em>before</em> the consumer starts fetching data again.</p>
 <p>It is guaranteed that all the processes in a consumer group will
 execute their <code>on_partitions_revoked</code> callback before any instance
 executes its <code>on_partitions_assigned</code> callback.</p>
+
 
 <details class="use-cases" open>
   <summary>Use cases</summary>
@@ -2402,39 +2380,38 @@ partition re-assignment.</li>
 </ul>
 </details>
 
-
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>assigned</code></td>
-          <td>
-                <code>Set[<span title="kstreams.TopicPartition">TopicPartition</span>]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Partitions assigned to the
-consumer (may include partitions that were previously assigned)</p>
-            </div>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.RebalanceListener.on_partitions_assigned.assigned">assigned</span></code></td>
+            <td>
+                  <code>Set[<span title="kstreams.TopicPartition">TopicPartition</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Partitions assigned to the
+consumer (may include partitions that were previously assigned)</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
       <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <code>Stream</code> is available using <code>self.stream</code></p>
 </div>
 
-          <details class="quote">
-            <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 80</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 80</span>
 <span class="normal"> 81</span>
 <span class="normal"> 82</span>
 <span class="normal"> 83</span>
@@ -2480,20 +2457,17 @@ consumer (may include partitions that were previously assigned)</p>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.RebalanceListener.on_partitions_revoked" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
-  
+            <code class="highlight language-python"><span class="n">on_partitions_revoked</span><span class="p">(</span><span class="n">revoked</span><span class="p">)</span></code>
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
@@ -2501,12 +2475,13 @@ consumer (may include partitions that were previously assigned)</p>
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Coroutine to be called <em>before</em> a rebalance operation starts and
 <em>after</em> the consumer stops fetching data.</p>
 <p>If you are using manual commit you have to commit all consumed offsets
 here, to avoid duplicate message delivery after rebalance is finished.</p>
+
 
 <details class="use-cases" open>
   <summary>Use cases</summary>
@@ -2516,39 +2491,38 @@ here, to avoid duplicate message delivery after rebalance is finished.</p>
 </ul>
 </details>
 
-
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>revoked</code></td>
-          <td>
-                <code>Set[TopicPartitions]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Partitions that were assigned
-to the consumer on the last rebalance</p>
-            </div>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.RebalanceListener.on_partitions_revoked.revoked">revoked</span></code></td>
+            <td>
+                  <code>Set[TopicPartitions]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Partitions that were assigned
+to the consumer on the last rebalance</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
       <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <code>Stream</code> is available using <code>self.stream</code></p>
 </div>
 
-          <details class="quote">
-            <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">59</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/rebalance_listener.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">59</span>
 <span class="normal">60</span>
 <span class="normal">61</span>
 <span class="normal">62</span>
@@ -2588,8 +2562,8 @@ to the consumer on the last rebalance</p>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
@@ -2597,7 +2571,7 @@ to the consumer on the last rebalance</p>
 
   </div>
 
-  </div>
+    </div>
 
 </div><div class="admonition note">
 <p class="admonition-title">Note</p>

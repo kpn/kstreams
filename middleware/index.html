@@ -11,7 +11,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-8.5.10">
     
     
       
@@ -651,14 +651,14 @@
 
 
 <a id="kstreams.middleware.middleware.MiddlewareProtocol"></a>
-  <div class="doc doc-contents first">
-          <p class="doc doc-class-bases">
-            Bases: <code><span title="typing.Protocol">Protocol</span></code></p>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="typing.Protocol">Protocol</span></code></p>
 
 
-            <details class="quote">
-              <summary>Source code in <code>kstreams/middleware/middleware.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
+              <details class="quote">
+                <summary>Source code in <code>kstreams/middleware/middleware.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
 <span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
@@ -684,9 +684,9 @@
     <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
         <span class="o">...</span>  <span class="c1">#  pragma: no cover</span>
 </code></pre></div></td></tr></table></div>
-            </details>
+              </details>
 
-  
+
 
   <div class="doc doc-children">
 
@@ -702,7 +702,7 @@
 
   </div>
 
-  </div>
+    </div>
 
 </div><div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -784,18 +784,18 @@
 
 
 <a id="kstreams.middleware.middleware.ExceptionMiddleware"></a>
-  <div class="doc doc-contents first">
+    <div class="doc doc-contents first">
 
-  
+
       <p>This is always the first Middleware in the middleware stack
 to catch any exception that might occur. Any exception raised
 when consuming events that is not handled by the end user
 will be handled by this ExceptionMiddleware executing the
 policy_error that was stablished.</p>
 
-            <details class="quote">
-              <summary>Source code in <code>kstreams/middleware/middleware.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 65</span>
+              <details class="quote">
+                <summary>Source code in <code>kstreams/middleware/middleware.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 65</span>
 <span class="normal"> 66</span>
 <span class="normal"> 67</span>
 <span class="normal"> 68</span>
@@ -905,9 +905,9 @@ policy_error that was stablished.</p>
         <span class="c1"># and avoid `RuntimeError: Lock is not acquired.`</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">is_processing</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
-            </details>
+              </details>
 
-  
+
 
   <div class="doc doc-children">
 
@@ -923,7 +923,7 @@ policy_error that was stablished.</p>
 
   </div>
 
-  </div>
+    </div>
 
 </div><h2 id="middleware-chain">Middleware chain</h2>
 <p>It is possible to add as many middlewares as you want to split and reuse business logic, however the downside is extra complexity and the code might become slower. The middleware order is important as they are evaluated in the order that were placed in the stream.</p>
@@ -1029,12 +1029,12 @@ policy_error that was stablished.</p>
 
 
 <a id="examples.dataclasses-avroschema-example.dataclasses_avroschema_example.middlewares.AvroDeserializerMiddleware"></a>
-  <div class="doc doc-contents first">
+    <div class="doc doc-contents first">
 
 
-            <details class="quote">
-              <summary>Source code in <code>examples/dataclasses-avroschema-example/dataclasses_avroschema_example/middlewares.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 6</span>
+              <details class="quote">
+                <summary>Source code in <code>examples/dataclasses-avroschema-example/dataclasses_avroschema_example/middlewares.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 6</span>
 <span class="normal"> 7</span>
 <span class="normal"> 8</span>
 <span class="normal"> 9</span>
@@ -1060,9 +1060,9 @@ policy_error that was stablished.</p>
             <span class="n">cr</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">data</span>
         <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_call</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-            </details>
+              </details>
 
-  
+
 
   <div class="doc doc-children">
 
@@ -1078,7 +1078,7 @@ policy_error that was stablished.</p>
 
   </div>
 
-  </div>
+    </div>
 
 </div>
 
@@ -1087,12 +1087,12 @@ policy_error that was stablished.</p>
 
 
 <a id="examples.confluent-example.confluent_example.middlewares.ConfluentMiddlewareDeserializer"></a>
-  <div class="doc doc-contents first">
+    <div class="doc doc-contents first">
 
 
-            <details class="quote">
-              <summary>Source code in <code>examples/confluent-example/confluent_example/middlewares.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
+              <details class="quote">
+                <summary>Source code in <code>examples/confluent-example/confluent_example/middlewares.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
 <span class="normal">10</span>
 <span class="normal">11</span>
 <span class="normal">12</span>
@@ -1142,9 +1142,9 @@ policy_error that was stablished.</p>
         <span class="n">cr</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">data</span>
         <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_call</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-            </details>
+              </details>
 
-  
+
 
   <div class="doc doc-children">
 
@@ -1160,7 +1160,7 @@ policy_error that was stablished.</p>
 
   </div>
 
-  </div>
+    </div>
 
 </div>
 

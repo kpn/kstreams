@@ -11,7 +11,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-8.5.10">
     
     
       
@@ -434,14 +434,14 @@
         
           <li class="md-nav__item">
   <a href="#kstreams.utils.create_ssl_context" class="md-nav__link">
-    create_ssl_context()
+    create_ssl_context
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.utils.create_ssl_context_from_mem" class="md-nav__link">
-    create_ssl_context_from_mem()
+    create_ssl_context_from_mem
   </a>
   
 </li>
@@ -510,14 +510,14 @@
         
           <li class="md-nav__item">
   <a href="#kstreams.utils.create_ssl_context" class="md-nav__link">
-    create_ssl_context()
+    create_ssl_context
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.utils.create_ssl_context_from_mem" class="md-nav__link">
-    create_ssl_context_from_mem()
+    create_ssl_context_from_mem
   </a>
   
 </li>
@@ -555,19 +555,17 @@
 
 
 
-
 <h2 id="kstreams.utils" class="doc doc-heading">
-          <code>kstreams.utils</code>
+            <code>kstreams.utils</code>
 
 
 </h2>
 
-  <div class="doc doc-contents first">
+    <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
-
 
 
 
@@ -580,128 +578,125 @@
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.utils.create_ssl_context" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">create_ssl_context</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">cafile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">capath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">certfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keyfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">crlfile</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">create_ssl_context</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">cafile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">capath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">certfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keyfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">crlfile</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Wrapper of <a href="https://aiokafka.readthedocs.io/en/stable/api.html#helpers">aiokafka.helpers.create_ssl_context</a>
 with typehints.</p>
 
 
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>cafile</code></td>
-          <td>
-                <code><span title="typing.Optional">Optional</span>[str]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Certificate Authority file path containing certificates
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>cafile</code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Certificate Authority file path containing certificates
 used to sign broker certificates</p>
-            </div>
-          </td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>capath</code></td>
-          <td>
-                <code><span title="typing.Optional">Optional</span>[str]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Same as <code>cafile</code>, but points to a directory containing
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>capath</code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Same as <code>cafile</code>, but points to a directory containing
 several CA certificates</p>
-            </div>
-          </td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>cadata</code></td>
-          <td>
-                <code><span title="typing.Union">Union</span>[str, bytes, None]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Same as <code>cafile</code>, but instead contains already
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>cadata</code></td>
+            <td>
+                  <code><span title="typing.Union">Union</span>[str, bytes, None]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Same as <code>cafile</code>, but instead contains already
 read data in either ASCII or bytes format</p>
-            </div>
-          </td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>certfile</code></td>
-          <td>
-                <code><span title="typing.Optional">Optional</span>[str]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>optional filename of file in PEM format containing
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>certfile</code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>optional filename of file in PEM format containing
 the client certificate, as well as any CA certificates needed to
 establish the certificate's authenticity</p>
-            </div>
-          </td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>keyfile</code></td>
-          <td>
-                <code><span title="typing.Optional">Optional</span>[str]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>optional filename containing the client private key.</p>
-            </div>
-          </td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>password</code></td>
-          <td>
-                <code><span title="typing.Optional">Optional</span>[str]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>optional password to be used when loading the
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>keyfile</code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>optional filename containing the client private key.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>password</code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>optional password to be used when loading the
 certificate chain</p>
-            </div>
-          </td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-          <details class="quote">
-            <summary>Source code in <code>kstreams/utils.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">55</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/utils.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">55</span>
 <span class="normal">56</span>
 <span class="normal">57</span>
 <span class="normal">58</span>
@@ -779,106 +774,102 @@ certificate chain</p>
         <span class="n">crlfile</span><span class="o">=</span><span class="n">crlfile</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.utils.create_ssl_context_from_mem" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">create_ssl_context_from_mem</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">certdata</span><span class="p">,</span> <span class="n">keydata</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">create_ssl_context_from_mem</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">certdata</span><span class="p">,</span> <span class="n">keydata</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Create a SSL context from data on memory.</p>
 <p>This makes it easy to read the certificates from environmental variables
 Usually the data is loaded from env variables.</p>
 
 
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>cadata</code></td>
-          <td>
-                <code><span title="typing.Optional">Optional</span>[str]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>certificates used to sign broker certificates provided as unicode str</p>
-            </div>
-          </td>
-          <td>
-                <code>None</code>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
         </tr>
-        <tr>
-          <td><code>certdata</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>the client certificate, as well as any CA certificates needed to
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>cadata</code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>certificates used to sign broker certificates provided as unicode str</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>certdata</code></td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the client certificate, as well as any CA certificates needed to
 establish the certificate's authenticity provided as unicode str</p>
-            </div>
-          </td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>keydata</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>the client private key provided as unicode str</p>
-            </div>
-          </td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>password</code></td>
-          <td>
-                <code><span title="typing.Optional">Optional</span>[str]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>optional password to be used when loading the
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>keydata</code></td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the client private key provided as unicode str</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>password</code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>optional password to be used when loading the
 certificate chain</p>
-            </div>
-          </td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-          <details class="quote">
-            <summary>Source code in <code>kstreams/utils.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/utils.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
 <span class="normal">19</span>
@@ -952,8 +943,8 @@ certificate chain</p>
         <span class="k">return</span> <span class="n">ssl_context</span>
     <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
@@ -961,7 +952,7 @@ certificate chain</p>
 
   </div>
 
-  </div>
+    </div>
 
 </div>
 

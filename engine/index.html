@@ -11,7 +11,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-8.5.10">
     
     
       
@@ -314,42 +314,42 @@
         
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.send" class="md-nav__link">
-    send()
+    send
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.on_startup" class="md-nav__link">
-    on_startup()
+    on_startup
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.on_stop" class="md-nav__link">
-    on_stop()
+    on_stop
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.after_startup" class="md-nav__link">
-    after_startup()
+    after_startup
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.after_stop" class="md-nav__link">
-    after_stop()
+    after_stop
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.add_stream" class="md-nav__link">
-    add_stream()
+    add_stream
   </a>
   
 </li>
@@ -538,42 +538,42 @@
         
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.send" class="md-nav__link">
-    send()
+    send
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.on_startup" class="md-nav__link">
-    on_startup()
+    on_startup
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.on_stop" class="md-nav__link">
-    on_stop()
+    on_stop
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.after_startup" class="md-nav__link">
-    after_startup()
+    after_startup
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.after_stop" class="md-nav__link">
-    after_stop()
+    after_stop
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#kstreams.engine.StreamEngine.add_stream" class="md-nav__link">
-    add_stream()
+    add_stream
   </a>
   
 </li>
@@ -610,116 +610,114 @@
 
 
 
-
 <h2 id="kstreams.engine.StreamEngine" class="doc doc-heading">
-          <code>kstreams.engine.StreamEngine</code>
+            <code>kstreams.engine.StreamEngine</code>
 
 
 </h2>
 
 
-  <div class="doc doc-contents first">
-
-  
+    <div class="doc doc-contents first">
 
 
 
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>backend</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="kstreams.backends.Kafka" href="../backends/#kstreams.backends.kafka.Kafka">Kafka</a></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Backend to connect. Default <code>Kafka</code></p>
-            </div>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-        <tr>
-          <td><code>consumer_class</code></td>
-          <td>
-                <code><span title="kstreams.Consumer">Consumer</span></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>The consumer class to use when
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.backend">backend</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="kstreams.backends.Kafka" href="../backends/#kstreams.backends.kafka.Kafka">Kafka</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Backend to connect. Default <code>Kafka</code></p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.consumer_class">consumer_class</span></code></td>
+            <td>
+                  <code><span title="kstreams.Consumer">Consumer</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The consumer class to use when
 instanciate a consumer. Default kstreams.Consumer</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>producer_class</code></td>
-          <td>
-                <code><span title="kstreams.Producer">Producer</span></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>The producer class to use when
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.producer_class">producer_class</span></code></td>
+            <td>
+                  <code><span title="kstreams.Producer">Producer</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The producer class to use when
 instanciate the producer. Default kstreams.Producer</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>monitor</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="kstreams.PrometheusMonitor" href="../monitoring/#kstreams.PrometheusMonitor">PrometheusMonitor</a></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Prometheus monitor that holds
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.monitor">monitor</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="kstreams.PrometheusMonitor" href="../monitoring/#kstreams.PrometheusMonitor">PrometheusMonitor</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Prometheus monitor that holds
 the <a href="https://kpn.github.io/kstreams/metrics/">metrics</a></p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>title</code></td>
-          <td>
-                <code>str | None</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Engine name</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>serializer</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Serializer" href="../serialization/#kstreams.serializers.Serializer">Serializer</a> | None</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Serializer to
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.title">title</span></code></td>
+            <td>
+                  <code>str | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Engine name</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.serializer">serializer</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Serializer" href="../serialization/#kstreams.serializers.Serializer">Serializer</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Serializer to
 use when an event is produced.</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>deserializer</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Deserializer" href="../serialization/#kstreams.serializers.Deserializer">Deserializer</a> | None</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Deserializer
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.deserializer">deserializer</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Deserializer" href="../serialization/#kstreams.serializers.Deserializer">Deserializer</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Deserializer
 to be used when an event is consumed.
 If provided it will be used in all Streams instances as a general one.
 To override it per Stream, you can provide one per Stream</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
       <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><span class="filename">Usage</span><pre><span></span><code><span class="kn">import</span> <span class="nn">kstreams</span>
@@ -737,9 +735,9 @@ To override it per Stream, you can provide one per Stream</p>
 </code></pre></div>
 </div>
 
-            <details class="quote">
-              <summary>Source code in <code>kstreams/engine.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 27</span>
+              <details class="quote">
+                <summary>Source code in <code>kstreams/engine.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 27</span>
 <span class="normal"> 28</span>
 <span class="normal"> 29</span>
 <span class="normal"> 30</span>
@@ -1587,12 +1585,11 @@ To override it per Stream, you can provide one per Stream</p>
 
         <span class="k">return</span> <span class="n">decorator</span>
 </code></pre></div></td></tr></table></div>
-            </details>
+              </details>
 
-  
+
 
   <div class="doc doc-children">
-
 
 
 
@@ -1605,11 +1602,9 @@ To override it per Stream, you can provide one per Stream</p>
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.engine.StreamEngine.send" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">send</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timestamp_ms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">serializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">serializer_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-  
+            <code class="highlight language-python"><span class="n">send</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timestamp_ms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">serializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">serializer_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
@@ -1617,116 +1612,115 @@ To override it per Stream, you can provide one per Stream</p>
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
 
 
 
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>topic</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Topic name to send the event to</p>
-            </div>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-        <tr>
-          <td><code>value</code></td>
-          <td>
-                <code>Any</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Event value</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>key</code></td>
-          <td>
-                <code>str | None</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Event key</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>partition</code></td>
-          <td>
-                <code>int | None</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Topic partition</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>timestamp_ms</code></td>
-          <td>
-                <code>int | None</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Event timestamp in miliseconds</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>headers</code></td>
-          <td>
-                <code>Dict[str, str] | None</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Event headers</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>serializer</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Serializer" href="../serialization/#kstreams.serializers.Serializer">Serializer</a> | None</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Serializer to
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.send.topic">topic</span></code></td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Topic name to send the event to</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.send.value">value</span></code></td>
+            <td>
+                  <code>Any</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Event value</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.send.key">key</span></code></td>
+            <td>
+                  <code>str | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Event key</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.send.partition">partition</span></code></td>
+            <td>
+                  <code>int | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Topic partition</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.send.timestamp_ms">timestamp_ms</span></code></td>
+            <td>
+                  <code>int | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Event timestamp in miliseconds</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.send.headers">headers</span></code></td>
+            <td>
+                  <code>Dict[str, str] | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Event headers</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.send.serializer">serializer</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Serializer" href="../serialization/#kstreams.serializers.Serializer">Serializer</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Serializer to
 encode the event</p>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td><code>serializer_kwargs</code></td>
-          <td>
-                <code>Dict[str, Any] | None</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Serializer kwargs</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.send.serializer_kwargs">serializer_kwargs</span></code></td>
+            <td>
+                  <code>Dict[str, Any] | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Serializer kwargs</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-          <details class="quote">
-            <summary>Source code in <code>kstreams/engine.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 91</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/engine.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 91</span>
 <span class="normal"> 92</span>
 <span class="normal"> 93</span>
 <span class="normal"> 94</span>
@@ -1830,54 +1824,50 @@ encode the event</p>
 
     <span class="k">return</span> <span class="n">metadata</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.engine.StreamEngine.on_startup" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">on_startup</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">on_startup</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></code>
 
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>A list of callables to run before the engine starts.
 Handler are callables that do not take any arguments, and may be either
 standard functions, or async functions.</p>
 
 
-
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>func</code></td>
-          <td>
-                <code><span title="typing.Callable">Callable</span>[[], <span title="typing.Any">Any</span>]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Func to callable before engine starts</p>
-            </div>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.on_startup.func">func</span></code></td>
+            <td>
+                  <code><span title="typing.Callable">Callable</span>[[], <span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Func to callable before engine starts</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
       <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><span class="filename">Engine before startup</span><pre><span></span><code><span class="kn">import</span> <span class="nn">kstreams</span>
@@ -1898,9 +1888,9 @@ standard functions, or async functions.</p>
 </code></pre></div>
 </div>
 
-          <details class="quote">
-            <summary>Source code in <code>kstreams/engine.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">158</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/engine.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">158</span>
 <span class="normal">159</span>
 <span class="normal">160</span>
 <span class="normal">161</span>
@@ -1968,54 +1958,50 @@ standard functions, or async functions.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">_on_startup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">func</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.engine.StreamEngine.on_stop" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">on_stop</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">on_stop</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></code>
 
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>A list of callables to run before the engine stops.
 Handler are callables that do not take any arguments, and may be either
 standard functions, or async functions.</p>
 
 
-
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>func</code></td>
-          <td>
-                <code><span title="typing.Callable">Callable</span>[[], <span title="typing.Any">Any</span>]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Func to callable before engine stops</p>
-            </div>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.on_stop.func">func</span></code></td>
+            <td>
+                  <code><span title="typing.Callable">Callable</span>[[], <span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Func to callable before engine stops</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
       <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><span class="filename">Engine before stops</span><pre><span></span><code><span class="kn">import</span> <span class="nn">kstreams</span>
@@ -2031,9 +2017,9 @@ standard functions, or async functions.</p>
 </code></pre></div>
 </div>
 
-          <details class="quote">
-            <summary>Source code in <code>kstreams/engine.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">193</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/engine.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">193</span>
 <span class="normal">194</span>
 <span class="normal">195</span>
 <span class="normal">196</span>
@@ -2091,54 +2077,50 @@ standard functions, or async functions.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">_on_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">func</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.engine.StreamEngine.after_startup" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">after_startup</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">after_startup</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></code>
 
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>A list of callables to run after the engine starts.
 Handler are callables that do not take any arguments, and may be either
 standard functions, or async functions.</p>
 
 
-
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>func</code></td>
-          <td>
-                <code><span title="typing.Callable">Callable</span>[[], <span title="typing.Any">Any</span>]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Func to callable after engine starts</p>
-            </div>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.after_startup.func">func</span></code></td>
+            <td>
+                  <code><span title="typing.Callable">Callable</span>[[], <span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Func to callable after engine starts</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
       <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><span class="filename">Engine after startup</span><pre><span></span><code><span class="kn">import</span> <span class="nn">kstreams</span>
@@ -2154,9 +2136,9 @@ standard functions, or async functions.</p>
 </code></pre></div>
 </div>
 
-          <details class="quote">
-            <summary>Source code in <code>kstreams/engine.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">223</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/engine.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">223</span>
 <span class="normal">224</span>
 <span class="normal">225</span>
 <span class="normal">226</span>
@@ -2214,54 +2196,50 @@ standard functions, or async functions.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">_after_startup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">func</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.engine.StreamEngine.after_stop" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">after_stop</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">after_stop</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></code>
 
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>A list of callables to run after the engine stops.
 Handler are callables that do not take any arguments, and may be either
 standard functions, or async functions.</p>
 
 
-
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>func</code></td>
-          <td>
-                <code><span title="typing.Callable">Callable</span>[[], <span title="typing.Any">Any</span>]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Func to callable after engine stops</p>
-            </div>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.engine.StreamEngine.after_stop.func">func</span></code></td>
+            <td>
+                  <code><span title="typing.Callable">Callable</span>[[], <span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Func to callable after engine stops</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
       <div class="admonition example">
 <p class="admonition-title">Example</p>
 <div class="highlight"><span class="filename">Engine after stops</span><pre><span></span><code><span class="kn">import</span> <span class="nn">kstreams</span>
@@ -2276,9 +2254,9 @@ standard functions, or async functions.</p>
 </code></pre></div>
 </div>
 
-          <details class="quote">
-            <summary>Source code in <code>kstreams/engine.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">253</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/engine.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">253</span>
 <span class="normal">254</span>
 <span class="normal">255</span>
 <span class="normal">256</span>
@@ -2334,98 +2312,94 @@ standard functions, or async functions.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">_after_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">func</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
-
 <h3 id="kstreams.engine.StreamEngine.add_stream" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">add_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">add_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Add a stream to the engine.</p>
 <p>This method registers a new stream with the engine, setting up necessary
 configurations and handlers. If a stream with the same name already exists,
 a DuplicateStreamException is raised.</p>
 
 
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>stream</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="kstreams.streams.Stream" href="../stream/#kstreams.streams.Stream">Stream</a></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>The stream to be added.</p>
-            </div>
-          </td>
-          <td>
-              <em>required</em>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
         </tr>
-        <tr>
-          <td><code>error_policy</code></td>
-          <td>
-                <code><span title="typing.Optional">Optional</span>[<span title="kstreams.streams_utils.StreamErrorPolicy">StreamErrorPolicy</span>]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>An optional error policy to be applied to the stream.
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>stream</code></td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="kstreams.streams.Stream" href="../stream/#kstreams.streams.Stream">Stream</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The stream to be added.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>error_policy</code></td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="kstreams.streams_utils.StreamErrorPolicy">StreamErrorPolicy</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>An optional error policy to be applied to the stream.
 You should probably set directly when instanciating a Stream, not here.</p>
-            </div>
-          </td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-
-  <p><strong>Raises:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td>
-                <code><span title="kstreams.exceptions.DuplicateStreamException">DuplicateStreamException</span></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>If a stream with the same name already exists.</p>
-            </div>
-          </td>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="kstreams.exceptions.DuplicateStreamException">DuplicateStreamException</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If a stream with the same name already exists.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
 
 <details class="notes" open>
   <summary>Notes</summary>
@@ -2440,9 +2414,9 @@ You should probably set directly when instanciating a Stream, not here.</p>
   is built for the stream's function.</li>
 </ul>
 </details>
-          <details class="quote">
-            <summary>Source code in <code>kstreams/engine.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">345</span>
+            <details class="quote">
+              <summary>Source code in <code>kstreams/engine.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">345</span>
 <span class="normal">346</span>
 <span class="normal">347</span>
 <span class="normal">348</span>
@@ -2556,8 +2530,8 @@ You should probably set directly when instanciating a Stream, not here.</p>
     <span class="k">if</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">UDFType</span><span class="o">.</span><span class="n">NO_TYPING</span><span class="p">:</span>
         <span class="n">stream</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_stream_middleware_stack</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
@@ -2565,7 +2539,7 @@ You should probably set directly when instanciating a Stream, not here.</p>
 
   </div>
 
-  </div>
+    </div>
 
 </div>
 
