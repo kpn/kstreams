@@ -62,8 +62,7 @@ class MockConsumer(Base):
     ) -> None:
         self.topics = topics
 
-    def unsubscribe(self) -> None:
-        ...
+    def unsubscribe(self) -> None: ...
 
     def assignment(self):
         return self._assigments

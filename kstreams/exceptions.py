@@ -24,5 +24,4 @@ class EngineNotStartedException(StreamException):
         return "Engine has not been started. Try with `await engine.start()`"
 
 
-class BackendNotSet(StreamException):
-    ...
+class BackendNotSet(StreamException): ...

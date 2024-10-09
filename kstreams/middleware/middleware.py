@@ -23,11 +23,9 @@ class MiddlewareProtocol(typing.Protocol):
         send: types.Send,
         stream: "Stream",
         **kwargs: typing.Any,
-    ) -> None:
-        ...  #  pragma: no cover
+    ) -> None: ...  #  pragma: no cover
 
-    async def __call__(self, cr: ConsumerRecord) -> typing.Any:
-        ...  #  pragma: no cover
+    async def __call__(self, cr: ConsumerRecord) -> typing.Any: ...  #  pragma: no cover
 
 
 class Middleware:

@@ -42,8 +42,7 @@ async def test_add_existing_streams(stream_engine: StreamEngine):
 async def test_add_stream_as_instance(stream_engine: StreamEngine):
     topics = ["local--hello-kpn", "local--hello-kpn-2"]
 
-    class MyDeserializer:
-        ...
+    class MyDeserializer: ...
 
     deserializer = MyDeserializer()
 
@@ -74,8 +73,7 @@ async def test_add_stream_as_instance(stream_engine: StreamEngine):
 async def test_remove_existing_stream(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
-    class MyDeserializer:
-        ...
+    class MyDeserializer: ...
 
     deserializer = MyDeserializer()
 
@@ -99,8 +97,7 @@ async def test_remove_existing_stream(stream_engine: StreamEngine):
 async def test_remove_missing_stream(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
-    class MyDeserializer:
-        ...
+    class MyDeserializer: ...
 
     deserializer = MyDeserializer()
 
@@ -122,8 +119,7 @@ async def test_remove_missing_stream(stream_engine: StreamEngine):
 async def test_remove_existing_stream_stops_stream(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
-    class MyDeserializer:
-        ...
+    class MyDeserializer: ...
 
     deserializer = MyDeserializer()
 
@@ -148,8 +144,7 @@ async def test_start_stop_stream_engine(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
     @stream_engine.stream(topic)
-    async def stream(_):
-        ...
+    async def stream(_): ...
 
     with mock.patch.multiple(Consumer, start=mock.DEFAULT, stop=mock.DEFAULT):
         with mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):

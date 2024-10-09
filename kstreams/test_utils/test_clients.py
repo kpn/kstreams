@@ -11,8 +11,7 @@ from .topics import TopicManager
 
 
 class Base:
-    async def start(self):
-        ...
+    async def start(self): ...
 
 
 class TestProducer(Base, Producer):

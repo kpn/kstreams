@@ -61,11 +61,11 @@ async def test_add_stream_with_rebalance_listener(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
     class MyRebalanceListener(RebalanceListener):
-        async def on_partitions_revoked(self, revoked: Set[TopicPartition]) -> None:
-            ...
+        async def on_partitions_revoked(self, revoked: Set[TopicPartition]) -> None: ...
 
-        async def on_partitions_assigned(self, assigned: Set[TopicPartition]) -> None:
-            ...
+        async def on_partitions_assigned(
+            self, assigned: Set[TopicPartition]
+        ) -> None: ...
 
     rebalance_listener = MyRebalanceListener()
 
