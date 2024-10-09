@@ -24,3 +24,7 @@ class Send(typing.Protocol):
         serializer: typing.Optional["Serializer"] = None,
         serializer_kwargs: typing.Optional[typing.Dict] = None,
     ) -> typing.Awaitable[RecordMetadata]: ...
+
+
+D = typing.TypeVar("D")
+Deprecated = typing.Annotated[D, "deprecated"]

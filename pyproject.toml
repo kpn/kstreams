@@ -63,6 +63,10 @@ major_version_zero = true
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 log_level = "DEBUG"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
 
 [[tool.mypy.overrides]]
 module = "aiokafka.*"
