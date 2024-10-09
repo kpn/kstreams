@@ -18,16 +18,14 @@ async def test_middleware_stack_from_stream(
         name=stream_name,
         middlewares=[middleware.Middleware(dlq_middleware.middleware)],
     )
-    async def consume(cr: ConsumerRecord):
-        ...
+    async def consume(cr: ConsumerRecord): ...
 
     @stream_engine.stream(
         "kstreams-topic-local",
         name=stream_name_local,
         middlewares=[middleware.Middleware(dlq_middleware.middleware)],
     )
-    async def process(cr: ConsumerRecord, stream: Stream):
-        ...
+    async def process(cr: ConsumerRecord, stream: Stream): ...
 
     my_stream = stream_engine.get_stream(stream_name)
     if my_stream is None:
@@ -65,8 +63,7 @@ async def test_middleware_stack_order(
             middleware.Middleware(elastic_middleware.middleware),
         ],
     )
-    async def consume(cr: ConsumerRecord):
-        ...
+    async def consume(cr: ConsumerRecord): ...
 
     my_stream = stream_engine.get_stream(stream_name)
     if my_stream is None:
@@ -184,8 +181,7 @@ async def test_base_middleware_exception(stream_engine: StreamEngine):
         name=stream_name,
         middlewares=[middleware.Middleware(middleware.BaseMiddleware)],
     )
-    async def stream(cr: ConsumerRecord):
-        ...
+    async def stream(cr: ConsumerRecord): ...
 
     async with client:
         await client.send(topic, value=b"test")

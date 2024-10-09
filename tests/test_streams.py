@@ -165,8 +165,7 @@ async def test_stream_multiple_topics(stream_engine: StreamEngine):
     ):
 
         @stream_engine.stream(topics, name="my-stream")
-        async def stream(_):
-            ...
+        async def stream(_): ...
 
         assert stream.topics == topics
 
@@ -187,8 +186,7 @@ async def test_stream_subscribe_topics_pattern(stream_engine: StreamEngine):
     ):
 
         @stream_engine.stream(topics=pattern, subscribe_by_pattern=True)
-        async def stream(_):
-            ...
+        async def stream(_): ...
 
         assert stream.topics == [pattern]
         assert stream.subscribe_by_pattern
@@ -214,8 +212,7 @@ async def test_stream_subscribe_topics_only_one_pattern(stream_engine: StreamEng
     ):
 
         @stream_engine.stream(topics=patterns, subscribe_by_pattern=True)
-        async def stream(_):
-            ...
+        async def stream(_): ...
 
         assert stream.topics == patterns
         assert stream.subscribe_by_pattern
@@ -234,8 +231,7 @@ async def test_stream_custom_conf(stream_engine: StreamEngine):
         auto_offset_reset="earliest",
         enable_auto_commit=False,
     )
-    async def stream(_):
-        ...
+    async def stream(_): ...
 
     with mock.patch.multiple(
         Consumer, start=mock.DEFAULT, stop=mock.DEFAULT

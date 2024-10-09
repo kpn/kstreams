@@ -20,8 +20,7 @@ async def test_hook_on_startup(stream_engine: StreamEngine, consumer_record_fact
         assert stream_engine._on_startup == []
 
         @stream_engine.stream("local--kstreams")
-        async def stream(cr: ConsumerRecord):
-            ...
+        async def stream(cr: ConsumerRecord): ...
 
         @stream_engine.on_startup
         async def init_db():
@@ -66,8 +65,7 @@ async def test_hook_after_startup(stream_engine: StreamEngine, consumer_record_f
         assert stream_engine._after_startup == []
 
         @stream_engine.stream("local--kstreams")
-        async def stream(cr: ConsumerRecord):
-            ...
+        async def stream(cr: ConsumerRecord): ...
 
         @stream_engine.after_startup
         async def healthy():
@@ -113,8 +111,7 @@ async def test_hook_on_stop(stream_engine: StreamEngine, consumer_record_factory
         assert stream_engine._on_stop == []
 
         @stream_engine.stream("local--kstreams")
-        async def stream(cr: ConsumerRecord):
-            ...
+        async def stream(cr: ConsumerRecord): ...
 
         @stream_engine.on_stop
         async def close_db():
@@ -160,8 +157,7 @@ async def test_hook_after_stop(stream_engine: StreamEngine, consumer_record_fact
         assert stream_engine._after_stop == []
 
         @stream_engine.stream("local--kstreams")
-        async def stream(cr: ConsumerRecord):
-            ...
+        async def stream(cr: ConsumerRecord): ...
 
         @stream_engine.after_stop
         async def delete_files():

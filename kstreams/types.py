@@ -23,5 +23,4 @@ class Send(typing.Protocol):
         headers: typing.Optional[Headers] = None,
         serializer: typing.Optional["Serializer"] = None,
         serializer_kwargs: typing.Optional[typing.Dict] = None,
-    ) -> typing.Awaitable[RecordMetadata]:
-        ...
+    ) -> typing.Awaitable[RecordMetadata]: ...
