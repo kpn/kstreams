@@ -428,6 +428,13 @@ class Stream:
         except errors.ConsumerStoppedError:
             raise StopAsyncIteration  # noqa: F821
 
+    async def __call__(self, *args, **kwargs) -> typing.Any:
+        """Make stream work as the wrapped func to keep behavior.
+
+        This allows for testing the stream as a normal function.
+        """
+        return self.func(*args, **kwargs)
+
 
 def stream(
     topics: typing.Union[typing.List[str], str],

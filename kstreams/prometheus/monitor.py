@@ -132,7 +132,7 @@ class PrometheusMonitor:
             partition = topic_partition.partition
 
             metrics_found = False
-            for sample in self.MET_LAG.collect()[0].samples:
+            for sample in list(self.MET_LAG.collect())[0].samples:
                 if {
                     "topic": topic,
                     "partition": str(partition),
