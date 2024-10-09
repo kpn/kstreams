@@ -1,3 +1,10 @@
+## 0.24.3 (2024-10-09)
+
+### Fix
+
+- bump missing dev dependencies
+- bump ruff dep and format files
+
 ## 0.24.2 (2024-10-09)
 
 ### Fix
