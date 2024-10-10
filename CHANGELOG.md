@@ -1,3 +1,9 @@
+## 0.24.5 (2024-10-10)
+
+### Fix
+
+- add maintainer instead of author (#213)
+
 ## 0.24.4 (2024-10-09)
 
 ### Fix
