@@ -2,10 +2,8 @@
 name = "kstreams"
 version = "0.24.4"
 description = "Build simple kafka streams applications"
-authors = [
-    "Marcos Schroh <marcos.schroh@kpn.com>",
-    "Santiago Fraire Willemoës <santiago.fraire@kpn.com>",
-]
+authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
+maintainers = ["Santiago Fraire Willemoës <santiago.fraire@kpn.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 keywords = ["stream", "processing", "kafka", "event streaming"]
