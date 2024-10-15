@@ -4,7 +4,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import ClassVar, DefaultDict, Dict, Optional, Sequence, Tuple
 
-from kstreams import ConsumerRecord
+from kstreams.types import ConsumerRecord
 
 from . import test_clients
 

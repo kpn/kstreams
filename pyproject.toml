@@ -29,6 +29,7 @@ prometheus-client = "<1.0"
 future = "^1.0.0"
 PyYAML = ">=5.4,<7.0.0"
 pydantic = ">=2.0.0,<3.0.0"
+di = "^0.79.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
@@ -47,6 +48,7 @@ mkdocs-material = "^9.5.39"
 starlette-prometheus = "^0.10.0"
 codecov = "^2.1.12"
 mkdocstrings = { version = "^0.26.1", extras = ["python"] }
+Faker = "^14.2.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

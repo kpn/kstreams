@@ -5,7 +5,7 @@ import typing
 
 from aiokafka import errors
 
-from kstreams import ConsumerRecord, types
+from kstreams import types
 from kstreams.streams_utils import StreamErrorPolicy
 
 if typing.TYPE_CHECKING:
@@ -25,7 +25,9 @@ class MiddlewareProtocol(typing.Protocol):
         **kwargs: typing.Any,
     ) -> None: ...  #  pragma: no cover
 
-    async def __call__(self, cr: ConsumerRecord) -> typing.Any: ...  #  pragma: no cover
+    async def __call__(
+        self, cr: types.ConsumerRecord
+    ) -> typing.Any: ...  #  pragma: no cover
 
 
 class Middleware:
@@ -56,7 +58,7 @@ class BaseMiddleware:
         self.send = send
         self.stream = stream
 
-    async def __call__(self, cr: ConsumerRecord) -> typing.Any:
+    async def __call__(self, cr: types.ConsumerRecord) -> typing.Any:
         raise NotImplementedError
 
 
@@ -76,7 +78,7 @@ class ExceptionMiddleware(BaseMiddleware):
         self.engine = engine
         self.error_policy = error_policy
 
-    async def __call__(self, cr: ConsumerRecord) -> typing.Any:
+    async def __call__(self, cr: types.ConsumerRecord) -> typing.Any:
         try:
             return await self.next_call(cr)
         except errors.ConsumerStoppedError as exc:

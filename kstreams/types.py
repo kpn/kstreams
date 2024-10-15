@@ -1,6 +1,7 @@
 import typing
 
-from kstreams import ConsumerRecord, RecordMetadata
+from aiokafka import ConsumerRecord as AIOConsumerRecord
+from aiokafka.structs import RecordMetadata
 
 if typing.TYPE_CHECKING:
     from .serializers import Serializer  #  pragma: no cover
@@ -8,7 +9,7 @@ if typing.TYPE_CHECKING:
 Headers = typing.Dict[str, str]
 EncodedHeaders = typing.Sequence[typing.Tuple[str, bytes]]
 StreamFunc = typing.Callable
-NextMiddlewareCall = typing.Callable[[ConsumerRecord], typing.Awaitable[None]]
+NextMiddlewareCall = typing.Callable[[AIOConsumerRecord], typing.Awaitable[None]]
 EngineHooks = typing.Sequence[typing.Callable[[], typing.Any]]
 
 
@@ -28,3 +29,6 @@ class Send(typing.Protocol):
 
 D = typing.TypeVar("D")
 Deprecated = typing.Annotated[D, "deprecated"]
+
+
+class ConsumerRecord(AIOConsumerRecord): ...
