@@ -3,7 +3,13 @@ from unittest.mock import AsyncMock, call
 import pytest
 from aiokafka.errors import ConsumerStoppedError
 
-from kstreams import ConsumerRecord, Stream, StreamEngine, TestStreamClient, middleware
+from kstreams import (
+    Stream,
+    StreamEngine,
+    TestStreamClient,
+    middleware,
+)
+from kstreams.types import ConsumerRecord
 
 
 @pytest.mark.asyncio

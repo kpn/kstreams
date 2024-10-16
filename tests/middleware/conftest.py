@@ -3,7 +3,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from kstreams import ConsumerRecord, middleware
+from kstreams import middleware
+from kstreams.types import ConsumerRecord
 
 Middleware = namedtuple("Middleware", ["middleware", "call"])
 

@@ -1,12 +1,12 @@
 from types import TracebackType
 from typing import Any, Dict, List, Optional, Type
 
-from kstreams import Consumer, ConsumerRecord, Producer
+from kstreams import Consumer, Producer
 from kstreams.engine import StreamEngine
 from kstreams.prometheus.monitor import PrometheusMonitor
 from kstreams.serializers import Serializer
 from kstreams.streams import Stream
-from kstreams.types import Headers
+from kstreams.types import ConsumerRecord, Headers
 
 from .structs import RecordMetadata
 from .test_clients import TestConsumer, TestProducer
