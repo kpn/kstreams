@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import Any, Coroutine, Dict, List, Optional, Sequence, Set
+from typing import Any, Coroutine, Dict, List, Optional, Sequence, Set, Union
 
-from kstreams import ConsumerRecord, RebalanceListener, TopicPartition
+from kstreams import RebalanceListener, TopicPartition
 from kstreams.clients import Consumer, Producer
 from kstreams.serializers import Serializer
-from kstreams.types import Headers
+from kstreams.types import ConsumerRecord, EncodedHeaders, Headers
 
 from .structs import RecordMetadata
 from .topics import TopicManager
@@ -23,28 +23,34 @@ class TestProducer(Base, Producer):
         value: Any = None,
         key: Any = None,
         partition: int = 0,
-        timestamp_ms: Optional[float] = None,
+        timestamp_ms: Optional[int] = None,
         headers: Optional[Headers] = None,
         serializer: Optional[Serializer] = None,
         serializer_kwargs: Optional[Dict] = None,
     ) -> Coroutine:
         topic, _ = TopicManager.get_or_create(topic_name)
-        timestamp_ms = timestamp_ms or datetime.now().timestamp()
+        timestamp_ms = timestamp_ms or datetime.now().toordinal()
         total_partition_events = topic.offset(partition=partition)
         partition = partition or 0
 
-        consumer_record = ConsumerRecord(
+        _headers: EncodedHeaders = []
+        if isinstance(headers, dict):
+            _headers = [(key, value.encode()) for key, value in headers.items()]
+
+        serialized_key_size = -1 if key is None else len(key)
+        serialized_value_size = -1 if value is None else len(value)
+        consumer_record: ConsumerRecord = ConsumerRecord(
             topic=topic_name,
             value=value,
             key=key,
-            headers=headers,
+            headers=_headers,
             partition=partition,
             timestamp=timestamp_ms,
             offset=total_partition_events + 1,
-            timestamp_type=None,
+            timestamp_type=0,
             checksum=None,
-            serialized_key_size=None,
-            serialized_value_size=None,
+            serialized_key_size=-serialized_key_size,
+            serialized_value_size=serialized_value_size,
         )
 
         await topic.put(consumer_record)
@@ -204,7 +210,7 @@ class TestConsumer(Base, Consumer):
         *partitions: List[TopicPartition],
         timeout_ms: int = 0,
         max_records: int = 1,
-    ) -> Dict[TopicPartition, List[ConsumerRecord]]:
+    ) -> Dict[TopicPartition, List[Union[ConsumerRecord, None]]]:
         """
         Basic getmany implementation.
         `partitions` and `timeout_ms` could be added to the logic

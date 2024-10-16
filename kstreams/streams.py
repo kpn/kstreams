@@ -8,7 +8,7 @@ from functools import update_wrapper
 
 from aiokafka import errors
 
-from kstreams import ConsumerRecord, TopicPartition
+from kstreams import TopicPartition
 from kstreams.exceptions import BackendNotSet
 from kstreams.middleware.middleware import ExceptionMiddleware
 from kstreams.structs import TopicPartitionOffset
@@ -19,7 +19,7 @@ from .middleware import Middleware, udf_middleware
 from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
 from .streams_utils import StreamErrorPolicy, UDFType
-from .types import Deprecated, StreamFunc
+from .types import ConsumerRecord, Deprecated, StreamFunc
 
 if typing.TYPE_CHECKING:
     from kstreams import StreamEngine
@@ -352,7 +352,7 @@ class Stream:
                     )
                     warnings.warn(msg, DeprecationWarning, stacklevel=2)
 
-                    func = self.udf_handler.next_call(self)
+                    func = self.udf_handler.next_call(self)  # type: ignore
                     await func
                 else:
                     # Typing cases

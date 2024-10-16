@@ -1,8 +1,6 @@
 from typing import Any, Dict, Optional, Protocol
 
-from kstreams import ConsumerRecord
-
-from .types import Headers
+from .types import ConsumerRecord, Headers
 
 
 class Deserializer(Protocol):
