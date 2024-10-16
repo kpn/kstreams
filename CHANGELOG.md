@@ -1,3 +1,9 @@
+## 0.24.6 (2024-10-16)
+
+### Fix
+
+- move consumer record to kstreams
+
 ## 0.24.5 (2024-10-10)
 
 ### Fix
