@@ -1,3 +1,9 @@
+## 0.24.7 (2024-10-17)
+
+### Fix
+
+- **test_client**: use proper type hint in Producer.send (#216)
+
 ## 0.24.6 (2024-10-16)
 
 ### Fix
