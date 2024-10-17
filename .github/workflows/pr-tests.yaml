@@ -33,7 +33,7 @@ jobs:
         architecture: x64
 
     - name: Set Cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: cache  # name for referring later
       with:
         path: .venv/
