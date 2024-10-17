@@ -4,7 +4,7 @@ from typing import Any, Coroutine, Dict, List, Optional, Sequence, Set, Union
 from kstreams import RebalanceListener, TopicPartition
 from kstreams.clients import Consumer, Producer
 from kstreams.serializers import Serializer
-from kstreams.types import ConsumerRecord, EncodedHeaders, Headers
+from kstreams.types import ConsumerRecord, EncodedHeaders
 
 from .structs import RecordMetadata
 from .topics import TopicManager
@@ -24,7 +24,7 @@ class TestProducer(Base, Producer):
         key: Any = None,
         partition: int = 0,
         timestamp_ms: Optional[int] = None,
-        headers: Optional[Headers] = None,
+        headers: Optional[EncodedHeaders] = None,
         serializer: Optional[Serializer] = None,
         serializer_kwargs: Optional[Dict] = None,
     ) -> Coroutine:
@@ -33,17 +33,13 @@ class TestProducer(Base, Producer):
         total_partition_events = topic.offset(partition=partition)
         partition = partition or 0
 
-        _headers: EncodedHeaders = []
-        if isinstance(headers, dict):
-            _headers = [(key, value.encode()) for key, value in headers.items()]
-
         serialized_key_size = -1 if key is None else len(key)
         serialized_value_size = -1 if value is None else len(value)
         consumer_record: ConsumerRecord = ConsumerRecord(
             topic=topic_name,
             value=value,
             key=key,
-            headers=_headers,
+            headers=headers or [],
             partition=partition,
             timestamp=timestamp_ms,
             offset=total_partition_events + 1,
