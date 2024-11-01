@@ -60,7 +60,7 @@ def setup_type(params: List[inspect.Parameter]) -> UDFType:
 
     first_annotation = params[0].annotation
 
-    if first_annotation in (inspect._empty, Stream):
+    if first_annotation in (inspect._empty, Stream) and len(params) < 2:
         # use case 1 NO_TYPING
         return UDFType.NO_TYPING
     # typing cases

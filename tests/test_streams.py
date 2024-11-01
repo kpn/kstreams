@@ -155,6 +155,45 @@ async def test_stream_all_typing(stream_engine: StreamEngine, consumer_record_fa
 
 
 @pytest.mark.asyncio
+async def test_stream_all_typing_order_in_setup_type(
+    stream_engine: StreamEngine, consumer_record_factory
+):
+    topic_name = "local--kstreams"
+    value = b"test"
+
+    async def getone(_):
+        return consumer_record_factory(value=value)
+
+    with mock.patch.multiple(
+        Consumer,
+        start=mock.DEFAULT,
+        subscribe=mock.DEFAULT,
+        getone=getone,
+    ):
+
+        @stream_engine.stream(topic_name)
+        async def stream(stream: Stream, cr: ConsumerRecord, send: Send):
+            assert cr.value == value
+            assert isinstance(stream, Stream)
+            assert send == stream_engine.send
+            await asyncio.sleep(0.2)
+
+        assert stream.consumer is None
+        assert stream.topics == [topic_name]
+
+        with contextlib.suppress(TimeoutErrorException):
+            # now it is possible to run a stream directly, so we need
+            # to stop the `forever` consumption
+            await asyncio.wait_for(stream.start(), timeout=0.1)
+
+        assert stream.consumer
+        Consumer.subscribe.assert_called_once_with(
+            topics=[topic_name], listener=stream.rebalance_listener, pattern=None
+        )
+        await stream.stop()
+
+
+@pytest.mark.asyncio
 async def test_stream_multiple_topics(stream_engine: StreamEngine):
     topics = ["local--hello-kpn", "local--hello-kpn-2"]
 
@@ -241,6 +280,7 @@ async def test_stream_custom_conf(stream_engine: StreamEngine):
         # switch the current Task to the one running in background
         await asyncio.sleep(0.1)
 
+        assert stream.consumer is not None
         assert stream.consumer._auto_offset_reset == "earliest"
         assert not stream.consumer._enable_auto_commit
 
@@ -291,6 +331,7 @@ async def test_stream_decorator(stream_engine: StreamEngine):
             await asyncio.sleep(0.1)
 
             Consumer.start.assert_awaited()
+            assert stream_engine._producer is not None
             stream_engine._producer.start.assert_awaited()
 
             await stream_engine.stop()
@@ -377,6 +418,7 @@ async def test_seek_to_initial_offsets_normal(
 
         await stream.start()
         # simulate a partitions assigned rebalance
+        assert stream.rebalance_listener is not None
         await stream.rebalance_listener.on_partitions_assigned(assigned=assignments)
 
         seek_mock.assert_called_once_with(
@@ -428,5 +470,6 @@ async def test_seek_to_initial_offsets_ignores_wrong_input(
 
         await stream.start()
         # simulate a partitions assigned rebalance
+        assert stream.rebalance_listener is not None
         await stream.rebalance_listener.on_partitions_assigned(assigned=assignments)
         seek_mock.assert_not_called()

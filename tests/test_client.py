@@ -87,6 +87,8 @@ async def test_streams_consume_events(stream_engine: StreamEngine):
     async with client:
         await client.send(topic, value=event, key="1")
         stream = stream_engine.get_stream("my-stream")
+        assert stream is not None
+        assert stream.consumer is not None
         assert stream.consumer.assignment() == [tp0, tp1, tp2]
         assert stream.consumer.last_stable_offset(tp0) == 0
         assert stream.consumer.highwater(tp0) == 1
@@ -164,6 +166,7 @@ async def test_stream_func_with_cr_and_stream(stream_engine: StreamEngine):
 
         # give some time so the `commit` can finished
         await asyncio.sleep(1)
+        assert my_stream.consumer is not None
         assert await my_stream.consumer.committed(tp) == 100
 
     # check that the event was consumed
@@ -381,6 +384,7 @@ async def test_partitions_for_topic(stream_engine: StreamEngine):
         await client.send(topic_name, value=value, key=key, partition=10)
 
         await asyncio.sleep(1e-10)
+        assert stream.consumer is not None
         assert stream.consumer.partitions_for_topic(topic_name) == set([0, 1, 2, 10])
 
 
@@ -410,6 +414,8 @@ async def test_end_offsets(stream_engine: StreamEngine):
         ]
 
         stream = stream_engine.get_stream("my-stream")
+        assert stream is not None
+        assert stream.consumer is not None
         assert (await stream.consumer.end_offsets(topic_partitions)) == {
             TopicPartition(topic="local--kstreams", partition=0): 2,
             TopicPartition(topic="local--kstreams", partition=2): 1,
@@ -445,6 +451,7 @@ async def test_consumer_commit(stream_engine: StreamEngine):
 
         await asyncio.sleep(1e-10)
         # check that everything was commited
+        assert my_stream.consumer is not None
         assert (await my_stream.consumer.committed(tp)) == total_events - 1
 
 
@@ -608,6 +615,9 @@ async def test_streams_consume_events_with_initial_offsets(stream_engine: Stream
             # now it is possible to run a stream directly, so we need
             # to stop the `forever` consumption
             await asyncio.wait_for(stream.start(), timeout=1.0)
+
+        assert stream.consumer is not None
+        assert stream.rebalance_listener is not None
 
         # simulate partitions assigned on rebalance
         await stream.rebalance_listener.on_partitions_assigned(assigned=assignments)

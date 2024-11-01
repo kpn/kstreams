@@ -10,6 +10,13 @@ from kstreams.engine import Stream, StreamEngine
 from kstreams.exceptions import DuplicateStreamException, EngineNotStartedException
 
 
+class DummyDeserializer:
+    async def deserialize(
+        self, consumer_record: ConsumerRecord, **kwargs
+    ) -> ConsumerRecord:
+        return consumer_record
+
+
 @pytest.mark.asyncio
 async def test_add_streams(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
@@ -42,9 +49,7 @@ async def test_add_existing_streams(stream_engine: StreamEngine):
 async def test_add_stream_as_instance(stream_engine: StreamEngine):
     topics = ["local--hello-kpn", "local--hello-kpn-2"]
 
-    class MyDeserializer: ...
-
-    deserializer = MyDeserializer()
+    deserializer = DummyDeserializer()
 
     async def processor(stream: Stream):
         pass
@@ -73,9 +78,7 @@ async def test_add_stream_as_instance(stream_engine: StreamEngine):
 async def test_remove_existing_stream(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
-    class MyDeserializer: ...
-
-    deserializer = MyDeserializer()
+    deserializer = DummyDeserializer()
 
     async def processor(stream: Stream):
         pass
@@ -97,9 +100,7 @@ async def test_remove_existing_stream(stream_engine: StreamEngine):
 async def test_remove_missing_stream(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
-    class MyDeserializer: ...
-
-    deserializer = MyDeserializer()
+    deserializer = DummyDeserializer()
 
     async def processor(stream: Stream):
         pass
@@ -119,9 +120,7 @@ async def test_remove_missing_stream(stream_engine: StreamEngine):
 async def test_remove_existing_stream_stops_stream(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
 
-    class MyDeserializer: ...
-
-    deserializer = MyDeserializer()
+    deserializer = DummyDeserializer()
 
     async def processor(stream: Stream):
         pass
@@ -136,7 +135,7 @@ async def test_remove_existing_stream_stops_stream(stream_engine: StreamEngine):
 
     with mock.patch.multiple(Stream, start=mock.DEFAULT, stop=mock.DEFAULT):
         await stream_engine.remove_stream(my_stream)
-        Stream.stop.assert_awaited()
+        Stream.stop.assert_awaited()  # type: ignore
 
 
 @pytest.mark.asyncio
@@ -149,13 +148,13 @@ async def test_start_stop_stream_engine(stream_engine: StreamEngine):
     with mock.patch.multiple(Consumer, start=mock.DEFAULT, stop=mock.DEFAULT):
         with mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
             await stream_engine.start()
-            stream_engine._producer.start.assert_awaited()
+            stream_engine._producer.start.assert_awaited()  # type: ignore
 
             await asyncio.sleep(0)  # Allow stream coroutine to run once
             Consumer.start.assert_awaited()
 
             await stream_engine.stop()
-            stream_engine._producer.stop.assert_awaited()
+            stream_engine._producer.stop.assert_awaited()  # type: ignore
             Consumer.stop.assert_awaited()
 
 
