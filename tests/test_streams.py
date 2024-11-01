@@ -241,6 +241,7 @@ async def test_stream_custom_conf(stream_engine: StreamEngine):
         # switch the current Task to the one running in background
         await asyncio.sleep(0.1)
 
+        assert stream.consumer is not None
         assert stream.consumer._auto_offset_reset == "earliest"
         assert not stream.consumer._enable_auto_commit
 
@@ -291,6 +292,7 @@ async def test_stream_decorator(stream_engine: StreamEngine):
             await asyncio.sleep(0.1)
 
             Consumer.start.assert_awaited()
+            assert stream_engine._producer is not None
             stream_engine._producer.start.assert_awaited()
 
             await stream_engine.stop()
@@ -377,6 +379,7 @@ async def test_seek_to_initial_offsets_normal(
 
         await stream.start()
         # simulate a partitions assigned rebalance
+        assert stream.rebalance_listener is not None
         await stream.rebalance_listener.on_partitions_assigned(assigned=assignments)
 
         seek_mock.assert_called_once_with(
@@ -428,5 +431,6 @@ async def test_seek_to_initial_offsets_ignores_wrong_input(
 
         await stream.start()
         # simulate a partitions assigned rebalance
+        assert stream.rebalance_listener is not None
         await stream.rebalance_listener.on_partitions_assigned(assigned=assignments)
         seek_mock.assert_not_called()

@@ -91,6 +91,7 @@ async def test_add_stream_with_rebalance_listener(stream_engine: StreamEngine):
         assert rebalance_listener.stream == my_stream
 
         # checking that the subscription has also the rebalance_listener
+        assert my_stream.consumer is not None
         assert my_stream.consumer._subscription._listener == rebalance_listener
 
         await stream_engine.stop()
@@ -172,6 +173,7 @@ async def test_stream_manual_commit_rebalance_listener(stream_engine: StreamEngi
 
         assert isinstance(rebalance_listener, ManualCommitRebalanceListener)
         # checking that the subscription has also the rebalance_listener
+        assert hello_stream.consumer is not None
         assert isinstance(
             hello_stream.consumer._subscription._listener, ManualCommitRebalanceListener
         )

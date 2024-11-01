@@ -127,6 +127,8 @@ async def test_clean_stream_consumer_metrics(
     stream_engine.add_stream(stream=stream)
     await stream.start()
 
+    assert stream.consumer is not None
+
     await stream_engine.monitor.generate_consumer_metrics(stream.consumer)
     consumer = stream.consumer
 
