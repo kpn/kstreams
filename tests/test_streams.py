@@ -155,6 +155,45 @@ async def test_stream_all_typing(stream_engine: StreamEngine, consumer_record_fa
 
 
 @pytest.mark.asyncio
+async def test_stream_all_typing_order_in_setup_type(
+    stream_engine: StreamEngine, consumer_record_factory
+):
+    topic_name = "local--kstreams"
+    value = b"test"
+
+    async def getone(_):
+        return consumer_record_factory(value=value)
+
+    with mock.patch.multiple(
+        Consumer,
+        start=mock.DEFAULT,
+        subscribe=mock.DEFAULT,
+        getone=getone,
+    ):
+
+        @stream_engine.stream(topic_name)
+        async def stream(stream: Stream, cr: ConsumerRecord, send: Send):
+            assert cr.value == value
+            assert isinstance(stream, Stream)
+            assert send == stream_engine.send
+            await asyncio.sleep(0.2)
+
+        assert stream.consumer is None
+        assert stream.topics == [topic_name]
+
+        with contextlib.suppress(TimeoutErrorException):
+            # now it is possible to run a stream directly, so we need
+            # to stop the `forever` consumption
+            await asyncio.wait_for(stream.start(), timeout=0.1)
+
+        assert stream.consumer
+        Consumer.subscribe.assert_called_once_with(
+            topics=[topic_name], listener=stream.rebalance_listener, pattern=None
+        )
+        await stream.stop()
+
+
+@pytest.mark.asyncio
 async def test_stream_multiple_topics(stream_engine: StreamEngine):
     topics = ["local--hello-kpn", "local--hello-kpn-2"]
 
