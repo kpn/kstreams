@@ -1,3 +1,10 @@
+## 0.24.8 (2024-11-01)
+
+### Fix
+
+- **streams_utils**: properly identify if typed or not
+- typing errors caused by optionals in tests
+
 ## 0.24.7 (2024-10-17)
 
 ### Fix
