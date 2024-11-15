@@ -364,9 +364,20 @@ class Stream:
 
     async def func_wrapper_with_typing(self) -> None:
         while self.running:
-            cr = await self.getone()
-            async with self.is_processing:
-                await self.func(cr)
+            try:
+                cr = await self.getone()
+                async with self.is_processing:
+                    await self.func(cr)
+            except errors.ConsumerStoppedError:
+                # This exception is only raised when we are inside the `getone`
+                # coroutine waiting for an event and `await consumer.stop()`
+                # is called. If this happens it means that the end users has called
+                # `engine.stop()` or has been another exception that causes all the
+                # streams to stop. In any case the exception should not be re raised.
+                # self.running = False
+                logger.info(
+                    f"Stream {self} stopped after Coordinator was closed {self.topics}"
+                )
 
     def seek_to_initial_offsets(self) -> None:
         if not self.seeked_initial_offsets and self.consumer is not None:

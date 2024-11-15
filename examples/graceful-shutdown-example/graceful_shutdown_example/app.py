@@ -4,6 +4,7 @@ import logging
 import aiorun
 
 import kstreams
+import kstreams.streams_utils
 
 logger = logging.getLogger(__name__)
 

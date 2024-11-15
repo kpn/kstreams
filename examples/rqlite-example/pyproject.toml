@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "rqlite-example"
+version = "0.1.0"
+description = ""
+authors = ["marcosschroh <schrohm@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+kstreams = { path = "../../.", develop = true }
+aiorun = "^2024.8.1"
+sqlalchemy-rqlite = "^2.0"
+
+sqlalchemy = "^2.0.32"
+datafusion = "^40.1.0"
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+app = "rqlite_example.app:main"
+
