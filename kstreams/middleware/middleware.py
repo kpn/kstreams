@@ -3,8 +3,6 @@ import signal
 import sys
 import typing
 
-from aiokafka import errors
-
 from kstreams import types
 from kstreams.streams_utils import StreamErrorPolicy
 
@@ -81,8 +79,6 @@ class ExceptionMiddleware(BaseMiddleware):
     async def __call__(self, cr: types.ConsumerRecord) -> typing.Any:
         try:
             return await self.next_call(cr)
-        except errors.ConsumerStoppedError as exc:
-            await self.cleanup_policy(exc)
         except Exception as exc:
             logger.exception(
                 "Unhandled error occurred while listening to the stream. "
@@ -95,25 +91,57 @@ class ExceptionMiddleware(BaseMiddleware):
             await self.cleanup_policy(exc)
 
     async def cleanup_policy(self, exc: Exception) -> None:
-        # always release the asyncio.Lock `is_processing` to
-        # stop or restart properly the `stream`
+        """
+        Execute clenup policicy according to the Stream configuration.
+
+        At this point we are inside the asyncio.Lock `is_processing`
+        as an event is being processed and an exeption has occured.
+        The Lock must be released to stop the Stream
+        (which must happen for any policy), then before re-raising
+        the exception the Lock must be acquire again to continue the processing
+
+        Exception and policies:
+
+            - STOP: The exception is re-raised as the Stream will be stopped
+              and the end user will deal with it
+
+            - STOP_ENGINE: The exception is re-raised as the Engine will be stopped
+              (all Streams and Producer) and the end user will deal with it
+
+            - RESTART: The exception is not re-raised as the Stream
+              will recover and continue the processing. The logger.exception
+              from __call__ will record that something went wrong
+
+            - STOP_APPLICATION: The exception is not re-raised as the entire
+              application will be stopped. This is only useful when using kstreams
+              with another library like FastAPI. The logger.exception
+              from __call__ will record that something went wrong
+
+        Args:
+            exc (Exception): Any Exception that causes the Stream to crash
+
+        Raises:
+            exc: Exception is the policy is `STOP` or `STOP_ENGINE`
+        """
         self.stream.is_processing.release()
 
         if self.error_policy == StreamErrorPolicy.RESTART:
             await self.stream.stop()
-            logger.info(f"Restarting stream {self.stream}")
             await self.stream.start()
         elif self.error_policy == StreamErrorPolicy.STOP:
             await self.stream.stop()
+            # acquire `is_processing` Lock again to resume processing
+            # and avoid `RuntimeError: Lock is not acquired.`
+            await self.stream.is_processing.acquire()
             raise exc
         elif self.error_policy == StreamErrorPolicy.STOP_ENGINE:
             await self.engine.stop()
+            # acquire `is_processing` Lock again to resume processing
+            # and avoid `RuntimeError: Lock is not acquired.`
+            await self.stream.is_processing.acquire()
             raise exc
         else:
             # STOP_APPLICATION
             await self.engine.stop()
+            await self.stream.is_processing.acquire()
             signal.raise_signal(signal.SIGTERM)
-
-        # acquire the asyncio.Lock `is_processing` again to resume the processing
-        # and avoid `RuntimeError: Lock is not acquired.`
-        await self.stream.is_processing.acquire()
