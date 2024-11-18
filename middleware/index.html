@@ -530,6 +530,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kstreams.middleware.middleware.ExceptionMiddleware.cleanup_policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      cleanup_policy
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#middleware-chain" class="md-nav__link">
     <span class="md-ellipsis">
       Middleware chain
@@ -694,6 +703,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kstreams.middleware.middleware.ExceptionMiddleware.cleanup_policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      cleanup_policy
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#middleware-chain" class="md-nav__link">
     <span class="md-ellipsis">
       Middleware chain
@@ -781,7 +799,9 @@
 
               <details class="quote">
                 <summary>Source code in <code>kstreams/middleware/middleware.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
 <span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
@@ -791,9 +811,7 @@
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
-<span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MiddlewareProtocol</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MiddlewareProtocol</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Protocol</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -918,7 +936,9 @@ policy_error that was stablished.</p>
 
               <details class="quote">
                 <summary>Source code in <code>kstreams/middleware/middleware.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 65</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
 <span class="normal"> 66</span>
 <span class="normal"> 67</span>
 <span class="normal"> 68</span>
@@ -972,7 +992,35 @@ policy_error that was stablished.</p>
 <span class="normal">116</span>
 <span class="normal">117</span>
 <span class="normal">118</span>
-<span class="normal">119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ExceptionMiddleware</span><span class="p">(</span><span class="n">BaseMiddleware</span><span class="p">):</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ExceptionMiddleware</span><span class="p">(</span><span class="n">BaseMiddleware</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This is always the first Middleware in the middleware stack</span>
 <span class="sd">    to catch any exception that might occur. Any exception raised</span>
@@ -991,8 +1039,6 @@ policy_error that was stablished.</p>
     <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cr</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_call</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">errors</span><span class="o">.</span><span class="n">ConsumerStoppedError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleanup_policy</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
                 <span class="s2">&quot;Unhandled error occurred while listening to the stream. &quot;</span>
@@ -1005,28 +1051,60 @@ policy_error that was stablished.</p>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleanup_policy</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># always release the asyncio.Lock `is_processing` to</span>
-        <span class="c1"># stop or restart properly the `stream`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute clenup policicy according to the Stream configuration.</span>
+
+<span class="sd">        At this point we are inside the asyncio.Lock `is_processing`</span>
+<span class="sd">        as an event is being processed and an exeption has occured.</span>
+<span class="sd">        The Lock must be released to stop the Stream</span>
+<span class="sd">        (which must happen for any policy), then before re-raising</span>
+<span class="sd">        the exception the Lock must be acquire again to continue the processing</span>
+
+<span class="sd">        Exception and policies:</span>
+
+<span class="sd">            - STOP: The exception is re-raised as the Stream will be stopped</span>
+<span class="sd">              and the end user will deal with it</span>
+
+<span class="sd">            - STOP_ENGINE: The exception is re-raised as the Engine will be stopped</span>
+<span class="sd">              (all Streams and Producer) and the end user will deal with it</span>
+
+<span class="sd">            - RESTART: The exception is not re-raised as the Stream</span>
+<span class="sd">              will recover and continue the processing. The logger.exception</span>
+<span class="sd">              from __call__ will record that something went wrong</span>
+
+<span class="sd">            - STOP_APPLICATION: The exception is not re-raised as the entire</span>
+<span class="sd">              application will be stopped. This is only useful when using kstreams</span>
+<span class="sd">              with another library like FastAPI. The logger.exception</span>
+<span class="sd">              from __call__ will record that something went wrong</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            exc (Exception): Any Exception that causes the Stream to crash</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            exc: Exception is the policy is `STOP` or `STOP_ENGINE`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">is_processing</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_policy</span> <span class="o">==</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">RESTART</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Restarting stream </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_policy</span> <span class="o">==</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">STOP</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="c1"># acquire `is_processing` Lock again to resume processing</span>
+            <span class="c1"># and avoid `RuntimeError: Lock is not acquired.`</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">is_processing</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">exc</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_policy</span> <span class="o">==</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">STOP_ENGINE</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="c1"># acquire `is_processing` Lock again to resume processing</span>
+            <span class="c1"># and avoid `RuntimeError: Lock is not acquired.`</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">is_processing</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">exc</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># STOP_APPLICATION</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">is_processing</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
             <span class="n">signal</span><span class="o">.</span><span class="n">raise_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">)</span>
-
-        <span class="c1"># acquire the asyncio.Lock `is_processing` again to resume the processing</span>
-        <span class="c1"># and avoid `RuntimeError: Lock is not acquired.`</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">is_processing</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -1041,6 +1119,213 @@ policy_error that was stablished.</p>
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="kstreams.middleware.middleware.ExceptionMiddleware.cleanup_policy" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">cleanup_policy</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Execute clenup policicy according to the Stream configuration.</p>
+<p>At this point we are inside the asyncio.Lock <code>is_processing</code>
+as an event is being processed and an exeption has occured.
+The Lock must be released to stop the Stream
+(which must happen for any policy), then before re-raising
+the exception the Lock must be acquire again to continue the processing</p>
+<p>Exception and policies:</p>
+<div class="highlight"><pre><span></span><code>- STOP: The exception is re-raised as the Stream will be stopped
+  and the end user will deal with it
+
+- STOP_ENGINE: The exception is re-raised as the Engine will be stopped
+  (all Streams and Producer) and the end user will deal with it
+
+- RESTART: The exception is not re-raised as the Stream
+  will recover and continue the processing. The logger.exception
+  from __call__ will record that something went wrong
+
+- STOP_APPLICATION: The exception is not re-raised as the entire
+  application will be stopped. This is only useful when using kstreams
+  with another library like FastAPI. The logger.exception
+  from __call__ will record that something went wrong
+</code></pre></div>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>exc</code></td>
+            <td>
+                  <code>Exception</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Any Exception that causes the Stream to crash</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code>exc</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Exception is the policy is <code>STOP</code> or <code>STOP_ENGINE</code></p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>kstreams/middleware/middleware.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Execute clenup policicy according to the Stream configuration.</span>
+
+<span class="sd">    At this point we are inside the asyncio.Lock `is_processing`</span>
+<span class="sd">    as an event is being processed and an exeption has occured.</span>
+<span class="sd">    The Lock must be released to stop the Stream</span>
+<span class="sd">    (which must happen for any policy), then before re-raising</span>
+<span class="sd">    the exception the Lock must be acquire again to continue the processing</span>
+
+<span class="sd">    Exception and policies:</span>
+
+<span class="sd">        - STOP: The exception is re-raised as the Stream will be stopped</span>
+<span class="sd">          and the end user will deal with it</span>
+
+<span class="sd">        - STOP_ENGINE: The exception is re-raised as the Engine will be stopped</span>
+<span class="sd">          (all Streams and Producer) and the end user will deal with it</span>
+
+<span class="sd">        - RESTART: The exception is not re-raised as the Stream</span>
+<span class="sd">          will recover and continue the processing. The logger.exception</span>
+<span class="sd">          from __call__ will record that something went wrong</span>
+
+<span class="sd">        - STOP_APPLICATION: The exception is not re-raised as the entire</span>
+<span class="sd">          application will be stopped. This is only useful when using kstreams</span>
+<span class="sd">          with another library like FastAPI. The logger.exception</span>
+<span class="sd">          from __call__ will record that something went wrong</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        exc (Exception): Any Exception that causes the Stream to crash</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        exc: Exception is the policy is `STOP` or `STOP_ENGINE`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">is_processing</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_policy</span> <span class="o">==</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">RESTART</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_policy</span> <span class="o">==</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">STOP</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="c1"># acquire `is_processing` Lock again to resume processing</span>
+        <span class="c1"># and avoid `RuntimeError: Lock is not acquired.`</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">is_processing</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">exc</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_policy</span> <span class="o">==</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">STOP_ENGINE</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="c1"># acquire `is_processing` Lock again to resume processing</span>
+        <span class="c1"># and avoid `RuntimeError: Lock is not acquired.`</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">is_processing</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">exc</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># STOP_APPLICATION</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">is_processing</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">raise_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 
