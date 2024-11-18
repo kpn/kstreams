@@ -4,7 +4,7 @@ from starlette_prometheus import PrometheusMiddleware, metrics
 from kstreams.streams_utils import StreamErrorPolicy
 
 from .resources import stream_engine
-from .streams import consume
+from .streams import consume, consume_2
 from .views import router
 
 app = FastAPI()
@@ -21,6 +21,7 @@ async def shutdown_event():
 
 
 stream_engine.add_stream(consume, error_policy=StreamErrorPolicy.STOP_APPLICATION)
+stream_engine.add_stream(consume_2, error_policy=StreamErrorPolicy.RESTART)
 app.include_router(router)
 app.add_middleware(PrometheusMiddleware, filter_unhandled_paths=True)
 app.add_api_route("/metrics", metrics)  # type: ignore

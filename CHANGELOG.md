@@ -1,3 +1,9 @@
+## 0.24.9 (2024-11-18)
+
+### Fix
+
+- prevent ConsumerStoppedError exception when engine or a stream is stopped. Related to #234 (#238)
+
 ## 0.24.8 (2024-11-01)
 
 ### Fix
