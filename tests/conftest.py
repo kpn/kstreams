@@ -1,3 +1,4 @@
+import asyncio
 from collections import namedtuple
 from dataclasses import field
 from typing import Any, Dict, List, NamedTuple, Optional, Sequence, Tuple
@@ -195,3 +196,49 @@ def consumer_record_factory():
         )
 
     return consumer_record
+
+
+@pytest_asyncio.fixture
+async def aio_benchmark(benchmark):
+    """
+    Asynchronous benchmark fixture for pytest.
+
+    This fixture allows benchmarking of asynchronous functions using pytest-benchmark.
+
+    Args:
+        benchmark: The benchmark fixture provided by pytest-benchmark.
+
+    Returns:
+        _wrapper: A function that wraps the provided function and benchmarks it.
+        If the function is asynchronous, it ensures the coroutine is run and completed
+        within the event loop.
+
+    Usage:
+
+    ```python
+    async my_benchmarked_function():
+        # Your async code here
+        pass
+
+    def test_my_async_function(aio_benchmark):
+        aio_benchmark(my_benchmarked_function)
+    ```
+
+    Notice how the test is synchronous, but the function being tested is asynchronous.
+    """
+    async def run_async_coroutine(func, *args, **kwargs):
+        return await func(*args, **kwargs)
+
+    def _wrapper(func, *args, **kwargs):
+        if asyncio.iscoroutinefunction(func):
+
+            @benchmark
+            def _():
+                future = asyncio.ensure_future(
+                    run_async_coroutine(func, *args, **kwargs)
+                )
+                return asyncio.get_event_loop().run_until_complete(future)
+        else:
+            benchmark(func, *args, **kwargs)
+
+    return _wrapper
