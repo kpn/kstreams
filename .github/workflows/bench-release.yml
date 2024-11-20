@@ -1,31 +1,22 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
-# We should restore the cache and remove extra requirements installations after this is resolved https://github.com/actions/setup-python/issues/182
-
-name: Tests
+name: Bump version
 
 on:
   push:
-    branches: ["master"]
-  pull_request:
-    branches: ["*"]
-  workflow_dispatch:
-    inputs:
-      release:
-        description: 'Release package'
-        required: true
+    branches:
+      - master
 
 jobs:
-  build_test_bench:
+  bench_release:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
     steps:
-    - uses: actions/checkout@v4
+    - name: Check out
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     - name: Setup python
       uses: actions/setup-python@v5
       with:
@@ -50,21 +41,13 @@ jobs:
         poetry --version
         poetry config --local virtualenvs.in-project true
         poetry install
-
-    - name: Test and Lint
+    - name: Benchmark code
+      run: |
+        ./scripts/bench-current
+    - name: Commit benchmark
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
-        ./scripts/test
-
-    - name: Benchmark regression test
-      run: |
-        ./scripts/bench-compare
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5.0.2
-      with:
-        file: ./coverage.xml
-        name: kstreams
-        fail_ci_if_error: true
-        token: ${{secrets.CODECOV_TOKEN}}
+        git add .benchmarks/
+        git commit -m "bench: bench: add benchmark current release"
+        git push origin master

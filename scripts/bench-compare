@@ -16,4 +16,4 @@ if [ -d '.venv' ] ; then
 fi
 
 # Commented out until after merge, so there will be date to compare with.
-${PREFIX}pytest tests/test_benchmarks.py --benchmark-compare --benchmark-compare-fail=min:5%
+# ${PREFIX}pytest tests/test_benchmarks.py --benchmark-compare --benchmark-compare-fail=min:5%

@@ -226,6 +226,7 @@ async def aio_benchmark(benchmark):
 
     Notice how the test is synchronous, but the function being tested is asynchronous.
     """
+
     async def run_async_coroutine(func, *args, **kwargs):
         return await func(*args, **kwargs)
 
