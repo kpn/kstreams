@@ -1,3 +1,14 @@
+## 0.26.0 (2024-11-22)
+
+### BREAKING CHANGE
+
+- Python 3.8 support has been dropped because of end-of-life (EOL), please update to a
+supported version
+
+### Fix
+
+- drop support for python 3.8 and bump deps (#243)
+
 ## 0.25.0 (2024-11-21)
 
 ### Feat
