@@ -12,11 +12,14 @@ async def test_hook_on_startup(stream_engine: StreamEngine, consumer_record_fact
     on_startup_sync_mock = mock.Mock()
     on_startup_async_mock = mock.AsyncMock()
 
-    with mock.patch.multiple(
-        Consumer,
-        start=mock.DEFAULT,
-        stop=mock.DEFAULT,
-    ), mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
+    with (
+        mock.patch.multiple(
+            Consumer,
+            start=mock.DEFAULT,
+            stop=mock.DEFAULT,
+        ),
+        mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT),
+    ):
         assert stream_engine._on_startup == []
 
         @stream_engine.stream("local--kstreams")
@@ -57,11 +60,14 @@ async def test_hook_after_startup(stream_engine: StreamEngine, consumer_record_f
     after_startup_async_mock = mock.AsyncMock()
     set_healthy_pod = mock.AsyncMock()
 
-    with mock.patch.multiple(
-        Consumer,
-        start=mock.DEFAULT,
-        stop=mock.DEFAULT,
-    ), mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
+    with (
+        mock.patch.multiple(
+            Consumer,
+            start=mock.DEFAULT,
+            stop=mock.DEFAULT,
+        ),
+        mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT),
+    ):
         assert stream_engine._after_startup == []
 
         @stream_engine.stream("local--kstreams")
@@ -103,11 +109,14 @@ async def test_hook_on_stop(stream_engine: StreamEngine, consumer_record_factory
     close_db_mock = mock.Mock()
     backgound_task_mock = mock.AsyncMock()
 
-    with mock.patch.multiple(
-        Consumer,
-        start=mock.DEFAULT,
-        stop=mock.DEFAULT,
-    ), mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
+    with (
+        mock.patch.multiple(
+            Consumer,
+            start=mock.DEFAULT,
+            stop=mock.DEFAULT,
+        ),
+        mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT),
+    ):
         assert stream_engine._on_stop == []
 
         @stream_engine.stream("local--kstreams")
@@ -149,11 +158,14 @@ async def test_hook_on_stop(stream_engine: StreamEngine, consumer_record_factory
 async def test_hook_after_stop(stream_engine: StreamEngine, consumer_record_factory):
     delete_files_mock = mock.AsyncMock()
 
-    with mock.patch.multiple(
-        Consumer,
-        start=mock.DEFAULT,
-        stop=mock.DEFAULT,
-    ), mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
+    with (
+        mock.patch.multiple(
+            Consumer,
+            start=mock.DEFAULT,
+            stop=mock.DEFAULT,
+        ),
+        mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT),
+    ):
         assert stream_engine._after_stop == []
 
         @stream_engine.stream("local--kstreams")

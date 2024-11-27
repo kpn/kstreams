@@ -175,12 +175,15 @@ async def test_wait_for_streams_before_stop(
         await asyncio.sleep(5)
         await save_to_db(cr.value)
 
-    with mock.patch.multiple(
-        Consumer,
-        start=mock.DEFAULT,
-        stop=mock.DEFAULT,
-        getone=getone,
-    ), mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
+    with (
+        mock.patch.multiple(
+            Consumer,
+            start=mock.DEFAULT,
+            stop=mock.DEFAULT,
+            getone=getone,
+        ),
+        mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT),
+    ):
         await stream_engine.start()
         await asyncio.sleep(0)  # Allow stream coroutine to run once
 

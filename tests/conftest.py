@@ -117,9 +117,11 @@ SSLData = namedtuple("SSLData", ["cabundle", "cert", "key"])
 
 @pytest.fixture
 def ssl_data():
-    with open("tests/fixtures/ssl/cabundle.pem") as cabundle, open(
-        "tests/fixtures/ssl/certificate.pem"
-    ) as cert, open("tests/fixtures/ssl/certificate.key") as key:
+    with (
+        open("tests/fixtures/ssl/cabundle.pem") as cabundle,
+        open("tests/fixtures/ssl/certificate.pem") as cert,
+        open("tests/fixtures/ssl/certificate.key") as key,
+    ):
         return SSLData(cabundle.read(), cert.read(), key.read())
 
 
