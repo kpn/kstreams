@@ -177,6 +177,9 @@ class Stream:
         self.subscribe_by_pattern = subscribe_by_pattern
         self.error_policy = error_policy
 
+    def __name__(self) -> str:
+        return self.name
+
     def _create_consumer(self) -> Consumer:
         if self.backend is None:
             raise BackendNotSet("A backend has not been set for this stream")
