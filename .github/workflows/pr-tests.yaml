@@ -17,7 +17,7 @@ on:
         required: true
 
 jobs:
-  build_test_bench:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -31,7 +31,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         architecture: x64
-
     - name: Set Cache
       uses: actions/cache@v4
       id: cache  # name for referring later
@@ -42,7 +41,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-cache-
           ${{ runner.os }}-
-
     - name: Install Dependencies
       # if: steps.cache.outputs.cache-hit != 'true'
       run: |
@@ -50,17 +48,11 @@ jobs:
         poetry --version
         poetry config --local virtualenvs.in-project true
         poetry install
-
     - name: Test and Lint
       run: |
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
         ./scripts/test
-
-    - name: Benchmark regression test
-      run: |
-        ./scripts/bench-compare
-
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5.0.2
       with:
@@ -68,3 +60,34 @@ jobs:
         name: kstreams
         fail_ci_if_error: true
         token: ${{secrets.CODECOV_TOKEN}}
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Setup python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+        architecture: x64
+    - name: Set Cache
+      uses: actions/cache@v4
+      id: cache  # name for referring later
+      with:
+        path: .venv/
+        # The cache key depends on poetry.lock
+        key: ${{ runner.os }}-cache-${{ hashFiles('poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cache-
+          ${{ runner.os }}-
+    - name: Install Dependencies
+      # if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+        python -m pip install -U pip poetry
+        poetry --version
+        poetry config --local virtualenvs.in-project true
+        poetry install
+    - name: Benchmark regression test
+      run: |
+        ./scripts/bench-compare
