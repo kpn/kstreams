@@ -58,10 +58,8 @@ def setup_type(params: List[inspect.Parameter]) -> UDFType:
     """
     from .streams import Stream
 
-    first_annotation = params[0].annotation
-
-    if first_annotation in (inspect._empty, Stream) and len(params) < 2:
-        # use case 1 NO_TYPING
+    no_type = len(params) == 1 and params[0] in (inspect._empty, Stream)
+    if no_type:
         return UDFType.NO_TYPING
-    # typing cases
+
     return UDFType.WITH_TYPING
