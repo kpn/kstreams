@@ -18,6 +18,24 @@ Interpreting the data:
     in one second (calculated as 1 / Mean).
 - Rounds: The number of times the test was run.
 - Iterations: Number of iterations per round.
+
+Performance may be affected by:
+- Power-saving modes
+- CPU frequency scaling
+- Background Processes
+
+To get accurate results, run benchmarks on a dedicated machine with no other
+applications running.
+
+## Profiling
+
+Profile and visualize your code with `py-spy`:
+
+```python
+pip install py-spy
+sudo py-spy record -o profile.svg -- python tests/test_benchmarks.py
+```
+
 """
 
 from typing import Callable, List

@@ -4,7 +4,7 @@ import sys
 import typing
 
 from kstreams import types
-from kstreams.streams_utils import StreamErrorPolicy
+from kstreams.streams_utils import StreamErrorPolicy, UDFType
 
 if typing.TYPE_CHECKING:
     from kstreams import Stream, StreamEngine  #  pragma: no cover
@@ -14,6 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 class MiddlewareProtocol(typing.Protocol):
+    next_call: types.NextMiddlewareCall
+    send: types.Send
+    stream: "Stream"
+
     def __init__(
         self,
         *,
@@ -45,6 +49,10 @@ class Middleware:
 
 
 class BaseMiddleware:
+    next_call: types.NextMiddlewareCall
+    send: types.Send
+    stream: "Stream"
+
     def __init__(
         self,
         *,
@@ -92,7 +100,7 @@ class ExceptionMiddleware(BaseMiddleware):
 
     async def cleanup_policy(self, exc: Exception) -> None:
         """
-        Execute clenup policicy according to the Stream configuration.
+        Execute cleanup policy according to the Stream configuration.
 
         At this point we are inside the asyncio.Lock `is_processing`
         as an event is being processed and an exeption has occured.
@@ -145,3 +153,15 @@ class ExceptionMiddleware(BaseMiddleware):
             await self.engine.stop()
             await self.stream.is_processing.acquire()
             signal.raise_signal(signal.SIGTERM)
+
+
+class BaseDependcyMiddleware(MiddlewareProtocol, typing.Protocol):
+    """Base class for Dependency Injection Middleware.
+
+    `get_type` is used to identify the way to call the user defined function,
+    whether to use DI or not.
+
+    On top of that, this middleware helps **avoid circular dependencies**.
+    """
+
+    def get_type(self) -> UDFType: ...

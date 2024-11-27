@@ -10,12 +10,15 @@ from aiokafka import errors
 
 from kstreams import TopicPartition
 from kstreams.exceptions import BackendNotSet
-from kstreams.middleware.middleware import ExceptionMiddleware
+from kstreams.middleware.middleware import (
+    BaseDependcyMiddleware,
+    ExceptionMiddleware,
+    Middleware,
+)
 from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
 from .clients import Consumer
-from .middleware import Middleware, udf_middleware
 from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
 from .streams_utils import StreamErrorPolicy, UDFType
@@ -172,7 +175,7 @@ class Stream:
         self.seeked_initial_offsets = False
         self.rebalance_listener = rebalance_listener
         self.middlewares = middlewares or []
-        self.udf_handler: typing.Optional[udf_middleware.UdfHandler] = None
+        self.udf_handler: typing.Optional[BaseDependcyMiddleware] = None
         self.topics = [topics] if isinstance(topics, str) else topics
         self.subscribe_by_pattern = subscribe_by_pattern
         self.error_policy = error_policy
@@ -345,7 +348,7 @@ class Stream:
             self.running = True
 
             if self.udf_handler is not None:
-                if self.udf_handler.type == UDFType.NO_TYPING:
+                if self.udf_handler.get_type() == UDFType.NO_TYPING:
                     # deprecated use case
                     msg = (
                         "Streams with `async for in` loop approach are deprecated.\n"
@@ -439,7 +442,7 @@ class Stream:
 
             if (
                 self.udf_handler is not None
-                and self.udf_handler.type == UDFType.NO_TYPING
+                and self.udf_handler.get_type() == UDFType.NO_TYPING
             ):
                 return cr
             return await self.func(cr)
