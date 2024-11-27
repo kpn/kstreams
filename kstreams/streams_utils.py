@@ -1,20 +1,10 @@
-import enum
 import inspect
 from typing import List
 
+from kstreams.consts import UDFType
+from kstreams.streams import Stream
+
 # NOTE: remove this module when Stream with `no typing` support is deprecated
-
-
-class UDFType(str, enum.Enum):
-    NO_TYPING = "NO_TYPING"
-    WITH_TYPING = "WITH_TYPING"
-
-
-class StreamErrorPolicy(str, enum.Enum):
-    RESTART = "RESTART"
-    STOP = "STOP"
-    STOP_ENGINE = "STOP_ENGINE"
-    STOP_APPLICATION = "STOP_APPLICATION"
 
 
 def setup_type(params: List[inspect.Parameter]) -> UDFType:
@@ -56,12 +46,10 @@ def setup_type(params: List[inspect.Parameter]) -> UDFType:
             async def consume(cr: ConsumerRecord, stream: Stream, send: Send):
                 ...
     """
-    from .streams import Stream
+    # from .streams import Stream
 
-    first_annotation = params[0].annotation
-
-    if first_annotation in (inspect._empty, Stream) and len(params) < 2:
-        # use case 1 NO_TYPING
+    no_type = len(params) == 1 and params[0] in (inspect._empty, Stream)
+    if no_type:
         return UDFType.NO_TYPING
-    # typing cases
+
     return UDFType.WITH_TYPING

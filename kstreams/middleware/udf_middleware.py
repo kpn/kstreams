@@ -18,8 +18,14 @@ class UdfHandler(BaseMiddleware):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         signature = inspect.signature(self.next_call)
-        self.params = list(signature.parameters.values())
+        self.params: typing.List[typing.Any] = [
+            typing.get_origin(param.annotation) or param.annotation
+            for param in signature.parameters.values()
+        ]
         self.type: UDFType = setup_type(self.params)
+
+    def get_type(self) -> UDFType:
+        return self.type
 
     def bind_udf_params(self, cr: types.ConsumerRecord) -> typing.List:
         # NOTE: When `no typing` support is deprecated then this can
@@ -30,7 +36,7 @@ class UdfHandler(BaseMiddleware):
             types.Send: self.send,
         }
 
-        return [ANNOTATIONS_TO_PARAMS[param.annotation] for param in self.params]
+        return [ANNOTATIONS_TO_PARAMS[param_type] for param_type in self.params]
 
     async def __call__(self, cr: types.ConsumerRecord) -> typing.Any:
         """

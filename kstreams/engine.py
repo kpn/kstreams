@@ -9,6 +9,7 @@ from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
 from .clients import Consumer, Producer
+from .consts import StreamErrorPolicy, UDFType
 from .exceptions import DuplicateStreamException, EngineNotStartedException
 from .middleware import Middleware
 from .middleware.udf_middleware import UdfHandler
@@ -17,7 +18,6 @@ from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import Deserializer, Serializer
 from .streams import Stream, StreamFunc
 from .streams import stream as stream_func
-from .streams_utils import StreamErrorPolicy, UDFType
 from .types import Deprecated, EngineHooks, Headers, NextMiddlewareCall
 from .utils import encode_headers, execute_hooks
 

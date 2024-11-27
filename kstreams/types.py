@@ -8,8 +8,7 @@ if typing.TYPE_CHECKING:
 
 Headers = typing.Dict[str, str]
 EncodedHeaders = typing.Sequence[typing.Tuple[str, bytes]]
-StreamFunc = typing.Callable
-
+StreamFunc = typing.Callable[..., typing.Any]
 EngineHooks = typing.Sequence[typing.Callable[[], typing.Any]]
 
 
