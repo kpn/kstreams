@@ -21,6 +21,9 @@ class UdfHandler(BaseMiddleware):
         self.params = list(signature.parameters.values())
         self.type: UDFType = setup_type(self.params)
 
+    def get_type(self) -> UDFType:
+        return self.type
+
     def bind_udf_params(self, cr: types.ConsumerRecord) -> typing.List:
         # NOTE: When `no typing` support is deprecated then this can
         # be more eficient as the CR will be always there.

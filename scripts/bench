@@ -1,0 +1,12 @@
+# When you run the bench script, it will create a "bench" report under the `.benchmarks` folder.
+# This way we can keep track of the regressions in performance.
+# Normally, you would run the benchmarks locally, and commit them to git, and then the
+# normal `test` script, can check for an accepted regression penalty.
+#!/bin/bash -e
+
+export PREFIX=""
+if [ -d '.venv' ] ; then
+    export PREFIX=".venv/bin/"
+fi
+
+${PREFIX}pytest tests/test_benchmarks.py --benchmark-autosave
