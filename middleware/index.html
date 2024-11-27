@@ -816,7 +816,15 @@
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
-<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MiddlewareProtocol</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">MiddlewareProtocol</span><span class="p">(</span><span class="n">typing</span><span class="o">.</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="n">next_call</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">NextMiddlewareCall</span>
+    <span class="n">send</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">Send</span>
+    <span class="n">stream</span><span class="p">:</span> <span class="s2">&quot;Stream&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -946,15 +954,7 @@ policy_error that was stablished.</p>
 
               <details class="quote">
                 <summary>Source code in <code>kstreams/middleware/middleware.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 63</span>
-<span class="normal"> 64</span>
-<span class="normal"> 65</span>
-<span class="normal"> 66</span>
-<span class="normal"> 67</span>
-<span class="normal"> 68</span>
-<span class="normal"> 69</span>
-<span class="normal"> 70</span>
-<span class="normal"> 71</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 71</span>
 <span class="normal"> 72</span>
 <span class="normal"> 73</span>
 <span class="normal"> 74</span>
@@ -1030,7 +1030,15 @@ policy_error that was stablished.</p>
 <span class="normal">144</span>
 <span class="normal">145</span>
 <span class="normal">146</span>
-<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ExceptionMiddleware</span><span class="p">(</span><span class="n">BaseMiddleware</span><span class="p">):</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ExceptionMiddleware</span><span class="p">(</span><span class="n">BaseMiddleware</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This is always the first Middleware in the middleware stack</span>
 <span class="sd">    to catch any exception that might occur. Any exception raised</span>
@@ -1062,7 +1070,7 @@ policy_error that was stablished.</p>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Execute clenup policicy according to the Stream configuration.</span>
+<span class="sd">        Execute cleanup policy according to the Stream configuration.</span>
 
 <span class="sd">        At this point we are inside the asyncio.Lock `is_processing`</span>
 <span class="sd">        as an event is being processed and an exeption has occured.</span>
@@ -1145,7 +1153,7 @@ policy_error that was stablished.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Execute clenup policicy according to the Stream configuration.</p>
+        <p>Execute cleanup policy according to the Stream configuration.</p>
 <p>At this point we are inside the asyncio.Lock <code>is_processing</code>
 as an event is being processed and an exeption has occured.
 The Lock must be released to stop the Stream
@@ -1224,15 +1232,7 @@ the exception the Lock must be acquire again to continue the processing</p>
 
             <details class="quote">
               <summary>Source code in <code>kstreams/middleware/middleware.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 93</span>
-<span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span>
 <span class="normal">104</span>
@@ -1278,9 +1278,17 @@ the exception the Lock must be acquire again to continue the processing</p>
 <span class="normal">144</span>
 <span class="normal">145</span>
 <span class="normal">146</span>
-<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Execute clenup policicy according to the Stream configuration.</span>
+<span class="sd">    Execute cleanup policy according to the Stream configuration.</span>
 
 <span class="sd">    At this point we are inside the asyncio.Lock `is_processing`</span>
 <span class="sd">    as an event is being processed and an exeption has occured.</span>
