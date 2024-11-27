@@ -4,7 +4,7 @@ from unittest import mock
 import pytest
 
 from kstreams import ConsumerRecord, StreamEngine, TestStreamClient
-from kstreams.streams_utils import StreamErrorPolicy
+from kstreams.consts import StreamErrorPolicy
 
 
 @pytest.mark.asyncio

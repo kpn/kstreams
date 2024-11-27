@@ -4,7 +4,7 @@ import sys
 import typing
 
 from kstreams import types
-from kstreams.streams_utils import StreamErrorPolicy, UDFType
+from kstreams.consts import StreamErrorPolicy, UDFType
 
 if typing.TYPE_CHECKING:
     from kstreams import Stream, StreamEngine  #  pragma: no cover

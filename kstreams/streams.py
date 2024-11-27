@@ -19,9 +19,9 @@ from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
 from .clients import Consumer
+from .consts import StreamErrorPolicy, UDFType
 from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
-from .streams_utils import StreamErrorPolicy, UDFType
 from .types import ConsumerRecord, Deprecated, StreamFunc
 
 if typing.TYPE_CHECKING:
