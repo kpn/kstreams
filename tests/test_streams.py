@@ -309,9 +309,10 @@ async def test_stream_custom_conf(stream_engine: StreamEngine):
     )
     async def stream(_): ...
 
-    with mock.patch.multiple(
-        Consumer, start=mock.DEFAULT, stop=mock.DEFAULT
-    ), mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
+    with (
+        mock.patch.multiple(Consumer, start=mock.DEFAULT, stop=mock.DEFAULT),
+        mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT),
+    ):
         await stream_engine.start_streams()
 
         # switch the current Task to the one running in background

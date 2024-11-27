@@ -69,9 +69,10 @@ async def test_add_stream_with_rebalance_listener(stream_engine: StreamEngine):
 
     rebalance_listener = MyRebalanceListener()
 
-    with mock.patch.multiple(
-        Consumer, start=mock.DEFAULT, unsubscribe=mock.DEFAULT
-    ), mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"):
+    with (
+        mock.patch.multiple(Consumer, start=mock.DEFAULT, unsubscribe=mock.DEFAULT),
+        mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"),
+    ):
 
         @stream_engine.stream(
             topic,
@@ -103,13 +104,14 @@ async def test_stream_with_default_rebalance_listener():
     topic = "local--hello-kpn"
     topic_partitions = set(TopicPartition(topic=topic, partition=0))
 
-    with mock.patch.multiple(
-        Consumer, start=mock.DEFAULT, unsubscribe=mock.DEFAULT
-    ), mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"), mock.patch(
-        "kstreams.PrometheusMonitor.start"
-    ) as monitor_start, mock.patch(
-        "kstreams.PrometheusMonitor.clean_stream_consumer_metrics"
-    ) as clean_stream_metrics:
+    with (
+        mock.patch.multiple(Consumer, start=mock.DEFAULT, unsubscribe=mock.DEFAULT),
+        mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"),
+        mock.patch("kstreams.PrometheusMonitor.start") as monitor_start,
+        mock.patch(
+            "kstreams.PrometheusMonitor.clean_stream_consumer_metrics"
+        ) as clean_stream_metrics,
+    ):
         # use this function so we can mock PrometheusMonitor
         stream_engine = create_engine()
 
@@ -150,9 +152,12 @@ async def test_stream_manual_commit_rebalance_listener(stream_engine: StreamEngi
     topic = "local--hello-kpn"
     topic_partitions = set(TopicPartition(topic=topic, partition=0))
 
-    with mock.patch.multiple(
-        Consumer, start=mock.DEFAULT, commit=mock.DEFAULT, unsubscribe=mock.DEFAULT
-    ), mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"):
+    with (
+        mock.patch.multiple(
+            Consumer, start=mock.DEFAULT, commit=mock.DEFAULT, unsubscribe=mock.DEFAULT
+        ),
+        mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"),
+    ):
 
         @stream_engine.stream(
             topic,
