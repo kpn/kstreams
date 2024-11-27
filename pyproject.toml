@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kstreams"
-version = "0.26.1"
+version = "0.26.2"
 description = "Build simple kafka streams applications"
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
 maintainers = ["Santiago Fraire Willemoës <santiago.fraire@kpn.com>"]

@@ -1,3 +1,15 @@
+## 0.26.2 (2024-11-27)
+
+### Fix
+
+- circular imports on DI system
+- typing issues
+- add support for generic values in dependency injection
+
+### Refactor
+
+- use abstract class for DI Middleware
+
 ## 0.26.1 (2024-11-26)
 
 ### Fix
