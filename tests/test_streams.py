@@ -4,6 +4,7 @@ from typing import Callable, Set
 from unittest import mock
 
 import pytest
+from pydantic import BaseModel
 
 from kstreams import ConsumerRecord, Send, TopicPartition
 from kstreams.clients import Consumer, Producer
@@ -107,6 +108,65 @@ async def test_stream_generic_cr_with_typing(
         @stream_engine.stream(topic_name)
         async def stream(cr: ConsumerRecord[str, bytes]):
             assert cr.value == value
+            await asyncio.sleep(0.1)
+
+        assert stream.consumer is None
+        assert stream.topics == [topic_name]
+
+        with contextlib.suppress(TimeoutErrorException):
+            # now it is possible to run a stream directly, so we need
+            # to stop the `forever` consumption
+            await asyncio.wait_for(stream.start(), timeout=0.1)
+
+        assert stream.consumer
+        Consumer.subscribe.assert_called_once_with(
+            topics=[topic_name], listener=stream.rebalance_listener, pattern=None
+        )
+        await stream.stop()
+
+
+@pytest.mark.asyncio
+async def test_stream_generic_cr_with_pydantic_type(
+    stream_engine: StreamEngine, consumer_record_factory
+):
+    """Allow to use Pydantic models as generic types in ConsumerRecord.
+
+    ```python
+    class Customer(BaseModel):
+        id: int
+
+    @stream_engine.stream("local--kstreams")
+    async def stream(cr: ConsumerRecord[str, Customer]):
+        assert cr.value.id == 1
+    ```
+    """
+
+    class Profile(BaseModel):
+        name: str
+
+    class Customer(BaseModel):
+        id: int
+        profile: Profile
+
+    data = {"id": 1, "profile": {"name": "John"}}
+    topic_name = "local--kstreams"
+    value = "John"
+
+    async def getone(_):
+        return consumer_record_factory(value=data)
+
+    with mock.patch.multiple(
+        Consumer,
+        start=mock.DEFAULT,
+        subscribe=mock.DEFAULT,
+        getone=getone,
+    ):
+
+        @stream_engine.stream(topic_name)
+        async def stream(cr: ConsumerRecord[str, Customer]):
+            if cr.value is None:
+                raise ValueError("Value is None")
+            assert cr.value.profile.name == value
             await asyncio.sleep(0.1)
 
         assert stream.consumer is None

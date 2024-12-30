@@ -7,7 +7,7 @@ from kstreams.streams import Stream
 # NOTE: remove this module when Stream with `no typing` support is deprecated
 
 
-def setup_type(params: List[inspect.Parameter]) -> UDFType:
+def setup_type(params: List[type]) -> UDFType:
     """
     Inspect the user defined function (coroutine) to get the  proper way to call it
 

@@ -14,29 +14,66 @@ if sys.version_info < (3, 10):
         return await async_gen.__anext__()
 
 
+class UdfParam(typing.NamedTuple):
+    annotation: type
+    args: typing.Tuple[typing.Any]
+    is_generic: bool = False
+
+
+def build_params(signature: inspect.Signature) -> typing.List[UdfParam]:
+    return [
+        UdfParam(
+            typing.get_origin(param.annotation) or param.annotation,
+            typing.get_args(param.annotation),
+            typing.get_origin(param.annotation) is not None,
+        )
+        for param in signature.parameters.values()
+    ]
+
+
 class UdfHandler(BaseMiddleware):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         signature = inspect.signature(self.next_call)
-        self.params: typing.List[typing.Any] = [
-            typing.get_origin(param.annotation) or param.annotation
+        self.params: typing.List[UdfParam] = [
+            UdfParam(
+                typing.get_origin(param.annotation) or param.annotation,
+                typing.get_args(param.annotation),
+                typing.get_origin(param.annotation) is not None,
+            )
             for param in signature.parameters.values()
         ]
-        self.type: UDFType = setup_type(self.params)
 
-    def get_type(self) -> UDFType:
-        return self.type
+        self.type: UDFType = setup_type([p.annotation for p in self.params])
 
-    def bind_udf_params(self, cr: types.ConsumerRecord) -> typing.List:
-        # NOTE: When `no typing` support is deprecated then this can
-        # be more eficient as the CR will be always there.
-        ANNOTATIONS_TO_PARAMS = {
-            types.ConsumerRecord: cr,
+        self.ANNOTATIONS_TO_PARAMS: dict[type, typing.Any] = {
+            types.ConsumerRecord: None,
             Stream: self.stream,
             types.Send: self.send,
         }
 
-        return [ANNOTATIONS_TO_PARAMS[param_type] for param_type in self.params]
+    def get_type(self) -> UDFType:
+        """Used by the stream_engine to know whether to call this middleware or not."""
+        return self.type
+
+    def bind_udf_params(self, cr: types.ConsumerRecord) -> typing.List:
+        self.ANNOTATIONS_TO_PARAMS[types.ConsumerRecord] = cr
+
+        args = []
+        for param in self.params:
+            if param.annotation is types.ConsumerRecord and param.is_generic:
+                if len(param.args) == 2:
+                    cr_type = param.args[1]
+
+                    # Check if it's compatible with a pydantic model
+                    if hasattr(cr_type, "model_validate"):
+                        pydantic_value = cr_type.model_validate(cr.value)
+                        self.ANNOTATIONS_TO_PARAMS[types.ConsumerRecord] = cr._replace(
+                            value=pydantic_value
+                        )
+            args.append(self.ANNOTATIONS_TO_PARAMS[param.annotation])
+
+        return args
 
     async def __call__(self, cr: types.ConsumerRecord) -> typing.Any:
         """
