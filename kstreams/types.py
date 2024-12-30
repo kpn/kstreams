@@ -35,6 +35,25 @@ VT = typing.TypeVar("VT")
 
 @dataclass
 class ConsumerRecord(typing.Generic[KT, VT]):
+    """
+    ConsumerRecord represents a record received from a Kafka topic.
+
+    Attributes:
+        topic (str): The topic this record is received from.
+        partition (int): The partition from which this record is received.
+        offset (int): The position of this record in the corresponding Kafka partition.
+        timestamp (int): The timestamp of this record.
+        timestamp_type (int): The timestamp type of this record.
+        key (Optional[KT]): The key (or `None` if no key is specified).
+        value (Optional[VT]): The value.
+        checksum (Optional[int]): Deprecated.
+        serialized_key_size (int): The size of the serialized,
+            uncompressed key in bytes.
+        serialized_value_size (int): The size of the serialized,
+            uncompressed value in bytes.
+        headers (EncodedHeaders): The headers.
+    """
+
     topic: str
     "The topic this record is received from"
 
