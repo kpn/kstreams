@@ -56,24 +56,28 @@ class UdfHandler(BaseMiddleware):
         """Used by the stream_engine to know whether to call this middleware or not."""
         return self.type
 
+    def build_param(self, param: UdfParam, cr: types.ConsumerRecord) -> type:
+        if (
+            param.annotation is types.ConsumerRecord
+            and param.is_generic
+            and len(param.args) == 2  # guarantees ConsumerRecord has two args
+        ):
+            cr_type = param.args[1]
+
+            # Check if it's compatible with a pydantic model
+            if hasattr(cr_type, "model_validate"):
+                pydantic_value = cr_type.model_validate(cr.value)
+                self.ANNOTATIONS_TO_PARAMS[types.ConsumerRecord] = cr._replace(
+                    value=pydantic_value
+                )
+        return param.annotation
+
     def bind_udf_params(self, cr: types.ConsumerRecord) -> typing.List:
         self.ANNOTATIONS_TO_PARAMS[types.ConsumerRecord] = cr
-
-        args = []
-        for param in self.params:
-            if param.annotation is types.ConsumerRecord and param.is_generic:
-                if len(param.args) == 2:
-                    cr_type = param.args[1]
-
-                    # Check if it's compatible with a pydantic model
-                    if hasattr(cr_type, "model_validate"):
-                        pydantic_value = cr_type.model_validate(cr.value)
-                        self.ANNOTATIONS_TO_PARAMS[types.ConsumerRecord] = cr._replace(
-                            value=pydantic_value
-                        )
-            args.append(self.ANNOTATIONS_TO_PARAMS[param.annotation])
-
-        return args
+        return [
+            self.ANNOTATIONS_TO_PARAMS[self.build_param(param, cr)]
+            for param in self.params
+        ]
 
     async def __call__(self, cr: types.ConsumerRecord) -> typing.Any:
         """
