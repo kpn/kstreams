@@ -1,3 +1,10 @@
+## 0.26.5 (2025-01-06)
+
+### Fix
+
+- enable performance checks
+- improve DI performance
+
 ## 0.26.4 (2025-01-06)
 
 ### Fix
