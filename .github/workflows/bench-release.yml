@@ -26,7 +26,7 @@ jobs:
       with:
         path: .venv/
         # The cache key depends on poetry.lock
-        key: ${{ runner.os }}-cache-${{ hashFiles('poetry.lock') }}
+        key: ${{ runner.os }}-cache-${{ hashFiles('poetry.lock') }}-313
         restore-keys: |
           ${{ runner.os }}-cache-
           ${{ runner.os }}-
