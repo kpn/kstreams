@@ -1,3 +1,22 @@
+## 0.26.5 (2025-01-06)
+
+### Fix
+
+- enable performance checks
+- improve DI performance
+
+## 0.26.4 (2025-01-06)
+
+### Fix
+
+- ci benchmark
+
+## 0.26.3 (2024-11-27)
+
+### Fix
+
+- bump deps
+
 ## 0.26.2 (2024-11-27)
 
 ### Fix

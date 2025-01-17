@@ -15,6 +15,18 @@ if sys.version_info < (3, 10):
 
 
 class UdfHandler(BaseMiddleware):
+    """User Defined Function Handler Middleware
+
+    Manages dependency injection for user defined functions (UDFs) that are
+    defined as coroutines. The UDFs are defined by the user and are passed
+    to the stream engine to be executed when a consumer record is received.
+
+    The UDFs can have different signatures and the middleware is responsible
+    for managing the dependency injection for the UDFs.
+
+    UdfHandler tries to stay small and performant.
+    """
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         signature = inspect.signature(self.next_call)
@@ -23,20 +35,17 @@ class UdfHandler(BaseMiddleware):
             for param in signature.parameters.values()
         ]
         self.type: UDFType = setup_type(self.params)
-
-    def get_type(self) -> UDFType:
-        return self.type
-
-    def bind_udf_params(self, cr: types.ConsumerRecord) -> typing.List:
-        # NOTE: When `no typing` support is deprecated then this can
-        # be more eficient as the CR will be always there.
-        ANNOTATIONS_TO_PARAMS = {
-            types.ConsumerRecord: cr,
+        self.annotations_to_params: dict[type, typing.Any] = {
+            types.ConsumerRecord: None,
             Stream: self.stream,
             types.Send: self.send,
         }
 
-        return [ANNOTATIONS_TO_PARAMS[param_type] for param_type in self.params]
+    def get_type(self) -> UDFType:
+        return self.type
+
+    def bind_cr(self, cr: types.ConsumerRecord) -> None:
+        self.annotations_to_params[types.ConsumerRecord] = cr
 
     async def __call__(self, cr: types.ConsumerRecord) -> typing.Any:
         """
@@ -58,7 +67,8 @@ class UdfHandler(BaseMiddleware):
                 async def consume(cr: ConsumerRecord, stream: Stream):
                     ...
         """
-        params = self.bind_udf_params(cr)
+        self.bind_cr(cr)
+        params = [self.annotations_to_params[param_type] for param_type in self.params]
 
         if inspect.isasyncgenfunction(self.next_call):
             return await anext(self.next_call(*params))
