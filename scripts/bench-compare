@@ -15,5 +15,8 @@ if [ -d '.venv' ] ; then
     export PREFIX=".venv/bin/"
 fi
 
+
+python --version
+ls -la
 # Commented out until after merge, so there will be date to compare with.
 ${PREFIX}pytest tests/test_benchmarks.py --benchmark-compare --benchmark-compare-fail=mean:10%
