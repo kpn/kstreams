@@ -9,9 +9,10 @@ By default, this is what kstream does.
 
 As you can see the ConsumerRecord's `value` is bytes.
 
-In order to keep your code pythonic, we provide a mechanism to serialize/deserialize
-these bytes, into something more useful.
+In order to keep your code pythonic, we provide a mechanism to `serialize/deserialize` these `bytes`, into something more useful.
 This way, you can work with other data structures, like a `dict` or `dataclasses`.
+
+## Serializers
 
 Sometimes it is easier to work with a `dict` in your app, give it to `kstreams`, and let it transform it into `bytes` to be delivered to Kafka. For this situation, you need to implement `kstreams.serializers.Serializer`.
 
@@ -20,10 +21,17 @@ Sometimes it is easier to work with a `dict` in your app, give it to `kstreams`,
         show_root_heading: true
         docstring_section_style: table
         show_bases: false
+        members:
+          -  
 
+## Deserializers
 
-The other situation is when you consume from Kafka (or other brokers). Instead of dealing with `bytes`,
-you may want to receive in your function the `dict` ready to be used. For those cases, we need to use [middleware](https://kpn.github.io/kstreams/middleware/). For example, we can implement a `JsonMiddleware`:
+The other situation is when you consume from Kafka (or other brokers). Instead of dealing with `bytes`, you may want to receive in your function the `dict` ready to be used.
+For those cases, we need to use [middlewares](https://kpn.github.io/kstreams/middleware/).
+
+### Deserializers Middleware
+
+For example, we can implement a `JsonMiddleware`:
 
 ```python
 from kstreams import middleware, ConsumerRecord
@@ -37,47 +45,131 @@ class JsonDeserializerMiddleware(middleware.BaseMiddleware):
         return await self.next_call(cr)
 ```
 
-It is also possble to use `kstreams.serializers.Deserializer` for deserialization, but this will be deprecated
+### Old Deserializers
+
+The old fashion way is to use `Deserializers`, which has been deprecated (but still maintained) in favor of [middleware](https://kpn.github.io/kstreams/middleware/)
 
 ::: kstreams.serializers.Deserializer
     options:
-        show_root_heading: true
+        show_root_heading: false
         docstring_section_style: table
         show_bases: false
+        members:
+          -  
 
 !!! warning
     `kstreams.serializers.Deserializer` will be deprecated, use [middlewares](https://kpn.github.io/kstreams/middleware/) instead
 
 ## Usage
 
-Once you have written your serializer or deserializer, there are 2 ways of using them, in a
-generic fashion or per stream.
+Once you have written your `serializer` and  `middleware/deserializer`, there are two ways to use them:
 
-### Initialize the engine with your serializers
+- `Globally`: When `Serializer` and/or `Deserializer` is set to the `StreamEngine` instance
+- `Per case`: When a `Serializer` is used with the `send coroutine` or a `Middleware/Deserializer` is set to a `stream`
 
-By doing this all the streams will use these serializers by default.
+### Globally
 
-```python
+The engine is initialized with serializers. By doing this all the streams will use these deserializers by default and every time that an event is produced
+then the default `serializer` is used.
+
+```python title="Json events example"
+from kstreams import create_engine, middleware, ConsumerRecord
+
+topic = "local--kstreams"
+
 stream_engine = create_engine(
     title="my-stream-engine",
     serializer=JsonSerializer(),
+    deserializer=JsonDeserializer(),  # old fashion way and it will be deprecated
+)
+
+
+@stream_engine.stream(topic)
+async def hello_stream(cr: ConsumerRecord):
+    # remember event.value is now a dict
+    print(cr.value["message"])
+    save_to_db(cr)
+    assert cr.value == {"message": "test"}
+
+
+await stream_engine.send(
+    topic,
+    value={"message": "test"}
+    headers={"content-type": consts.APPLICATION_JSON,}
+    key="1",
 )
 ```
 
-### Initilize `streams` with a `deserializer` and produce events with `serializers`
+### Per case
+
+This is when `streams` are initialized with a `deserializer` (preferably a `middleware`) and we produce events with `serializers` in the send function.
+
+- If a `global serializer` is set but we call `send(serializer=...)`, then the local `serializer` is used, not the global one.
+- If a `global deserializer` is set but a `stream` has a local one, then the local `deserializer` is used. In other words, the most specific `deserializer` will be used
 
 ```python
-from kstreams import middleware, ConsumerRecord
+from kstreams import create_engine, middleware, ConsumerRecord
 
+topic = "local--kstreams"
 
+# stream_engine created without a `serializer/deserializer`
+stream_engine = create_engine(
+    title="my-stream-engine",
+)
+
+# Here deserializer=JsonDeserializer() instead, but it will be deprecated
 @stream_engine.stream(topic, middlewares=[middleware.Middleware(JsonDeserializerMiddleware)])
 async def hello_stream(cr: ConsumerRecord):
     # remember event.value is now a dict
     print(cr.value["message"])
     save_to_db(cr)
+
+
+# send with a serializer
+await stream_engine.send(
+    topic,
+    value={"message": "test"}
+    headers={"content-type": consts.APPLICATION_JSON,}
+    serializer=JsonSerializer()  # in this case the Global Serializer is not used if there was one
+    key="1",
+)
 ```
 
-```python
+## Forcing raw data
+
+There is a situation when a `global` serializer is being used but still we want to produce raw data, for example when producing to a `DLQ`.
+For this case, when must set the `serialzer` option to `None`:
+
+```python title="DLQ example"
+from kstreams import create_engine, middleware, ConsumerRecord
+
+
+topic = "local--kstreams"
+dlq_topic = "dlq--kstreams"
+
+stream_engine = create_engine(
+    title="my-stream-engine",
+    serializer=JsonSerializer(),  # Global serializer
+)
+
+
+@stream_engine.stream(topic)
+async def hello_stream(cr: ConsumerRecord):
+    try:
+        # remember event.value is now a dict
+        save_to_db(cr)
+        assert cr.value == {"message": "test"}
+    except DeserializationException:
+        await stream_engine.send(
+            dlq_topic,
+            value=cr.value
+            headers=cr.headers
+            key=cr.key,
+            serializer=None, # force raw data
+        )
+
+
+# this will produce Json
 await stream_engine.send(
     topic,
     value={"message": "test"}
