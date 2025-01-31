@@ -15,7 +15,7 @@ from .middleware import Middleware
 from .middleware.udf_middleware import UdfHandler
 from .prometheus.monitor import PrometheusMonitor
 from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
-from .serializers import Deserializer, Serializer
+from .serializers import NO_DEFAULT, Deserializer, Serializer
 from .streams import Stream, StreamFunc
 from .streams import stream as stream_func
 from .types import Deprecated, EngineHooks, Headers, NextMiddlewareCall
@@ -96,7 +96,7 @@ class StreamEngine:
         partition: typing.Optional[int] = None,
         timestamp_ms: typing.Optional[int] = None,
         headers: typing.Optional[Headers] = None,
-        serializer: typing.Optional[Serializer] = None,
+        serializer: typing.Optional[Serializer] = NO_DEFAULT,
         serializer_kwargs: typing.Optional[typing.Dict] = None,
     ):
         """
@@ -114,7 +114,8 @@ class StreamEngine:
         if self._producer is None:
             raise EngineNotStartedException()
 
-        serializer = serializer or self.serializer
+        if serializer is NO_DEFAULT:
+            serializer = self.serializer
 
         # serialize only when value and serializer are present
         if value is not None and serializer is not None:
