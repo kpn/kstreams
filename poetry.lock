@@ -54,13 +54,13 @@ zstd = ["cramjam"]
 
 [[package]]
 name = "aiorun"
-version = "2024.8.1"
+version = "2025.1.1"
 description = "Boilerplate for asyncio applications"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "aiorun-2024.8.1-py3-none-any.whl", hash = "sha256:e06cd75611a85f71802e741e7294b2db470f77bba8d76dce229fcc51dd58ec38"},
-    {file = "aiorun-2024.8.1.tar.gz", hash = "sha256:87ea66b6146756ced58175d2f5ae64519ef96c4657f46b0e0c036e541a22c764"},
+    {file = "aiorun-2025.1.1-py3-none-any.whl", hash = "sha256:46d6fa7ac4bfe93ff8385fa17941e4dbe0452d0353497196be25b000571fe3e1"},
+    {file = "aiorun-2025.1.1.tar.gz", hash = "sha256:86d1075a034ce2671ab532db06e9204fe784cdd0c66ca7b8cc47a7527d0d50a3"},
 ]
 
 [package.extras]
@@ -1768,4 +1768,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "140fa0c33d82c775324d0bae862177f0791b444a5a44d2ed0059d0ae077a333c"
+content-hash = "c14f19ab41693fca615d5244ad5ad13b6ecf669959ac308896e1bcc778f51195"
