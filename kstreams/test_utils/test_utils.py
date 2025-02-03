@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Type
 from kstreams import Consumer, Producer
 from kstreams.engine import StreamEngine
 from kstreams.prometheus.monitor import PrometheusMonitor
-from kstreams.serializers import Serializer
+from kstreams.serializers import NO_DEFAULT, Serializer
 from kstreams.streams import Stream
 from kstreams.types import ConsumerRecord, Headers
 
@@ -116,7 +116,7 @@ class TestStreamClient:
         partition: int = 0,
         timestamp_ms: Optional[int] = None,
         headers: Optional[Headers] = None,
-        serializer: Optional[Serializer] = None,
+        serializer: Optional[Serializer] = NO_DEFAULT,
         serializer_kwargs: Optional[Dict] = None,
     ) -> RecordMetadata:
         return await self.stream_engine.send(
