@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kstreams"
-version = "0.26.5"
+version = "0.26.6"
 description = "Build simple kafka streams applications"
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
 maintainers = ["Santiago Fraire Willemoës <santiago.fraire@kpn.com>"]
@@ -37,7 +37,7 @@ pytest-benchmark = "^5.1.0"
 pytest-cov = "^6"
 pytest-httpserver = "^1.1.0"
 mypy = "^1.11.2"
-ruff = "^0.8"
+ruff = ">=0.8,<0.10"
 aiorun = "^2024.5.1"
 jedi = "^0.19.1"
 mkdocs = "^1.1.2"

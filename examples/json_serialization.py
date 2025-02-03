@@ -5,10 +5,16 @@ from typing import Any, Dict, Optional
 
 import aiorun
 
-from kstreams import ConsumerRecord, Stream, consts, create_engine, middleware
+from kstreams import ConsumerRecord, consts, create_engine, middleware
 from kstreams.types import Headers
 
 logger = logging.getLogger(__name__)
+
+
+json_data = {"message": "Hello world!"}
+raw_data = b"Hello world!"
+raw_topic = "local--kstreams"
+json_topic = "local--kstreams-json"
 
 
 class JsonSerializer:
@@ -38,32 +44,47 @@ stream_engine = create_engine(
     serializer=JsonSerializer(),
 )
 
-data = {"message": "Hello world!"}
-topic = "local--kstreams-json"
+
+@stream_engine.stream(
+    raw_topic,
+    group_id="my-group-raw-data",
+)
+async def consume_raw(cr: ConsumerRecord):
+    logger.info(f"Event consumed: headers: {cr.headers}, value: {cr.value}")
+    assert cr.value == raw_data
 
 
 @stream_engine.stream(
-    topic,
-    group_id="my-group",
+    json_topic,
+    group_id="my-group-json-data",
     middlewares=[middleware.Middleware(JsonDeserializerMiddleware)],
 )
-async def consume(cr: ConsumerRecord, stream: Stream):
+async def consume_json(cr: ConsumerRecord):
     logger.info(f"Event consumed: headers: {cr.headers}, value: {cr.value}")
-    assert cr.value == data
+    assert cr.value == json_data
 
 
 async def produce():
     for _ in range(5):
         # Serialize the data with APPLICATION_JSON
         metadata = await stream_engine.send(
-            topic,
-            value=data,
+            json_topic,
+            value=json_data,
             headers={
                 "content-type": consts.APPLICATION_JSON,
             },
         )
         logger.info(f"Message sent: {metadata}")
         await asyncio.sleep(3)
+
+    # send raw data to show that it is possible to send data without serialization
+    metadata = await stream_engine.send(
+        raw_topic,
+        value=raw_data,
+        serializer=None,
+    )
+
+    logger.info(f"Message sent: {metadata}")
 
 
 async def main():

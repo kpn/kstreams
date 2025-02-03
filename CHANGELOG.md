@@ -1,3 +1,9 @@
+## 0.26.6 (2025-02-03)
+
+### Fix
+
+- **send**: _NoDefault serializer sentinel introduced in order to make possible to send raw data even when a global serializer has been set (#280)
+
 ## 0.26.5 (2025-01-06)
 
 ### Fix
