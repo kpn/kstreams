@@ -511,9 +511,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#global" class="md-nav__link">
+  <a href="#globally" class="md-nav__link">
     <span class="md-ellipsis">
-      Global
+      Globally
     </span>
   </a>
   
@@ -725,9 +725,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#global" class="md-nav__link">
+  <a href="#globally" class="md-nav__link">
     <span class="md-ellipsis">
-      Global
+      Globally
     </span>
   </a>
   
@@ -1068,13 +1068,14 @@ For those cases, we need to use <a href="https://kpn.github.io/kstreams/middlewa
 <p><code>kstreams.serializers.Deserializer</code> will be deprecated, use <a href="https://kpn.github.io/kstreams/middleware/">middlewares</a> instead</p>
 </div>
 <h2 id="usage">Usage</h2>
-<p>Once you have written your <code>serializer</code> and  <code>middleware/deserializer</code>, there are two ways of use them:</p>
+<p>Once you have written your <code>serializer</code> and  <code>middleware/deserializer</code>, there are two ways to use them:</p>
 <ul>
-<li><code>Global</code>: When <code>Serializer</code> and/or <code>Deserializer</code> is set to the <code>StreamEngine</code> isntance</li>
+<li><code>Globally</code>: When <code>Serializer</code> and/or <code>Deserializer</code> is set to the <code>StreamEngine</code> instance</li>
 <li><code>Per case</code>: When a <code>Serializer</code> is used with the <code>send coroutine</code> or a <code>Middleware/Deserializer</code> is set to a <code>stream</code></li>
 </ul>
-<h3 id="global">Global</h3>
-<p>By doing this all the streams will use these serializers by default.</p>
+<h3 id="globally">Globally</h3>
+<p>The engine is initialized with serializers. By doing this all the streams will use these deserializers by default and every time that an event is produced
+then the default <code>serializer</code> is used.</p>
 <div class="highlight"><span class="filename">Json events example</span><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">middleware</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 
 <span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>
@@ -1102,10 +1103,10 @@ For those cases, we need to use <a href="https://kpn.github.io/kstreams/middlewa
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="per-case">Per case</h3>
-<p>This is when <code>streams</code> are initialized with a <code>deserializer</code> (preferible a middleware) and we produce events with <code>serializers</code> in the send function.</p>
+<p>This is when <code>streams</code> are initialized with a <code>deserializer</code> (preferably a <code>middleware</code>) and we produce events with <code>serializers</code> in the send function.</p>
 <ul>
 <li>If a <code>global serializer</code> is set but we call <code>send(serializer=...)</code>, then the local <code>serializer</code> is used, not the global one.</li>
-<li>If a <code>global deserializer</code> is set but a <code>stream</code> has a local one, then then the local <code>deserializer</code> is used, not the global one.</li>
+<li>If a <code>global deserializer</code> is set but a <code>stream</code> has a local one, then the local <code>deserializer</code> is used. In other words, the most specific <code>deserializer</code> will be used</li>
 </ul>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">middleware</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 
@@ -1129,13 +1130,13 @@ For those cases, we need to use <a href="https://kpn.github.io/kstreams/middlewa
     <span class="n">topic</span><span class="p">,</span>
     <span class="n">value</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">}</span>
     <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;content-type&quot;</span><span class="p">:</span> <span class="n">consts</span><span class="o">.</span><span class="n">APPLICATION_JSON</span><span class="p">,}</span>
-    <span class="n">serializer</span><span class="o">=</span><span class="n">JsonSerializer</span><span class="p">()</span>  <span class="c1"># in this case the Global Serializer is not used if there is one</span>
+    <span class="n">serializer</span><span class="o">=</span><span class="n">JsonSerializer</span><span class="p">()</span>  <span class="c1"># in this case the Global Serializer is not used if there was one</span>
     <span class="n">key</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="forcing-raw-data">Forcing raw data</h2>
-<p>There is a situation when a <code>global</code> serializer is being used but still you want to produce raw data, for example when producing to a <code>DLQ</code>.
-For this case, when must set the <code>deserialzer</code> option to <code>None</code>:</p>
+<p>There is a situation when a <code>global</code> serializer is being used but still we want to produce raw data, for example when producing to a <code>DLQ</code>.
+For this case, when must set the <code>serialzer</code> option to <code>None</code>:</p>
 <div class="highlight"><span class="filename">DLQ example</span><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">middleware</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 
 
