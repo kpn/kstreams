@@ -1002,6 +1002,22 @@ files = [
 ]
 
 [[package]]
+name = "plantuml-markdown"
+version = "3.11.1"
+description = "A PlantUML plugin for Markdown"
+optional = false
+python-versions = "*"
+files = [
+    {file = "plantuml_markdown-3.11.1-py3-none-any.whl", hash = "sha256:52c8507be5b4e5b57e3c4c1cfbe8894b6204f4b6bac2279896efb03d3b79bacf"},
+    {file = "plantuml_markdown-3.11.1.tar.gz", hash = "sha256:0ac39c5d13d3ea8b84ec88f57369a85d058ff15c0c225591dd649b327586142c"},
+]
+
+[package.dependencies]
+Markdown = "*"
+requests = "*"
+six = "*"
+
+[[package]]
 name = "platformdirs"
 version = "4.3.6"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`."
@@ -1849,4 +1865,8 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
+<<<<<<< HEAD
 content-hash = "b629fcf9b3b50684a0b607191ca97c3020979a1d7414fce0d6412350e92175c8"
+=======
+content-hash = "57d2a33928e246b36b1db75d0e316a483605ac09a0048bde3be66f3d85beec18"
+>>>>>>> ef71845 (feat(transactions): Transaction added to garantee only once paradigm. Related to #265)

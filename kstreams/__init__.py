@@ -11,7 +11,8 @@ from .rebalance_listener import (
 from .streams import Stream, stream
 from .structs import TopicPartitionOffset
 from .test_utils import TestStreamClient
-from .types import ConsumerRecord, Send
+from .transaction import Transaction
+from .types import ConsumerRecord, Send, Transactional
 
 __all__ = [
     "Consumer",
@@ -31,4 +32,6 @@ __all__ = [
     "TestStreamClient",
     "TopicPartition",
     "TopicPartitionOffset",
+    "Transaction",
+    "Transactional",
 ]
