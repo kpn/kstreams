@@ -39,6 +39,7 @@ class UdfHandler(BaseMiddleware):
             types.ConsumerRecord: None,
             Stream: self.stream,
             types.Send: self.send,
+            types.Transaction: self.transaction,
         }
 
     def get_type(self) -> UDFType:

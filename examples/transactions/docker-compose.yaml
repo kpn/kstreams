@@ -1,0 +1,104 @@
+version: '3'
+services:
+  zookeeper:
+    image: "confluentinc/cp-zookeeper:7.7.0"
+    hostname: zookeeper
+    container_name: kstream_zookeeper
+    ports:
+      - 32181:32181
+    networks:
+      - kafka
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=32181
+  broker-1:
+    image: confluentinc/cp-kafka:7.7.0
+    hostname: broker-1
+    container_name: broker-1
+    ports:
+    - 9091:9091
+    depends_on:
+    - zookeeper
+    networks:
+      - kafka
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:32181
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=2
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
+      - KAFKA_ADVERTISED_LISTENERS=EXTERNAL://127.0.0.1:9091,INTERNAL://broker-1:9010
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_BROKER_ID=1
+      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
+      - CONFLUENT_METRICS_ENABLE=true
+      - CONFLUENT_SUPPORT_CUSTOMER_ID=anonymous
+      - KAFKA_AUTO_CREATE_TOPICS_ENABL="true"
+      - KAFKA_JMX_PORT=19101
+  broker-2:
+    image: confluentinc/cp-kafka:7.7.0
+    hostname: broker-2
+    container_name: broker-2
+    ports:
+    - 9092:9092
+    depends_on:
+    - zookeeper
+    networks:
+      - kafka
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:32181
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=2
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
+      - KAFKA_ADVERTISED_LISTENERS=EXTERNAL://127.0.0.1:9092,INTERNAL://broker-2:9010
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_BROKER_ID=2
+      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
+      - CONFLUENT_METRICS_ENABLE=true
+      - CONFLUENT_SUPPORT_CUSTOMER_ID=anonymous
+      - KAFKA_AUTO_CREATE_TOPICS_ENABL="true"
+      - KAFKA_JMX_PORT=19102
+  broker-3:
+    image: confluentinc/cp-kafka:7.7.0
+    hostname: broker-3
+    container_name: broker-3
+    ports:
+    - 9093:9093
+    depends_on:
+    - zookeeper
+    networks:
+      - kafka
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:32181
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=2
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
+      - KAFKA_ADVERTISED_LISTENERS=EXTERNAL://127.0.0.1:9093,INTERNAL://broker-3:9010
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_BROKER_ID=3
+      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
+      - CONFLUENT_METRICS_ENABLE=true
+      - CONFLUENT_SUPPORT_CUSTOMER_ID=anonymous
+      - KAFKA_AUTO_CREATE_TOPICS_ENABL="true"
+      - KAFKA_JMX_PORT=19103
+  kafka-ui: 
+    container_name: kafka-ui 
+    image: kafbat/kafka-ui:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      - broker-1
+      - broker-2
+      - broker-3
+    environment:
+      KAFKA_CLUSTERS_0_NAME: broker-1
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker-1:9010
+      KAFKA_CLUSTERS_0_METRICS_PORT: 19101
+      KAFKA_CLUSTERS_1_NAME: broker-2
+      KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: broker-2:9010
+      KAFKA_CLUSTERS_1_METRICS_PORT: 19102
+      KAFKA_CLUSTERS_2_NAME: broker-3
+      KAFKA_CLUSTERS_2_BOOTSTRAPSERVERS: broker-3:9010
+      KAFKA_CLUSTERS_2_METRICS_PORT: 19103
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    networks:
+      - kafka
+
+networks:
+  kafka:
+    name: kafka

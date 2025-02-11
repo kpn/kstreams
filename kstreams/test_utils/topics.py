@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import re
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -7,6 +8,9 @@ from typing import ClassVar, DefaultDict, Dict, Optional, Sequence, Tuple
 from kstreams.types import ConsumerRecord
 
 from . import test_clients
+from .structs import TransactionStatus
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -18,7 +22,7 @@ class Topic:
     )
     total_events: int = 0
     # for now we assumed that 1 streams is connected to 1 topic
-    consumer: Optional[test_clients.Consumer] = None
+    consumer: Optional["test_clients.TestConsumer"] = None
 
     async def put(self, event: ConsumerRecord) -> None:
         await self.queue.put(event)
@@ -27,6 +31,7 @@ class Topic:
     async def get(self) -> ConsumerRecord:
         cr = await self.queue.get()
         self.task_done()
+
         return cr
 
     def get_nowait(self) -> ConsumerRecord:
@@ -78,6 +83,42 @@ class Topic:
 
 
 @dataclass
+class TransactionalTopic(Topic):
+    transaction_status: TransactionStatus = TransactionStatus.INITIALIZED
+
+    async def get(self) -> ConsumerRecord:
+        while self.transaction_status in (TransactionStatus.INITIALIZED,):
+            # wait for the transaction to end
+            await asyncio.sleep(1e-10)
+            logger.debug(
+                f"Waiting for transaction to end. Status: {self.transaction_status}"
+            )
+
+        if (
+            self.consumer is not None
+            and self.transaction_status == TransactionStatus.ABORTED
+            and self.consumer.transactional
+        ):
+            # The transaction was aborted and the consumer wants only events
+            # that were committed, then we should empty the queue
+            # then we do a normal get to wait for the next event
+            while not self.queue.empty():
+                await super().get()
+
+        # Here the transaction was committed or the consumer is not transactional
+        return await super().get()
+
+    @property
+    def consumed(self) -> bool:
+        """
+        If there is an initialized transaction we should wait for it to end
+        """
+        return self.transaction_status != TransactionStatus.INITIALIZED and (
+            self.is_empty() or not self.is_consumer_running
+        )
+
+
+@dataclass
 class TopicManager:
     # The queues will represent the kafka topics during testing
     # where the name is the topic name
@@ -108,15 +149,28 @@ class TopicManager:
 
     @classmethod
     def create(
-        cls, name: str, consumer: Optional["test_clients.Consumer"] = None
+        cls,
+        name: str,
+        consumer: Optional["test_clients.TestConsumer"] = None,
+        transactional: bool = False,
     ) -> Topic:
-        topic = Topic(name=name, queue=asyncio.Queue(), consumer=consumer)
+        topic_class = TransactionalTopic if transactional else Topic
+
+        topic = topic_class(
+            name=name,
+            queue=asyncio.Queue(),
+            consumer=consumer,
+        )
+
         cls.topics[name] = topic
         return topic
 
     @classmethod
     def get_or_create(
-        cls, name: str, consumer: Optional["test_clients.Consumer"] = None
+        cls,
+        name: str,
+        consumer: Optional["test_clients.TestConsumer"] = None,
+        transactional: bool = False,
     ) -> Tuple[Topic, bool]:
         """
         A convenience method for looking up Topic by name.
@@ -130,7 +184,7 @@ class TopicManager:
             topic = cls.get(name)
             return topic, False
         except ValueError:
-            topic = cls.create(name, consumer=consumer)
+            topic = cls.create(name, consumer=consumer, transactional=transactional)
             return topic, True
 
     @classmethod
