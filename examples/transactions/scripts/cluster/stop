@@ -1,0 +1,4 @@
+#!/bin/sh -e
+
+docker-compose stop
+docker-compose rm --force -v
