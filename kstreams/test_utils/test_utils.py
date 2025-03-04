@@ -9,7 +9,7 @@ from kstreams.streams import Stream
 from kstreams.types import ConsumerRecord, Headers
 
 from .structs import RecordMetadata
-from .test_clients import TestConsumer, TestProducer
+from .test_clients import TestConsumer, TestProducer, TestTransactionalProducer
 from .topics import Topic, TopicManager
 
 
@@ -39,10 +39,14 @@ class TestStreamClient:
         topics: Optional[List[str]] = None,
         test_producer_class: Type[Producer] = TestProducer,
         test_consumer_class: Type[Consumer] = TestConsumer,
+        test_transactional_producer: Type[
+            TestTransactionalProducer
+        ] = TestTransactionalProducer,
     ) -> None:
         self.stream_engine = stream_engine
         self.test_producer_class = test_producer_class
         self.test_consumer_class = test_consumer_class
+        self.test_transactional_producer = test_transactional_producer
 
         # Extra topics' names defined by the end user which must be created
         # before the cycle test starts
@@ -54,6 +58,9 @@ class TestStreamClient:
         self.engine_consumer_class = self.stream_engine.consumer_class
 
         self.stream_engine.producer_class = self.test_producer_class
+        self.stream_engine._transaction_manager.producer_class = (
+            self.test_transactional_producer
+        )
         self.stream_engine.consumer_class = self.test_consumer_class
 
         if not monitoring_enabled:
@@ -89,6 +96,9 @@ class TestStreamClient:
 
         # restore original config
         self.stream_engine.producer_class = self.engine_producer_class
+        self.stream_engine._transaction_manager.producer_class = (
+            self.engine_producer_class
+        )
         self.stream_engine.consumer_class = self.engine_consumer_class
         self.stream_engine.monitor = self.monitor
 

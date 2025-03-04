@@ -6,7 +6,13 @@ from unittest.mock import Mock, call
 
 import pytest
 
-from kstreams import ConsumerRecord, StreamEngine, TopicPartition, TopicPartitionOffset
+from kstreams import (
+    ConsumerRecord,
+    StreamEngine,
+    TopicPartition,
+    TopicPartitionOffset,
+    Transactional,
+)
 from kstreams.streams import Stream
 from kstreams.test_utils import (
     TestConsumer,
@@ -453,6 +459,135 @@ async def test_consumer_commit(stream_engine: StreamEngine):
         # check that everything was commited
         assert my_stream.consumer is not None
         assert (await my_stream.consumer.committed(tp)) == total_events - 1
+
+
+@pytest.mark.asyncio
+async def test_multiple_transactions(stream_engine: StreamEngine):
+    topic_name = "local--kstreams-consumer-commit"
+    transactional_topic = "transactional-topic"
+    value = b'{"message": "Hello world!"}'
+    total_events = 5
+    save_to_db = Mock()
+
+    @stream_engine.stream(transactional_topic, isolation_level="read_committed")
+    async def stream_transaction(cr: ConsumerRecord):
+        assert cr.value == value
+        save_to_db(cr.value)
+
+    @stream_engine.stream(topic_name, group_id="my-group-id")
+    async def my_stream(cr: ConsumerRecord, transaction: Transactional):
+        for transaction_id in range(0, total_events):
+            async with transaction(transaction_id=str(transaction_id)) as t:
+                await t.send(transactional_topic, value=cr.value)
+                tp = TopicPartition(
+                    topic=topic_name,
+                    partition=cr.partition,
+                )
+                await t.commit_offsets(offsets={tp: cr.offset}, group_id="my-group-id")
+
+    client = TestStreamClient(stream_engine)
+    async with client:
+        for _ in range(0, total_events):
+            await client.send(topic_name, value=value)
+
+        await asyncio.sleep(1e-10)
+
+        assert my_stream.consumer is not None
+        assert stream_transaction.consumer is not None
+
+    save_to_db.assert_has_calls(
+        [call(value) for _ in range(0, total_events)], any_order=True
+    )
+
+
+@pytest.mark.asyncio
+async def test_single_transaction_multiple_events(stream_engine: StreamEngine):
+    topic_name = "local--kstreams-consumer-commit"
+    transactional_topic = "transactional-topic"
+    value = b'{"message": "Hello world!"}'
+    total_events = 5
+    save_to_db = Mock()
+
+    @stream_engine.stream(transactional_topic, isolation_level="read_committed")
+    async def stream_transaction(cr: ConsumerRecord):
+        assert cr.value == value
+        save_to_db(cr.value)
+
+    @stream_engine.stream(topic_name, group_id="my-group-id")
+    async def my_stream(cr: ConsumerRecord, transaction: Transactional):
+        async with transaction(transaction_id="transaction_id") as t:
+            for _ in range(0, total_events):
+                await t.send(transactional_topic, value=cr.value)
+                tp = TopicPartition(
+                    topic=topic_name,
+                    partition=cr.partition,
+                )
+                await t.commit_offsets(offsets={tp: cr.offset}, group_id="my-group-id")
+
+    client = TestStreamClient(stream_engine)
+    async with client:
+        await client.send(topic_name, value=value)
+        await asyncio.sleep(1e-10)
+
+        assert my_stream.consumer is not None
+        assert stream_transaction.consumer is not None
+
+    save_to_db.assert_has_calls(
+        [call(value) for _ in range(0, total_events)], any_order=True
+    )
+
+
+@pytest.mark.asyncio
+async def test_not_consume_on_abort_transaction(stream_engine: StreamEngine):
+    topic_name = "local--kstreams-consumer-commit"
+    transactional_topic = "transactional-topic"
+    save_to_db = Mock()
+
+    @stream_engine.stream(transactional_topic, isolation_level="read_committed")
+    async def stream_transaction(cr: ConsumerRecord):
+        save_to_db(cr.value)
+
+    @stream_engine.stream(topic_name)
+    async def my_stream(cr: ConsumerRecord, transaction: Transactional):
+        async with transaction(transaction_id="my-transaction-id") as t:
+            await t.send(transactional_topic, value=cr.value)
+            await t.send(transactional_topic, value=cr.value)
+            raise ValueError("This is an arror....")
+
+    client = TestStreamClient(stream_engine)
+    async with client:
+        await client.send(topic_name, value=b'{"message": "Hello world!"}')
+        await asyncio.sleep(1e-10)
+
+    save_to_db.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_consume_on_abort_transaction(stream_engine: StreamEngine):
+    topic_name = "local--kstreams-consumer-commit"
+    transactional_topic = "transactional-topic"
+    value = b'{"message": "Hello world!"}'
+    save_to_db = Mock()
+
+    # the streams has the isolation_level="read_uncommitted"
+    @stream_engine.stream(transactional_topic)
+    async def stream_transaction(cr: ConsumerRecord):
+        assert cr.value == value
+        save_to_db(cr.value)
+
+    @stream_engine.stream(topic_name, group_id="my-group-id")
+    async def my_stream(cr: ConsumerRecord, transaction: Transactional):
+        async with transaction(transaction_id="my-transaction-id") as t:
+            await t.send(transactional_topic, value=cr.value)
+            await t.send(transactional_topic, value=cr.value)
+            raise ValueError("This is an arror....")
+
+    client = TestStreamClient(stream_engine)
+    async with client:
+        await client.send(topic_name, value=value)
+        await asyncio.sleep(1e-10)
+
+    save_to_db.assert_has_calls([call(value), call(value)], any_order=True)
 
 
 @pytest.mark.asyncio

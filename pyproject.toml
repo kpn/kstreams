@@ -48,6 +48,7 @@ mkdocs-material = "^9.5.39"
 starlette-prometheus = "^0.10.0"
 codecov = "^2.1.12"
 mkdocstrings = { version = "^0.27", extras = ["python"] }
+plantuml-markdown = "^3.11.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
