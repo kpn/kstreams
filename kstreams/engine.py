@@ -18,7 +18,13 @@ from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import NO_DEFAULT, Deserializer, Serializer
 from .streams import Stream, StreamFunc
 from .streams import stream as stream_func
-from .types import Deprecated, EngineHooks, Headers, NextMiddlewareCall
+from .transaction import Transaction, TransactionManager
+from .types import (
+    Deprecated,
+    EngineHooks,
+    Headers,
+    NextMiddlewareCall,
+)
 from .utils import encode_headers, execute_hooks
 
 logger = logging.getLogger(__name__)
@@ -81,8 +87,11 @@ class StreamEngine:
         self.deserializer = deserializer
         self.serializer = serializer
         self.monitor = monitor
-        self._producer: typing.Optional[typing.Type[Producer]] = None
+        self._producer: typing.Optional[Producer] = None
         self._streams: typing.List[Stream] = []
+        self._transaction_manager = TransactionManager(
+            producer_class=self.producer_class, backend=self.backend, send=self.send
+        )
         self._on_startup = [] if on_startup is None else list(on_startup)
         self._on_stop = [] if on_stop is None else list(on_stop)
         self._after_startup = [] if after_startup is None else list(after_startup)
@@ -98,6 +107,7 @@ class StreamEngine:
         headers: typing.Optional[Headers] = None,
         serializer: typing.Optional[Serializer] = NO_DEFAULT,
         serializer_kwargs: typing.Optional[typing.Dict] = None,
+        producer: typing.Optional[Producer] = None,
     ):
         """
         Attributes:
@@ -111,7 +121,9 @@ class StreamEngine:
                 encode the event
             serializer_kwargs Dict[str, Any] | None: Serializer kwargs
         """
-        if self._producer is None:
+        producer = producer or self._producer
+
+        if producer is None:
             raise EngineNotStartedException()
 
         if serializer is NO_DEFAULT:
@@ -127,7 +139,7 @@ class StreamEngine:
         if headers is not None:
             encoded_headers = encode_headers(headers)
 
-        fut = await self._producer.send(
+        fut = await producer.send(
             topic,
             value=value,
             key=key,
@@ -141,6 +153,23 @@ class StreamEngine:
         )
 
         return metadata
+
+    def transaction(
+        self,
+        transaction_id: typing.Optional[str] = None,
+    ) -> Transaction:
+        """
+        Provides a context manager to send messages transactionally.
+        It creates a transactional producer, starts a transaction and
+        commits or aborts the transaction based on the context manager
+
+        Attributes:
+            transaction_id str | None: The transaction unique identifier.
+            if None, a new transaction id will be generated
+        """
+        return self._transaction_manager.get_or_create_transaction(
+            transaction_id=transaction_id
+        )
 
     async def start(self) -> None:
         # Execute on_startup hooks
@@ -394,6 +423,7 @@ class StreamEngine:
             next_call=stream.func,
             send=self.send,
             stream=stream,
+            transaction=self.transaction,
         )
 
         # NOTE: When `no typing` support is deprecated this check can
@@ -408,7 +438,11 @@ class StreamEngine:
         next_call = stream.udf_handler
         for middleware, options in reversed(middlewares):
             next_call = middleware(
-                next_call=next_call, send=self.send, stream=stream, **options
+                next_call=next_call,
+                send=self.send,
+                stream=stream,
+                transaction=self.transaction,
+                **options,
             )
         return next_call
 

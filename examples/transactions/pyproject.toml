@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "transactions"
+version = "0.1.0"
+description = ""
+authors = ["marcosschroh <schrohm@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+kstreams = { path = "../../.", develop = true }
+aiorun = "^2025.1.1"
+pytest = "^8.3.3"
+pytest-asyncio = ">=0.24,<0.26"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+app = "transactions.app:main"

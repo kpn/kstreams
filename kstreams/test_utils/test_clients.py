@@ -1,12 +1,12 @@
 from datetime import datetime
-from typing import Any, Coroutine, Dict, List, Optional, Sequence, Set, Union
+from typing import Any, Coroutine, Dict, List, Literal, Optional, Sequence, Set, Union
 
 from kstreams import RebalanceListener, TopicPartition
 from kstreams.clients import Consumer, Producer
 from kstreams.serializers import Serializer
 from kstreams.types import ConsumerRecord, EncodedHeaders
 
-from .structs import RecordMetadata
+from .structs import RecordMetadata, TransactionStatus
 from .topics import TopicManager
 
 
@@ -62,6 +62,64 @@ class TestProducer(Base, Producer):
         return fut()
 
 
+class TransactionalManager:
+    def is_fatal_error(self) -> Literal[False]:
+        return False
+
+
+class TestTransactionalProducer(TestProducer):
+    __test__ = False
+
+    def __init__(self, *args, **kwargs):
+        self.topics = []
+        self._txn_manager = TransactionalManager()
+
+    async def send(
+        self,
+        topic_name: str,
+        value: Any = None,
+        key: Any = None,
+        partition: int = 0,
+        timestamp_ms: Optional[int] = None,
+        headers: Optional[EncodedHeaders] = None,
+        serializer: Optional[Serializer] = None,
+        serializer_kwargs: Optional[Dict] = None,
+    ) -> Coroutine:
+        topic, _ = TopicManager.get_or_create(topic_name, transactional=True)
+        self.topics.append(topic)
+
+        return await super().send(
+            topic_name=topic_name,
+            value=value,
+            key=key,
+            partition=partition or 0,
+            timestamp_ms=timestamp_ms,
+            headers=headers,
+            serializer=serializer,
+            serializer_kwargs=serializer_kwargs,
+        )
+
+    async def stop(self): ...
+
+    async def begin_transaction(self) -> None: ...
+
+    async def abort_transaction(self) -> None:
+        """
+        Abort all TransactionalTopics
+        """
+        for topic in self.topics:
+            topic.transaction_status = TransactionStatus.ABORTED
+
+    async def commit_transaction(self) -> None:
+        """
+        Commit all TransactionalTopics then they are ready to be consumed
+        """
+        for topic in self.topics:
+            topic.transaction_status = TransactionStatus.COMMITTED
+
+    async def send_offsets_to_transaction(self, offsets, group_id) -> None: ...
+
+
 class TestConsumer(Base, Consumer):
     __test__ = False
 
@@ -74,7 +132,10 @@ class TestConsumer(Base, Consumer):
 
         # Called to make sure that has all the kafka attributes like _coordinator
         # so it will behave like an real Kafka Consumer
-        super().__init__()
+        super().__init__(**kwargs)
+        self.transactional = (
+            True if self._isolation_level == "read_committed" else False
+        )
 
     def subscribe(
         self,
@@ -84,6 +145,7 @@ class TestConsumer(Base, Consumer):
         pattern: Optional[str] = None,
     ) -> None:
         self.topics = topics
+
         if topics is None:
             # then it is a pattern subscription, we need to get the current
             # topics (pre created) from the topic manager
@@ -91,7 +153,11 @@ class TestConsumer(Base, Consumer):
             topics = TopicManager.get_topics_by_pattern(pattern=pattern)
 
         for topic_name in topics:
-            topic, created = TopicManager.get_or_create(topic_name, consumer=self)
+            topic, created = TopicManager.get_or_create(
+                topic_name,
+                consumer=self,
+                transactional=self.transactional,
+            )
 
             if not created:
                 # It means that the topic already exist, so we are in
@@ -153,6 +219,7 @@ class TestConsumer(Base, Consumer):
         if offsets is not None:
             for topic_partition, offset in offsets.items():
                 self.partitions_committed[topic_partition] = offset
+
         return None
 
     async def committed(self, topic_partition: TopicPartition) -> Optional[int]:

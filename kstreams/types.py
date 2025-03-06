@@ -1,9 +1,13 @@
 import typing
+from contextlib import AbstractAsyncContextManager
 from dataclasses import dataclass
 
 from aiokafka.structs import RecordMetadata
 
+from .clients import Producer
+
 if typing.TYPE_CHECKING:
+    from . import transaction  #  pragma: no cover
     from .serializers import Serializer  #  pragma: no cover
 
 Headers = typing.Dict[str, str]
@@ -23,7 +27,15 @@ class Send(typing.Protocol):
         headers: typing.Optional[Headers] = None,
         serializer: typing.Optional["Serializer"] = None,
         serializer_kwargs: typing.Optional[typing.Dict] = None,
+        producer: typing.Optional[Producer] = None,
     ) -> typing.Awaitable[RecordMetadata]: ...
+
+
+class Transaction(typing.Protocol):
+    def __call__(
+        self,
+        transaction_id: typing.Optional[str] = None,
+    ) -> AbstractAsyncContextManager["transaction.Transaction", None]: ...
 
 
 D = typing.TypeVar("D")

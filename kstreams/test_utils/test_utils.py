@@ -6,10 +6,11 @@ from kstreams.engine import StreamEngine
 from kstreams.prometheus.monitor import PrometheusMonitor
 from kstreams.serializers import NO_DEFAULT, Serializer
 from kstreams.streams import Stream
+from kstreams.transaction import Transaction
 from kstreams.types import ConsumerRecord, Headers
 
 from .structs import RecordMetadata
-from .test_clients import TestConsumer, TestProducer
+from .test_clients import TestConsumer, TestProducer, TestTransactionalProducer
 from .topics import Topic, TopicManager
 
 
@@ -39,10 +40,14 @@ class TestStreamClient:
         topics: Optional[List[str]] = None,
         test_producer_class: Type[Producer] = TestProducer,
         test_consumer_class: Type[Consumer] = TestConsumer,
+        test_transactional_producer: Type[
+            TestTransactionalProducer
+        ] = TestTransactionalProducer,
     ) -> None:
         self.stream_engine = stream_engine
         self.test_producer_class = test_producer_class
         self.test_consumer_class = test_consumer_class
+        self.test_transactional_producer = test_transactional_producer
 
         # Extra topics' names defined by the end user which must be created
         # before the cycle test starts
@@ -54,6 +59,9 @@ class TestStreamClient:
         self.engine_consumer_class = self.stream_engine.consumer_class
 
         self.stream_engine.producer_class = self.test_producer_class
+        self.stream_engine._transaction_manager.producer_class = (
+            self.test_transactional_producer
+        )
         self.stream_engine.consumer_class = self.test_consumer_class
 
         if not monitoring_enabled:
@@ -89,6 +97,9 @@ class TestStreamClient:
 
         # restore original config
         self.stream_engine.producer_class = self.engine_producer_class
+        self.stream_engine._transaction_manager.producer_class = (
+            self.engine_producer_class
+        )
         self.stream_engine.consumer_class = self.engine_consumer_class
         self.stream_engine.monitor = self.monitor
 
@@ -129,6 +140,21 @@ class TestStreamClient:
             serializer=serializer,
             serializer_kwargs=serializer_kwargs,
         )
+
+    def transaction(
+        self,
+        transaction_id: Optional[str] = None,
+    ) -> Transaction:
+        """
+        Provides a context manager to send messages transactionally.
+        It creates a transactional producer, starts a transaction and
+        commits or aborts the transaction based on the context manager
+
+        Attributes:
+            transaction_id str | None: The transaction unique identifier.
+            if None, a new transaction id will be generated
+        """
+        return self.stream_engine.transaction(transaction_id=transaction_id)
 
     def get_topic(self, *, topic_name: str) -> Topic:
         return TopicManager.get(topic_name)
