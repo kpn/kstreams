@@ -1,4 +1,6 @@
 import asyncio
+import signal
+from typing import NoReturn
 from unittest import mock
 
 import pytest
@@ -56,7 +58,10 @@ async def test_stop_engine_error_policy(stream_engine: StreamEngine):
     topic = "kstrems--local"
     topic_two = "kstrems--local-two"
     save_to_db = mock.Mock()
-    client = TestStreamClient(stream_engine)
+
+    # use the flag stop_engine_after_test=False because the engine is stopped
+    # with the error policy StreamErrorPolicy.STOP_ENGINE
+    client = TestStreamClient(stream_engine, stop_engine_after_test=False)
 
     @stream_engine.stream(topic, error_policy=StreamErrorPolicy.STOP_ENGINE)
     async def my_stream(cr: ConsumerRecord):
@@ -65,6 +70,7 @@ async def test_stop_engine_error_policy(stream_engine: StreamEngine):
     @stream_engine.stream(topic_two)
     async def my_stream_two(cr: ConsumerRecord):
         save_to_db(cr.value)
+        # await asyncio.sleep(1e-10)
 
     async with client:
         # send event and crash the first Stream, then the second one
@@ -90,34 +96,37 @@ async def test_stop_application_error_policy(stream_engine: StreamEngine):
     topic = "kstrems--local"
     topic_two = "kstrems--local-two"
     save_to_db = mock.Mock()
-    client = TestStreamClient(stream_engine)
+    signal_handler = mock.Mock()
+    signal.signal(signal.SIGTERM, signal_handler)
 
-    with mock.patch("signal.raise_signal"):
+    # use the flag stop_engine_after_test=False because the engine is stopped
+    # with the error policy StreamErrorPolicy.STOP_APPLICATION
+    client = TestStreamClient(stream_engine, stop_engine_after_test=False)
 
-        @stream_engine.stream(topic, error_policy=StreamErrorPolicy.STOP_APPLICATION)
-        async def my_stream(cr: ConsumerRecord):
-            raise ValueError("Crashing Stream...")
+    @stream_engine.stream(topic, error_policy=StreamErrorPolicy.STOP_APPLICATION)
+    async def my_stream(cr: ConsumerRecord) -> NoReturn:
+        raise ValueError("Crashing Stream...")
 
-        @stream_engine.stream(topic_two)
-        async def my_stream_two(cr: ConsumerRecord):
-            save_to_db(cr.value)
+    @stream_engine.stream(topic_two)
+    async def my_stream_two(cr: ConsumerRecord):
+        save_to_db(cr.value)
 
-        async with client:
-            # send event and crash the first Stream, then the second one
-            # should be stopped because of StreamErrorPolicy.STOP_ENGINE
-            await client.send(topic, value=event, key="1")
+    async with client:
+        # send event and crash the first Stream, then the second one
+        # should be stopped because of StreamErrorPolicy.STOP_APPLICATION
+        await client.send(topic, value=event, key="1")
 
-            # Send an event to the second Stream, it should be consumed
-            # as the Stream has been stopped
-            await client.send(topic_two, value=event, key="1")
+        # Send an event to the second Stream, it should be consumed
+        # as the Stream has been stopped
+        await client.send(topic_two, value=event, key="1")
 
-            # Both streams are stopped before leaving the context
-            assert not my_stream.running
-            assert not my_stream_two.running
+        # Both streams are stopped before leaving the context
+        assert not my_stream.running
+        assert not my_stream_two.running
 
-        # check that the event was consumed only once.
-        # The StreamEngine must wait for graceful shutdown
-        save_to_db.assert_called_once_with(b'{"message": "Hello world!"}')
+    # check that the event was consumed only once.
+    # The StreamEngine must wait for graceful shutdown
+    save_to_db.assert_called_once_with(b'{"message": "Hello world!"}')
 
 
 @pytest.mark.asyncio

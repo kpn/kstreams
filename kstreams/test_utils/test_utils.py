@@ -18,7 +18,7 @@ class TestMonitor(PrometheusMonitor):
 
     async def start(self, *args, **kwargs) -> None: ...
 
-    async def stop(self, *args, **kwargs) -> None: ...
+    def stop(self, *args, **kwargs) -> None: ...
 
     def add_topic_partition_offset(self, *args, **kwargs) -> None: ...
 
@@ -36,6 +36,7 @@ class TestStreamClient:
         self,
         stream_engine: StreamEngine,
         monitoring_enabled: bool = True,
+        stop_engine_after_test: bool = True,
         topics: Optional[List[str]] = None,
         test_producer_class: Type[Producer] = TestProducer,
         test_consumer_class: Type[Consumer] = TestConsumer,
@@ -58,6 +59,8 @@ class TestStreamClient:
 
         if not monitoring_enabled:
             self.stream_engine.monitor = TestMonitor()
+
+        self.stop_engine_after_test = stop_engine_after_test
 
         self.create_extra_topics()
 
@@ -85,7 +88,9 @@ class TestStreamClient:
         # If there are streams, we must wait until all the messages are consumed
         if self.stream_engine._streams:
             await TopicManager.join()
-        await self.stream_engine.stop()
+
+        if self.stop_engine_after_test:
+            await self.stream_engine.stop()
 
         # restore original config
         self.stream_engine.producer_class = self.engine_producer_class

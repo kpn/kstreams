@@ -87,6 +87,8 @@ class StreamEngine:
         self._on_stop = [] if on_stop is None else list(on_stop)
         self._after_startup = [] if after_startup is None else list(after_startup)
         self._after_stop = [] if after_stop is None else list(after_stop)
+        self.monitoring_task: typing.Optional[asyncio.Task] = None
+        self.streams_to_tasks: typing.Dict[Stream, asyncio.Task] = {}
 
     async def send(
         self,
@@ -152,6 +154,7 @@ class StreamEngine:
 
         await self.start_producer()
         await self.start_streams()
+        self.start_monitoring()
 
         # Execute after_startup hooks
         await execute_hooks(self._after_startup)
@@ -284,12 +287,27 @@ class StreamEngine:
         # Execute on_startup hooks
         await execute_hooks(self._on_stop)
 
-        await self.monitor.stop()
         await self.stop_producer()
         await self.stop_streams()
+        await self.stop_monitoring()
 
         # Execute after_startup hooks
         await execute_hooks(self._after_stop)
+
+    def start_monitoring(self):
+        self.monitoring_task = asyncio.create_task(self.monitor.start())
+
+    async def stop_monitoring(self):
+        if self.monitoring_task is not None:
+            self.monitoring_task.cancel()
+
+            try:
+                await self.monitoring_task
+            except asyncio.CancelledError:
+                logger.debug(f"Cancelling {self.monitoring_task} now")
+
+            self.monitoring_task = None
+            self.monitor.stop()
 
     async def stop_producer(self):
         if self._producer is not None:
@@ -320,19 +338,31 @@ class StreamEngine:
     ) -> None:
         # start all the streams
         for stream in streams:
-            asyncio.create_task(stream.start())
+            self.streams_to_tasks[stream] = asyncio.create_task(stream.start())
 
-        # start monitoring
-        asyncio.create_task(self.monitor.start())
+    async def restart_stream(self, stream: Stream) -> None:
+        await stream.stop()
+        self.streams_to_tasks[stream] = asyncio.create_task(stream.start())
 
     async def stop_streams(self) -> None:
-        for stream in self._streams:
-            await stream.stop()
+        for stream, task in self.streams_to_tasks.items():
+            await self.stop_stream(stream=stream, task=task)
         logger.info("Streams have STOPPED....")
+
+    async def stop_stream(self, *, stream: Stream, task: asyncio.Task) -> None:
+        await stream.stop()
+
+        if not task.done():
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                logger.debug(f"Cancelling {task} now")
 
     async def clean_streams(self):
         await self.stop_streams()
         self._streams = []
+        self.streams_to_tasks = {}
 
     def exist_stream(self, name: str) -> bool:
         stream = self.get_stream(name)

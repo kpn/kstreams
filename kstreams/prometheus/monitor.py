@@ -66,7 +66,7 @@ class PrometheusMonitor:
         logger.info("Starting Prometheus Monitoring started...")
         await self._metrics_task()
 
-    async def stop(self) -> None:
+    def stop(self) -> None:
         self.running = False
         self._clean_consumer_metrics()
         logger.info("Prometheus Monitoring stopped...")
@@ -220,7 +220,7 @@ class PrometheusMonitor:
         When self.running is False the task will finish and it
         will be safe to stop consumers and producers.
         """
-        while self.running:
+        while True:
             await asyncio.sleep(self.metrics_scrape_time)
             for stream in self._streams:
                 if stream.consumer is not None:

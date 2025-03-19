@@ -109,7 +109,7 @@ async def stream_engine():
         producer_class=clients.Producer,
     )
     yield stream_engine
-    await stream_engine.clean_streams()
+    # await stream_engine.clean_streams()
 
 
 SSLData = namedtuple("SSLData", ["cabundle", "cert", "key"])
