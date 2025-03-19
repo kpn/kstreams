@@ -1052,7 +1052,8 @@ policy_error that was stablished.</p>
 <span class="normal">152</span>
 <span class="normal">153</span>
 <span class="normal">154</span>
-<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ExceptionMiddleware</span><span class="p">(</span><span class="n">BaseMiddleware</span><span class="p">):</span>
+<span class="normal">155</span>
+<span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ExceptionMiddleware</span><span class="p">(</span><span class="n">BaseMiddleware</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This is always the first Middleware in the middleware stack</span>
 <span class="sd">    to catch any exception that might occur. Any exception raised</span>
@@ -1119,6 +1120,7 @@ policy_error that was stablished.</p>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_policy</span> <span class="o">==</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">RESTART</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">restart_stream</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">)</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">is_processing</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_policy</span> <span class="o">==</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">STOP</span><span class="p">:</span>
             <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">streams_to_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">]</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">stop_stream</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
@@ -1300,7 +1302,8 @@ the exception the Lock must be acquire again to continue the processing</p>
 <span class="normal">152</span>
 <span class="normal">153</span>
 <span class="normal">154</span>
-<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">155</span>
+<span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Execute cleanup policy according to the Stream configuration.</span>
 
@@ -1337,6 +1340,7 @@ the exception the Lock must be acquire again to continue the processing</p>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_policy</span> <span class="o">==</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">RESTART</span><span class="p">:</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">restart_stream</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">is_processing</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_policy</span> <span class="o">==</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">STOP</span><span class="p">:</span>
         <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">streams_to_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">]</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">stop_stream</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
