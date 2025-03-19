@@ -1,3 +1,9 @@
+## 0.26.7 (2025-03-19)
+
+### Fix
+
+- stop properly asyncio.Tasks that run in background mode (streams and monitoring). Related to #299 (#300)
+
 ## 0.26.6 (2025-02-03)
 
 ### Fix
