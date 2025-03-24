@@ -4,14 +4,18 @@ import logging
 import aiorun
 
 import kstreams
-import kstreams.streams_utils
+from kstreams.consts import StreamErrorPolicy
 
 logger = logging.getLogger(__name__)
 
 stream_engine = kstreams.create_engine(title="my-stream-engine")
 
 
-@stream_engine.stream(topics=["local--hello-world"], group_id="example-group")
+@stream_engine.stream(
+    topics=["local--hello-world"],
+    group_id="example-group",
+    error_policy=StreamErrorPolicy.STOP_APPLICATION,
+)
 async def consume(cr: kstreams.ConsumerRecord):
     logger.info(f"Event consumed: headers: {cr.headers}, payload: {cr}")
 
