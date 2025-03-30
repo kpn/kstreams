@@ -1,4 +1,5 @@
 import asyncio
+import json
 from collections import namedtuple
 from dataclasses import field
 from typing import Any, Dict, List, NamedTuple, Optional, Sequence, Tuple
@@ -7,7 +8,7 @@ import pytest
 import pytest_asyncio
 from pytest_httpserver import HTTPServer
 
-from kstreams import clients, create_engine
+from kstreams import ConsumerRecord, clients, create_engine, types
 from kstreams.utils import create_ssl_context_from_mem
 
 
@@ -79,6 +80,27 @@ class MockConsumer(Base):
 
     async def committed(self, _: TopicPartition):
         return 10
+
+
+class JsonSerializer:
+    async def serialize(
+        self,
+        payload: Any,
+        headers: Optional[types.Headers] = None,
+        serializer_kwargs: Optional[Dict] = None,
+    ) -> bytes:
+        """
+        Serialize paylod to json
+        """
+        value = json.dumps(payload)
+        return value.encode()
+
+
+class JsonDeserializer:
+    async def deserialize(self, consumer_record: ConsumerRecord, **kwargs) -> Any:
+        if consumer_record.value is not None:
+            data = consumer_record.value.decode()
+            return json.loads(data)
 
 
 @pytest.fixture

@@ -1,41 +1,20 @@
-import json
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 from unittest import mock
 
 import pytest
 
-from kstreams import ConsumerRecord, StreamEngine, consts
+from kstreams import StreamEngine, consts
 from kstreams.clients import Producer
 from kstreams.streams import Stream
 from kstreams.test_utils.test_utils import TestStreamClient
-from kstreams.types import Headers
 from kstreams.utils import encode_headers
 
-
-class MyJsonSerializer:
-    async def serialize(
-        self,
-        payload: Any,
-        headers: Optional[Headers] = None,
-        serializer_kwargs: Optional[Dict] = None,
-    ) -> bytes:
-        """
-        Serialize paylod to json
-        """
-        value = json.dumps(payload)
-        return value.encode()
-
-
-class MyJsonDeserializer:
-    async def deserialize(self, consumer_record: ConsumerRecord, **kwargs) -> Any:
-        if consumer_record.value is not None:
-            data = consumer_record.value.decode()
-            return json.loads(data)
+from .conftest import JsonDeserializer, JsonSerializer
 
 
 @pytest.mark.asyncio
 async def test_send_global_serializer(stream_engine: StreamEngine, record_metadata):
-    serializer = MyJsonSerializer()
+    serializer = JsonSerializer()
     stream_engine.serializer = serializer
 
     async def async_func():
@@ -87,7 +66,7 @@ async def test_send_custom_serialization(stream_engine: StreamEngine, record_met
             topic,
             value=value,
             headers=headers,
-            serializer=MyJsonSerializer(),
+            serializer=JsonSerializer(),
         )
 
         assert metadata
@@ -104,7 +83,7 @@ async def test_send_custom_serialization(stream_engine: StreamEngine, record_met
 @pytest.mark.asyncio
 async def test_not_serialize_value(stream_engine: StreamEngine, record_metadata):
     # even if a serializer is set, we can send the value as is
-    stream_engine.serializer = MyJsonSerializer()
+    stream_engine.serializer = JsonSerializer()
 
     async def async_func():
         return record_metadata
@@ -153,7 +132,7 @@ async def test_consume_global_deserialization(
     Even though deserialzers are deprecated, we still support them.
     """
     topic = "local--hello-kpn"
-    stream_engine.deserializer = MyJsonDeserializer()
+    stream_engine.deserializer = JsonDeserializer()
     client = TestStreamClient(stream_engine)
     save_to_db = mock.Mock()
 
@@ -169,7 +148,7 @@ async def test_consume_global_deserialization(
             value=value,
             headers=headers,
             key="1",
-            serializer=MyJsonSerializer(),
+            serializer=JsonSerializer(),
         )
 
     # The payload as been encoded with json,
@@ -197,7 +176,7 @@ async def test_consume_custom_deserialization(
 
     save_to_db = mock.Mock()
 
-    @stream_engine.stream(topic, deserializer=MyJsonDeserializer())
+    @stream_engine.stream(topic, deserializer=JsonDeserializer())
     async def hello_stream(stream: Stream):
         async for event in stream:
             save_to_db(event)
@@ -209,7 +188,7 @@ async def test_consume_custom_deserialization(
             value=value,
             headers=headers,
             key="1",
-            serializer=MyJsonSerializer(),
+            serializer=JsonSerializer(),
         )
 
     # The payload as been encoded with json,
