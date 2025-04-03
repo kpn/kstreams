@@ -760,7 +760,7 @@
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.backend">backend</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="kstreams.backends.Kafka" href="../backends/#kstreams.backends.kafka.Kafka">Kafka</a></code>
+                  <code><a class="autorefs autorefs-internal" title="kstreams.backends.kafka.Kafka (kstreams.backends.Kafka)" href="../backends/#kstreams.backends.kafka.Kafka">Kafka</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -807,7 +807,7 @@ the <a href="https://kpn.github.io/kstreams/metrics/">metrics</a></p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.title">title</span></code></td>
             <td>
-                  <code>str | None</code>
+                  <code><span title="str">str</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -830,7 +830,7 @@ use when an event is produced.</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.deserializer">deserializer</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Deserializer" href="../serialization/#kstreams.serializers.Deserializer">Deserializer</a> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="Deserializer (kstreams.serializers.Deserializer)" href="../serialization/#kstreams.serializers.Deserializer">Deserializer</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -859,6 +859,7 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </code></pre></div>
 </div>
+
 
 
 
@@ -1821,7 +1822,7 @@ To override it per Stream, you can provide one per Stream</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send.topic">topic</span></code></td>
             <td>
-                  <code>str</code>
+                  <code><span title="str">str</span></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1832,7 +1833,7 @@ To override it per Stream, you can provide one per Stream</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send.value">value</span></code></td>
             <td>
-                  <code>Any</code>
+                  <code><span title="Any">Any</span></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1843,7 +1844,7 @@ To override it per Stream, you can provide one per Stream</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send.key">key</span></code></td>
             <td>
-                  <code>str | None</code>
+                  <code><span title="str">str</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1854,7 +1855,7 @@ To override it per Stream, you can provide one per Stream</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send.partition">partition</span></code></td>
             <td>
-                  <code>int | None</code>
+                  <code><span title="int">int</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1865,7 +1866,7 @@ To override it per Stream, you can provide one per Stream</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send.timestamp_ms">timestamp_ms</span></code></td>
             <td>
-                  <code>int | None</code>
+                  <code><span title="int">int</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1876,7 +1877,7 @@ To override it per Stream, you can provide one per Stream</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send.headers">headers</span></code></td>
             <td>
-                  <code>Dict[str, str] | None</code>
+                  <code><span title="Dict">Dict</span>[<span title="str">str</span>, <span title="str">str</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1899,7 +1900,7 @@ encode the event</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send.serializer_kwargs">serializer_kwargs</span></code></td>
             <td>
-                  <code>Dict[str, Any] | None</code>
+                  <code><span title="Dict">Dict</span>[<span title="str">str</span>, <span title="Any">Any</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1909,6 +1910,7 @@ encode the event</p>
           </tr>
       </tbody>
     </table>
+
 
             <details class="quote">
               <summary>Source code in <code>kstreams/engine.py</code></summary>
@@ -2082,6 +2084,7 @@ standard functions, or async functions.</p>
 </code></pre></div>
 </div>
 
+
             <details class="quote">
               <summary>Source code in <code>kstreams/engine.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">162</span>
@@ -2211,6 +2214,7 @@ standard functions, or async functions.</p>
 </code></pre></div>
 </div>
 
+
             <details class="quote">
               <summary>Source code in <code>kstreams/engine.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">197</span>
@@ -2330,6 +2334,7 @@ standard functions, or async functions.</p>
 </code></pre></div>
 </div>
 
+
             <details class="quote">
               <summary>Source code in <code>kstreams/engine.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">227</span>
@@ -2447,6 +2452,7 @@ standard functions, or async functions.</p>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finishing backgrpund tasks&quot;</span><span class="p">)</span>
 </code></pre></div>
 </div>
+
 
             <details class="quote">
               <summary>Source code in <code>kstreams/engine.py</code></summary>
@@ -2612,6 +2618,7 @@ You should probably set directly when instanciating a Stream, not here.</p>
   is built for the stream's function.</li>
 </ul>
 </details>
+
             <details class="quote">
               <summary>Source code in <code>kstreams/engine.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">376</span>
