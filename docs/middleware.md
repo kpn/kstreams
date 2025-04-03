@@ -214,10 +214,10 @@ To `deserialize` bytes into a different structure like `dict` middlewares are th
     options:
         show_bases: false
         members:
-         -  
+         - ""
 
 ::: examples.confluent-example.confluent_example.middlewares.ConfluentMiddlewareDeserializer
     options:
         show_bases: false
         members:
-         -  
+         - ""

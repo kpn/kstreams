@@ -41,7 +41,7 @@ class Stream:
         func Callable[["Stream"], Awaitable[Any]]: Coroutine fucntion or generator
             to be called when an event arrives
         config Dict[str, Any]: Stream configuration. Here all the
-         [properties](https://aiokafka.readthedocs.io/en/stable/api.html#consumer-class)
+            [properties](https://aiokafka.readthedocs.io/en/stable/api.html#consumer-class)
             can be passed in the dictionary
         deserializer kstreams.serializers.Deserializer: Deserializer to be used
             when an event is consumed

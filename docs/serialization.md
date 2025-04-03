@@ -22,7 +22,7 @@ Sometimes it is easier to work with a `dict` in your app, give it to `kstreams`,
         docstring_section_style: table
         show_bases: false
         members:
-          -  
+          - ""
 
 ## Deserializers
 
@@ -55,7 +55,7 @@ The old fashion way is to use `Deserializers`, which has been deprecated (but st
         docstring_section_style: table
         show_bases: false
         members:
-          -  
+          - ""
 
 !!! warning
     `kstreams.serializers.Deserializer` will be deprecated, use [middlewares](https://kpn.github.io/kstreams/middleware/) instead

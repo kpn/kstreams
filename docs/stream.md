@@ -10,7 +10,7 @@ Consuming can be done using `kstreams.Stream`. You only need to decorate a `coro
         docstring_section_style: table
         show_source: false
         members:
-          -  
+          - ""
 
 ## Dependency Injection
 
