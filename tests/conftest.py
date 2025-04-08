@@ -8,7 +8,7 @@ import pytest_asyncio
 from pytest_httpserver import HTTPServer
 
 from kstreams import clients, create_engine
-from kstreams.utils import create_ssl_context_from_mem
+from kstreams.utils import PY_VERSION, create_ssl_context_from_mem
 
 
 class RecordMetadata(NamedTuple):
@@ -109,7 +109,9 @@ async def stream_engine():
         producer_class=clients.Producer,
     )
     yield stream_engine
-    # await stream_engine.clean_streams()
+
+    if PY_VERSION >= (3, 11):
+        await stream_engine.stop()
 
 
 SSLData = namedtuple("SSLData", ["cabundle", "cert", "key"])
