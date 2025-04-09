@@ -1057,9 +1057,7 @@ policy_error that was stablished.</p>
 <span class="normal">154</span>
 <span class="normal">155</span>
 <span class="normal">156</span>
-<span class="normal">157</span>
-<span class="normal">158</span>
-<span class="normal">159</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ExceptionMiddleware</span><span class="p">(</span><span class="n">BaseMiddleware</span><span class="p">):</span>
+<span class="normal">157</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ExceptionMiddleware</span><span class="p">(</span><span class="n">BaseMiddleware</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This is always the first Middleware in the middleware stack</span>
 <span class="sd">    to catch any exception that might occur. Any exception raised</span>
@@ -1084,12 +1082,10 @@ policy_error that was stablished.</p>
                 <span class="sa">f</span><span class="s2">&quot;Stream consuming from topics </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">topics</span><span class="si">}</span><span class="s2"> CRASHED!!! </span><span class="se">\n\n</span><span class="s2"> &quot;</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="n">utils</span><span class="o">.</span><span class="n">PY_VERSION</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">11</span><span class="p">):</span>
-                <span class="n">exc</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span>  <span class="c1"># type ignore: [attr-defined]</span>
-                    <span class="sa">f</span><span class="s2">&quot;Handler: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">func</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
-                <span class="n">exc</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span>  <span class="c1"># type ignore: [attr-defined]</span>
-                    <span class="sa">f</span><span class="s2">&quot;Topics: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">topics</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
+                <span class="c1"># ignore the type error because `add_note` was added in 3.11</span>
+                <span class="c1"># we get error when python &lt; 3.11</span>
+                <span class="n">exc</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Handler: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">func</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="n">exc</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Topics: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">topics</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleanup_policy</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
 
@@ -1259,7 +1255,9 @@ the exception the Lock must be acquire again to continue the processing</p>
 
             <details class="quote">
               <summary>Source code in <code>kstreams/middleware/middleware.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">104</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
 <span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span>
@@ -1312,9 +1310,7 @@ the exception the Lock must be acquire again to continue the processing</p>
 <span class="normal">154</span>
 <span class="normal">155</span>
 <span class="normal">156</span>
-<span class="normal">157</span>
-<span class="normal">158</span>
-<span class="normal">159</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">157</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Execute cleanup policy according to the Stream configuration.</span>
 
