@@ -1,12 +1,19 @@
+import asyncio
 import contextlib
 import inspect
+import logging
 import ssl
+import sys
 from tempfile import NamedTemporaryFile
 from typing import Any, Optional, Union
 
 from aiokafka.helpers import create_ssl_context as aiokafka_create_ssl_context
 
 from kstreams import types
+
+logger = logging.getLogger(__name__)
+
+PY_VERSION = sys.version_info
 
 
 def encode_headers(headers: types.Headers) -> types.EncodedHeaders:
@@ -99,6 +106,26 @@ async def execute_hooks(hooks: types.EngineHooks) -> None:
             await hook()
         else:
             hook()
+
+
+async def stop_task(task: asyncio.Task) -> None:
+    async def cancel_attempt(task: asyncio.Task) -> None:
+        task.cancel()
+
+        try:
+            await task
+        except asyncio.CancelledError:
+            logger.debug(f"Cancelling {task} now")
+
+    if PY_VERSION >= (3, 11):
+        # extra check for python 3.11 to prevent
+        #  RuntimeError: await wasn't used with future
+        if not task.done() and not task.cancelling():  # type: ignore [attr-defined]
+            await cancel_attempt(task)
+    else:
+        if not task.done():
+            # python < 3.11 we can not do anything to prevent the error
+            await cancel_attempt(task)
 
 
 __all__ = ["create_ssl_context", "create_ssl_context_from_mem", "encode_headers"]

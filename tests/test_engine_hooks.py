@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 
-from kstreams import ConsumerRecord, StreamEngine
+from kstreams import ConsumerRecord, StreamEngine, create_engine
 from kstreams.clients import Consumer, Producer
 
 
@@ -105,22 +105,30 @@ async def test_hook_after_startup(stream_engine: StreamEngine, consumer_record_f
 
 
 @pytest.mark.asyncio
-async def test_hook_on_stop(stream_engine: StreamEngine, consumer_record_factory):
+async def test_hook_on_stop(consumer_record_factory):
+    stream_engine = create_engine(title="test-engine")
     close_db_mock = mock.Mock()
     backgound_task_mock = mock.AsyncMock()
+
+    cr = consumer_record_factory()
+
+    async def getone(_):
+        return cr
 
     with (
         mock.patch.multiple(
             Consumer,
             start=mock.DEFAULT,
             stop=mock.DEFAULT,
+            getone=getone,
         ),
         mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT),
     ):
         assert stream_engine._on_stop == []
 
         @stream_engine.stream("local--kstreams")
-        async def stream(cr: ConsumerRecord): ...
+        async def stream(cr: ConsumerRecord):
+            await asyncio.sleep(0.1)
 
         @stream_engine.on_stop
         async def close_db():
@@ -141,6 +149,7 @@ async def test_hook_on_stop(stream_engine: StreamEngine, consumer_record_factory
 
         # give some time to start the tasks
         await asyncio.sleep(0.1)
+        assert stream_engine.monitor.running
 
         # check that `on_stop` hooks were not called before
         # `stream_engine.stop()` was called

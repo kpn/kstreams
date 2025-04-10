@@ -19,7 +19,7 @@ from .serializers import NO_DEFAULT, Deserializer, Serializer
 from .streams import Stream, StreamFunc
 from .streams import stream as stream_func
 from .types import Deprecated, EngineHooks, Headers, NextMiddlewareCall
-from .utils import encode_headers, execute_hooks
+from .utils import encode_headers, execute_hooks, stop_task
 
 logger = logging.getLogger(__name__)
 
@@ -351,13 +351,7 @@ class StreamEngine:
 
     async def stop_stream(self, *, stream: Stream, task: asyncio.Task) -> None:
         await stream.stop()
-
-        if not task.done():
-            task.cancel()
-            try:
-                await task
-            except asyncio.CancelledError:
-                logger.debug(f"Cancelling {task} now")
+        await stop_task(task=task)
 
     async def clean_streams(self):
         await self.stop_streams()

@@ -1,14 +1,13 @@
 import inspect
-import sys
 import typing
 
-from kstreams import types
+from kstreams import types, utils
 from kstreams.streams import Stream
 from kstreams.streams_utils import UDFType, setup_type
 
 from .middleware import BaseMiddleware
 
-if sys.version_info < (3, 10):
+if utils.PY_VERSION < (3, 10):
 
     async def anext(async_gen: typing.AsyncGenerator):
         return await async_gen.__anext__()
