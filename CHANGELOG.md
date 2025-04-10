@@ -1,3 +1,9 @@
+## 0.26.8 (2025-04-10)
+
+### Fix
+
+- RuntimeError await wasn't used with future when the stop engine on a failing test (#311)
+
 ## 0.26.7 (2025-03-19)
 
 ### Fix
