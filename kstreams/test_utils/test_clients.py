@@ -61,6 +61,13 @@ class TestProducer(Base, Producer):
 
         return fut()
 
+    async def flush(self) -> None:
+        """
+        Flush the producer. In this case, it does nothing because
+        the messages are already in the topic (asyncio.Queue).
+        """
+        return None
+
 
 class TestConsumer(Base, Consumer):
     __test__ = False

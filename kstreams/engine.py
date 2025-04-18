@@ -311,6 +311,7 @@ class StreamEngine:
 
     async def stop_producer(self):
         if self._producer is not None:
+            await self._producer.flush()
             await self._producer.stop()
         logger.info("Producer has STOPPED....")
 
