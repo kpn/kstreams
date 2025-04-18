@@ -1,3 +1,9 @@
+## 0.26.9 (2025-04-18)
+
+### Fix
+
+- flush all events in producer buffer before the producer is stopped (#312)
+
 ## 0.26.8 (2025-04-10)
 
 ### Fix
