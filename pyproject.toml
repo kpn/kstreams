@@ -32,7 +32,7 @@ pydantic = ">=2.0.0,<3.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
-pytest-asyncio = ">=0.24,<0.26"
+pytest-asyncio = ">=0.24,<0.27"
 pytest-benchmark = "^5.1.0"
 pytest-cov = "^6"
 pytest-httpserver = "^1.1.0"
