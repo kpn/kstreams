@@ -27,7 +27,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Setup python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
         architecture: x64
@@ -55,7 +55,7 @@ jobs:
         git config --global user.name "GitHub Action"
         ./scripts/test
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5.4.2
+      uses: codecov/codecov-action@v5.5.1
       with:
         file: ./coverage.xml
         name: kstreams
