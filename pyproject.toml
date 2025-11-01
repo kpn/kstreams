@@ -47,7 +47,7 @@ fastapi = "^0.115.0"
 mkdocs-material = "^9.5.39"
 starlette-prometheus = "^0.10.0"
 codecov = "^2.1.12"
-mkdocstrings = { version = ">=0.27,<0.30", extras = ["python"] }
+mkdocstrings = { version = ">=0.27,<0.31", extras = ["python"] }
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
