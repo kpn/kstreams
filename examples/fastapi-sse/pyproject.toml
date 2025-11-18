@@ -6,7 +6,7 @@ authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
 
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 sse-starlette = "^1.8.2"
 kstreams = { path = "../../.", develop = true }
 uvicorn = "^0.18.2"

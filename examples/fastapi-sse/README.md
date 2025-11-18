@@ -4,7 +4,7 @@ Simple `Server Send Events` example with `kstreams`
 
 ### Requirements
 
-python 3.8+, poetry, docker-compose
+python 3.10+, poetry, docker-compose
 
 ### Installation
 
