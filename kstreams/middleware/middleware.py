@@ -24,6 +24,7 @@ class MiddlewareProtocol(typing.Protocol):
         next_call: types.NextMiddlewareCall,
         send: types.Send,
         stream: "Stream",
+        send_many: types.SendMany,
         **kwargs: typing.Any,
     ) -> None: ...  #  pragma: no cover
 
@@ -52,6 +53,7 @@ class BaseMiddleware:
     next_call: types.NextMiddlewareCall
     send: types.Send
     stream: "Stream"
+    send_maney: types.SendMany
 
     def __init__(
         self,
@@ -59,10 +61,12 @@ class BaseMiddleware:
         next_call: types.NextMiddlewareCall,
         send: types.Send,
         stream: "Stream",
+        send_many: types.SendMany,
     ) -> None:
         self.next_call = next_call
         self.send = send
         self.stream = stream
+        self.send_many = send_many
 
     async def __call__(self, cr: types.ConsumerRecord) -> typing.Any:
         raise NotImplementedError

@@ -8,6 +8,7 @@ import pytest
 
 from kstreams import ConsumerRecord, StreamEngine, TopicPartition, TopicPartitionOffset
 from kstreams.streams import Stream
+from kstreams.structs import BatchEvent
 from kstreams.test_utils import (
     TestConsumer,
     TestProducer,
@@ -71,6 +72,27 @@ async def test_send_event_with_test_client(
 
         # because it is a different partition the offset should be 1
         assert metadata.offset == 0
+
+
+@pytest.mark.asyncio
+async def test_send_many_events_with_test_client(stream_engine: StreamEngine):
+    topic = "local--kstreams"
+    client = TestStreamClient(stream_engine)
+
+    batch_events = [
+        BatchEvent(
+            value=f"Hello world {str(id)}!".encode(),
+            key=str(id),
+        )
+        for id in range(5)
+    ]
+
+    async with client:
+        metadata = await client.send_many(topic, partition=0, batch_events=batch_events)
+
+        assert metadata.topic == topic
+        assert metadata.partition == 0
+        assert metadata.offset == 4
 
 
 @pytest.mark.asyncio
