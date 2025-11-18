@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from kstreams import ConsumerRecord
+from kstreams import BatchEvent, ConsumerRecord, RecordMetadata
 from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
 from kstreams.exceptions import DuplicateStreamException, EngineNotStartedException
@@ -204,3 +204,69 @@ async def test_engine_not_started(stream_engine: StreamEngine):
 
     with pytest.raises(EngineNotStartedException):
         await stream_engine.send(topic, value=b"1")
+
+    with pytest.raises(EngineNotStartedException):
+        await stream_engine.send_many(topic, partition=0, batch_events=[])
+
+
+@pytest.mark.asyncio
+async def test_send(stream_engine: StreamEngine, record_metadata: RecordMetadata):
+    topic = "local--hello-kpn"
+    value = b"Hello world"
+
+    async def async_func():
+        return record_metadata
+
+    send = mock.AsyncMock(return_value=async_func())
+
+    with (
+        mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT, send=send),
+    ):
+        await stream_engine.start()
+        metadata = await stream_engine.send(topic, value=value, partition=1)
+
+        # stop engine immediately, this should not break the streams
+        # and it should wait until the event is processed.
+        await stream_engine.stop()
+
+        met_position = (
+            list(
+                stream_engine.monitor.MET_OFFSETS.labels(
+                    topic=topic,
+                    partition=1,
+                ).collect()
+            )[0]
+            .samples[0]
+            .value
+        )
+
+        assert met_position == metadata.offset
+
+
+@pytest.mark.asyncio
+async def test_send_many(stream_engine: StreamEngine, record_metadata: RecordMetadata):
+    topic = "local--hello-kpn"
+    value = b"Hello world"
+    total_events = 5
+
+    async def async_func():
+        return record_metadata
+
+    send_batch = mock.AsyncMock(return_value=async_func())
+    batch_events = [BatchEvent(value=value, key="1") for _ in range(total_events)]
+
+    with (
+        mock.patch.multiple(
+            Producer, start=mock.DEFAULT, stop=mock.DEFAULT, send_batch=send_batch
+        ),
+    ):
+        await stream_engine.start()
+        await stream_engine.send_many(topic, partition=1, batch_events=batch_events)
+        await stream_engine.stop()
+
+    send_batch.assert_awaited_once()
+    send_batch.assert_awaited_with(
+        mock.ANY,
+        topic,
+        partition=1,
+    )

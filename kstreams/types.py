@@ -5,6 +5,7 @@ from aiokafka.structs import RecordMetadata
 
 if typing.TYPE_CHECKING:
     from .serializers import Serializer  #  pragma: no cover
+    from .structs import BatchEvent  #  pragma: no cover
 
 Headers = typing.Dict[str, str]
 EncodedHeaders = typing.Sequence[typing.Tuple[str, bytes]]
@@ -19,6 +20,20 @@ class Send(typing.Protocol):
         value: typing.Any = None,
         key: typing.Any = None,
         partition: typing.Optional[int] = None,
+        timestamp_ms: typing.Optional[int] = None,
+        headers: typing.Optional[Headers] = None,
+        serializer: typing.Optional["Serializer"] = None,
+        serializer_kwargs: typing.Optional[typing.Dict] = None,
+    ) -> typing.Awaitable[RecordMetadata]: ...
+
+
+class SendMany(typing.Protocol):
+    def __call__(
+        self,
+        topic: str,
+        partition: int,
+        batch_events: typing.List["BatchEvent"],
+        key: typing.Any = None,
         timestamp_ms: typing.Optional[int] = None,
         headers: typing.Optional[Headers] = None,
         serializer: typing.Optional["Serializer"] = None,
