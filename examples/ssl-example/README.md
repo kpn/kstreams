@@ -8,7 +8,7 @@ Check [resources.py](https://github.com/kpn/kstreams/blob/master/examples/ssl-ex
 
 ## Requirements
 
-`python 3.8+`, `poetry`, `docker-compose`, `openssl`
+`python 3.10+`, `poetry`, `docker-compose`, `openssl`
 
 ### Usage
 

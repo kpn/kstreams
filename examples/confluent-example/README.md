@@ -4,7 +4,7 @@ This example is run with [python-schema-registry-client](https://github.com/marc
 
 ## Requirements
 
-python 3.8+, poetry, docker-compose
+python 3.10+, poetry, docker-compose
 
 ## Installation
 

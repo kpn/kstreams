@@ -5,7 +5,7 @@ description = ""
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>, Santiago Fraire <santiago.fraire@kpn.com>, Alexandre Cirilo <alexandre.cirilo@kpn.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 aiorun = "^2024.5.1"
 kstreams = { path = "../../.", develop = true }
 

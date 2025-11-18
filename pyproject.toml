@@ -8,8 +8,6 @@ license = "Apache-2.0"
 readme = "README.md"
 keywords = ["stream", "processing", "kafka", "event streaming"]
 classifiers = [
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -23,7 +21,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 aiokafka = "<1.0"
 prometheus-client = "<1.0"
 future = "^1.0.0"
