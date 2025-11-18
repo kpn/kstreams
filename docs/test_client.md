@@ -256,6 +256,41 @@ async def test_event_produced():
     for example a `FastAPI` view.
     Then you don't want to use `client.send` directly, just called the function that contains `stream_engine.send(...)`
 
+## SendMany
+
+Your application might produce many events and other application/s will consume it, but you want to make sure that
+the events were procuced properly
+
+```python
+--8<-- "examples/send-many/src/send_many/app.py"
+```
+
+Then you could have a `test_producer_example.py` file to test the code:
+
+```python
+# test_send_many_example.py
+import pytest
+from kstreams.test_utils import TestStreamClient
+
+from send_many_example import stream_engine, send_many
+
+
+@pytest.mark.asyncio
+async def test_send_many_example():
+    client = TestStreamClient(stream_engine)
+
+    async with client:
+        metadata = await app.send_many()
+
+        topic = TopicManager.get("local--kstreams-send-many")
+        assert topic.total_events == 5
+        assert topic.consumed
+
+    assert metadata.partition == 0
+    assert metadata.topic == "local--kstreams-send-many"
+    assert metadata.offset == 4
+```
+
 ## Defining extra topics
 
 For some uses cases is required to produce an event to a topic (`target topic`) after it was consumed (`source topic`). We are in control of the `source topic`

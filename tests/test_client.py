@@ -8,6 +8,7 @@ import pytest
 
 from kstreams import ConsumerRecord, StreamEngine, TopicPartition, TopicPartitionOffset
 from kstreams.streams import Stream
+from kstreams.structs import BatchEvent
 from kstreams.test_utils import (
     TestConsumer,
     TestProducer,
@@ -71,6 +72,27 @@ async def test_send_event_with_test_client(
 
         # because it is a different partition the offset should be 1
         assert metadata.offset == 0
+
+
+@pytest.mark.asyncio
+async def test_send_many_events_with_test_client(stream_engine: StreamEngine):
+    topic = "local--kstreams"
+    client = TestStreamClient(stream_engine)
+
+    batch_events = [
+        BatchEvent(
+            value=f"Hello world {str(id)}!".encode(),
+            key=str(id),
+        )
+        for id in range(5)
+    ]
+
+    async with client:
+        metadata = await client.send_many(topic, partition=0, batch_events=batch_events)
+
+        assert metadata.topic == topic
+        assert metadata.partition == 0
+        assert metadata.offset == 4
 
 
 @pytest.mark.asyncio
@@ -640,3 +662,21 @@ async def test_streams_consume_events_with_initial_offsets(stream_engine: Stream
         assert not TopicManager.get(name=topic).size()
 
     process.assert_has_calls([call(event1), call(event1), call(event2)], any_order=True)
+
+
+@pytest.mark.asyncio
+async def test_send_many_example():
+    app = importlib.import_module("examples.send-many.src.send_many.app")
+
+    client = TestStreamClient(app.stream_engine)
+
+    async with client:
+        metadata = await app.send_many()
+
+        topic = TopicManager.get("local--kstreams-send-many")
+        assert topic.total_events == 5
+        assert topic.consumed
+
+    assert metadata.partition == 0
+    assert metadata.topic == "local--kstreams-send-many"
+    assert metadata.offset == 4

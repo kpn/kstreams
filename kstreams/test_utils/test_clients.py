@@ -1,13 +1,51 @@
 from datetime import datetime
-from typing import Any, Coroutine, Dict, List, Optional, Sequence, Set, Union
+from typing import (
+    Any,
+    Coroutine,
+    Dict,
+    List,
+    NamedTuple,
+    Optional,
+    Sequence,
+    Set,
+    Union,
+)
 
 from kstreams import RebalanceListener, TopicPartition
 from kstreams.clients import Consumer, Producer
-from kstreams.serializers import Serializer
+from kstreams.serializers import NO_DEFAULT, Serializer
 from kstreams.types import ConsumerRecord, EncodedHeaders
 
 from .structs import RecordMetadata
 from .topics import TopicManager
+
+
+class BatchEvent(NamedTuple):
+    value: Any
+    key: Any = None
+    timestamp: Optional[int] = None
+    headers: Optional[EncodedHeaders] = None
+
+
+class BatchEvents:
+    def __init__(self) -> None:
+        self.events: List[BatchEvent] = []
+
+    def append(
+        self,
+        *,
+        value: Any,
+        key: Any = None,
+        timestamp: Optional[int] = None,
+        headers: Optional[EncodedHeaders] = None,
+    ) -> None:
+        batch_event = BatchEvent(
+            value=value,
+            key=key,
+            timestamp=timestamp,
+            headers=headers,
+        )
+        self.events.append(batch_event)
 
 
 class Base:
@@ -17,6 +55,9 @@ class Base:
 class TestProducer(Base, Producer):
     __test__ = False
 
+    def create_batch(self) -> BatchEvents:
+        return BatchEvents()
+
     async def send(
         self,
         topic_name: str,
@@ -25,7 +66,7 @@ class TestProducer(Base, Producer):
         partition: int = 0,
         timestamp_ms: Optional[int] = None,
         headers: Optional[EncodedHeaders] = None,
-        serializer: Optional[Serializer] = None,
+        serializer: Optional[Serializer] = NO_DEFAULT,
         serializer_kwargs: Optional[Dict] = None,
     ) -> Coroutine:
         topic, _ = TopicManager.get_or_create(topic_name)
@@ -60,6 +101,28 @@ class TestProducer(Base, Producer):
             )
 
         return fut()
+
+    async def send_batch(
+        self,
+        batch_events: BatchEvents,
+        topic: str,
+        *,
+        partition: int,
+    ) -> Coroutine:
+        # Because we use an asyncio.Queue to store the events during testing,
+        # we can call send once per event in the batch
+        for batch_event in batch_events.events:
+            fut = await self.send(
+                topic,
+                value=batch_event.value,
+                key=batch_event.key,
+                partition=partition,
+                timestamp_ms=batch_event.timestamp,
+                headers=batch_event.headers,
+            )
+
+        # return the last future
+        return fut
 
     async def flush(self) -> None:
         """
