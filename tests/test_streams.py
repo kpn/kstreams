@@ -3,7 +3,7 @@ import contextlib
 from typing import Callable, Set
 from unittest import mock
 
-from kstreams import ConsumerRecord, Send, TopicPartition
+from kstreams import ConsumerRecord, Send, SendMany, TopicPartition
 from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
 from kstreams.streams import stream
@@ -240,10 +240,13 @@ async def test_stream_all_typing_order_in_setup_type(
     ):
 
         @stream_engine.stream(topic_name)
-        async def stream(stream: Stream, cr: ConsumerRecord, send: Send):
+        async def stream(
+            stream: Stream, cr: ConsumerRecord, send: Send, send_many: SendMany
+        ):
             assert cr.value == value
             assert isinstance(stream, Stream)
             assert send == stream_engine.send
+            assert send_many == stream_engine.send_many
             await asyncio.sleep(0.1)
 
         assert stream.consumer is None

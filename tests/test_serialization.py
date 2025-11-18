@@ -7,6 +7,7 @@ import pytest
 from kstreams import ConsumerRecord, StreamEngine, consts
 from kstreams.clients import Producer
 from kstreams.streams import Stream
+from kstreams.structs import BatchEvent
 from kstreams.test_utils.test_utils import TestStreamClient
 from kstreams.types import Headers
 from kstreams.utils import encode_headers
@@ -133,6 +134,180 @@ async def test_not_serialize_value(stream_engine: StreamEngine, record_metadata)
             timestamp_ms=None,
             headers=None,
         )
+
+
+@pytest.mark.asyncio
+async def test_send_many_global_serializer(
+    stream_engine: StreamEngine, record_metadata
+):
+    serializer = MyJsonSerializer()
+    stream_engine.serializer = serializer
+    total_events = 2
+
+    async def async_func():
+        return record_metadata
+
+    send_batch = mock.AsyncMock(return_value=async_func())
+    topic = "my-topic"
+    value = {"message": "test"}
+    headers = {
+        "content-type": consts.APPLICATION_JSON,
+    }
+
+    # use python dict as value
+    batch_events = [
+        BatchEvent(value=value, key="1", headers=headers) for _ in range(total_events)
+    ]
+
+    batch_mock = mock.Mock()
+
+    def create_batch(_):
+        return batch_mock
+
+    with mock.patch.multiple(
+        Producer, start=mock.DEFAULT, send_batch=send_batch, create_batch=create_batch
+    ):
+        await stream_engine.start()
+        metadata = await stream_engine.send_many(
+            topic,
+            partition=0,
+            batch_events=batch_events,
+        )
+
+        assert metadata
+
+    send_batch.assert_awaited_with(
+        mock.ANY,
+        topic,
+        partition=0,
+    )
+
+    batch_mock.append.assert_has_calls(
+        [
+            mock.call(
+                key="1",
+                # use python dict was converted to json bytes
+                value='{"message": "test"}'.encode(),
+                headers=encode_headers(headers),
+                timestamp=None,
+            )
+            for _ in range(total_events)
+        ]
+    )
+
+
+@pytest.mark.asyncio
+async def test_send_many_custom_serialization(
+    stream_engine: StreamEngine, record_metadata
+):
+    assert stream_engine.serializer is None
+
+    async def async_func():
+        return record_metadata
+
+    total_events = 2
+    send_batch = mock.AsyncMock(return_value=async_func())
+    topic = "my-topic"
+    value = {"message": "test"}
+    headers = {
+        "content-type": consts.APPLICATION_JSON,
+    }
+
+    # use python dict as value
+    batch_events = [
+        BatchEvent(value=value, key="1", headers=headers) for _ in range(total_events)
+    ]
+
+    batch_mock = mock.Mock()
+
+    def create_batch(_):
+        return batch_mock
+
+    with mock.patch.multiple(
+        Producer, start=mock.DEFAULT, send_batch=send_batch, create_batch=create_batch
+    ):
+        await stream_engine.start()
+        metadata = await stream_engine.send_many(
+            topic,
+            partition=0,
+            batch_events=batch_events,
+            serializer=MyJsonSerializer(),  # use custom serializer
+        )
+
+        assert metadata
+
+    send_batch.assert_awaited_with(
+        mock.ANY,
+        topic,
+        partition=0,
+    )
+
+    batch_mock.append.assert_has_calls(
+        [
+            mock.call(
+                key="1",
+                # use python dict was converted to json bytes
+                value='{"message": "test"}'.encode(),
+                headers=encode_headers(headers),
+                timestamp=None,
+            )
+            for _ in range(total_events)
+        ]
+    )
+
+
+@pytest.mark.asyncio
+async def test_not_serialize_value_send_many(
+    stream_engine: StreamEngine, record_metadata
+):
+    # even if a serializer is set, we can send the value as is
+    stream_engine.serializer = MyJsonSerializer()
+
+    async def async_func():
+        return record_metadata
+
+    total_events = 2
+    send_batch = mock.AsyncMock(return_value=async_func())
+    topic = "my-topic"
+    value = b'{"message": "test"}'
+    # use python dict as value
+    batch_events = [BatchEvent(value=value) for _ in range(total_events)]
+
+    batch_mock = mock.Mock()
+
+    def create_batch(_):
+        return batch_mock
+
+    with mock.patch.multiple(
+        Producer, start=mock.DEFAULT, send_batch=send_batch, create_batch=create_batch
+    ):
+        await stream_engine.start()
+        metadata = await stream_engine.send_many(
+            topic,
+            partition=0,
+            batch_events=batch_events,
+            serializer=None,  # send value as it is
+        )
+
+        assert metadata
+
+    send_batch.assert_awaited_with(
+        mock.ANY,
+        topic,
+        partition=0,
+    )
+
+    batch_mock.append.assert_has_calls(
+        [
+            mock.call(
+                key=None,
+                value=value,
+                headers=None,
+                timestamp=None,
+            )
+            for _ in range(total_events)
+        ]
+    )
 
 
 @pytest.mark.asyncio
