@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-PYTHON="${PYTHON:=python3.8}" 
+PYTHON="${PYTHON:=python3.10}" 
 POETRY_VERSION="${POETRY_VERSION:=1.1.4}" 
 PREFIX=".venv/bin/"
 
