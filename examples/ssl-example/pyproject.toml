@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "ssl_example"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 aiorun = "^2024.5.1"
 kstreams = { path = "../../.", develop = true }
 pydantic-settings = "^2.3.4"

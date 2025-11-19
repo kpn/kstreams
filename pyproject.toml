@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kstreams"
-version = "0.26.9"
+version = "0.27.0"
 description = "Build simple kafka streams applications"
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
 maintainers = ["Santiago Fraire Willemoës <santiago.fraire@kpn.com>"]
@@ -8,8 +8,6 @@ license = "Apache-2.0"
 readme = "README.md"
 keywords = ["stream", "processing", "kafka", "event streaming"]
 classifiers = [
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -23,7 +21,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 aiokafka = "<1.0"
 prometheus-client = "<1.0"
 future = "^1.0.0"
@@ -43,11 +41,11 @@ jedi = "^0.19.1"
 mkdocs = "^1.1.2"
 uvicorn = "<1.0"
 commitizen = "^4"
-fastapi = "^0.115.0"
+fastapi = ">=0.115,<0.122"
 mkdocs-material = "^9.5.39"
 starlette-prometheus = "^0.10.0"
 codecov = "^2.1.12"
-mkdocstrings = { version = ">=0.27,<0.30", extras = ["python"] }
+mkdocstrings = { version = ">=0.27,<0.31", extras = ["python"] }
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

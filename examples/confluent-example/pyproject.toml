@@ -5,7 +5,7 @@ description = ""
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 kstreams = { path = "../../.", develop = true }
 python-schema-registry-client = "^2.4.0"
 aiorun = "^2024.5.1"
