@@ -6,6 +6,7 @@ from kstreams.engine import StreamEngine
 from kstreams.prometheus.monitor import PrometheusMonitor
 from kstreams.serializers import NO_DEFAULT, Serializer
 from kstreams.streams import Stream
+from kstreams.structs import BatchEvent
 from kstreams.types import ConsumerRecord, Headers
 
 from .structs import RecordMetadata
@@ -134,6 +135,34 @@ class TestStreamClient:
             serializer=serializer,
             serializer_kwargs=serializer_kwargs,
         )
+
+    async def send_many(
+        self,
+        topic: str,
+        partition: int,
+        batch_events: List[BatchEvent],
+        key: Any = None,
+        timestamp_ms: Optional[int] = None,
+        headers: Optional[Headers] = None,
+        serializer: Optional[Serializer] = NO_DEFAULT,
+        serializer_kwargs: Optional[Dict] = None,
+    ) -> RecordMetadata:
+        # Because we use an asyncio.Queue to store the events during testing,
+        # we can call send once per event in the batch
+        for batch_event in batch_events:
+            metadata = await self.send(
+                topic,
+                value=batch_event.value,
+                key=key,
+                partition=partition,
+                timestamp_ms=timestamp_ms,
+                headers=headers,
+                serializer=serializer,
+                serializer_kwargs=serializer_kwargs,
+            )
+
+        # return the metadata of the last event
+        return metadata
 
     def get_topic(self, *, topic_name: str) -> Topic:
         return TopicManager.get(topic_name)

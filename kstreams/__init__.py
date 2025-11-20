@@ -9,9 +9,9 @@ from .rebalance_listener import (
     RebalanceListener,
 )
 from .streams import Stream, stream
-from .structs import TopicPartitionOffset
+from .structs import BatchEvent, TopicPartitionOffset
 from .test_utils import TestStreamClient
-from .types import ConsumerRecord, Send
+from .types import ConsumerRecord, Send, SendMany
 
 __all__ = [
     "Consumer",
@@ -24,6 +24,7 @@ __all__ = [
     "ManualCommitRebalanceListener",
     "RebalanceListener",
     "Send",
+    "SendMany",
     "Stream",
     "stream",
     "ConsumerRecord",
@@ -31,4 +32,5 @@ __all__ = [
     "TestStreamClient",
     "TopicPartition",
     "TopicPartitionOffset",
+    "BatchEvent",
 ]
