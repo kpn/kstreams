@@ -3,11 +3,11 @@ import contextlib
 from typing import Callable, Set
 from unittest import mock
 
-from kstreams import ConsumerRecord, Send, TopicPartition
+from kstreams import ConsumerRecord, Send, SendMany, TopicPartition
 from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
 from kstreams.streams import stream
-from kstreams.structs import TopicPartitionOffset
+from kstreams.structs import BatchEvent, TopicPartitionOffset
 from kstreams.test_utils import TestStreamClient
 from tests import TimeoutErrorException
 
@@ -158,6 +158,44 @@ async def test_stream_class_cr_with_typing(
         assert r.value == value
 
 
+async def test_send_many_from_streams(stream_engine: StreamEngine):
+    client = TestStreamClient(stream_engine)
+    save_to_db = mock.Mock()
+    batch_events = [
+        BatchEvent(
+            value=f"Hello world {str(id)}!".encode(),
+            key=str(id),
+        )
+        for id in range(2)
+    ]
+
+    @stream_engine.stream("kstreams--local")
+    async def my_stream(cr: ConsumerRecord):
+        save_to_db(cr.value)
+
+    @stream_engine.stream("kstreams--trigger")
+    async def trigger(cr: ConsumerRecord, send_many: SendMany):
+        assert cr.value == b"trigger"
+        metadata = await send_many(
+            "kstreams--local", partition=0, batch_events=batch_events
+        )
+
+        assert metadata.topic == "kstreams--local"
+        assert metadata.partition == 0
+        assert metadata.offset == 1
+
+    async with client:
+        await client.send("kstreams--trigger", value=b"trigger")
+
+    # check that the event was consumed
+    save_to_db.assert_has_calls(
+        [
+            mock.call(b"Hello world 0!"),
+            mock.call(b"Hello world 1!"),
+        ]
+    )
+
+
 async def test_stream_cr_and_stream_with_typing(
     stream_engine: StreamEngine, consumer_record_factory
 ):
@@ -240,10 +278,13 @@ async def test_stream_all_typing_order_in_setup_type(
     ):
 
         @stream_engine.stream(topic_name)
-        async def stream(stream: Stream, cr: ConsumerRecord, send: Send):
+        async def stream(
+            stream: Stream, cr: ConsumerRecord, send: Send, send_many: SendMany
+        ):
             assert cr.value == value
             assert isinstance(stream, Stream)
             assert send == stream_engine.send
+            assert send_many == stream_engine.send_many
             await asyncio.sleep(0.1)
 
         assert stream.consumer is None
