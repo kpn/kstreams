@@ -1426,6 +1426,7 @@ for this reason it is possible to remove the <code>async for loop</code> using p
 <li><code>ConsumerRecord</code>: The <code>aiokafka</code> ConsumerRecord that will be received every time that a new event is in the <code>Stream</code></li>
 <li><code>Stream</code>: The <code>Stream</code> object that is subscribed to the topic/s. Useful when <code>manual</code> commit is enabled or when other <code>Stream</code> operations are needed</li>
 <li><code>Send</code>: Coroutine to produce events. The same as <code>stream_engine.send(...)</code></li>
+<li><code>SendMany</code>: Coroutine to produce events in batch. The same as <code>stream_engine.send_many(...)</code></li>
 </ul>
 <p>if you use <code>type hints</code> then every time that a new event is in the stream the <code>coroutine</code> function defined by the end user will ba <code>awaited</code> with the specified types</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:5"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><input id="__tabbed_1_5" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">ConsumerRecord</label><label for="__tabbed_1_2">ConsumerRecord and Stream</label><label for="__tabbed_1_3">ConsumerRecord, Stream and Send</label><label for="__tabbed_1_4">ConsumerRecord, Stream and SendMany</label><label for="__tabbed_1_5">Old fashion</label></div>
