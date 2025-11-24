@@ -1012,8 +1012,7 @@ Then you don't want to use <code>client.send</code> directly, just called the fu
 <h2 id="sendmany">SendMany</h2>
 <p>Your application might produce many events and other application/s will consume it, but you want to make sure that
 the events were procuced properly</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># send_many_example.py</span>
-<span class="kn">import</span> <span class="nn">asyncio</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">BatchEvent</span><span class="p">,</span> <span class="n">create_engine</span>
