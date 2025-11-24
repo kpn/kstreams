@@ -1485,7 +1485,7 @@ for this reason it is possible to remove the <code>async for loop</code> using p
         <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
     <span class="p">]</span>
 
-    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send_many</span><span class="p">(</span>
+    <span class="k">await</span> <span class="n">send_many</span><span class="p">(</span>
         <span class="s2">&quot;local--kstreams-send-many&quot;</span><span class="p">,</span> <span class="n">batch_events</span><span class="o">=</span><span class="n">batch_events</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="mi">0</span>
     <span class="p">)</span>
 </code></pre></div>

@@ -1476,7 +1476,9 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="normal">598</span>
 <span class="normal">599</span>
 <span class="normal">600</span>
-<span class="normal">601</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
+<span class="normal">601</span>
+<span class="normal">602</span>
+<span class="normal">603</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        backend kstreams.backends.Kafka: Backend to connect. Default `Kafka`</span>
@@ -1612,8 +1614,10 @@ To override it per Stream, you can provide one per Stream</p>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RecordMetadata</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If your application needs precise control over batch creation and submission</span>
-<span class="sd">        and you’re willing to forego the niceties of automatic serialization and</span>
-<span class="sd">        partition selection, you may use the `send_many` interface.</span>
+<span class="sd">        and you’re willing to forego partition selection, </span>
+<span class="sd">        you may use the `send_many` interface. `Send many` is more efficient</span>
+<span class="sd">        than calling `send` multiple times as it avoids repeated partition selection.</span>
+<span class="sd">        More events that you send, then more efficient it becomes.</span>
 
 <span class="sd">        Attributes:</span>
 <span class="sd">            topic str: Topic name to send the event to</span>
@@ -2344,8 +2348,10 @@ encode the event</p>
     <div class="doc doc-contents ">
 
         <p>If your application needs precise control over batch creation and submission
-and you’re willing to forego the niceties of automatic serialization and
-partition selection, you may use the <code>send_many</code> interface.</p>
+and you’re willing to forego partition selection, 
+you may use the <code>send_many</code> interface. <code>Send many</code> is more efficient
+than calling <code>send</code> multiple times as it avoids repeated partition selection.
+More events that you send, then more efficient it becomes.</p>
 
 
 <p><span class="doc-section-title">Attributes:</span></p>
@@ -2636,7 +2642,9 @@ meaning that all events in the batch will be sent to the same partition.</p>
 <span class="normal">262</span>
 <span class="normal">263</span>
 <span class="normal">264</span>
-<span class="normal">265</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">send_many</span><span class="p">(</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">send_many</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">partition</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -2649,8 +2657,10 @@ meaning that all events in the batch will be sent to the same partition.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RecordMetadata</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    If your application needs precise control over batch creation and submission</span>
-<span class="sd">    and you’re willing to forego the niceties of automatic serialization and</span>
-<span class="sd">    partition selection, you may use the `send_many` interface.</span>
+<span class="sd">    and you’re willing to forego partition selection, </span>
+<span class="sd">    you may use the `send_many` interface. `Send many` is more efficient</span>
+<span class="sd">    than calling `send` multiple times as it avoids repeated partition selection.</span>
+<span class="sd">    More events that you send, then more efficient it becomes.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        topic str: Topic name to send the event to</span>
@@ -2820,9 +2830,7 @@ standard functions, or async functions.</p>
 
             <details class="quote">
               <summary>Source code in <code>kstreams/engine.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">282</span>
-<span class="normal">283</span>
-<span class="normal">284</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">284</span>
 <span class="normal">285</span>
 <span class="normal">286</span>
 <span class="normal">287</span>
@@ -2853,7 +2861,9 @@ standard functions, or async functions.</p>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
-<span class="normal">315</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_startup</span><span class="p">(</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_startup</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
@@ -2950,9 +2960,7 @@ standard functions, or async functions.</p>
 
             <details class="quote">
               <summary>Source code in <code>kstreams/engine.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">317</span>
-<span class="normal">318</span>
-<span class="normal">319</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
 <span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
@@ -2978,7 +2986,9 @@ standard functions, or async functions.</p>
 <span class="normal">342</span>
 <span class="normal">343</span>
 <span class="normal">344</span>
-<span class="normal">345</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_stop</span><span class="p">(</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_stop</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
@@ -3070,9 +3080,7 @@ standard functions, or async functions.</p>
 
             <details class="quote">
               <summary>Source code in <code>kstreams/engine.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">347</span>
-<span class="normal">348</span>
-<span class="normal">349</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">349</span>
 <span class="normal">350</span>
 <span class="normal">351</span>
 <span class="normal">352</span>
@@ -3098,7 +3106,9 @@ standard functions, or async functions.</p>
 <span class="normal">372</span>
 <span class="normal">373</span>
 <span class="normal">374</span>
-<span class="normal">375</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">after_startup</span><span class="p">(</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">after_startup</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
@@ -3189,9 +3199,7 @@ standard functions, or async functions.</p>
 
             <details class="quote">
               <summary>Source code in <code>kstreams/engine.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">377</span>
-<span class="normal">378</span>
-<span class="normal">379</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">379</span>
 <span class="normal">380</span>
 <span class="normal">381</span>
 <span class="normal">382</span>
@@ -3216,7 +3224,9 @@ standard functions, or async functions.</p>
 <span class="normal">401</span>
 <span class="normal">402</span>
 <span class="normal">403</span>
-<span class="normal">404</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">after_stop</span><span class="p">(</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">after_stop</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
@@ -3354,9 +3364,7 @@ You should probably set directly when instanciating a Stream, not here.</p>
 
             <details class="quote">
               <summary>Source code in <code>kstreams/engine.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">491</span>
-<span class="normal">492</span>
-<span class="normal">493</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">493</span>
 <span class="normal">494</span>
 <span class="normal">495</span>
 <span class="normal">496</span>
@@ -3411,7 +3419,9 @@ You should probably set directly when instanciating a Stream, not here.</p>
 <span class="normal">545</span>
 <span class="normal">546</span>
 <span class="normal">547</span>
-<span class="normal">548</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_stream</span><span class="p">(</span>
+<span class="normal">548</span>
+<span class="normal">549</span>
+<span class="normal">550</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_stream</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">StreamErrorPolicy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
