@@ -1426,25 +1426,41 @@ for this reason it is possible to remove the <code>async for loop</code> using p
 <li><code>ConsumerRecord</code>: The <code>aiokafka</code> ConsumerRecord that will be received every time that a new event is in the <code>Stream</code></li>
 <li><code>Stream</code>: The <code>Stream</code> object that is subscribed to the topic/s. Useful when <code>manual</code> commit is enabled or when other <code>Stream</code> operations are needed</li>
 <li><code>Send</code>: Coroutine to produce events. The same as <code>stream_engine.send(...)</code></li>
+<li><code>SendMany</code>: Coroutine to produce events in batch. The same as <code>stream_engine.send_many(...)</code></li>
 </ul>
 <p>if you use <code>type hints</code> then every time that a new event is in the stream the <code>coroutine</code> function defined by the end user will ba <code>awaited</code> with the specified types</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">ConsumerRecord</label><label for="__tabbed_1_2">ConsumerRecord and Stream</label><label for="__tabbed_1_3">ConsumerRecord, Stream and Send</label><label for="__tabbed_1_4">Old fashion</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:5"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><input id="__tabbed_1_5" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">ConsumerRecord</label><label for="__tabbed_1_2">ConsumerRecord and Stream</label><label for="__tabbed_1_3">ConsumerRecord, Stream and Send</label><label for="__tabbed_1_4">ConsumerRecord, Stream and SendMany</label><label for="__tabbed_1_5">Old fashion</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span>
+
+<span class="kn">from</span> <span class="nn">.engine</span> <span class="kn">import</span> <span class="n">stream_engine</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">Stream</span>
+
+<span class="kn">from</span> <span class="nn">.engine</span> <span class="kn">import</span> <span class="n">stream_engine</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">Send</span><span class="p">,</span> <span class="n">Stream</span>
+
+<span class="kn">from</span> <span class="nn">.engine</span> <span class="kn">import</span> <span class="n">stream_engine</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
@@ -1452,7 +1468,34 @@ for this reason it is possible to remove the <code>async for loop</code> using p
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">BatchEvent</span><span class="p">,</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">SendMany</span><span class="p">,</span> <span class="n">Stream</span>
+
+<span class="kn">from</span> <span class="nn">.engine</span> <span class="kn">import</span> <span class="n">stream_engine</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">send_many</span><span class="p">:</span> <span class="n">SendMany</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="n">batch_events</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">BatchEvent</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Hello world </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="si">}</span><span class="s2">!&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
+            <span class="n">key</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="k">await</span> <span class="n">send_many</span><span class="p">(</span>
+        <span class="s2">&quot;local--kstreams-send-many&quot;</span><span class="p">,</span> <span class="n">batch_events</span><span class="o">=</span><span class="n">batch_events</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">.engine</span> <span class="kn">import</span> <span class="n">stream_engine</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>  <span class="c1"># you can specify the type but it will be the same result</span>
     <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>

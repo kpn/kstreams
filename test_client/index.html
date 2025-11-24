@@ -539,6 +539,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sendmany" class="md-nav__link">
+    <span class="md-ellipsis">
+      SendMany
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#defining-extra-topics" class="md-nav__link">
     <span class="md-ellipsis">
       Defining extra topics
@@ -711,6 +720,15 @@
   <a href="#producer-only" class="md-nav__link">
     <span class="md-ellipsis">
       Producer only
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sendmany" class="md-nav__link">
+    <span class="md-ellipsis">
+      SendMany
     </span>
   </a>
   
@@ -991,6 +1009,74 @@ it shows what to do when the <code>procuder code</code> is encapsulated in other
 for example a <code>FastAPI</code> view.
 Then you don't want to use <code>client.send</code> directly, just called the function that contains <code>stream_engine.send(...)</code></p>
 </div>
+<h2 id="sendmany">SendMany</h2>
+<p>Your application might produce many events and other application/s will consume it, but you want to make sure that
+the events were procuced properly</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">BatchEvent</span><span class="p">,</span> <span class="n">create_engine</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">send_many</span><span class="p">():</span>
+    <span class="n">batch_events</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">BatchEvent</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Hello world </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="si">}</span><span class="s2">!&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
+            <span class="n">key</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send_many</span><span class="p">(</span>
+        <span class="n">topic</span><span class="o">=</span><span class="s2">&quot;local--kstreams-send-many&quot;</span><span class="p">,</span> <span class="n">batch_events</span><span class="o">=</span><span class="n">batch_events</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">send_many</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start</span><span class="p">())</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+<p>Then you could have a <code>test_producer_example.py</code> file to test the code:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># test_send_many_example.py</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">kstreams.test_utils</span> <span class="kn">import</span> <span class="n">TestStreamClient</span>
+
+<span class="kn">from</span> <span class="nn">send_many_example</span> <span class="kn">import</span> <span class="n">stream_engine</span><span class="p">,</span> <span class="n">send_many</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">test_send_many_example</span><span class="p">():</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">TestStreamClient</span><span class="p">(</span><span class="n">stream_engine</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="p">:</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">send_many</span><span class="p">()</span>
+
+        <span class="n">topic</span> <span class="o">=</span> <span class="n">TopicManager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;local--kstreams-send-many&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">topic</span><span class="o">.</span><span class="n">total_events</span> <span class="o">==</span> <span class="mi">5</span>
+        <span class="k">assert</span> <span class="n">topic</span><span class="o">.</span><span class="n">consumed</span>
+
+    <span class="k">assert</span> <span class="n">metadata</span><span class="o">.</span><span class="n">partition</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">metadata</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="s2">&quot;local--kstreams-send-many&quot;</span>
+    <span class="k">assert</span> <span class="n">metadata</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="mi">4</span>
+</code></pre></div>
 <h2 id="defining-extra-topics">Defining extra topics</h2>
 <p>For some uses cases is required to produce an event to a topic (<code>target topic</code>) after it was consumed (<code>source topic</code>). We are in control of the <code>source topic</code>
 because it has a <code>stream</code> associated with it and we want to consume events from it, however we might not be in control of the <code>target topic</code>.</p>
