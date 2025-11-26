@@ -103,15 +103,15 @@ class StreamEngine:
     ) -> RecordMetadata:
         """
         Attributes:
-            topic str: Topic name to send the event to
-            value Any: Event value
-            key str | None: Event key
-            partition int | None: Topic partition
-            timestamp_ms int | None: Event timestamp in miliseconds
-            headers Dict[str, str] | None: Event headers
-            serializer kstreams.serializers.Serializer | None: Serializer to
+            topic (str): Topic name to send the event to
+            value (Any): Event value
+            key (str | None): Event key
+            partition (int | None): Topic partition
+            timestamp_ms (int | None): Event timestamp in miliseconds
+            headers (Dict[str, str] | None): Event headers
+            serializer (kstreams.serializers.Serializer | None): Serializer to
                 encode the event
-            serializer_kwargs Dict[str, Any] | None: Serializer kwargs
+            serializer_kwargs (Dict[str, Any] | None): Serializer kwargs
 
         Returns:
             RecordMetadata: Metadata of the sent record
@@ -166,15 +166,15 @@ class StreamEngine:
         More events that you send, then more efficient it becomes.
 
         Attributes:
-            topic str: Topic name to send the event to
-            partition: Topic partition to send the events to
-            batch_events List[kstreams.structs.BatchEvent]: List of events to send
-            key str | None: Events key
-            timestamp_ms int | None: Event timestamp in miliseconds
-            headers Dict[str, str] | None: Event headers
-            serializer kstreams.serializers.Serializer | None: Serializer to
+            topic (str): Topic name to send the event to
+            partition (int): Topic partition to send the events to
+            batch_events (List[kstreams.structs.BatchEvent]): List of events to send
+            key (str | None): If provided, it is used when an event has not its own key
+            timestamp_ms (int | None): Event timestamp in miliseconds
+            headers (Dict[str, str] | None): Event headers
+            serializer (kstreams.serializers.Serializer | None): Serializer to
                 encode the event
-            serializer_kwargs Dict[str, Any] | None: Serializer kwargs
+            serializer_kwargs (Dict[str, Any] | None): Serializer kwargs
 
         Returns:
             RecordMetadata: Metadata of the sent record
