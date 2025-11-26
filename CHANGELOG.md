@@ -1,3 +1,9 @@
+## 0.28.1 (2025-11-26)
+
+### Fix
+
+- some docstrings fixed to impreove ide hover (#357)
+
 ## 0.28.0 (2025-11-24)
 
 ### Feat
