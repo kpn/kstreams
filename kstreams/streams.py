@@ -33,21 +33,21 @@ logger = logging.getLogger(__name__)
 class Stream:
     """
     Attributes:
-        name Optional[str]: Stream name. Default is a generated uuid4
-        topics List[str]: List of topics to consume
-        subscribe_by_pattern bool: Whether subscribe to topics by pattern
-        backend kstreams.backends.Kafka: backend kstreams.backends.kafka.Kafka:
+        name (Optional[str]): Stream name. Default is a generated uuid4
+        topics (List[str]): List of topics to consume
+        subscribe_by_pattern (bool): Whether subscribe to topics by pattern
+        backend (kstreams.backends.Kafka): backend kstreams.backends.kafka.Kafka:
             Backend to connect. Default `Kafka`
-        func Callable[["Stream"], Awaitable[Any]]: Coroutine fucntion or generator
+        func (Callable[["Stream"], Awaitable[Any]]): Coroutine fucntion or generator
             to be called when an event arrives
-        config Dict[str, Any]: Stream configuration. Here all the
+        config (Dict[str, Any]): Stream configuration. Here all the
             [properties](https://aiokafka.readthedocs.io/en/stable/api.html#consumer-class)
             can be passed in the dictionary
-        deserializer kstreams.serializers.Deserializer: Deserializer to be used
+        deserializer (kstreams.serializers.Deserializer): Deserializer to be used
             when an event is consumed
-        initial_offsets List[kstreams.TopicPartitionOffset]: List of
+        initial_offsets (List[kstreams.TopicPartitionOffset]): List of
             TopicPartitionOffset that will `seek` the initial offsets to
-        rebalance_listener kstreams.rebalance_listener.RebalanceListener: Listener
+        rebalance_listener (kstreams.rebalance_listener.RebalanceListener): Listener
             callbacks when partition are assigned or revoked
 
     ## Subscribe to a topic
@@ -308,14 +308,14 @@ class Stream:
         `timeout_ms` milliseconds.
 
         Attributes:
-            partitions List[TopicPartition] | None: The partitions that need
+            partitions (List[TopicPartition] | None): The partitions that need
                 fetching message. If no one partition specified then all
                 subscribed partitions will be used
-            timeout_ms int | None: milliseconds spent waiting if
+            timeout_ms (int | None): milliseconds spent waiting if
                 data is not available in the buffer. If 0, returns immediately
                 with any records that are available currently in the buffer,
                 else returns empty. Must not be negative.
-            max_records int | None: The amount of records to fetch.
+            max_records (int | None): The amount of records to fetch.
                 if `timeout_ms` was defined and reached and the fetched records
                 has not reach `max_records` then returns immediately
                 with any records that are available currently in the buffer
