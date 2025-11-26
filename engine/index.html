@@ -1557,15 +1557,15 @@ To override it per Stream, you can provide one per Stream</p>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RecordMetadata</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Attributes:</span>
-<span class="sd">            topic str: Topic name to send the event to</span>
-<span class="sd">            value Any: Event value</span>
-<span class="sd">            key str | None: Event key</span>
-<span class="sd">            partition int | None: Topic partition</span>
-<span class="sd">            timestamp_ms int | None: Event timestamp in miliseconds</span>
-<span class="sd">            headers Dict[str, str] | None: Event headers</span>
-<span class="sd">            serializer kstreams.serializers.Serializer | None: Serializer to</span>
+<span class="sd">            topic (str): Topic name to send the event to</span>
+<span class="sd">            value (Any): Event value</span>
+<span class="sd">            key (str | None): Event key</span>
+<span class="sd">            partition (int | None): Topic partition</span>
+<span class="sd">            timestamp_ms (int | None): Event timestamp in miliseconds</span>
+<span class="sd">            headers (Dict[str, str] | None): Event headers</span>
+<span class="sd">            serializer (kstreams.serializers.Serializer | None): Serializer to</span>
 <span class="sd">                encode the event</span>
-<span class="sd">            serializer_kwargs Dict[str, Any] | None: Serializer kwargs</span>
+<span class="sd">            serializer_kwargs (Dict[str, Any] | None): Serializer kwargs</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            RecordMetadata: Metadata of the sent record</span>
@@ -1620,15 +1620,15 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="sd">        More events that you send, then more efficient it becomes.</span>
 
 <span class="sd">        Attributes:</span>
-<span class="sd">            topic str: Topic name to send the event to</span>
-<span class="sd">            partition: Topic partition to send the events to</span>
-<span class="sd">            batch_events List[kstreams.structs.BatchEvent]: List of events to send</span>
-<span class="sd">            key str | None: Events key</span>
-<span class="sd">            timestamp_ms int | None: Event timestamp in miliseconds</span>
-<span class="sd">            headers Dict[str, str] | None: Event headers</span>
-<span class="sd">            serializer kstreams.serializers.Serializer | None: Serializer to</span>
+<span class="sd">            topic (str): Topic name to send the event to</span>
+<span class="sd">            partition (int): Topic partition to send the events to</span>
+<span class="sd">            batch_events (List[kstreams.structs.BatchEvent]): List of events to send</span>
+<span class="sd">            key (str | None): If provided, it is used when an event has not its own key</span>
+<span class="sd">            timestamp_ms (int | None): Event timestamp in miliseconds</span>
+<span class="sd">            headers (Dict[str, str] | None): Event headers</span>
+<span class="sd">            serializer (kstreams.serializers.Serializer | None): Serializer to</span>
 <span class="sd">                encode the event</span>
-<span class="sd">            serializer_kwargs Dict[str, Any] | None: Serializer kwargs</span>
+<span class="sd">            serializer_kwargs (Dict[str, Any] | None): Serializer kwargs</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            RecordMetadata: Metadata of the sent record</span>
@@ -2283,15 +2283,15 @@ encode the event</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RecordMetadata</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
-<span class="sd">        topic str: Topic name to send the event to</span>
-<span class="sd">        value Any: Event value</span>
-<span class="sd">        key str | None: Event key</span>
-<span class="sd">        partition int | None: Topic partition</span>
-<span class="sd">        timestamp_ms int | None: Event timestamp in miliseconds</span>
-<span class="sd">        headers Dict[str, str] | None: Event headers</span>
-<span class="sd">        serializer kstreams.serializers.Serializer | None: Serializer to</span>
+<span class="sd">        topic (str): Topic name to send the event to</span>
+<span class="sd">        value (Any): Event value</span>
+<span class="sd">        key (str | None): Event key</span>
+<span class="sd">        partition (int | None): Topic partition</span>
+<span class="sd">        timestamp_ms (int | None): Event timestamp in miliseconds</span>
+<span class="sd">        headers (Dict[str, str] | None): Event headers</span>
+<span class="sd">        serializer (kstreams.serializers.Serializer | None): Serializer to</span>
 <span class="sd">            encode the event</span>
-<span class="sd">        serializer_kwargs Dict[str, Any] | None: Serializer kwargs</span>
+<span class="sd">        serializer_kwargs (Dict[str, Any] | None): Serializer kwargs</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        RecordMetadata: Metadata of the sent record</span>
@@ -2378,7 +2378,7 @@ More events that you send, then more efficient it becomes.</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send_many.partition">partition</span></code></td>
             <td>
-                  <code><span title="str">str</span></code>
+                  <code><span title="int">int</span></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2404,7 +2404,7 @@ More events that you send, then more efficient it becomes.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Events key</p>
+                <p>If provided, it is used when an event has not its own key</p>
               </div>
             </td>
           </tr>
@@ -2663,15 +2663,15 @@ meaning that all events in the batch will be sent to the same partition.</p>
 <span class="sd">    More events that you send, then more efficient it becomes.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        topic str: Topic name to send the event to</span>
-<span class="sd">        partition: Topic partition to send the events to</span>
-<span class="sd">        batch_events List[kstreams.structs.BatchEvent]: List of events to send</span>
-<span class="sd">        key str | None: Events key</span>
-<span class="sd">        timestamp_ms int | None: Event timestamp in miliseconds</span>
-<span class="sd">        headers Dict[str, str] | None: Event headers</span>
-<span class="sd">        serializer kstreams.serializers.Serializer | None: Serializer to</span>
+<span class="sd">        topic (str): Topic name to send the event to</span>
+<span class="sd">        partition (int): Topic partition to send the events to</span>
+<span class="sd">        batch_events (List[kstreams.structs.BatchEvent]): List of events to send</span>
+<span class="sd">        key (str | None): If provided, it is used when an event has not its own key</span>
+<span class="sd">        timestamp_ms (int | None): Event timestamp in miliseconds</span>
+<span class="sd">        headers (Dict[str, str] | None): Event headers</span>
+<span class="sd">        serializer (kstreams.serializers.Serializer | None): Serializer to</span>
 <span class="sd">            encode the event</span>
-<span class="sd">        serializer_kwargs Dict[str, Any] | None: Serializer kwargs</span>
+<span class="sd">        serializer_kwargs (Dict[str, Any] | None): Serializer kwargs</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        RecordMetadata: Metadata of the sent record</span>

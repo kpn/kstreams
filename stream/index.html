@@ -1841,14 +1841,14 @@ with any records that are available currently in the buffer</p>
 <span class="sd">    `timeout_ms` milliseconds.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        partitions List[TopicPartition] | None: The partitions that need</span>
+<span class="sd">        partitions (List[TopicPartition] | None): The partitions that need</span>
 <span class="sd">            fetching message. If no one partition specified then all</span>
 <span class="sd">            subscribed partitions will be used</span>
-<span class="sd">        timeout_ms int | None: milliseconds spent waiting if</span>
+<span class="sd">        timeout_ms (int | None): milliseconds spent waiting if</span>
 <span class="sd">            data is not available in the buffer. If 0, returns immediately</span>
 <span class="sd">            with any records that are available currently in the buffer,</span>
 <span class="sd">            else returns empty. Must not be negative.</span>
-<span class="sd">        max_records int | None: The amount of records to fetch.</span>
+<span class="sd">        max_records (int | None): The amount of records to fetch.</span>
 <span class="sd">            if `timeout_ms` was defined and reached and the fetched records</span>
 <span class="sd">            has not reach `max_records` then returns immediately</span>
 <span class="sd">            with any records that are available currently in the buffer</span>
