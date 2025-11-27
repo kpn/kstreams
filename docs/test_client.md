@@ -269,7 +269,10 @@ Then you could have a `test_producer_example.py` file to test the code:
 
 ```python
 # test_send_many_example.py
+import typing
 import pytest
+
+from aiokafka.structs import RecordMetadata
 from kstreams.test_utils import TestStreamClient
 
 from send_many_example import stream_engine, send_many
@@ -280,15 +283,16 @@ async def test_send_many_example():
     client = TestStreamClient(stream_engine)
 
     async with client:
-        metadata = await app.send_many()
+        batch_metadata: typing.List[RecordMetadata] = await app.send_many()
 
         topic = TopicManager.get("local--kstreams-send-many")
         assert topic.total_events == 5
         assert topic.consumed
 
-    assert metadata.partition == 0
-    assert metadata.topic == "local--kstreams-send-many"
-    assert metadata.offset == 4
+    first_batch_metadata = batch_metadata[0]
+    assert first_batch_metadata.partition == 0
+    assert first_batch_metadata.topic == "local--kstreams-send-many"
+    assert first_batch_metadata.offset == 4
 ```
 
 ## Defining extra topics

@@ -1,5 +1,5 @@
 import logging
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
 import aiokafka
 
@@ -40,3 +40,9 @@ class Producer(aiokafka.AIOKafkaProducer):
                     return key.encode("utf-8")
 
         super().__init__(*args, key_serializer=key_serializer, **self.config)
+
+    def all_partitions_for_topic(self, topic: str) -> List[int]:
+        return list(self._metadata.partitions_for_topic(topic))
+
+    def available_partitions_for_topic(self, topic: str) -> List[int]:
+        return list(self._metadata.available_partitions_for_topic(topic))

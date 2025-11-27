@@ -2,11 +2,11 @@ from types import TracebackType
 from typing import Any, Dict, List, Optional, Type
 
 from kstreams import Consumer, Producer
+from kstreams.batch import BatchEvent
 from kstreams.engine import StreamEngine
 from kstreams.prometheus.monitor import PrometheusMonitor
 from kstreams.serializers import NO_DEFAULT, Serializer
 from kstreams.streams import Stream
-from kstreams.structs import BatchEvent
 from kstreams.types import ConsumerRecord, Headers
 
 from .structs import RecordMetadata
@@ -139,14 +139,15 @@ class TestStreamClient:
     async def send_many(
         self,
         topic: str,
-        partition: int,
+        *,
         batch_events: List[BatchEvent],
+        partition: Optional[int] = None,
         key: Any = None,
         timestamp_ms: Optional[int] = None,
         headers: Optional[Headers] = None,
         serializer: Optional[Serializer] = NO_DEFAULT,
         serializer_kwargs: Optional[Dict] = None,
-    ) -> RecordMetadata:
+    ) -> List[RecordMetadata]:
         return await self.stream_engine.send_many(
             topic,
             batch_events=batch_events,

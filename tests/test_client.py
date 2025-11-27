@@ -1,14 +1,21 @@
 import asyncio
 import contextlib
 import importlib
+import typing
 from typing import Set
 from unittest.mock import Mock, call
 
 import pytest
 
-from kstreams import ConsumerRecord, StreamEngine, TopicPartition, TopicPartitionOffset
+from kstreams import (
+    ConsumerRecord,
+    RecordMetadata,
+    StreamEngine,
+    TopicPartition,
+    TopicPartitionOffset,
+)
+from kstreams.batch import BatchEvent
 from kstreams.streams import Stream
-from kstreams.structs import BatchEvent
 from kstreams.test_utils import (
     TestConsumer,
     TestProducer,
@@ -88,11 +95,37 @@ async def test_send_many_events_with_test_client(stream_engine: StreamEngine):
     ]
 
     async with client:
-        metadata = await client.send_many(topic, partition=0, batch_events=batch_events)
+        metadata = (
+            await client.send_many(topic, partition=1, batch_events=batch_events)
+        )[0]
 
         assert metadata.topic == topic
-        assert metadata.partition == 0
+        assert metadata.partition == 1
         assert metadata.offset == 4
+
+
+@pytest.mark.parametrize("partition", (1, None))
+async def test_send_many_keyless_events_with_test_client(
+    stream_engine: StreamEngine, partition: typing.Optional[int]
+):
+    topic = "local--kstreams"
+    client = TestStreamClient(stream_engine)
+
+    batch_events = [
+        BatchEvent(
+            value=f"Hello world {str(id)}!".encode(),
+        )
+        for id in range(5)
+    ]
+
+    async with client:
+        metadata = await client.send_many(
+            topic, partition=partition, batch_events=batch_events
+        )
+
+        assert metadata[0].topic == topic
+        assert metadata[0].partition == (partition if partition is not None else 0)
+        assert metadata[0].offset == 4
 
 
 @pytest.mark.asyncio
@@ -671,12 +704,12 @@ async def test_send_many_example():
     client = TestStreamClient(app.stream_engine)
 
     async with client:
-        metadata = await app.send_many()
+        metadata: typing.List[RecordMetadata] = await app.send_many()
 
         topic = TopicManager.get("local--kstreams-send-many")
         assert topic.total_events == 5
         assert topic.consumed
 
-    assert metadata.partition == 0
-    assert metadata.topic == "local--kstreams-send-many"
-    assert metadata.offset == 4
+    assert metadata[0].partition == 0
+    assert metadata[0].topic == "local--kstreams-send-many"
+    assert metadata[0].offset == 4

@@ -3,10 +3,10 @@ import inspect
 import logging
 import typing
 
-from aiokafka.producer.message_accumulator import BatchBuilder
 from aiokafka.structs import RecordMetadata
 
 from .backends.kafka import Kafka
+from .batch import BatchAggregator, BatchEvent
 from .clients import Consumer, Producer
 from .consts import StreamErrorPolicy, UDFType
 from .exceptions import DuplicateStreamException, EngineNotStartedException
@@ -17,7 +17,7 @@ from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import NO_DEFAULT, Deserializer, Serializer
 from .streams import Stream, StreamFunc
 from .streams import stream as stream_func
-from .structs import BatchEvent, TopicPartitionOffset
+from .structs import TopicPartitionOffset
 from .types import Deprecated, EngineHooks, Headers, NextMiddlewareCall
 from .utils import encode_headers, execute_hooks, stop_task
 
@@ -81,7 +81,7 @@ class StreamEngine:
         self.deserializer = deserializer
         self.serializer = serializer
         self.monitor = monitor
-        self._producer: typing.Optional[typing.Type[Producer]] = None
+        self._producer: typing.Optional[Producer] = None
         self._streams: typing.List[Stream] = []
         self._on_startup = [] if on_startup is None else list(on_startup)
         self._on_stop = [] if on_stop is None else list(on_stop)
@@ -150,14 +150,15 @@ class StreamEngine:
     async def send_many(
         self,
         topic: str,
-        partition: int,
+        *,
         batch_events: typing.List[BatchEvent],
+        partition: typing.Optional[int] = None,
         key: typing.Any = None,
         timestamp_ms: typing.Optional[int] = None,
         headers: typing.Optional[Headers] = None,
         serializer: typing.Optional[Serializer] = NO_DEFAULT,
         serializer_kwargs: typing.Optional[typing.Dict] = None,
-    ) -> RecordMetadata:
+    ) -> typing.List[RecordMetadata]:
         """
         If your application needs precise control over batch creation and submission
         and you’re willing to forego partition selection,
@@ -167,7 +168,7 @@ class StreamEngine:
 
         Attributes:
             topic (str): Topic name to send the event to
-            partition (int): Topic partition to send the events to
+            partition (int | None): Topic partition to send the events to
             batch_events (List[kstreams.structs.BatchEvent]): List of events to send
             key (str | None): If provided, it is used when an event has not its own key
             timestamp_ms (int | None): Event timestamp in miliseconds
@@ -177,7 +178,7 @@ class StreamEngine:
             serializer_kwargs (Dict[str, Any] | None): Serializer kwargs
 
         Returns:
-            RecordMetadata: Metadata of the sent record
+            RecordMetadata: List of Metadata of the sent records
 
         !!! Example
             ```python
@@ -220,8 +221,13 @@ class StreamEngine:
             ```
 
         !!! Note
-            When using `send_many` the partition must specified at the batch level,
-            meaning that all events in the batch will be sent to the same partition.
+            If the partition is not specified, then the partitions are selected
+            using the producer's partitioner. If `P` partitions are selected,
+            then internally `P` batches are created and sent
+
+        !!! Note
+            The result is a list of RecordMetadata, one for each batch sent if
+            multiple partitions were used
         """
         if self._producer is None:
             raise EngineNotStartedException()
@@ -229,7 +235,11 @@ class StreamEngine:
         if serializer is NO_DEFAULT:
             serializer = self.serializer
 
-        batch: BatchBuilder = self._producer.create_batch()
+        batch_aggregator = BatchAggregator(
+            topic=topic,
+            partition=partition,
+            producer=self._producer,
+        )
 
         for event in batch_events:
             headers = event.headers or headers
@@ -247,24 +257,22 @@ class StreamEngine:
             if headers is not None:
                 encoded_headers = encode_headers(headers)
 
-            batch.append(
-                key=event.key or key,
+            key = event.key or key
+            batch_aggregator.append(
+                key=key,
                 value=event_value,
                 timestamp=timestamp_ms,
                 headers=encoded_headers,
             )
 
-        fut = await self._producer.send_batch(
-            batch,
-            topic,
-            partition=partition,
-        )
-        metadata: RecordMetadata = await fut
-        self.monitor.add_topic_partition_offset(
-            topic, metadata.partition, metadata.offset
-        )
+        result = await batch_aggregator.flush()
 
-        return metadata
+        for metadata in result:
+            self.monitor.add_topic_partition_offset(
+                topic, metadata.partition, metadata.offset
+            )
+
+        return result
 
     async def start(self) -> None:
         # Execute on_startup hooks
