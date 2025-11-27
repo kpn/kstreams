@@ -7,8 +7,8 @@ from unittest.mock import Mock, call
 import pytest
 
 from kstreams import ConsumerRecord, StreamEngine, TopicPartition, TopicPartitionOffset
+from kstreams.batch import BatchEvent
 from kstreams.streams import Stream
-from kstreams.structs import BatchEvent
 from kstreams.test_utils import (
     TestConsumer,
     TestProducer,
