@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from aiokafka.structs import RecordMetadata
 
 if typing.TYPE_CHECKING:
+    from .batch import BatchEvent  #  pragma: no cover
     from .serializers import Serializer  #  pragma: no cover
-    from .structs import BatchEvent  #  pragma: no cover
 
 Headers = typing.Dict[str, str]
 EncodedHeaders = typing.Sequence[typing.Tuple[str, bytes]]

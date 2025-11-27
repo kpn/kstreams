@@ -2,11 +2,11 @@ from types import TracebackType
 from typing import Any, Dict, List, Optional, Type
 
 from kstreams import Consumer, Producer
+from kstreams.batch import BatchEvent
 from kstreams.engine import StreamEngine
 from kstreams.prometheus.monitor import PrometheusMonitor
 from kstreams.serializers import NO_DEFAULT, Serializer
 from kstreams.streams import Stream
-from kstreams.structs import BatchEvent
 from kstreams.types import ConsumerRecord, Headers
 
 from .structs import RecordMetadata

@@ -3,10 +3,10 @@ import inspect
 import logging
 import typing
 
-from aiokafka.producer.message_accumulator import BatchBuilder
 from aiokafka.structs import RecordMetadata
 
 from .backends.kafka import Kafka
+from .batch import BatchAggregator, BatchEvent
 from .clients import Consumer, Producer
 from .consts import StreamErrorPolicy, UDFType
 from .exceptions import DuplicateStreamException, EngineNotStartedException
@@ -17,7 +17,7 @@ from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import NO_DEFAULT, Deserializer, Serializer
 from .streams import Stream, StreamFunc
 from .streams import stream as stream_func
-from .structs import BatchEvent, TopicPartitionOffset
+from .structs import TopicPartitionOffset
 from .types import Deprecated, EngineHooks, Headers, NextMiddlewareCall
 from .utils import encode_headers, execute_hooks, stop_task
 
@@ -81,7 +81,7 @@ class StreamEngine:
         self.deserializer = deserializer
         self.serializer = serializer
         self.monitor = monitor
-        self._producer: typing.Optional[typing.Type[Producer]] = None
+        self._producer: typing.Optional[Producer] = None
         self._streams: typing.List[Stream] = []
         self._on_startup = [] if on_startup is None else list(on_startup)
         self._on_stop = [] if on_stop is None else list(on_stop)
@@ -150,8 +150,9 @@ class StreamEngine:
     async def send_many(
         self,
         topic: str,
-        partition: int,
+        *,
         batch_events: typing.List[BatchEvent],
+        partition: typing.Optional[int] = None,
         key: typing.Any = None,
         timestamp_ms: typing.Optional[int] = None,
         headers: typing.Optional[Headers] = None,
@@ -229,7 +230,11 @@ class StreamEngine:
         if serializer is NO_DEFAULT:
             serializer = self.serializer
 
-        batch: BatchBuilder = self._producer.create_batch()
+        batch_aggregator = BatchAggregator(
+            topic=topic,
+            partition=partition,
+            producer=self._producer,
+        )
 
         for event in batch_events:
             headers = event.headers or headers
@@ -247,24 +252,23 @@ class StreamEngine:
             if headers is not None:
                 encoded_headers = encode_headers(headers)
 
-            batch.append(
-                key=event.key or key,
+            key = event.key or key
+            batch_aggregator.append(
+                key=key,
                 value=event_value,
                 timestamp=timestamp_ms,
                 headers=encoded_headers,
             )
 
-        fut = await self._producer.send_batch(
-            batch,
-            topic,
-            partition=partition,
-        )
-        metadata: RecordMetadata = await fut
-        self.monitor.add_topic_partition_offset(
-            topic, metadata.partition, metadata.offset
-        )
+        result = await batch_aggregator.flush()
 
-        return metadata
+        for metadata in result:
+            self.monitor.add_topic_partition_offset(
+                topic, metadata.partition, metadata.offset
+            )
+
+        # TODO: The list should be returned instead
+        return result[0]
 
     async def start(self) -> None:
         # Execute on_startup hooks

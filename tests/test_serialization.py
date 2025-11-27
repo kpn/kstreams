@@ -5,9 +5,9 @@ from unittest import mock
 import pytest
 
 from kstreams import ConsumerRecord, StreamEngine, consts
+from kstreams.batch import BatchEvent
 from kstreams.clients import Producer
 from kstreams.streams import Stream
-from kstreams.structs import BatchEvent
 from kstreams.test_utils.test_utils import TestStreamClient
 from kstreams.types import Headers
 from kstreams.utils import encode_headers

@@ -4,10 +4,11 @@ from typing import Callable, Set
 from unittest import mock
 
 from kstreams import ConsumerRecord, Send, SendMany, TopicPartition
+from kstreams.batch import BatchEvent
 from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
 from kstreams.streams import stream
-from kstreams.structs import BatchEvent, TopicPartitionOffset
+from kstreams.structs import TopicPartitionOffset
 from kstreams.test_utils import TestStreamClient
 from tests import TimeoutErrorException
 

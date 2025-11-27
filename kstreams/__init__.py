@@ -1,5 +1,6 @@
 from aiokafka.structs import RecordMetadata, TopicPartition
 
+from .batch import BatchEvent
 from .clients import Consumer, Producer
 from .create import StreamEngine, create_engine
 from .prometheus.monitor import PrometheusMonitor, PrometheusMonitorType
@@ -9,7 +10,7 @@ from .rebalance_listener import (
     RebalanceListener,
 )
 from .streams import Stream, stream
-from .structs import BatchEvent, TopicPartitionOffset
+from .structs import TopicPartitionOffset
 from .test_utils import TestStreamClient
 from .types import ConsumerRecord, Send, SendMany
 
