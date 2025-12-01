@@ -1067,15 +1067,16 @@ the events were procuced properly</p>
     <span class="n">client</span> <span class="o">=</span> <span class="n">TestStreamClient</span><span class="p">(</span><span class="n">stream_engine</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="p">:</span>
-        <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">send_many</span><span class="p">()</span>
+        <span class="n">batch_metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">send_many</span><span class="p">()</span>
 
         <span class="n">topic</span> <span class="o">=</span> <span class="n">TopicManager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;local--kstreams-send-many&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">topic</span><span class="o">.</span><span class="n">total_events</span> <span class="o">==</span> <span class="mi">5</span>
         <span class="k">assert</span> <span class="n">topic</span><span class="o">.</span><span class="n">consumed</span>
 
-    <span class="k">assert</span> <span class="n">metadata</span><span class="o">.</span><span class="n">partition</span> <span class="o">==</span> <span class="mi">0</span>
-    <span class="k">assert</span> <span class="n">metadata</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="s2">&quot;local--kstreams-send-many&quot;</span>
-    <span class="k">assert</span> <span class="n">metadata</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="mi">4</span>
+    <span class="n">first_batch_metadata</span> <span class="o">=</span> <span class="n">batch_metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">first_batch_metadata</span><span class="o">.</span><span class="n">partition</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">first_batch_metadata</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="s2">&quot;local--kstreams-send-many&quot;</span>
+    <span class="k">assert</span> <span class="n">first_batch_metadata</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="mi">4</span>
 </code></pre></div>
 <h2 id="defining-extra-topics">Defining extra topics</h2>
 <p>For some uses cases is required to produce an event to a topic (<code>target topic</code>) after it was consumed (<code>source topic</code>). We are in control of the <code>source topic</code>
