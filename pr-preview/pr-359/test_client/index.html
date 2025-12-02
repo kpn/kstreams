@@ -1056,7 +1056,10 @@ the events were procuced properly</p>
 </code></pre></div>
 <p>Then you could have a <code>test_producer_example.py</code> file to test the code:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># test_send_many_example.py</span>
+<span class="kn">import</span> <span class="nn">typing</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">aiokafka.structs</span> <span class="kn">import</span> <span class="n">RecordMetadata</span>
 <span class="kn">from</span> <span class="nn">kstreams.test_utils</span> <span class="kn">import</span> <span class="n">TestStreamClient</span>
 
 <span class="kn">from</span> <span class="nn">send_many_example</span> <span class="kn">import</span> <span class="n">stream_engine</span><span class="p">,</span> <span class="n">send_many</span>
@@ -1067,7 +1070,7 @@ the events were procuced properly</p>
     <span class="n">client</span> <span class="o">=</span> <span class="n">TestStreamClient</span><span class="p">(</span><span class="n">stream_engine</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="p">:</span>
-        <span class="n">batch_metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">send_many</span><span class="p">()</span>
+        <span class="n">batch_metadata</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">RecordMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">send_many</span><span class="p">()</span>
 
         <span class="n">topic</span> <span class="o">=</span> <span class="n">TopicManager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;local--kstreams-send-many&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">topic</span><span class="o">.</span><span class="n">total_events</span> <span class="o">==</span> <span class="mi">5</span>
