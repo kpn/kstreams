@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kstreams"
-version = "0.27.0"
+version = "0.28.1"
 description = "Build simple kafka streams applications"
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
 maintainers = ["Santiago Fraire Willemoës <santiago.fraire@kpn.com>"]
@@ -30,7 +30,7 @@ pydantic = ">=2.0.0,<3.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
-pytest-asyncio = ">=0.24,<0.27"
+pytest-asyncio = ">=0.24,<1.4"
 pytest-benchmark = "^5.1.0"
 pytest-cov = "^6"
 pytest-httpserver = "^1.1.0"
@@ -45,7 +45,7 @@ fastapi = ">=0.115,<0.122"
 mkdocs-material = "^9.5.39"
 starlette-prometheus = "^0.10.0"
 codecov = "^2.1.12"
-mkdocstrings = { version = ">=0.27,<0.31", extras = ["python"] }
+mkdocstrings = { version = ">=0.27,<1.1", extras = ["python"] }
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -3,9 +3,8 @@ import inspect
 import logging
 import typing
 
+from aiokafka.producer.message_accumulator import BatchBuilder
 from aiokafka.structs import RecordMetadata
-
-from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
 from .clients import Consumer, Producer
@@ -18,6 +17,7 @@ from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import NO_DEFAULT, Deserializer, Serializer
 from .streams import Stream, StreamFunc
 from .streams import stream as stream_func
+from .structs import BatchEvent, TopicPartitionOffset
 from .types import Deprecated, EngineHooks, Headers, NextMiddlewareCall
 from .utils import encode_headers, execute_hooks, stop_task
 
@@ -100,18 +100,21 @@ class StreamEngine:
         headers: typing.Optional[Headers] = None,
         serializer: typing.Optional[Serializer] = NO_DEFAULT,
         serializer_kwargs: typing.Optional[typing.Dict] = None,
-    ):
+    ) -> RecordMetadata:
         """
         Attributes:
-            topic str: Topic name to send the event to
-            value Any: Event value
-            key str | None: Event key
-            partition int | None: Topic partition
-            timestamp_ms int | None: Event timestamp in miliseconds
-            headers Dict[str, str] | None: Event headers
-            serializer kstreams.serializers.Serializer | None: Serializer to
+            topic (str): Topic name to send the event to
+            value (Any): Event value
+            key (str | None): Event key
+            partition (int | None): Topic partition
+            timestamp_ms (int | None): Event timestamp in miliseconds
+            headers (Dict[str, str] | None): Event headers
+            serializer (kstreams.serializers.Serializer | None): Serializer to
                 encode the event
-            serializer_kwargs Dict[str, Any] | None: Serializer kwargs
+            serializer_kwargs (Dict[str, Any] | None): Serializer kwargs
+
+        Returns:
+            RecordMetadata: Metadata of the sent record
         """
         if self._producer is None:
             raise EngineNotStartedException()
@@ -136,6 +139,125 @@ class StreamEngine:
             partition=partition,
             timestamp_ms=timestamp_ms,
             headers=encoded_headers,
+        )
+        metadata: RecordMetadata = await fut
+        self.monitor.add_topic_partition_offset(
+            topic, metadata.partition, metadata.offset
+        )
+
+        return metadata
+
+    async def send_many(
+        self,
+        topic: str,
+        partition: int,
+        batch_events: typing.List[BatchEvent],
+        key: typing.Any = None,
+        timestamp_ms: typing.Optional[int] = None,
+        headers: typing.Optional[Headers] = None,
+        serializer: typing.Optional[Serializer] = NO_DEFAULT,
+        serializer_kwargs: typing.Optional[typing.Dict] = None,
+    ) -> RecordMetadata:
+        """
+        If your application needs precise control over batch creation and submission
+        and you’re willing to forego partition selection,
+        you may use the `send_many` interface. `Send many` is more efficient
+        than calling `send` multiple times as it avoids repeated partition selection.
+        More events that you send, then more efficient it becomes.
+
+        Attributes:
+            topic (str): Topic name to send the event to
+            partition (int): Topic partition to send the events to
+            batch_events (List[kstreams.structs.BatchEvent]): List of events to send
+            key (str | None): If provided, it is used when an event has not its own key
+            timestamp_ms (int | None): Event timestamp in miliseconds
+            headers (Dict[str, str] | None): Event headers
+            serializer (kstreams.serializers.Serializer | None): Serializer to
+                encode the event
+            serializer_kwargs (Dict[str, Any] | None): Serializer kwargs
+
+        Returns:
+            RecordMetadata: Metadata of the sent record
+
+        !!! Example
+            ```python
+            import aiorun
+            from kstreams import create_engine, BatchEvent
+
+
+            topic = "local--kstreams-send-many"
+            stream_engine = create_engine(title="my-stream-engine")
+
+            async def send_many(*, partition: int = 0):
+                batch_events = []
+                for id in range(5):
+                    batch_events.append(
+                        BatchEvent(
+                            value=f"Hello world {str(id)}!".encode(),
+                            key=str(id),
+                        )
+                    )
+
+                batch_metadata = await stream_engine.send_many(
+                    topic, batch_events=batch_events, partition=partition
+                )
+
+            async def start():
+                await stream_engine.start()
+                await send_many()
+
+
+            async def shutdown(loop):
+                await stream_engine.stop()
+
+
+            if __name__ == "__main__":
+                aiorun.run(
+                    start(),
+                    stop_on_unhandled_errors=True,
+                    shutdown_callback=shutdown
+                )
+            ```
+
+        !!! Note
+            When using `send_many` the partition must specified at the batch level,
+            meaning that all events in the batch will be sent to the same partition.
+        """
+        if self._producer is None:
+            raise EngineNotStartedException()
+
+        if serializer is NO_DEFAULT:
+            serializer = self.serializer
+
+        batch: BatchBuilder = self._producer.create_batch()
+
+        for event in batch_events:
+            headers = event.headers or headers
+            event_value = event.value
+
+            # serialize only when value and serializer are present
+            if event_value is not None and serializer is not None:
+                event_value = await serializer.serialize(
+                    event_value,
+                    headers=headers,
+                    serializer_kwargs=serializer_kwargs,
+                )
+
+            encoded_headers = None
+            if headers is not None:
+                encoded_headers = encode_headers(headers)
+
+            batch.append(
+                key=event.key or key,
+                value=event_value,
+                timestamp=timestamp_ms,
+                headers=encoded_headers,
+            )
+
+        fut = await self._producer.send_batch(
+            batch,
+            topic,
+            partition=partition,
         )
         metadata: RecordMetadata = await fut
         self.monitor.add_topic_partition_offset(
@@ -419,6 +541,7 @@ class StreamEngine:
             next_call=stream.func,
             send=self.send,
             stream=stream,
+            send_many=self.send_many,
         )
 
         # NOTE: When `no typing` support is deprecated this check can
@@ -433,7 +556,11 @@ class StreamEngine:
         next_call = stream.udf_handler
         for middleware, options in reversed(middlewares):
             next_call = middleware(
-                next_call=next_call, send=self.send, stream=stream, **options
+                next_call=next_call,
+                send=self.send,
+                stream=stream,
+                send_many=self.send_many,
+                **options,
             )
         return next_call
 

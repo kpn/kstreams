@@ -19,7 +19,7 @@ class PrometheusMonitor:
     Metrics monitor to keep track of Producers and Consumers.
 
      Attributes:
-        metrics_scrape_time float: Amount of seconds that the monitor
+        metrics_scrape_time (float): Amount of seconds that the monitor
             will wait until next scrape iteration
     """
 

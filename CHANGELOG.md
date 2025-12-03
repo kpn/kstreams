@@ -1,3 +1,15 @@
+## 0.28.1 (2025-11-26)
+
+### Fix
+
+- some docstrings fixed to impreove ide hover (#357)
+
+## 0.28.0 (2025-11-24)
+
+### Feat
+
+- **SendMany**: add send_many feature. Related to #298 (#354)
+
 ## 0.27.0 (2025-11-18)
 
 ## 0.26.9 (2025-04-18)

@@ -20,19 +20,30 @@ for this reason it is possible to remove the `async for loop` using proper `typi
 - `ConsumerRecord`: The `aiokafka` ConsumerRecord that will be received every time that a new event is in the `Stream`
 - `Stream`: The `Stream` object that is subscribed to the topic/s. Useful when `manual` commit is enabled or when other `Stream` operations are needed
 - `Send`: Coroutine to produce events. The same as `stream_engine.send(...)`
+- `SendMany`: Coroutine to produce events in batch. The same as `stream_engine.send_many(...)`
 
 if you use `type hints` then every time that a new event is in the stream the `coroutine` function defined by the end user will ba `awaited` with the specified types
 
 === "ConsumerRecord"
     ```python
-    @stream_engine.stream(topic)
+    from kstreams import ConsumerRecord
+    
+    from .engine import stream_engine
+
+
+    @stream_engine.stream("local--kstreams")
     async def my_stream(cr: ConsumerRecord):
         print(cr.value)
     ```
 
 === "ConsumerRecord and Stream"
     ```python
-    @stream_engine.stream(topic, enable_auto_commit=False)
+    from kstreams import ConsumerRecord, Stream
+
+    from .engine import stream_engine
+
+
+    @stream_engine.stream("local--kstreams", enable_auto_commit=False)
     async def my_stream(cr: ConsumerRecord, stream: Stream):
         print(cr.value)
         await stream.commit()
@@ -40,16 +51,49 @@ if you use `type hints` then every time that a new event is in the stream the `c
 
 === "ConsumerRecord, Stream and Send"
     ```python
-    @stream_engine.stream(topic, enable_auto_commit=False)
+    from kstreams import ConsumerRecord, Send, Stream
+
+    from .engine import stream_engine
+
+
+    @stream_engine.stream("local--kstreams", enable_auto_commit=False)
     async def my_stream(cr: ConsumerRecord, stream: Stream, send: Send):
         print(cr.value)
         await stream.commit()
         await send("sink-to-elastic-topic", value=cr.value)
     ```
 
+=== "ConsumerRecord, Stream and SendMany"
+    ```python
+    from kstreams import BatchEvent, ConsumerRecord, SendMany, Stream
+
+    from .engine import stream_engine
+
+
+    @stream_engine.stream("local--kstreams", enable_auto_commit=False)
+    async def my_stream(cr: ConsumerRecord, stream: Stream, send_many: SendMany):
+        print(cr.value)
+        await stream.commit()
+
+        batch_events = [
+            BatchEvent(
+                value=f"Hello world {str(id)}!".encode(),
+                key=str(id),
+            )
+            for id in range(5)
+        ]
+
+        await send_many(
+            "local--kstreams-send-many", batch_events=batch_events, partition=0
+        )
+    ```
+
 === "Old fashion"
     ```python
-    @stream_engine.stream(topic)
+    from .engine import stream_engine
+
+
+    @stream_engine.stream("local--kstreams")
     async def consume(stream):  # you can specify the type but it will be the same result
         async for cr in stream:
             print(cr.value)
