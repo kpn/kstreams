@@ -1630,7 +1630,7 @@ To override it per Stream, you can provide one per Stream</p>
 
 <span class="sd">        Attributes:</span>
 <span class="sd">            topic (str): Topic name to send the event to</span>
-<span class="sd">            partition (int): Topic partition to send the events to</span>
+<span class="sd">            partition (int | None): Topic partition to send the events to</span>
 <span class="sd">            batch_events (List[kstreams.structs.BatchEvent]): List of events to send</span>
 <span class="sd">            key (str | None): If provided, it is used when an event has not its own key</span>
 <span class="sd">            timestamp_ms (int | None): Event timestamp in miliseconds</span>
@@ -2394,7 +2394,7 @@ More events that you send, then more efficient it becomes.</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send_many.partition">partition</span></code></td>
             <td>
-                  <code><span title="int">int</span></code>
+                  <code><span title="int">int</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2695,7 +2695,7 @@ multiple partitions were used</p>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        topic (str): Topic name to send the event to</span>
-<span class="sd">        partition (int): Topic partition to send the events to</span>
+<span class="sd">        partition (int | None): Topic partition to send the events to</span>
 <span class="sd">        batch_events (List[kstreams.structs.BatchEvent]): List of events to send</span>
 <span class="sd">        key (str | None): If provided, it is used when an event has not its own key</span>
 <span class="sd">        timestamp_ms (int | None): Event timestamp in miliseconds</span>
