@@ -1,3 +1,13 @@
+## 0.29.0 (2025-12-04)
+
+### BREAKING CHANGE
+
+- now the return of send_many is a List[RecordMetadata] rather then RecordMetadata
+
+### Feat
+
+- **SendMany**: group events per partition. Closes #356 (#359)
+
 ## 0.28.1 (2025-11-26)
 
 ### Fix
