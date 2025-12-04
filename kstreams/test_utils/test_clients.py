@@ -124,6 +124,18 @@ class TestProducer(Base, Producer):
         # return the last future
         return fut
 
+    def all_partitions_for_topic(self, topic: str) -> List[int]:
+        """
+        Just return partition 0 for testing purposes when using TestStreamClient
+        """
+        return [0]
+
+    def available_partitions_for_topic(self, topic: str) -> List[int]:
+        """
+        Just return partition 0 for testing purposes when using TestStreamClient
+        """
+        return [0]
+
     async def flush(self) -> None:
         """
         Flush the producer. In this case, it does nothing because

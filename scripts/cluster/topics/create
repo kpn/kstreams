@@ -4,10 +4,11 @@
 #
 # Usage:
 # ./scripts/cluster/topics/create "example-topic"
+# ./scripts/cluster/topics/create "example-topic" partitions=3
 #
 
 topic_name=$1
-partitions=1
+partitions=${2:-1}
 replication_factor=1
 cleanup_policy=delete
 
