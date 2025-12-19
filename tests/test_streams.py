@@ -3,7 +3,7 @@ import contextlib
 from typing import Callable, Set
 from unittest import mock
 
-from kstreams import ConsumerRecord, Send, SendMany, TopicPartition
+from kstreams import ConsumerRecord, GetMany, Send, SendMany, TopicPartition
 from kstreams.batch import BatchEvent
 from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
@@ -392,7 +392,7 @@ async def test_stream_custom_conf(stream_engine: StreamEngine):
         assert not stream.consumer._enable_auto_commit
 
 
-async def test_stream_getmany(
+async def test_stream_getmany_old_fashion(
     stream_engine: StreamEngine, consumer_record_factory: Callable[..., ConsumerRecord]
 ):
     topic_partition_crs = {
@@ -417,6 +417,44 @@ async def test_stream_getmany(
         await stream_engine.start_streams()
         await asyncio.sleep(0.1)
         save_to_db.assert_called_once_with(topic_partition_crs)
+
+
+async def test_stream_getmany(
+    stream_engine: StreamEngine, consumer_record_factory: Callable[..., ConsumerRecord]
+):
+    topic_partition_crs = {
+        TopicPartition(topic="local--hello-kpn", partition=0): [
+            consumer_record_factory(offset=1),
+            consumer_record_factory(offset=2),
+            consumer_record_factory(offset=3),
+        ]
+    }
+
+    save_to_db = mock.Mock()
+    data = []
+
+    @stream_engine.stream("local--hello-kpn", get_many=GetMany(max_records=3))
+    async def stream(cr: ConsumerRecord, stream: Stream):
+        data.append(cr)
+        if len(data) == 3:
+            save_to_db(data)
+
+            # stop the stream after processing 3 records
+            # then we can assert the call and stop the test
+            await stream.stop()
+
+    async def getmany(*args, **kwargs):
+        return topic_partition_crs
+
+    with mock.patch.multiple(
+        Consumer, start=mock.DEFAULT, subscribe=mock.DEFAULT, getmany=getmany
+    ):
+        await stream_engine.start_streams()
+        # switch the current Task to the one running in background
+        await asyncio.sleep(1e-10)
+
+    crs = [cr for cr_list in topic_partition_crs.values() for cr in cr_list]
+    save_to_db.assert_called_once_with(crs)
 
 
 async def test_stream_decorator(stream_engine: StreamEngine):
