@@ -1874,12 +1874,6 @@ with any records that are available currently in the buffer</p>
         <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">getmany</span><span class="p">(</span><span class="n">max_records</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The <code>getmany</code> method is deprecated and will be removed in future
-versions. Please use the <code>get_many</code> parameter in the <code>@stream</code>
-decorator instead.</p>
-</div>
 </div>
 
 
@@ -1933,12 +1927,7 @@ decorator instead.</p>
 <span class="normal">402</span>
 <span class="normal">403</span>
 <span class="normal">404</span>
-<span class="normal">405</span>
-<span class="normal">406</span>
-<span class="normal">407</span>
-<span class="normal">408</span>
-<span class="normal">409</span>
-<span class="normal">410</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@deprecated</span><span class="p">(</span>
+<span class="normal">405</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@deprecated</span><span class="p">(</span>
     <span class="s2">&quot;getmany is deprecated and will be removed in future versions. &quot;</span>
     <span class="s2">&quot;Please use @stream(get_many=GetMany(...)) instead.&quot;</span><span class="p">,</span>
     <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">,</span>
@@ -1982,11 +1971,6 @@ decorator instead.</p>
 <span class="sd">                data = await stream.getmany(max_records=5)</span>
 <span class="sd">                print(data)</span>
 <span class="sd">        ```</span>
-
-<span class="sd">        !!! note</span>
-<span class="sd">            The `getmany` method is deprecated and will be removed in future</span>
-<span class="sd">            versions. Please use the `get_many` parameter in the `@stream`</span>
-<span class="sd">            decorator instead.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">partitions</span> <span class="o">=</span> <span class="n">partitions</span> <span class="ow">or</span> <span class="p">[]</span>
     <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer</span><span class="o">.</span><span class="n">getmany</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
@@ -1999,6 +1983,12 @@ decorator instead.</p>
 </div><div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>This approach does not works with <code>Dependency Injection</code>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <code>getmany</code> method is deprecated and will be removed in future
+versions. Please use the <code>get_many</code> parameter in the <code>@stream</code>
+decorator instead.</p>
 </div>
 <h2 id="rebalance-listener">Rebalance Listener</h2>
 <p>For some cases you will need a <code>RebalanceListener</code> so when partitions are <code>assigned</code> or <code>revoked</code> to the stream different accions can be performed.</p>
