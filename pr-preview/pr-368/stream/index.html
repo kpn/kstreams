@@ -1432,7 +1432,7 @@ the stream is subscribed to. In the following example the stream will fetch
 up to 3 events with a timeout of 1000 ms. If no events are available
 after the timeout it will process whatever events it has fetched until that moment.</p>
 <p>One important aspect to consider when using <code>GetMany</code> is that the
-<code>stream</code> will receive one <code>ConsumerRecord</code> at a time, so if <code>max_records</code> 
+<code>stream</code> will receive one <code>ConsumerRecord</code> at a time, so if <code>max_records</code>
 is set to N and there are N events available, the <code>stream</code> will be
 called N times, once for each event.</p>
 <div class="admonition example">
