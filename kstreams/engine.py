@@ -17,7 +17,7 @@ from .rebalance_listener import MetricsRebalanceListener, RebalanceListener
 from .serializers import NO_DEFAULT, Deserializer, Serializer
 from .streams import Stream, StreamFunc
 from .streams import stream as stream_func
-from .structs import TopicPartitionOffset
+from .structs import GetMany, TopicPartitionOffset
 from .types import Deprecated, EngineHooks, Headers, NextMiddlewareCall
 from .utils import encode_headers, execute_hooks, stop_task
 
@@ -591,6 +591,7 @@ class StreamEngine:
         middlewares: typing.Optional[typing.List[Middleware]] = None,
         subscribe_by_pattern: bool = False,
         error_policy: StreamErrorPolicy = StreamErrorPolicy.STOP,
+        get_many: typing.Optional[GetMany] = None,
         **kwargs,
     ) -> typing.Callable[[StreamFunc], Stream]:
         def decorator(func: StreamFunc) -> Stream:
@@ -602,6 +603,7 @@ class StreamEngine:
                 rebalance_listener=rebalance_listener,
                 middlewares=middlewares,
                 subscribe_by_pattern=subscribe_by_pattern,
+                get_many=get_many,
                 **kwargs,
             )(func)
             self.add_stream(stream_from_func, error_policy=error_policy)

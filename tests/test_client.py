@@ -9,6 +9,7 @@ import pytest
 
 from kstreams import (
     ConsumerRecord,
+    GetMany,
     RecordMetadata,
     StreamEngine,
     TopicPartition,
@@ -154,7 +155,7 @@ async def test_streams_consume_events(stream_engine: StreamEngine):
 
 
 @pytest.mark.asyncio
-async def test_stream_consume_many(stream_engine: StreamEngine):
+async def test_stream_consume_many_old_fashion(stream_engine: StreamEngine):
     event = b'{"message": "Hello world!"}'
     max_records = 2
     save_to_db = Mock()
@@ -177,6 +178,55 @@ async def test_stream_consume_many(stream_engine: StreamEngine):
         await client.send(topic, value=event, key="1")
 
     save_to_db.assert_called_once_with([event for _ in range(0, max_records)])
+
+
+@pytest.mark.asyncio
+async def test_stream_consume_many(stream_engine: StreamEngine):
+    event = b'{"message": "Hello world!"}'
+    topic = "local--kstreams-consume-many"
+    max_records = 2
+    save_to_db = Mock()
+
+    data = []
+
+    @stream_engine.stream(topic, get_many=GetMany(max_records=max_records))
+    async def stream(cr: ConsumerRecord, stream: Stream):
+        data.append(cr.value)
+
+        if len(data) == max_records:
+            save_to_db(data)
+
+    client = TestStreamClient(stream_engine)
+    async with client:
+        await client.send(topic, value=event, key="1")
+        await client.send(topic, value=event, key="1")
+
+    save_to_db.assert_called_once_with([event for _ in range(0, max_records)])
+
+
+@pytest.mark.asyncio
+async def test_stream_consume_many_with_timeout(stream_engine: StreamEngine):
+    event = b'{"message": "Hello world!"}'
+    max_records = 3
+    records_to_send = 2
+    save_to_db = Mock()
+
+    @stream_engine.stream(
+        topic, get_many=GetMany(max_records=max_records, timeout_ms=1000)
+    )
+    async def stream(cr: ConsumerRecord):
+        save_to_db(cr.value)
+
+    client = TestStreamClient(stream_engine)
+    async with client:
+        for _ in range(0, records_to_send):
+            await client.send(topic, value=event, key="1")
+
+        # wait for the 1.1 second, then the timeout in getmany triggers
+        # and it returns as many events are available
+        await asyncio.sleep(1.1)
+
+    save_to_db.assert_has_calls([call(event) for _ in range(0, records_to_send)])
 
 
 @pytest.mark.asyncio
