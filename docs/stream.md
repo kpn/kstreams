@@ -317,6 +317,11 @@ async with stream as stream_flow:  # Use the context manager
 !!! warning
     This approach does not works with `Dependency Injection`.
 
+!!! warning
+    The `getmany` method is deprecated and will be removed in future
+    versions. Please use the `get_many` parameter in the `@stream`
+    decorator instead.
+
 ## Rebalance Listener
 
 For some cases you will need a `RebalanceListener` so when partitions are `assigned` or `revoked` to the stream different accions can be performed.

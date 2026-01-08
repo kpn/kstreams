@@ -7,6 +7,7 @@ import warnings
 from functools import update_wrapper
 
 from aiokafka import errors
+from typing_extensions import deprecated
 
 from kstreams import TopicPartition
 from kstreams.exceptions import BackendNotSet
@@ -15,13 +16,13 @@ from kstreams.middleware.middleware import (
     ExceptionMiddleware,
     Middleware,
 )
-from kstreams.structs import TopicPartitionOffset
 
 from .backends.kafka import Kafka
 from .clients import Consumer
 from .consts import StreamErrorPolicy, UDFType
 from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
+from .structs import GetMany, TopicPartitionOffset
 from .types import ConsumerRecord, Deprecated, StreamFunc
 
 if typing.TYPE_CHECKING:
@@ -100,6 +101,21 @@ class Stream:
         )
         async def consume(cr: ConsumerRecord) -> None:
             print(f"Event from {cr.topic}: headers: {cr.headers}, payload: {cr.value}")
+
+
+        async def start():
+            await stream_engine.start()
+
+        async def shutdown(loop):
+            await stream_engine.stop()
+
+
+        if __name__ == "__main__":
+            aiorun.run(
+                start(),
+                stop_on_unhandled_errors=True,
+                shutdown_callback=shutdown
+            )
         ```
 
     ## Subscribe to topics by pattern
@@ -144,6 +160,48 @@ class Stream:
                 shutdown_callback=shutdown
             )
         ```
+    ## GetMany to fetch batches of events
+
+    Using `GetMany` it is possible to fetch batches of events from the topics
+    the stream is subscribed to. In the following example the stream will fetch
+    up to 3 events with a timeout of 1000 ms. If no events are available
+    after the timeout it will process whatever events it has fetched until that moment.
+
+    One important aspect to consider when using `GetMany` is that the
+    `stream` will receive one `ConsumerRecord` at a time, so if `max_records`
+    is set to N and there are N events available, the `stream` will be
+    called N times, once for each event.
+
+    !!! Example
+        ```python
+        import aiorun
+        from kstreams import create_engine, ConsumerRecord, GetMany
+
+        stream_engine = create_engine(title="my-stream-engine")
+
+
+        @stream_engine.stream(
+            "local--kstreams",
+            get_many=GetMany(max_records=3, timeout_ms=1000),
+        )
+        async def consume(cr: ConsumerRecord) -> None:
+            print(f"Event from {cr.topic}: headers: {cr.headers}, payload: {cr.value}")
+
+
+        async def start():
+            await stream_engine.start()
+
+        async def shutdown(loop):
+            await stream_engine.stop()
+
+
+        if __name__ == "__main__":
+            aiorun.run(
+                start(),
+                stop_on_unhandled_errors=True,
+                shutdown_callback=shutdown
+            )
+        ```
     """
 
     def __init__(
@@ -161,6 +219,7 @@ class Stream:
         rebalance_listener: typing.Optional[RebalanceListener] = None,
         middlewares: typing.Optional[typing.List[Middleware]] = None,
         error_policy: StreamErrorPolicy = StreamErrorPolicy.STOP,
+        get_many: typing.Optional[GetMany] = None,
     ) -> None:
         self.func = func
         self.backend = backend
@@ -179,6 +238,7 @@ class Stream:
         self.topics = [topics] if isinstance(topics, str) else topics
         self.subscribe_by_pattern = subscribe_by_pattern
         self.error_policy = error_policy
+        self.get_many = get_many
 
     def __name__(self) -> str:
         return self.name
@@ -294,6 +354,11 @@ class Stream:
 
         return consumer_record
 
+    @deprecated(
+        "getmany is deprecated and will be removed in future versions. "
+        "Please use @stream(get_many=GetMany(...)) instead.",
+        category=DeprecationWarning,
+    )
     async def getmany(
         self,
         partitions: typing.Optional[typing.List[TopicPartition]] = None,
@@ -321,7 +386,9 @@ class Stream:
                 with any records that are available currently in the buffer
 
         Returns:
-            Topic to list of records
+            dict(TopicPartition, list[ConsumerRecord]): topic to list of
+            records since the last fetch for the subscribed list of topics and
+            partitions
 
         !!! Example
             ```python
@@ -371,9 +438,21 @@ class Stream:
     async def func_wrapper_with_typing(self) -> None:
         while self.running:
             try:
-                cr = await self.getone()
+                if self.get_many is None:
+                    crs = [await self.getone()]
+                else:
+                    tp_to_records = await self.getmany(
+                        partitions=self.get_many.partitions,
+                        timeout_ms=self.get_many.timeout_ms,
+                        max_records=self.get_many.max_records,
+                    )
+                    # flatten the dict values to a single list
+                    crs = [cr for records in tp_to_records.values() for cr in records]
+
                 async with self.is_processing:
-                    await self.func(cr)
+                    for cr in crs:
+                        await self.func(cr)
+
             except errors.ConsumerStoppedError:
                 # This exception is only raised when we are inside the `getone`
                 # coroutine waiting for an event and `await consumer.stop()`
@@ -466,6 +545,7 @@ def stream(
     initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
     rebalance_listener: typing.Optional[RebalanceListener] = None,
     middlewares: typing.Optional[typing.List[Middleware]] = None,
+    get_many: typing.Optional[GetMany] = None,
     **kwargs,
 ) -> typing.Callable[[StreamFunc], Stream]:
     def decorator(func: StreamFunc) -> Stream:
@@ -478,6 +558,7 @@ def stream(
             rebalance_listener=rebalance_listener,
             middlewares=middlewares,
             subscribe_by_pattern=subscribe_by_pattern,
+            get_many=get_many,
             config=kwargs,
         )
         update_wrapper(s, func)
