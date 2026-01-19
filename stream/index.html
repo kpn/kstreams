@@ -414,6 +414,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kstreams.streams.Stream--getmany-to-fetch-batches-of-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      GetMany to fetch batches of events
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -903,6 +912,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kstreams.streams.Stream--getmany-to-fetch-batches-of-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      GetMany to fetch batches of events
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1350,6 +1368,21 @@ of topics must be provided.</p>
 <span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event from </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">loop</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">start</span><span class="p">(),</span>
+        <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">shutdown</span>
+    <span class="p">)</span>
 </code></pre></div>
 </div>
 <h4 id="kstreams.streams.Stream--subscribe-to-topics-by-pattern">Subscribe to topics by pattern</h4>
@@ -1376,6 +1409,46 @@ the regex <code>^dev--customer-.*</code>, for example <code>dev--customer-invoic
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Event from topic dev--customer-profile&quot;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid topic </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">loop</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">start</span><span class="p">(),</span>
+        <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">shutdown</span>
+    <span class="p">)</span>
+</code></pre></div>
+</div>
+<h4 id="kstreams.streams.Stream--getmany-to-fetch-batches-of-events">GetMany to fetch batches of events</h4>
+<p>Using <code>GetMany</code> it is possible to fetch batches of events from the topics
+the stream is subscribed to. In the following example the stream will fetch
+up to 3 events with a timeout of 1000 ms. If no events are available
+after the timeout it will process whatever events it has fetched until that moment.</p>
+<p>One important aspect to consider when using <code>GetMany</code> is that the
+<code>stream</code> will receive one <code>ConsumerRecord</code> at a time, so if <code>max_records</code>
+is set to N and there are N events available, the <code>stream</code> will be
+called N times, once for each event.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
+<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">GetMany</span>
+
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span>
+    <span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span>
+    <span class="n">get_many</span><span class="o">=</span><span class="n">GetMany</span><span class="p">(</span><span class="n">max_records</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">timeout_ms</span><span class="o">=</span><span class="mi">1000</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event from </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
@@ -1756,18 +1829,38 @@ with any records that are available currently in the buffer</p>
     <table>
       <thead>
         <tr>
-          <th>Type</th>
+<th>Name</th>          <th>Type</th>
           <th>Description</th>
         </tr>
       </thead>
       <tbody>
           <tr class="doc-section-item">
+<td><code>dict</code></td>            <td>
+                  <code>(<span title="kstreams.TopicPartition">TopicPartition</span>, <span title="list">list</span>[<span title="kstreams.types.ConsumerRecord">ConsumerRecord</span>])</code>
+            </td>
             <td>
+              <div class="doc-md-description">
+                <p>topic to list of</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td></td>            <td>
                   <code><span title="typing.Dict">Dict</span>[<span title="kstreams.TopicPartition">TopicPartition</span>, <span title="typing.List">List</span>[<span title="kstreams.types.ConsumerRecord">ConsumerRecord</span>]]</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Topic to list of records</p>
+                <p>records since the last fetch for the subscribed list of topics and</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td></td>            <td>
+                  <code><span title="typing.Dict">Dict</span>[<span title="kstreams.TopicPartition">TopicPartition</span>, <span title="typing.List">List</span>[<span title="kstreams.types.ConsumerRecord">ConsumerRecord</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>partitions</p>
               </div>
             </td>
           </tr>
@@ -1786,48 +1879,60 @@ with any records that are available currently in the buffer</p>
 
             <details class="quote">
               <summary>Source code in <code>kstreams/streams.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">297</span>
-<span class="normal">298</span>
-<span class="normal">299</span>
-<span class="normal">300</span>
-<span class="normal">301</span>
-<span class="normal">302</span>
-<span class="normal">303</span>
-<span class="normal">304</span>
-<span class="normal">305</span>
-<span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span>
-<span class="normal">309</span>
-<span class="normal">310</span>
-<span class="normal">311</span>
-<span class="normal">312</span>
-<span class="normal">313</span>
-<span class="normal">314</span>
-<span class="normal">315</span>
-<span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span>
-<span class="normal">319</span>
-<span class="normal">320</span>
-<span class="normal">321</span>
-<span class="normal">322</span>
-<span class="normal">323</span>
-<span class="normal">324</span>
-<span class="normal">325</span>
-<span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span>
-<span class="normal">329</span>
-<span class="normal">330</span>
-<span class="normal">331</span>
-<span class="normal">332</span>
-<span class="normal">333</span>
-<span class="normal">334</span>
-<span class="normal">335</span>
-<span class="normal">336</span>
-<span class="normal">337</span>
-<span class="normal">338</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">getmany</span><span class="p">(</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@deprecated</span><span class="p">(</span>
+    <span class="s2">&quot;getmany is deprecated and will be removed in future versions. &quot;</span>
+    <span class="s2">&quot;Please use @stream(get_many=GetMany(...)) instead.&quot;</span><span class="p">,</span>
+    <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">getmany</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">partitions</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">TopicPartition</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">timeout_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -1854,7 +1959,9 @@ with any records that are available currently in the buffer</p>
 <span class="sd">            with any records that are available currently in the buffer</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Topic to list of records</span>
+<span class="sd">        dict(TopicPartition, list[ConsumerRecord]): topic to list of</span>
+<span class="sd">        records since the last fetch for the subscribed list of topics and</span>
+<span class="sd">        partitions</span>
 
 <span class="sd">    !!! Example</span>
 <span class="sd">        ```python</span>
@@ -1876,6 +1983,12 @@ with any records that are available currently in the buffer</p>
 </div><div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>This approach does not works with <code>Dependency Injection</code>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <code>getmany</code> method is deprecated and will be removed in future
+versions. Please use the <code>get_many</code> parameter in the <code>@stream</code>
+decorator instead.</p>
 </div>
 <h2 id="rebalance-listener">Rebalance Listener</h2>
 <p>For some cases you will need a <code>RebalanceListener</code> so when partitions are <code>assigned</code> or <code>revoked</code> to the stream different accions can be performed.</p>

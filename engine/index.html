@@ -1486,7 +1486,9 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="normal">608</span>
 <span class="normal">609</span>
 <span class="normal">610</span>
-<span class="normal">611</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
+<span class="normal">611</span>
+<span class="normal">612</span>
+<span class="normal">613</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StreamEngine</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        backend kstreams.backends.Kafka: Backend to connect. Default `Kafka`</span>
@@ -2053,6 +2055,7 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="n">middlewares</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">Middleware</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">subscribe_by_pattern</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">error_policy</span><span class="p">:</span> <span class="n">StreamErrorPolicy</span> <span class="o">=</span> <span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">STOP</span><span class="p">,</span>
+        <span class="n">get_many</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">GetMany</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[</span><span class="n">StreamFunc</span><span class="p">],</span> <span class="n">Stream</span><span class="p">]:</span>
         <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">StreamFunc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stream</span><span class="p">:</span>
@@ -2064,6 +2067,7 @@ To override it per Stream, you can provide one per Stream</p>
                 <span class="n">rebalance_listener</span><span class="o">=</span><span class="n">rebalance_listener</span><span class="p">,</span>
                 <span class="n">middlewares</span><span class="o">=</span><span class="n">middlewares</span><span class="p">,</span>
                 <span class="n">subscribe_by_pattern</span><span class="o">=</span><span class="n">subscribe_by_pattern</span><span class="p">,</span>
+                <span class="n">get_many</span><span class="o">=</span><span class="n">get_many</span><span class="p">,</span>
                 <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
             <span class="p">)(</span><span class="n">func</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_stream</span><span class="p">(</span><span class="n">stream_from_func</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="n">error_policy</span><span class="p">)</span>
