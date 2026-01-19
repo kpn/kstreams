@@ -1,3 +1,9 @@
+## 0.30.0 (2026-01-19)
+
+### Feat
+
+- **GetMany**: GetMany functionality added to Stream. Closes #309 (#368)
+
 ## 0.29.0 (2025-12-04)
 
 ### BREAKING CHANGE

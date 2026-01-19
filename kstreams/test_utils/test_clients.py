@@ -1,3 +1,6 @@
+import asyncio
+import contextlib
+import typing
 from datetime import datetime
 from typing import (
     Any,
@@ -15,6 +18,7 @@ from kstreams import RebalanceListener, TopicPartition
 from kstreams.clients import Consumer, Producer
 from kstreams.serializers import NO_DEFAULT, Serializer
 from kstreams.types import ConsumerRecord, EncodedHeaders
+from tests import TimeoutErrorException
 
 from .structs import RecordMetadata
 from .topics import TopicManager
@@ -295,9 +299,23 @@ class TestConsumer(Base, Consumer):
         but it seems unnecessary for now; if end users request them we
         can add it
         """
-        return {
-            self._assignment[0]: [await self.getone() for _ in range(0, max_records)]
-        }
+        data: typing.Dict[
+            TopicPartition, typing.List[typing.Optional[ConsumerRecord]]
+        ] = {self._assignment[0]: []}
+
+        async def get_records():
+            for _ in range(0, max_records):
+                cr = await self.getone()
+                if cr is not None:
+                    data[self._assignment[0]].append(cr)
+
+        if timeout_ms == 0:
+            await get_records()
+        else:
+            with contextlib.suppress(TimeoutErrorException):
+                await asyncio.wait_for(get_records(), timeout=timeout_ms / 1000)
+
+        return data
 
     def seek(self, *, partition: TopicPartition, offset: int) -> None:
         # This method intends to have the same signature as aiokafka but with kwargs
