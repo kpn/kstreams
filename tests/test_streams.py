@@ -10,7 +10,7 @@ from kstreams.engine import Stream, StreamEngine
 from kstreams.streams import stream
 from kstreams.structs import TopicPartitionOffset
 from kstreams.test_utils import TestStreamClient
-from tests import TimeoutErrorException
+from kstreams.utils import TimeoutErrorException
 
 # NOTE: remove the test when `no typing` support is deprecated
 

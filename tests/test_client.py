@@ -23,7 +23,7 @@ from kstreams.test_utils import (
     TestStreamClient,
     TopicManager,
 )
-from tests import TimeoutErrorException
+from kstreams.utils import TimeoutErrorException
 
 topic = "local--kstreams-consumer"
 tp0 = TopicPartition(topic=topic, partition=0)

@@ -18,7 +18,7 @@ from kstreams import RebalanceListener, TopicPartition
 from kstreams.clients import Consumer, Producer
 from kstreams.serializers import NO_DEFAULT, Serializer
 from kstreams.types import ConsumerRecord, EncodedHeaders
-from tests import TimeoutErrorException
+from kstreams.utils import TimeoutErrorException
 
 from .structs import RecordMetadata
 from .topics import TopicManager
