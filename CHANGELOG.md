@@ -1,3 +1,9 @@
+## 0.30.1 (2026-01-23)
+
+### Fix
+
+- **TestStreamClient**: missing utility TimeoutErrorException added to kstreams and removed it from tests (#377)
+
 ## 0.30.0 (2026-01-19)
 
 ### Feat
