@@ -679,11 +679,11 @@
           <tr class="doc-section-item">
             <td><code><span title="kstreams.ProducerSettings.client_id">client_id</span></code></td>
             <td>
-                  <code><span title="str">str</span> | None</code>
+                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Name passed to Kafka brokers for request logging.</p>
+                <p>Name passed to Kafka brokers for request logging. Default to None.</p>
               </div>
             </td>
           </tr>
@@ -694,7 +694,8 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Interval in milliseconds to force metadata refresh.</p>
+                <p>Interval in milliseconds to force metadata refresh.
+Default to 300000 (<code>5 minutes</code>)</p>
               </div>
             </td>
           </tr>
@@ -705,30 +706,31 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Produce request timeout in milliseconds.</p>
+                <p>Produce request timeout in milliseconds.
+Default to 40000 (<code>40 seconds</code>)</p>
               </div>
             </td>
           </tr>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.ProducerSettings.acks">acks</span></code></td>
             <td>
-                  <code>0 | 1 | <span title="all">all</span> | None</code>
+                  <code><span title="typing.Union">Union</span>[<span title="typing.Literal">Literal</span>[0, 1], <span title="typing.Literal">Literal</span>[&#39;all&#39;]]</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Required broker acknowledgments
-for produce requests.</p>
+                <p>Required broker acknowledgments for produce requests. Default to 1.</p>
               </div>
             </td>
           </tr>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.ProducerSettings.compression_type">compression_type</span></code></td>
             <td>
-                  <code><span title="gzip">gzip</span> | <span title="snappy">snappy</span> | <span title="lz4">lz4</span> | <span title="zstd">zstd</span> | None</code>
+                  <code><span title="typing.Optional">Optional</span>[<span title="typing.Literal">Literal</span>[&#39;gzip&#39;, &#39;snappy&#39;, &#39;lz4&#39;, &#39;zstd&#39;]]</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Compression algorithm used for produced batches.</p>
+                <p>Compression algorithm used for produced batches.
+Default to None</p>
               </div>
             </td>
           </tr>
@@ -739,19 +741,19 @@ for produce requests.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Maximum buffered bytes per partition before send blocks.</p>
+                <p>Maximum buffered bytes per partition before send blocks.
+Default to 16384</p>
               </div>
             </td>
           </tr>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.ProducerSettings.partitioner">partitioner</span></code></td>
             <td>
-                  <code><span title="Callable">Callable</span>[..., <span title="int">int</span>] | None</code>
+                  <code><span title="typing.Optional">Optional</span>[<span title="typing.Callable">Callable</span>[..., <span title="int">int</span>]]</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Callable used to choose
-target partition.</p>
+                <p>Callable used to choose target partition. Default to None.</p>
               </div>
             </td>
           </tr>
@@ -762,7 +764,8 @@ target partition.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Maximum size of a produce request in bytes.</p>
+                <p>Maximum size of a produce request in bytes.
+Default to 1048576 (<code>~1 MB</code>)</p>
               </div>
             </td>
           </tr>
@@ -773,8 +776,8 @@ target partition.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Time in milliseconds to wait for additional
-records before send.</p>
+                <p>Time in milliseconds to wait for additional records before send.
+Default to 0</p>
               </div>
             </td>
           </tr>
@@ -785,18 +788,20 @@ records before send.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Backoff in milliseconds between retry attempts.</p>
+                <p>Backoff in milliseconds between retry attempts.
+Default to 100</p>
               </div>
             </td>
           </tr>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.ProducerSettings.connections_max_idle_ms">connections_max_idle_ms</span></code></td>
             <td>
-                  <code><span title="int">int</span> | None</code>
+                  <code><span title="typing.Optional">Optional</span>[<span title="int">int</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Close idle connections after this timeout.</p>
+                <p>Close idle connections after this timeout.
+Default to 540000 (<code>9 minutes</code>)</p>
               </div>
             </td>
           </tr>
@@ -807,18 +812,21 @@ records before send.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Enables idempotent production semantics.</p>
+                <p>Enables idempotent production semantics.
+The value of <code>acks</code> must be <code>all</code> when <code>enable_idempotence</code> is True.
+Default to False.</p>
               </div>
             </td>
           </tr>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.ProducerSettings.transactional_id">transactional_id</span></code></td>
             <td>
-                  <code><span title="str">str</span> | None</code>
+                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Transactional producer id for transactions.</p>
+                <p>Transactional producer id for transactions.
+Default to None</p>
               </div>
             </td>
           </tr>
@@ -829,7 +837,8 @@ records before send.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Transaction timeout in milliseconds.</p>
+                <p>Transaction timeout in milliseconds.
+Default to 60000 (<code>1 minute</code>)</p>
               </div>
             </td>
           </tr>
@@ -863,6 +872,7 @@ records before send.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
 <span class="kn">from</span> <span class="nn">kstreams.backends.kafka</span> <span class="kn">import</span> <span class="n">Kafka</span>
 <span class="kn">from</span> <span class="nn">kstreams.clients</span> <span class="kn">import</span> <span class="n">ProducerSettings</span>
+
 
 <span class="n">backend</span> <span class="o">=</span> <span class="n">Kafka</span><span class="p">(</span><span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;localhost:9092&quot;</span><span class="p">])</span>
 <span class="n">producer_settings</span> <span class="o">=</span> <span class="n">ProducerSettings</span><span class="p">(</span>
@@ -958,28 +968,43 @@ records before send.</p>
 <span class="normal">79</span>
 <span class="normal">80</span>
 <span class="normal">81</span>
-<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ProducerSettings</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ProducerSettings</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Kafka producer configuration.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        client_id (str | None): Name passed to Kafka brokers for request logging.</span>
-<span class="sd">        metadata_max_age_ms (int): Interval in milliseconds to force metadata refresh.</span>
-<span class="sd">        request_timeout_ms (int): Produce request timeout in milliseconds.</span>
-<span class="sd">        acks (0 | 1 | &quot;all&quot; | None): Required broker acknowledgments</span>
-<span class="sd">            for produce requests.</span>
-<span class="sd">        compression_type (&quot;gzip&quot; | &quot;snappy&quot; | &quot;lz4&quot; | &quot;zstd&quot; | None):</span>
-<span class="sd">            Compression algorithm used for produced batches.</span>
-<span class="sd">        max_batch_size (int): Maximum buffered bytes per partition before send blocks.</span>
-<span class="sd">        partitioner (Callable[..., int] | None): Callable used to choose</span>
-<span class="sd">            target partition.</span>
-<span class="sd">        max_request_size (int): Maximum size of a produce request in bytes.</span>
-<span class="sd">        linger_ms (int): Time in milliseconds to wait for additional</span>
-<span class="sd">            records before send.</span>
-<span class="sd">        retry_backoff_ms (int): Backoff in milliseconds between retry attempts.</span>
-<span class="sd">        connections_max_idle_ms (int | None): Close idle connections after this timeout.</span>
-<span class="sd">        enable_idempotence (bool): Enables idempotent production semantics.</span>
-<span class="sd">        transactional_id (str | None): Transactional producer id for transactions.</span>
-<span class="sd">        transaction_timeout_ms (int): Transaction timeout in milliseconds.</span>
+<span class="sd">        client_id: Name passed to Kafka brokers for request logging. Default to None.</span>
+<span class="sd">        metadata_max_age_ms: Interval in milliseconds to force metadata refresh.</span>
+<span class="sd">            Default to 300000 (`5 minutes`)</span>
+<span class="sd">        request_timeout_ms: Produce request timeout in milliseconds.</span>
+<span class="sd">            Default to 40000 (`40 seconds`)</span>
+<span class="sd">        acks: Required broker acknowledgments for produce requests. Default to 1.</span>
+<span class="sd">        compression_type: Compression algorithm used for produced batches.</span>
+<span class="sd">            Default to None</span>
+<span class="sd">        max_batch_size: Maximum buffered bytes per partition before send blocks.</span>
+<span class="sd">            Default to 16384</span>
+<span class="sd">        partitioner: Callable used to choose target partition. Default to None.</span>
+<span class="sd">        max_request_size: Maximum size of a produce request in bytes.</span>
+<span class="sd">            Default to 1048576 (`~1 MB`)</span>
+<span class="sd">        linger_ms: Time in milliseconds to wait for additional records before send.</span>
+<span class="sd">            Default to 0</span>
+<span class="sd">        retry_backoff_ms: Backoff in milliseconds between retry attempts.</span>
+<span class="sd">            Default to 100</span>
+<span class="sd">        connections_max_idle_ms: Close idle connections after this timeout.</span>
+<span class="sd">            Default to 540000 (`9 minutes`)</span>
+<span class="sd">        enable_idempotence: Enables idempotent production semantics.</span>
+<span class="sd">            The value of `acks` must be `all` when `enable_idempotence` is True.</span>
+<span class="sd">            Default to False.</span>
+<span class="sd">        transactional_id: Transactional producer id for transactions.</span>
+<span class="sd">            Default to None</span>
+<span class="sd">        transaction_timeout_ms: Transaction timeout in milliseconds.</span>
+<span class="sd">            Default to 60000 (`1 minute`)</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: If ``enable_idempotence`` is True and ``acks`` is 0 or 1.</span>
@@ -989,6 +1014,7 @@ records before send.</p>
 <span class="sd">        from kstreams import create_engine</span>
 <span class="sd">        from kstreams.backends.kafka import Kafka</span>
 <span class="sd">        from kstreams.clients import ProducerSettings</span>
+
 
 <span class="sd">        backend = Kafka(bootstrap_servers=[&quot;localhost:9092&quot;])</span>
 <span class="sd">        producer_settings = ProducerSettings(</span>
@@ -1007,9 +1033,7 @@ records before send.</p>
     <span class="n">client_id</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">metadata_max_age_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300000</span>
     <span class="n">request_timeout_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40000</span>
-    <span class="n">acks</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="kc">None</span>
-    <span class="p">)</span>
+    <span class="n">acks</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">compression_type</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span>
         <span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="s2">&quot;snappy&quot;</span><span class="p">,</span> <span class="s2">&quot;lz4&quot;</span><span class="p">,</span> <span class="s2">&quot;zstd&quot;</span><span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
