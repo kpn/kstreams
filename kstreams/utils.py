@@ -5,7 +5,7 @@ import logging
 import ssl
 import sys
 from tempfile import NamedTemporaryFile
-from typing import Any, Optional, Union
+from typing import Any, Optional, Type, Union
 
 from aiokafka.helpers import create_ssl_context as aiokafka_create_ssl_context
 
@@ -14,6 +14,14 @@ from kstreams import types
 logger = logging.getLogger(__name__)
 
 PY_VERSION = sys.version_info
+
+
+if PY_VERSION < (3, 11):
+    TimeoutErrorException: Type[Union[asyncio.TimeoutError, TimeoutError]] = (
+        asyncio.TimeoutError
+    )
+else:
+    TimeoutErrorException = TimeoutError
 
 
 def encode_headers(headers: types.Headers) -> types.EncodedHeaders:
