@@ -1,7 +1,7 @@
 from typing import Optional, Type
 
 from .backends.kafka import Kafka
-from .clients import Consumer, Producer
+from .clients import Consumer, Producer, ProducerSettings
 from .engine import StreamEngine
 from .prometheus.monitor import PrometheusMonitor
 from .serializers import Deserializer, Serializer
@@ -13,6 +13,7 @@ def create_engine(
     backend: Optional[Kafka] = None,
     consumer_class: Type[Consumer] = Consumer,
     producer_class: Type[Producer] = Producer,
+    producer_settings: Optional[ProducerSettings] = None,
     serializer: Optional[Serializer] = None,
     deserializer: Optional[Deserializer] = None,
     monitor: Optional[PrometheusMonitor] = None,
@@ -32,11 +33,12 @@ def create_engine(
         title=title,
         consumer_class=consumer_class,
         producer_class=producer_class,
+        producer_settings=producer_settings,
         serializer=serializer,
         deserializer=deserializer,
         monitor=monitor,
         on_startup=on_startup,
         on_stop=on_stop,
         after_startup=after_startup,
-        after_stop=after_startup,
+        after_stop=after_stop,
     )

@@ -3,8 +3,10 @@ from typing import Callable
 from unittest import mock
 
 import pytest
+from pydantic import ValidationError
 
-from kstreams import ConsumerRecord, RecordMetadata
+from kstreams import ConsumerRecord, ProducerSettings, RecordMetadata, create_engine
+from kstreams.backends.kafka import Kafka
 from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
 from kstreams.exceptions import DuplicateStreamException, EngineNotStartedException
@@ -156,6 +158,66 @@ async def test_start_stop_stream_engine(stream_engine: StreamEngine):
             await stream_engine.stop()
             stream_engine._producer.stop.assert_awaited()  # type: ignore
             Consumer.stop.assert_awaited()
+
+
+@pytest.mark.asyncio
+async def test_stream_engine_custom_producer_settings():
+    producer_settings = ProducerSettings(
+        client_id="custom-producer-client",
+        linger_ms=10,
+        request_timeout_ms=80000,
+    )
+    stream_engine = create_engine(producer_settings=producer_settings)
+
+    with mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
+        await stream_engine.start()
+
+        assert stream_engine._producer is not None
+        assert stream_engine._producer.config["client_id"] == "custom-producer-client"
+        assert stream_engine._producer.config["linger_ms"] == 10
+        assert stream_engine._producer.config["request_timeout_ms"] == 80000
+        assert stream_engine._producer._request_timeout_ms == 80000
+
+        await stream_engine.stop()
+
+
+def test_idempotence_and_acks_producer_settings():
+    ProducerSettings(
+        client_id="custom-producer-client",
+        linger_ms=10,
+        enable_idempotence=True,
+        acks="all",
+    )
+
+    with pytest.raises(ValidationError) as exc_info:
+        ProducerSettings(
+            client_id="custom-producer-client",
+            linger_ms=10,
+            enable_idempotence=True,
+        )
+
+    assert "`acks` must be `all` when `enable_idempotence` is True" in str(
+        exc_info.value
+    )
+
+
+@pytest.mark.asyncio
+async def test_stream_engine_producer_settings_merged_with_backend_config():
+    backend = Kafka(bootstrap_servers=["backend-host:9092"])
+    producer_settings = ProducerSettings(request_timeout_ms=80000)
+    stream_engine = create_engine(backend=backend, producer_settings=producer_settings)
+
+    with mock.patch.multiple(Producer, start=mock.DEFAULT, stop=mock.DEFAULT):
+        await stream_engine.start()
+
+        assert stream_engine._producer is not None
+        assert stream_engine._producer.config["bootstrap_servers"] == [
+            "backend-host:9092"
+        ]
+        assert stream_engine._producer.config["request_timeout_ms"] == 80000
+        assert stream_engine._producer._request_timeout_ms == 80000
+
+        await stream_engine.stop()
 
 
 @pytest.mark.asyncio

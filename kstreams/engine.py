@@ -7,7 +7,7 @@ from aiokafka.structs import RecordMetadata
 
 from .backends.kafka import Kafka
 from .batch import BatchAggregator, BatchEvent
-from .clients import Consumer, Producer
+from .clients import Consumer, Producer, ProducerSettings
 from .consts import StreamErrorPolicy, UDFType
 from .exceptions import DuplicateStreamException, EngineNotStartedException
 from .middleware import Middleware
@@ -32,6 +32,7 @@ class StreamEngine:
             instanciate a consumer. Default kstreams.Consumer
         producer_class kstreams.Producer: The producer class to use when
             instanciate the producer. Default kstreams.Producer
+        producer_settings kstreams.ProducerSettings | None: Settings for the producer.
         monitor kstreams.PrometheusMonitor: Prometheus monitor that holds
             the [metrics](https://kpn.github.io/kstreams/metrics/)
         title str | None: Engine name
@@ -65,6 +66,7 @@ class StreamEngine:
         backend: Kafka,
         consumer_class: typing.Type[Consumer],
         producer_class: typing.Type[Producer],
+        producer_settings: typing.Optional[ProducerSettings] = None,
         monitor: PrometheusMonitor,
         title: typing.Optional[str] = None,
         deserializer: Deprecated[typing.Optional[Deserializer]] = None,
@@ -78,6 +80,7 @@ class StreamEngine:
         self.backend = backend
         self.consumer_class = consumer_class
         self.producer_class = producer_class
+        self.producer_settings = producer_settings
         self.deserializer = deserializer
         self.serializer = serializer
         self.monitor = monitor
@@ -279,10 +282,10 @@ class StreamEngine:
         await execute_hooks(self._on_startup)
 
         # add the producer and streams to the Monitor
-        self.monitor.add_producer(self._producer)
-        self.monitor.add_streams(self._streams)
-
         await self.start_producer()
+        self.monitor.add_producer(self._producer)
+
+        self.monitor.add_streams(self._streams)
         await self.start_streams()
         self.start_monitoring()
 
@@ -445,13 +448,18 @@ class StreamEngine:
             await self._producer.stop()
         logger.info("Producer has STOPPED....")
 
-    async def start_producer(self, **kwargs) -> None:
+    async def start_producer(self) -> None:
         if self.producer_class is None:
             return None
-        config = {**self.backend.model_dump(), **kwargs}
+        config = {
+            **self.backend.model_dump(),
+            **(
+                self.producer_settings.model_dump(exclude_none=True)
+                if self.producer_settings
+                else {}
+            ),
+        }
         self._producer = self.producer_class(**config)
-        if self._producer is None:
-            return None
         await self._producer.start()
 
     async def start_streams(self) -> None:
