@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../middleware/">
+        <link rel="prev" href="../backends/">
       
       
-        <link rel="next" href="../large_project_structure/">
+        <link rel="next" href="../stream/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Utils - kstreams</title>
+        <title>Clients - kstreams</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#utils" class="md-skip">
+        <a href="#clients" class="md-skip">
           Skip to content
         </a>
       
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Utils
+              Clients
             
           </span>
         </div>
@@ -347,10 +347,32 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../clients/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Clients
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -361,6 +383,35 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kstreams.ProducerSettings" class="md-nav__link">
+    <span class="md-ellipsis">
+      ProducerSettings
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -501,32 +552,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Utils
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../utils/" class="md-nav__link">
         
   
   
@@ -537,59 +566,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#kstreams.utils" class="md-nav__link">
-    <span class="md-ellipsis">
-      utils
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="utils">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kstreams.utils.create_ssl_context" class="md-nav__link">
-    <span class="md-ellipsis">
-      create_ssl_context
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kstreams.utils.create_ssl_context_from_mem" class="md-nav__link">
-    <span class="md-ellipsis">
-      create_ssl_context_from_mem
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -643,35 +619,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kstreams.utils" class="md-nav__link">
+  <a href="#kstreams.ProducerSettings" class="md-nav__link">
     <span class="md-ellipsis">
-      utils
+      ProducerSettings
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="utils">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kstreams.utils.create_ssl_context" class="md-nav__link">
-    <span class="md-ellipsis">
-      create_ssl_context
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kstreams.utils.create_ssl_context_from_mem" class="md-nav__link">
-    <span class="md-ellipsis">
-      create_ssl_context_from_mem
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -694,357 +646,268 @@
   
 
 
-<h1 id="utils">Utils</h1>
-<p>Utility functions</p>
+<h1 id="clients">Clients</h1>
 
 
-<div class="doc doc-object doc-module">
+<div class="doc doc-object doc-class">
 
 
 
-<h2 id="kstreams.utils" class="doc doc-heading">
-            <code>kstreams.utils</code>
+<h2 id="kstreams.ProducerSettings" class="doc doc-heading">
+            <code>kstreams.ProducerSettings</code>
 
 
 </h2>
 
+
     <div class="doc doc-contents first">
 
 
+        <p>Kafka producer configuration.</p>
 
 
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="kstreams.utils.create_ssl_context" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">create_ssl_context</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">cafile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">capath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">certfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keyfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">crlfile</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Wrapper of <a href="https://aiokafka.readthedocs.io/en/stable/api.html#helpers">aiokafka.helpers.create_ssl_context</a>
-with typehints.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
+<p><span class="doc-section-title">Attributes:</span></p>
     <table>
       <thead>
         <tr>
           <th>Name</th>
           <th>Type</th>
           <th>Description</th>
-          <th>Default</th>
         </tr>
       </thead>
       <tbody>
           <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.client_id">client_id</span></code></td>
             <td>
-                <code>cafile</code>
-            </td>
-            <td>
-                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
+                  <code><span title="str">str</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Certificate Authority file path containing certificates
-used to sign broker certificates</p>
+                <p>Name passed to Kafka brokers for request logging.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.metadata_max_age_ms">metadata_max_age_ms</span></code></td>
             <td>
-                <code>capath</code>
-            </td>
-            <td>
-                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
+                  <code><span title="int">int</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Same as <code>cafile</code>, but points to a directory containing
-several CA certificates</p>
+                <p>Interval in milliseconds to force metadata refresh.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.request_timeout_ms">request_timeout_ms</span></code></td>
             <td>
-                <code>cadata</code>
-            </td>
-            <td>
-                  <code><span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="bytes">bytes</span>, None]</code>
+                  <code><span title="int">int</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Same as <code>cafile</code>, but instead contains already
-read data in either ASCII or bytes format</p>
+                <p>Produce request timeout in milliseconds.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.acks">acks</span></code></td>
             <td>
-                <code>certfile</code>
-            </td>
-            <td>
-                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
+                  <code>0 | 1 | <span title="all">all</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>optional filename of file in PEM format containing
-the client certificate, as well as any CA certificates needed to
-establish the certificate's authenticity</p>
+                <p>Required broker acknowledgments
+for produce requests.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.compression_type">compression_type</span></code></td>
             <td>
-                <code>keyfile</code>
-            </td>
-            <td>
-                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
+                  <code><span title="gzip">gzip</span> | <span title="snappy">snappy</span> | <span title="lz4">lz4</span> | <span title="zstd">zstd</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>optional filename containing the client private key.</p>
+                <p>Compression algorithm used for produced batches.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.max_batch_size">max_batch_size</span></code></td>
             <td>
-                <code>password</code>
-            </td>
-            <td>
-                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
+                  <code><span title="int">int</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>optional password to be used when loading the
-certificate chain</p>
+                <p>Maximum buffered bytes per partition before send blocks.</p>
               </div>
             </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.partitioner">partitioner</span></code></td>
             <td>
-                  <code>None</code>
+                  <code><span title="Callable">Callable</span>[..., <span title="int">int</span>] | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Callable used to choose
+target partition.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.max_request_size">max_request_size</span></code></td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Maximum size of a produce request in bytes.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.linger_ms">linger_ms</span></code></td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Time in milliseconds to wait for additional
+records before send.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.retry_backoff_ms">retry_backoff_ms</span></code></td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Backoff in milliseconds between retry attempts.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.connections_max_idle_ms">connections_max_idle_ms</span></code></td>
+            <td>
+                  <code><span title="int">int</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Close idle connections after this timeout.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.enable_idempotence">enable_idempotence</span></code></td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Enables idempotent production semantics.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.transactional_id">transactional_id</span></code></td>
+            <td>
+                  <code><span title="str">str</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Transactional producer id for transactions.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="kstreams.ProducerSettings.transaction_timeout_ms">transaction_timeout_ms</span></code></td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Transaction timeout in milliseconds.</p>
+              </div>
             </td>
           </tr>
       </tbody>
     </table>
 
 
-            <details class="quote">
-              <summary>Source code in <code>kstreams/utils.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 70</span>
-<span class="normal"> 71</span>
-<span class="normal"> 72</span>
-<span class="normal"> 73</span>
-<span class="normal"> 74</span>
-<span class="normal"> 75</span>
-<span class="normal"> 76</span>
-<span class="normal"> 77</span>
-<span class="normal"> 78</span>
-<span class="normal"> 79</span>
-<span class="normal"> 80</span>
-<span class="normal"> 81</span>
-<span class="normal"> 82</span>
-<span class="normal"> 83</span>
-<span class="normal"> 84</span>
-<span class="normal"> 85</span>
-<span class="normal"> 86</span>
-<span class="normal"> 87</span>
-<span class="normal"> 88</span>
-<span class="normal"> 89</span>
-<span class="normal"> 90</span>
-<span class="normal"> 91</span>
-<span class="normal"> 92</span>
-<span class="normal"> 93</span>
-<span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_ssl_context</span><span class="p">(</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">cafile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">capath</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">cadata</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">certfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">keyfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">crlfile</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper of [aiokafka.helpers.create_ssl_context](</span>
-<span class="sd">        https://aiokafka.readthedocs.io/en/stable/api.html#helpers</span>
-<span class="sd">    )</span>
-<span class="sd">    with typehints.</span>
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="ValueError">ValueError</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>enable_idempotence</code> is True and <code>acks</code> is 0 or 1.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+        <div class="admonition example">
+<p class="admonition-title">Example</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span>
+<span class="kn">from</span> <span class="nn">kstreams.backends.kafka</span> <span class="kn">import</span> <span class="n">Kafka</span>
+<span class="kn">from</span> <span class="nn">kstreams.clients</span> <span class="kn">import</span> <span class="n">ProducerSettings</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        cafile: Certificate Authority file path containing certificates</span>
-<span class="sd">            used to sign broker certificates</span>
-<span class="sd">        capath: Same as `cafile`, but points to a directory containing</span>
-<span class="sd">            several CA certificates</span>
-<span class="sd">        cadata: Same as `cafile`, but instead contains already</span>
-<span class="sd">            read data in either ASCII or bytes format</span>
-<span class="sd">        certfile: optional filename of file in PEM format containing</span>
-<span class="sd">            the client certificate, as well as any CA certificates needed to</span>
-<span class="sd">            establish the certificate&#39;s authenticity</span>
-<span class="sd">        keyfile: optional filename containing the client private key.</span>
-<span class="sd">        password: optional password to be used when loading the</span>
-<span class="sd">            certificate chain</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">Kafka</span><span class="p">(</span><span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;localhost:9092&quot;</span><span class="p">])</span>
+<span class="n">producer_settings</span> <span class="o">=</span> <span class="n">ProducerSettings</span><span class="p">(</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;my-producer&quot;</span><span class="p">,</span>
+    <span class="n">linger_ms</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">request_timeout_ms</span><span class="o">=</span><span class="mi">80000</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">aiokafka_create_ssl_context</span><span class="p">(</span>
-        <span class="n">cafile</span><span class="o">=</span><span class="n">cafile</span><span class="p">,</span>
-        <span class="n">capath</span><span class="o">=</span><span class="n">capath</span><span class="p">,</span>
-        <span class="n">cadata</span><span class="o">=</span><span class="n">cadata</span><span class="p">,</span>
-        <span class="n">certfile</span><span class="o">=</span><span class="n">certfile</span><span class="p">,</span>
-        <span class="n">keyfile</span><span class="o">=</span><span class="n">keyfile</span><span class="p">,</span>
-        <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
-        <span class="n">crlfile</span><span class="o">=</span><span class="n">crlfile</span><span class="p">,</span>
-    <span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
+    <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+    <span class="n">producer_settings</span><span class="o">=</span><span class="n">producer_settings</span>
+<span class="p">)</span>
+</code></pre></div>
 </div>
 
-<div class="doc doc-object doc-function">
 
 
-<h3 id="kstreams.utils.create_ssl_context_from_mem" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">create_ssl_context_from_mem</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">certdata</span><span class="p">,</span> <span class="n">keydata</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-
-</h3>
 
 
-    <div class="doc doc-contents ">
-
-        <p>Create a SSL context from data on memory.</p>
-<p>This makes it easy to read the certificates from environmental variables
-Usually the data is loaded from env variables.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>cadata</code>
-            </td>
-            <td>
-                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>certificates used to sign broker certificates provided as unicode str</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>certdata</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>the client certificate, as well as any CA certificates needed to
-establish the certificate's authenticity provided as unicode str</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>keydata</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>the client private key provided as unicode str</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>password</code>
-            </td>
-            <td>
-                  <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>optional password to be used when loading the
-certificate chain</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-            <details class="quote">
-              <summary>Source code in <code>kstreams/utils.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
+              <details class="quote">
+                <summary>Source code in <code>kstreams/clients.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
 <span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span>
@@ -1080,48 +943,108 @@ certificate chain</p>
 <span class="normal">64</span>
 <span class="normal">65</span>
 <span class="normal">66</span>
-<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_ssl_context_from_mem</span><span class="p">(</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">certdata</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">keydata</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">cadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a SSL context from data on memory.</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ProducerSettings</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kafka producer configuration.</span>
 
-<span class="sd">    This makes it easy to read the certificates from environmental variables</span>
-<span class="sd">    Usually the data is loaded from env variables.</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        client_id (str | None): Name passed to Kafka brokers for request logging.</span>
+<span class="sd">        metadata_max_age_ms (int): Interval in milliseconds to force metadata refresh.</span>
+<span class="sd">        request_timeout_ms (int): Produce request timeout in milliseconds.</span>
+<span class="sd">        acks (0 | 1 | &quot;all&quot; | None): Required broker acknowledgments</span>
+<span class="sd">            for produce requests.</span>
+<span class="sd">        compression_type (&quot;gzip&quot; | &quot;snappy&quot; | &quot;lz4&quot; | &quot;zstd&quot; | None):</span>
+<span class="sd">            Compression algorithm used for produced batches.</span>
+<span class="sd">        max_batch_size (int): Maximum buffered bytes per partition before send blocks.</span>
+<span class="sd">        partitioner (Callable[..., int] | None): Callable used to choose</span>
+<span class="sd">            target partition.</span>
+<span class="sd">        max_request_size (int): Maximum size of a produce request in bytes.</span>
+<span class="sd">        linger_ms (int): Time in milliseconds to wait for additional</span>
+<span class="sd">            records before send.</span>
+<span class="sd">        retry_backoff_ms (int): Backoff in milliseconds between retry attempts.</span>
+<span class="sd">        connections_max_idle_ms (int | None): Close idle connections after this timeout.</span>
+<span class="sd">        enable_idempotence (bool): Enables idempotent production semantics.</span>
+<span class="sd">        transactional_id (str | None): Transactional producer id for transactions.</span>
+<span class="sd">        transaction_timeout_ms (int): Transaction timeout in milliseconds.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        cadata: certificates used to sign broker certificates provided as unicode str</span>
-<span class="sd">        certdata: the client certificate, as well as any CA certificates needed to</span>
-<span class="sd">            establish the certificate&#39;s authenticity provided as unicode str</span>
-<span class="sd">        keydata: the client private key provided as unicode str</span>
-<span class="sd">        password: optional password to be used when loading the</span>
-<span class="sd">            certificate chain</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If ``enable_idempotence`` is True and ``acks`` is 0 or 1.</span>
+
+<span class="sd">    !!! Example</span>
+<span class="sd">        ```python</span>
+<span class="sd">        from kstreams import create_engine</span>
+<span class="sd">        from kstreams.backends.kafka import Kafka</span>
+<span class="sd">        from kstreams.clients import ProducerSettings</span>
+
+<span class="sd">        backend = Kafka(bootstrap_servers=[&quot;localhost:9092&quot;])</span>
+<span class="sd">        producer_settings = ProducerSettings(</span>
+<span class="sd">            client_id=&quot;my-producer&quot;,</span>
+<span class="sd">            linger_ms=10,</span>
+<span class="sd">            request_timeout_ms=80000,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        stream_engine = create_engine(</span>
+<span class="sd">            backend=backend,</span>
+<span class="sd">            producer_settings=producer_settings</span>
+<span class="sd">        )</span>
+<span class="sd">        ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">ExitStack</span><span class="p">()</span> <span class="k">as</span> <span class="n">stack</span><span class="p">:</span>
-        <span class="n">cert_file</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.crt&quot;</span><span class="p">))</span>
-        <span class="n">key_file</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.key&quot;</span><span class="p">))</span>
 
-        <span class="c1"># expecting unicode data, writing it as bytes to files as utf-8</span>
-        <span class="n">cert_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">certdata</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
-        <span class="n">cert_file</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+    <span class="n">client_id</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">metadata_max_age_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300000</span>
+    <span class="n">request_timeout_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40000</span>
+    <span class="n">acks</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">compression_type</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span>
+        <span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="s2">&quot;snappy&quot;</span><span class="p">,</span> <span class="s2">&quot;lz4&quot;</span><span class="p">,</span> <span class="s2">&quot;zstd&quot;</span><span class="p">]</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">max_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16384</span>
+    <span class="n">partitioner</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">max_request_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1048576</span>
+    <span class="n">linger_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">retry_backoff_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">connections_max_idle_ms</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">540000</span>
+    <span class="n">enable_idempotence</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">transactional_id</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">transaction_timeout_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60000</span>
 
-        <span class="n">key_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">keydata</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
-        <span class="n">key_file</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;forbid&quot;</span><span class="p">)</span>
 
-        <span class="n">ssl_context</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">create_default_context</span><span class="p">(</span><span class="n">cadata</span><span class="o">=</span><span class="n">cadata</span><span class="p">)</span>
-        <span class="n">ssl_context</span><span class="o">.</span><span class="n">load_cert_chain</span><span class="p">(</span>
-            <span class="n">cert_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">keyfile</span><span class="o">=</span><span class="n">key_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">ssl_context</span>
-    <span class="k">return</span> <span class="kc">None</span>
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">validate_idempotence_and_acks</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">enable_idempotence</span> <span class="ow">and</span> <span class="n">values</span><span class="o">.</span><span class="n">acks</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`acks` must be `all` when `enable_idempotence` is True&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">values</span>
 </code></pre></div></td></tr></table></div>
-            </details>
-    </div>
+              </details>
 
-</div>
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
 
 
 
