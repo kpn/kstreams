@@ -1,3 +1,9 @@
+## 0.31.0 (2026-06-10)
+
+### Feat
+
+- **ProducerSettings**: enable producer settings when creating Stream… (#396)
+
 ## 0.30.1 (2026-01-23)
 
 ### Fix
