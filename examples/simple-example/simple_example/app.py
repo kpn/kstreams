@@ -5,12 +5,17 @@ from dataclasses import dataclass, field
 
 import aiorun
 
-from kstreams import ConsumerRecord, create_engine
+from kstreams import ConsumerRecord, ProducerSettings, create_engine
 
 logger = logging.getLogger(__name__)
 
 topic = "local--kstreams-test"
-stream_engine = create_engine(title="my-stream-engine")
+producer_settings = ProducerSettings(
+    client_id="my-producer", linger_ms=10, request_timeout_ms=80000
+)
+stream_engine = create_engine(
+    title="my-stream-engine", producer_settings=producer_settings
+)
 
 
 @dataclass
