@@ -17,8 +17,11 @@
         <link rel="next" href="../clients/">
       
       
+        
+      
+      
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -26,10 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -56,7 +59,6 @@
     
       
 
-    
     
     
   </head>
@@ -267,9 +269,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Introduction
+  
+
     
   </span>
+  
   
 
       </a>
@@ -289,9 +296,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Getting Started
+  
+
     
   </span>
+  
   
 
       </a>
@@ -311,9 +323,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     StreamEngine
+  
+
     
   </span>
+  
   
 
       </a>
@@ -342,9 +359,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Backends
+  
+
     
   </span>
+  
   
 
           <span class="md-nav__icon md-icon"></span>
@@ -355,9 +377,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Backends
+  
+
     
   </span>
+  
   
 
       </a>
@@ -380,7 +407,9 @@
         <li class="md-nav__item">
   <a href="#kstreams.backends.kafka.Kafka" class="md-nav__link">
     <span class="md-ellipsis">
-      Kafka
+      
+        Kafka
+      
     </span>
   </a>
   
@@ -390,7 +419,9 @@
           <li class="md-nav__item">
   <a href="#kstreams.backends.kafka.Kafka--plaintext" class="md-nav__link">
     <span class="md-ellipsis">
-      PLAINTEXT
+      
+        PLAINTEXT
+      
     </span>
   </a>
   
@@ -399,7 +430,9 @@
           <li class="md-nav__item">
   <a href="#kstreams.backends.kafka.Kafka--ssl" class="md-nav__link">
     <span class="md-ellipsis">
-      SSL
+      
+        SSL
+      
     </span>
   </a>
   
@@ -430,9 +463,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Clients
+  
+
     
   </span>
+  
   
 
       </a>
@@ -452,9 +490,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Stream
+  
+
     
   </span>
+  
   
 
       </a>
@@ -474,9 +517,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Metrics
+  
+
     
   </span>
+  
   
 
       </a>
@@ -496,9 +544,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Monitoring
+  
+
     
   </span>
+  
   
 
       </a>
@@ -518,9 +571,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Serialization
+  
+
     
   </span>
+  
   
 
       </a>
@@ -540,9 +598,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Testing
+  
+
     
   </span>
+  
   
 
       </a>
@@ -562,9 +625,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Middleware
+  
+
     
   </span>
+  
   
 
       </a>
@@ -584,9 +652,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Utils
+  
+
     
   </span>
+  
   
 
       </a>
@@ -606,9 +679,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Large Projects
+  
+
     
   </span>
+  
   
 
       </a>
@@ -645,7 +723,9 @@
         <li class="md-nav__item">
   <a href="#kstreams.backends.kafka.Kafka" class="md-nav__link">
     <span class="md-ellipsis">
-      Kafka
+      
+        Kafka
+      
     </span>
   </a>
   
@@ -655,7 +735,9 @@
           <li class="md-nav__item">
   <a href="#kstreams.backends.kafka.Kafka--plaintext" class="md-nav__link">
     <span class="md-ellipsis">
-      PLAINTEXT
+      
+        PLAINTEXT
+      
     </span>
   </a>
   
@@ -664,7 +746,9 @@
           <li class="md-nav__item">
   <a href="#kstreams.backends.kafka.Kafka--ssl" class="md-nav__link">
     <span class="md-ellipsis">
-      SSL
+      
+        SSL
+      
     </span>
   </a>
   
@@ -685,6 +769,7 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
@@ -712,6 +797,7 @@ with the backend.</p>
 
 
     <div class="doc doc-contents first">
+
 
 
         <p>The <code>Kafka</code> backend validates the given attributes.</p>
@@ -836,8 +922,8 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
         <h4 id="kstreams.backends.kafka.Kafka--plaintext">PLAINTEXT</h4>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams.backends.kafka</span> <span class="kn">import</span> <span class="n">Kafka</span>
-<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Stream</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kstreams.backends.kafka</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kafka</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Stream</span>
 
 <span class="n">backend</span> <span class="o">=</span> <span class="n">Kafka</span><span class="p">(</span><span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;localhost:9092&quot;</span><span class="p">])</span>
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
@@ -846,13 +932,13 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
 <h4 id="kstreams.backends.kafka.Kafka--ssl">SSL</h4>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><span class="filename">Create SSL context</span><pre><span></span><code><span class="kn">import</span> <span class="nn">ssl</span>
+<div class="highlight"><span class="filename">Create SSL context</span><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">ssl</span>
 
-<span class="kn">from</span> <span class="nn">kstreams.backends.kafka</span> <span class="kn">import</span> <span class="n">Kafka</span>
-<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">Stream</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kstreams.backends.kafka</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kafka</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">Stream</span>
 
 
-<span class="k">def</span> <span class="nf">get_ssl_context</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ssl_context</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">create_ssl_context</span><span class="p">(</span>
         <span class="n">cafile</span><span class="o">=</span><span class="s2">&quot;certificate-authority-file-path&quot;</span><span class="p">,</span>
         <span class="n">capath</span><span class="o">=</span><span class="s2">&quot;points-to-directory-with-several-ca-certificates&quot;</span><span class="p">,</span>
@@ -877,13 +963,13 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
 </div>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><span class="filename">Create SSL context from memory</span><pre><span></span><code><span class="kn">import</span> <span class="nn">ssl</span>
+<div class="highlight"><span class="filename">Create SSL context from memory</span><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">ssl</span>
 
-<span class="kn">from</span> <span class="nn">kstreams.backends.kafka</span> <span class="kn">import</span> <span class="n">Kafka</span>
-<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">Stream</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kstreams.backends.kafka</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kafka</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">Stream</span>
 
 
-<span class="k">def</span> <span class="nf">get_ssl_context</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ssl_context</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">create_ssl_context_from_mem</span><span class="p">(</span>
         <span class="n">cadata</span><span class="o">=</span><span class="s2">&quot;ca-certificates-as-unicode&quot;</span><span class="p">,</span>
         <span class="n">certdata</span><span class="o">=</span><span class="s2">&quot;client-certificate-as-unicode&quot;</span><span class="p">,</span>
@@ -911,7 +997,8 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
 
 
 
-              <details class="quote">
+
+              <details class="mkdocstrings-source">
                 <summary>Source code in <code>kstreams/backends/kafka.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 23</span>
 <span class="normal"> 24</span>
@@ -1064,7 +1151,7 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
 <span class="normal">171</span>
 <span class="normal">172</span>
 <span class="normal">173</span>
-<span class="normal">174</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Kafka</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">174</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Kafka</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The `Kafka` backend validates the given attributes.</span>
 
@@ -1170,7 +1257,7 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
 
     <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">protocols_validation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">protocols_validation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
         <span class="n">security_protocol</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">security_protocol</span>
 
         <span class="k">if</span> <span class="n">security_protocol</span> <span class="o">==</span> <span class="n">SecurityProtocol</span><span class="o">.</span><span class="n">PLAINTEXT</span><span class="p">:</span>
@@ -1221,7 +1308,8 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
 
 
 
-  <div class="doc doc-children">
+<div class="doc doc-children">
+
 
 
 
@@ -1288,10 +1376,11 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

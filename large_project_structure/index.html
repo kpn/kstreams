@@ -15,8 +15,11 @@
       
       
       
+        
+      
+      
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -24,10 +27,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -54,7 +57,6 @@
     
       
 
-    
     
     
   </head>
@@ -265,9 +267,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Introduction
+  
+
     
   </span>
+  
   
 
       </a>
@@ -287,9 +294,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Getting Started
+  
+
     
   </span>
+  
   
 
       </a>
@@ -309,9 +321,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     StreamEngine
+  
+
     
   </span>
+  
   
 
       </a>
@@ -331,9 +348,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Backends
+  
+
     
   </span>
+  
   
 
       </a>
@@ -353,9 +375,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Clients
+  
+
     
   </span>
+  
   
 
       </a>
@@ -375,9 +402,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Stream
+  
+
     
   </span>
+  
   
 
       </a>
@@ -397,9 +429,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Metrics
+  
+
     
   </span>
+  
   
 
       </a>
@@ -419,9 +456,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Monitoring
+  
+
     
   </span>
+  
   
 
       </a>
@@ -441,9 +483,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Serialization
+  
+
     
   </span>
+  
   
 
       </a>
@@ -463,9 +510,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Testing
+  
+
     
   </span>
+  
   
 
       </a>
@@ -485,9 +537,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Middleware
+  
+
     
   </span>
+  
   
 
       </a>
@@ -507,9 +564,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Utils
+  
+
     
   </span>
+  
   
 
       </a>
@@ -536,9 +598,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Large Projects
+  
+
     
   </span>
+  
   
 
           <span class="md-nav__icon md-icon"></span>
@@ -549,9 +616,14 @@
   
   
   <span class="md-ellipsis">
+    
+  
     Large Projects
+  
+
     
   </span>
+  
   
 
       </a>
@@ -572,7 +644,9 @@
         <li class="md-nav__item">
   <a href="#resources" class="md-nav__link">
     <span class="md-ellipsis">
-      Resources
+      
+        Resources
+      
     </span>
   </a>
   
@@ -581,7 +655,9 @@
         <li class="md-nav__item">
   <a href="#streams" class="md-nav__link">
     <span class="md-ellipsis">
-      Streams
+      
+        Streams
+      
     </span>
   </a>
   
@@ -590,7 +666,9 @@
         <li class="md-nav__item">
   <a href="#application" class="md-nav__link">
     <span class="md-ellipsis">
-      Application
+      
+        Application
+      
     </span>
   </a>
   
@@ -599,7 +677,9 @@
         <li class="md-nav__item">
   <a href="#tests" class="md-nav__link">
     <span class="md-ellipsis">
-      Tests
+      
+        Tests
+      
     </span>
   </a>
   
@@ -640,7 +720,9 @@
         <li class="md-nav__item">
   <a href="#resources" class="md-nav__link">
     <span class="md-ellipsis">
-      Resources
+      
+        Resources
+      
     </span>
   </a>
   
@@ -649,7 +731,9 @@
         <li class="md-nav__item">
   <a href="#streams" class="md-nav__link">
     <span class="md-ellipsis">
-      Streams
+      
+        Streams
+      
     </span>
   </a>
   
@@ -658,7 +742,9 @@
         <li class="md-nav__item">
   <a href="#application" class="md-nav__link">
     <span class="md-ellipsis">
-      Application
+      
+        Application
+      
     </span>
   </a>
   
@@ -667,7 +753,9 @@
         <li class="md-nav__item">
   <a href="#tests" class="md-nav__link">
     <span class="md-ellipsis">
-      Tests
+      
+        Tests
+      
     </span>
   </a>
   
@@ -683,6 +771,7 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
@@ -720,7 +809,7 @@
 </div>
 <h2 id="resources">Resources</h2>
 <p>This python module contains any global resource that will be used later in the application, for example <code>DB connections</code> or the <code>StreamEngine</code>. Typically we will have the following:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">backends</span><span class="p">,</span> <span class="n">create_engine</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">backends</span><span class="p">,</span> <span class="n">create_engine</span>
 
 <span class="n">backend</span> <span class="o">=</span> <span class="n">backends</span><span class="o">.</span><span class="n">Kafka</span><span class="p">(</span>
     <span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;localhost:9092&quot;</span><span class="p">],</span>
@@ -735,9 +824,9 @@
 <p>Then later <code>stream_engine</code> can be reused to start the application.</p>
 <h2 id="streams">Streams</h2>
 <p>When starting your project you can have <code>N</code> number of <code>Streams</code> with its <code>handler</code>, let's say in <code>streams.py</code> module. All of the <code>Streams</code> will run next to each other and because they are in the same project it is really easy to share common code. However, this comes with a downside of <code>scalability</code> as it is not possible to take the advantages of <code>kafka</code> and scale up <code>Streams</code> individually. In next versions the <code>StreamEngine</code> will be able to select which <code>Stream/s</code> should run to mitigate this issue. Typically, your <code>streams.py</code> will look like:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">Stream</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stream</span>
 
-<span class="kn">from</span> <span class="nn">.streams_roster</span> <span class="kn">import</span> <span class="n">stream_roster</span><span class="p">,</span> <span class="n">stream_two_roster</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.streams_roster</span><span class="w"> </span><span class="kn">import</span> <span class="n">stream_roster</span><span class="p">,</span> <span class="n">stream_two_roster</span>
 
 
 <span class="n">my_stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
@@ -761,14 +850,14 @@
 <span class="o">...</span>
 </code></pre></div>
 <p>and <code>streams_roster.py</code> contains all the <code>coroutines</code> that will be executed when an event arrives</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">logging</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">kstreams</span> <span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">Send</span><span class="p">,</span> <span class="n">Stream</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">Send</span><span class="p">,</span> <span class="n">Stream</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">stream_roster</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stream_roster</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;showing bytes: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Event confirmed. </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
 
@@ -779,7 +868,7 @@
     <span class="p">)</span>
 
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">stream_two_roster</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stream_two_roster</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="o">...</span>
 </code></pre></div>
 <p>It is worth to note three things:</p>
@@ -790,21 +879,21 @@
 </ul>
 <h2 id="application">Application</h2>
 <p>The <code>entrypoint</code> is usually in <code>app.py</code>. The module contains the import of <code>stream_engine</code>, it's <code>hooks</code> and the <code>streams</code> to be added to the <code>engine</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">aiorun</span>
-<span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">import</span> <span class="nn">logging</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">aiorun</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">kstreams.stream_utils</span> <span class="kn">import</span> <span class="n">StreamErrorPolicy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kstreams.stream_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">StreamErrorPolicy</span>
 
-<span class="kn">from</span> <span class="nn">.resources</span> <span class="kn">import</span> <span class="n">stream_engine</span>
-<span class="kn">from</span> <span class="nn">.streams</span> <span class="kn">import</span> <span class="n">my_stream</span><span class="p">,</span> <span class="n">my_second_stream</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.resources</span><span class="w"> </span><span class="kn">import</span> <span class="n">stream_engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.streams</span><span class="w"> </span><span class="kn">import</span> <span class="n">my_stream</span><span class="p">,</span> <span class="n">my_second_stream</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <span class="c1"># hooks</span>
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">after_startup</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">init_events</span><span class="p">():</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">init_events</span><span class="p">():</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;local--hello-world&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;Hi Kstreams!&quot;</span><span class="p">)</span>
 
 
@@ -813,15 +902,15 @@
 <span class="n">stream_engine</span><span class="o">.</span><span class="n">add_stream</span><span class="p">(</span><span class="n">my_second_stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">STOP_ENGINE</span><span class="p">)</span>
 
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">():</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">():</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="n">loop</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">AbstractEventLoop</span><span class="p">):</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="n">loop</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">AbstractEventLoop</span><span class="p">):</span>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting application...&quot;</span><span class="p">)</span>
     <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start</span><span class="p">(),</span> <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">stop</span><span class="p">)</span>
@@ -831,24 +920,24 @@
 <p>In this module you test your application using the <code>TestStreamClient</code>, usually provided as a <code>fixture</code> thanks to <code>pytest</code>. The package <code>pytest-asyncio</code> is also needed 
 to test <code>async</code> code.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># conftest.py</span>
-<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
 
-<span class="kn">from</span> <span class="nn">kstreams.test_utils</span> <span class="kn">import</span> <span class="n">TestStreamClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kstreams.test_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestStreamClient</span>
 
-<span class="kn">from</span> <span class="nn">my_project.resources</span> <span class="kn">import</span> <span class="n">stream_engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">my_project.resources</span><span class="w"> </span><span class="kn">import</span> <span class="n">stream_engine</span>
 
 
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">stream_client</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">stream_client</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">TestStreamClient</span><span class="p">(</span><span class="n">stream_engine</span><span class="o">=</span><span class="n">stream_engine</span><span class="p">)</span>
 </code></pre></div>
 <p>then you can test your streams</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># test_app.py</span>
-<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
 
 
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">test_my_stream</span><span class="p">(</span><span class="n">stream_client</span><span class="p">):</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_my_stream</span><span class="p">(</span><span class="n">stream_client</span><span class="p">):</span>
     <span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;local--hello-world&quot;</span>  <span class="c1"># Use the same topic as the stream</span>
     <span class="n">event</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;{&quot;message&quot;: &quot;Hello world!&quot;}&#39;</span>
 
@@ -906,10 +995,11 @@ to test <code>async</code> code.</p>
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
