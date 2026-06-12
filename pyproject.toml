@@ -88,3 +88,11 @@ select = [
 
 [tool.ruff.lint.isort]
 known-first-party = ["kstreams", "tests"]
+
+[tool.tombi.lint.rules]
+tables-out-of-order = "off"
+dotted-keys-out-of-order = "off"
+
+[[tool.tombi.overrides]]
+files.include = ["pyproject.toml"]
+format.enabled = false
