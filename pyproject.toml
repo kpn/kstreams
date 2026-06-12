@@ -3,7 +3,7 @@ name = "kstreams"
 version = "0.31.0"
 description = "Build simple kafka streams applications"
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
-maintainers = ["Santiago Fraire Willemoës <santiago.fraire@kpn.com>"]
+maintainers = ["Santiago Fraire Willemoës <santiago.frairewillemoes@kpn.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 keywords = ["stream", "processing", "kafka", "event streaming"]
@@ -22,7 +22,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-aiokafka = "<1.0"
+aiokafka = {version = "^0.14.0", extras = ["lz4", "snappy", "zstd"]}
 prometheus-client = "<1.0"
 future = "^1.0.0"
 PyYAML = ">=5.4,<7.0.0"
