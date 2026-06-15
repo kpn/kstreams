@@ -18,7 +18,7 @@ from kstreams.middleware.middleware import (
 )
 
 from .backends.kafka import Kafka
-from .clients import Consumer
+from .clients import Consumer, ConsumerSettings
 from .consts import StreamErrorPolicy, UDFType
 from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
@@ -45,6 +45,8 @@ class Stream:
             [properties](https://aiokafka.readthedocs.io/en/stable/api.html#consumer-class)
             can be passed in the dictionary
         deserializer (kstreams.serializers.Deserializer): Deserializer to be used
+            when an event is consumed
+        settings (kstreams.clients.ConsumerSettings): Consumer settings to be used
             when an event is consumed
         initial_offsets (List[kstreams.TopicPartitionOffset]): List of
             TopicPartitionOffset that will `seek` the initial offsets to
@@ -213,13 +215,17 @@ class Stream:
         backend: typing.Optional[Kafka] = None,
         consumer_class: typing.Type[Consumer] = Consumer,
         name: typing.Optional[str] = None,
-        config: typing.Optional[typing.Dict] = None,
         deserializer: Deprecated[typing.Optional[Deserializer]] = None,
         initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
         rebalance_listener: typing.Optional[RebalanceListener] = None,
         middlewares: typing.Optional[typing.List[Middleware]] = None,
         error_policy: StreamErrorPolicy = StreamErrorPolicy.STOP,
         get_many: typing.Optional[GetMany] = None,
+        # Old way to pass consumer settings in the config dictionary,
+        # we keep it for backward compatibility but it is deprecated
+        config: typing.Optional[typing.Dict] = None,
+        # New way to pass consumer settings directly to the stream
+        settings: typing.Optional[ConsumerSettings] = None,
     ) -> None:
         self.func = func
         self.backend = backend
@@ -239,6 +245,7 @@ class Stream:
         self.subscribe_by_pattern = subscribe_by_pattern
         self.error_policy = error_policy
         self.get_many = get_many
+        self.settings = settings
 
     def __name__(self) -> str:
         return self.name
@@ -246,7 +253,14 @@ class Stream:
     def _create_consumer(self) -> Consumer:
         if self.backend is None:
             raise BackendNotSet("A backend has not been set for this stream")
-        config = {**self.backend.model_dump(), **self.config}
+
+        # We give priority to the settings passed directly to the stream,
+        # if there are no settings we fallback to the backend config
+        settings = (
+            self.settings.model_dump() if self.settings is not None else self.config
+        )
+
+        config = {**self.backend.model_dump(), **settings}
         return self.consumer_class(**config)
 
     def get_middlewares(self, engine: "StreamEngine") -> typing.Sequence[Middleware]:
@@ -546,6 +560,7 @@ def stream(
     rebalance_listener: typing.Optional[RebalanceListener] = None,
     middlewares: typing.Optional[typing.List[Middleware]] = None,
     get_many: typing.Optional[GetMany] = None,
+    settings: typing.Optional[ConsumerSettings] = None,
     **kwargs,
 ) -> typing.Callable[[StreamFunc], Stream]:
     def decorator(func: StreamFunc) -> Stream:
@@ -559,6 +574,7 @@ def stream(
             middlewares=middlewares,
             subscribe_by_pattern=subscribe_by_pattern,
             get_many=get_many,
+            settings=settings,
             config=kwargs,
         )
         update_wrapper(s, func)

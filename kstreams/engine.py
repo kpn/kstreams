@@ -7,7 +7,7 @@ from aiokafka.structs import RecordMetadata
 
 from .backends.kafka import Kafka
 from .batch import BatchAggregator, BatchEvent
-from .clients import Consumer, Producer, ProducerSettings
+from .clients import Consumer, ConsumerSettings, Producer, ProducerSettings
 from .consts import StreamErrorPolicy, UDFType
 from .exceptions import DuplicateStreamException, EngineNotStartedException
 from .middleware import Middleware
@@ -600,6 +600,7 @@ class StreamEngine:
         subscribe_by_pattern: bool = False,
         error_policy: StreamErrorPolicy = StreamErrorPolicy.STOP,
         get_many: typing.Optional[GetMany] = None,
+        settings: typing.Optional[ConsumerSettings] = None,
         **kwargs,
     ) -> typing.Callable[[StreamFunc], Stream]:
         def decorator(func: StreamFunc) -> Stream:
@@ -612,6 +613,7 @@ class StreamEngine:
                 middlewares=middlewares,
                 subscribe_by_pattern=subscribe_by_pattern,
                 get_many=get_many,
+                settings=settings,
                 **kwargs,
             )(func)
             self.add_stream(stream_from_func, error_policy=error_policy)
