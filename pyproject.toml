@@ -1,9 +1,9 @@
 [tool.poetry]
 name = "kstreams"
-version = "0.31.0"
+version = "0.32.0"
 description = "Build simple kafka streams applications"
 authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
-maintainers = ["Santiago Fraire Willemoës <santiago.fraire@kpn.com>"]
+maintainers = ["Santiago Fraire Willemoës <santiago.frairewillemoes@kpn.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 keywords = ["stream", "processing", "kafka", "event streaming"]
@@ -22,22 +22,22 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-aiokafka = "<1.0"
+aiokafka = {version = "^0.14.0", extras = ["lz4", "snappy", "zstd"]}
 prometheus-client = "<1.0"
 future = "^1.0.0"
 PyYAML = ">=5.4,<7.0.0"
 pydantic = ">=2.0.0,<3.0.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.3.3"
+pytest = "^9"
 pytest-asyncio = ">=0.24,<1.4"
 pytest-benchmark = "^5.1.0"
 pytest-cov = ">=6,<8"
 pytest-httpserver = "^1.1.0"
-mypy = "^1.11.2"
-ruff = ">=0.8,<0.15"
+mypy = "^2"
+ruff = "0.15"
 aiorun = ">=2024.5.1,<2026.0.0"
-jedi = "^0.19.1"
+jedi = "^0.20"
 mkdocs = "^1.1.2"
 uvicorn = "<1.0"
 commitizen = "^4"
@@ -88,3 +88,11 @@ select = [
 
 [tool.ruff.lint.isort]
 known-first-party = ["kstreams", "tests"]
+
+[tool.tombi.lint.rules]
+tables-out-of-order = "off"
+dotted-keys-out-of-order = "off"
+
+[[tool.tombi.overrides]]
+files.include = ["pyproject.toml"]
+format.enabled = false

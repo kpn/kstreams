@@ -1,11 +1,35 @@
 version: 2
 
 updates:
-- package-ecosystem: pip
-  directory: "/"
-  schedule:
-    interval: monthly
-- package-ecosystem: "github-actions"
-  directory: "/"
-  schedule:
-    interval: monthly
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "fix(deps)" # trigger a patch release in parent package after dependabot PR is merged
+    groups:
+      # Group 1: Production/Main dependencies
+      prod-dependencies:
+        dependency-type: "production" # Targets main dependencies
+        patterns:
+          - "*"
+
+      # Group 2: Development dependencies
+      dev-dependencies:
+        dependency-type: "development" # Targets tool.poetry.group.dev
+        patterns:
+          - "*"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "fix(ci)"
+    groups:
+      all-actions-dependencies:
+        patterns:
+          - "*"
