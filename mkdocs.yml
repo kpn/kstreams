@@ -31,6 +31,7 @@ nav:
   - Backends: 'backends.md'
   - Clients: 'clients.md'
   - Stream: 'stream.md'
+  - Rebalance Listener: 'rebalance_listener.md'
   - Metrics: 'metrics.md'
   - Monitoring: 'monitoring.md'
   - Serialization: 'serialization.md'
