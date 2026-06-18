@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/usr/bin/env sh
 #
 # Send messages to the given kafka topic (default: local--hello-world)
 #
@@ -6,6 +6,7 @@
 #
 # ./scripts/cluster/events/send  # default: local--hello-world
 # ./scripts/cluster/events/send example-topic
+set -e
 
 topic_name="${1:-local--hello-world}"
 
