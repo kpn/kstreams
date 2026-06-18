@@ -1,3 +1,16 @@
+## 0.33.0 (2026-06-18)
+
+### BREAKING CHANGE
+
+- the field was removed from the function,
+if you were using the crlfile, remove it as it is no longer
+supported.
+
+### Fix
+
+- **scripts**: do not assume terminal
+- **create_ssl_context**: remove crlfile field
+
 ## 0.32.0 (2026-06-12)
 
 ### Feat
