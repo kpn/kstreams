@@ -4,4 +4,10 @@
     options:
         show_root_heading: true
         docstring_section_style: table
-        show_bases: false
+        show_source: false
+
+::: kstreams.ConsumerSettings
+    options:
+        show_root_heading: true
+        docstring_section_style: table
+        show_source: false

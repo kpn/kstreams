@@ -3,11 +3,21 @@ import contextlib
 from typing import Callable, Set
 from unittest import mock
 
-from kstreams import ConsumerRecord, GetMany, Send, SendMany, TopicPartition
+import pytest
+from pydantic import ValidationError
+
+from kstreams import (
+    ConsumerRecord,
+    ConsumerSettings,
+    GetMany,
+    Send,
+    SendMany,
+    TopicPartition,
+    stream,
+)
 from kstreams.batch import BatchEvent
 from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
-from kstreams.streams import stream
 from kstreams.structs import TopicPartitionOffset
 from kstreams.test_utils import TestStreamClient
 from kstreams.utils import TimeoutErrorException
@@ -627,3 +637,30 @@ async def test_stream_simple_di_works(
 
     r = await streaming_fn.func(cr)
     assert r == b"test"
+
+
+def test_consumer_settings_reject_unknown_property():
+    with pytest.raises(ValidationError):
+        ConsumerSettings(unknown_setting=True)
+
+
+@pytest.mark.asyncio
+async def test_stream_engine_consumer_settings(stream_engine: StreamEngine):
+    consumer_settings = ConsumerSettings(
+        group_id="default-group",
+        enable_auto_commit=False,
+        auto_offset_reset="earliest",
+    )
+
+    with mock.patch.multiple(Consumer, start=mock.DEFAULT, stop=mock.DEFAULT):
+
+        @stream_engine.stream("local--hello-kpn", settings=consumer_settings)
+        async def my_stream(_):
+            pass
+
+        await my_stream.start()
+
+        assert my_stream.consumer is not None
+        assert my_stream.consumer._auto_offset_reset == "earliest"
+        assert my_stream.consumer._group_id == "default-group"
+        assert my_stream.consumer._enable_auto_commit is False

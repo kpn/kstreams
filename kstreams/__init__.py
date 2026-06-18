@@ -1,7 +1,7 @@
 from aiokafka.structs import RecordMetadata, TopicPartition
 
 from .batch import BatchEvent
-from .clients import Consumer, Producer, ProducerSettings
+from .clients import Consumer, ConsumerSettings, Producer, ProducerSettings
 from .create import StreamEngine, create_engine
 from .prometheus.monitor import PrometheusMonitor, PrometheusMonitorType
 from .rebalance_listener import (
@@ -17,6 +17,7 @@ from .types import ConsumerRecord, Send, SendMany
 __all__ = [
     "BatchEvent",
     "Consumer",
+    "ConsumerSettings",
     "GetMany",
     "Producer",
     "ProducerSettings",
