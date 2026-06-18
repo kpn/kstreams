@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 # This script runs benchmark tests using pytest and saves the results.
 #
 # By saving this information, way we can keep track of the regressions in performance.
@@ -7,6 +7,7 @@
 # Usage:
 # 1. Run this script from the terminal: ./bench-current
 # 2. The benchmark results will be saved in the `.benchmarks` folder.
+set -e
 
 export PREFIX=""
 if [ -d '.venv' ] ; then

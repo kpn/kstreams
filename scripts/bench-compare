@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script runs pytest benchmarks to compare benchmark results.
 #
 # The script compares the latest benchmark with the current code.
