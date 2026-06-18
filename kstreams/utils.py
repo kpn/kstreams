@@ -5,7 +5,7 @@ import logging
 import ssl
 import sys
 from tempfile import NamedTemporaryFile
-from typing import Any, Optional, Type, Union
+from typing import Optional, Type, Union
 
 from aiokafka.helpers import create_ssl_context as aiokafka_create_ssl_context
 
@@ -75,12 +75,15 @@ def create_ssl_context(
     certfile: Optional[str] = None,
     keyfile: Optional[str] = None,
     password: Optional[str] = None,
-    crlfile: Any = None,
 ):
     """Wrapper of [aiokafka.helpers.create_ssl_context](
         https://aiokafka.readthedocs.io/en/stable/api.html#helpers
     )
     with typehints.
+
+    Note:
+        Legacy function, we leave it to not depend directly on aiokafka,
+        but aiokafka now has typehints.
 
     Arguments:
         cafile: Certificate Authority file path containing certificates
@@ -104,7 +107,6 @@ def create_ssl_context(
         certfile=certfile,
         keyfile=keyfile,
         password=password,
-        crlfile=crlfile,
     )
 
 
