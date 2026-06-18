@@ -426,6 +426,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../rebalance_listener/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rebalance Listener
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../metrics/" class="md-nav__link">
         
   
@@ -819,7 +846,7 @@
 
 
 <h3 id="kstreams.utils.create_ssl_context" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">create_ssl_context</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">cafile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">capath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">certfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keyfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">crlfile</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">create_ssl_context</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">cafile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">capath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">certfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keyfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
@@ -829,6 +856,12 @@
         <p>Wrapper of <a href="https://aiokafka.readthedocs.io/en/stable/api.html#helpers">aiokafka.helpers.create_ssl_context</a>
 with typehints.</p>
 
+
+<details class="note" open>
+  <summary>Note</summary>
+  <p>Legacy function, we leave it to not depend directly on aiokafka,
+but aiokafka now has typehints.</p>
+</details>
 
 <p><span class="doc-section-title">Parameters:</span></p>
     <table>
@@ -987,7 +1020,9 @@ certificate chain</p>
 <span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span>
-<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_ssl_context</span><span class="p">(</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_ssl_context</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">cafile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">capath</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -995,12 +1030,15 @@ certificate chain</p>
     <span class="n">certfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">keyfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">crlfile</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper of [aiokafka.helpers.create_ssl_context](</span>
 <span class="sd">        https://aiokafka.readthedocs.io/en/stable/api.html#helpers</span>
 <span class="sd">    )</span>
 <span class="sd">    with typehints.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Legacy function, we leave it to not depend directly on aiokafka,</span>
+<span class="sd">        but aiokafka now has typehints.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        cafile: Certificate Authority file path containing certificates</span>
@@ -1024,7 +1062,6 @@ certificate chain</p>
         <span class="n">certfile</span><span class="o">=</span><span class="n">certfile</span><span class="p">,</span>
         <span class="n">keyfile</span><span class="o">=</span><span class="n">keyfile</span><span class="p">,</span>
         <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
-        <span class="n">crlfile</span><span class="o">=</span><span class="n">crlfile</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
