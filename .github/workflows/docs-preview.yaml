@@ -16,7 +16,7 @@ jobs:
     # Do not trigger for Dependabot PRs
     if: ${{ github.actor != 'dependabot[bot]' }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
