@@ -307,68 +307,19 @@ async with stream as stream_flow:  # Use the context manager
 !!! note
     Yield from a stream only works with the [typing approach](https://kpn.github.io/kstreams/stream/#dependency-injection-and-typing)
 
-## Get many
-
-::: kstreams.streams.Stream.getmany
-    options:
-        docstring_section_style: table
-        show_signature_annotations: false
-
-!!! warning
-    This approach does not works with `Dependency Injection`.
+## Get many (Deprecated)
 
 !!! warning
     The `getmany` method is deprecated and will be removed in future
     versions. Please use the `get_many` parameter in the `@stream`
-    decorator instead.
+    decorator instead
 
-## Rebalance Listener
+!!! warning
+    This approach does not works with `Dependency Injection`
 
-For some cases you will need a `RebalanceListener` so when partitions are `assigned` or `revoked` to the stream different accions can be performed.
-
-### Use cases
-
-- Cleanup or custom state save on the start of a rebalance operation
-- Saving offsets in a custom store when a partition is `revoked`
-- Load a state or cache warmup on completion of a successful partition re-assignment.
-
-### Metrics Rebalance Listener
-
-Kstreams use a default listener for all the streams to clean the metrics after a rebalance takes place
-
-::: kstreams.MetricsRebalanceListener
+::: kstreams.streams.Stream.getmany
     options:
-        show_root_heading: true
+        heading_level: 3
         docstring_section_style: table
         show_signature_annotations: false
-        show_bases: false
-
-### Manual Commit
-
-If `manual` commit is enabled, you migh want to use the `ManualCommitRebalanceListener`. This `rebalance listener` will call `commit`
-before the `stream` partitions are revoked to avoid the error `CommitFailedError` and *duplicate* message delivery after a rebalance. See code [example](https://github.com/kpn/kstreams/tree/master/examples/stream-with-manual-commit) with
-manual `commit`
-
-::: kstreams.ManualCommitRebalanceListener
-    options:
-        show_root_heading: true
-        docstring_section_style: table
-        show_signature_annotations: false
-        show_bases: false
-
-!!! note
-    `ManualCommitRebalanceListener` also includes the `MetricsRebalanceListener` funcionality.
-
-### Custom Rebalance Listener
-
-If you want to define a custom `RebalanceListener`, it has to inherits from `kstreams.RebalanceListener`.
-
-::: kstreams.RebalanceListener
-    options:
-        show_root_heading: true
-        docstring_section_style: table
-        show_signature_annotations: false
-        show_bases: false
-
-!!! note
-    It also possible to inherits from `ManualCommitRebalanceListener` and `MetricsRebalanceListener`
+        show_source: false

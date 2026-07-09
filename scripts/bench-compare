@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # This script runs pytest benchmarks to compare benchmark results.
 #
 # The script compares the latest benchmark with the current code.
@@ -7,14 +8,12 @@
 # Usage: Run this script locally for testing performance changes.
 # If you are running on a Mac, you may need to run the bench-current on the previous code,
 # and then on the current code.
-#
-#!/bin/bash -e
+set -e
 
 export PREFIX=""
 if [ -d '.venv' ] ; then
     export PREFIX=".venv/bin/"
 fi
-
 
 python --version
 ls -la
