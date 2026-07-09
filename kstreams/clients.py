@@ -2,6 +2,7 @@ import logging
 import typing
 
 import aiokafka
+from aiokafka.coordinator.assignors.roundrobin import RoundRobinPartitionAssignor
 from pydantic import BaseModel, ConfigDict, model_validator
 
 logger = logging.getLogger(__name__)
@@ -89,6 +90,134 @@ class ProducerSettings(BaseModel):
         return values
 
 
+class ConsumerSettings(BaseModel):
+    """Kafka consumer configuration.
+
+    Attributes:
+        group_id: Name of the consumer group to join.
+        client_id: Name passed to Kafka brokers for request logging. Default to `None`.
+        group_instance_id: Unique identifier for static consumer group membership.
+            Default to `None`
+        fetch_max_wait_ms: Maximum time in milliseconds the broker waits to fill fetch
+            requests. Default to 500 (`0.5 seconds`)
+        fetch_max_bytes: Maximum bytes to fetch in a single request. Default to 52428800
+        fetch_min_bytes: Minimum bytes to fetch in a single request. Default to 1
+        max_partition_fetch_bytes: Maximum bytes to fetch per partition in a
+            single request. Default to 1048576 (`~1 MB`)
+        request_timeout_ms: Fetch request timeout in milliseconds. Default to 40000
+        retry_backoff_ms: Backoff in milliseconds between retry attempts. Default to 100
+        auto_offset_reset: What to do when there is no initial offset or
+            the current offset is invalid. Default to `latest`
+        enable_auto_commit: Whether to automatically commit offsets. Default to True
+        auto_commit_interval_ms: Interval in milliseconds to automatically
+            commit offsets. Default to 5000 (`5 seconds`)
+        check_crcs: Whether to check CRCs on messages consumed from Kafka.
+            Default to `True`
+        metadata_max_age_ms: Interval in milliseconds to force metadata refresh.
+            Default to 300000 (`5 minutes`)
+        partition_assignment_strategy: List of partition assignor classes to
+            use for consumer group coordination.
+            Default to `RoundRobinPartitionAssignor`
+        max_poll_interval_ms: Maximum time in milliseconds between calls to poll()
+            before the consumer is considered failed. Default to 300000 (`5 minutes`)
+        rebalance_timeout_ms: Time in milliseconds to wait for a rebalance to
+            complete before raising an error. We decouple this setting to allow finer
+            tuning by users that use
+            [RebalanceListener](../stream/#kstreams.RebalanceListener)
+            to delay rebalacing If not set, defaults to `session_timeout_ms`.
+        session_timeout_ms: Timeout in milliseconds for consumer group session.
+            Default to 10000 (`10 seconds`)
+        heartbeat_interval_ms: Interval in milliseconds to send heartbeats to
+            the consumer group coordinator. Default to 3000 (`3 seconds`)
+        consumer_timeout_ms: Time in milliseconds to wait for messages in poll()
+            before returning an empty result. Default to 200 (`0.2 seconds`)
+        max_poll_records: Maximum number of records returned in a
+            single call to poll(). Default to `None` (no limit)
+        exclude_internal_topics: Whether to exclude internal topics when
+            auto-subscribing to topics by regex. Default to `True`
+        connections_max_idle_ms: Close idle connections after this timeout.
+            Default to `None` (no timeout)
+        isolation_level: Controls how to read messages written by
+            transactional producers. Default to `read_uncommitted`
+
+    !!! Example
+        ```python
+        from kstreams import create_engine, ConsumerSettings, ConsumerRecord
+
+        consumer_settings = ConsumerSettings(
+            group_id="example-group",
+            enable_auto_commit=False,
+            auto_offset_reset="earliest",
+        )
+
+        stream_engine = create_engine(title="my-stream-engine")
+
+
+        @stream_engine.stream("my-topic", settings=consumer_settings)
+        async def stream(cr: ConsumerRecord) -> None:
+            print(f"Event consumed: headers: {cr.headers}, payload: {cr.value}")
+
+        ```
+    """
+
+    # kafka client settings
+    group_id: str
+    client_id: typing.Optional[str] = None
+    group_instance_id: typing.Optional[str] = None
+    fetch_max_wait_ms: int = 500
+    fetch_max_bytes: int = 52428800
+    fetch_min_bytes: int = 1
+    max_partition_fetch_bytes: int = 1048576
+    request_timeout_ms: int = 40000
+    retry_backoff_ms: int = 100
+    auto_offset_reset: typing.Literal["latest", "earliest", "none"] = "latest"
+    enable_auto_commit: bool = True
+    auto_commit_interval_ms: int = 5000
+    check_crcs: bool = True
+    metadata_max_age_ms: int = 300000
+    partition_assignment_strategy: typing.Tuple[typing.Type, ...] = (
+        RoundRobinPartitionAssignor,
+    )
+    max_poll_interval_ms: int = 300000
+    rebalance_timeout_ms: typing.Optional[int] = None
+    session_timeout_ms: int = 10000
+    heartbeat_interval_ms: int = 3000
+    consumer_timeout_ms: int = 200
+    max_poll_records: typing.Optional[int] = None
+    exclude_internal_topics: bool = True
+    connections_max_idle_ms: typing.Optional[int] = 540000
+    isolation_level: typing.Literal["read_uncommitted", "read_committed"] = (
+        "read_uncommitted"
+    )
+
+    # TODO: check this later! Shuld it be part of ConsumerSettings?
+    #  Should we keep separeted Kstreams settings to the kafka driver?
+
+    # name: Optional name for the consumer. If not set, defaults to generated uuid4.
+    #     initial_offsets: Optional list of `TopicPartitionOffset` to set
+    # initial offsets to start consuming from. Default to `None`, which means
+    #     the consumer will start based on `auto_offset_reset` setting.
+    # rebalance_listener (kstreams.rebalance_listener.RebalanceListener): Listener
+    #     callbacks when partition are assigned or revoked
+    # middlewares: Optional list of `middleware.Middleware` to apply to the consumer.
+    #     error_policy: Policy to handle errors during stream processing.
+    #     Default to `StreamErrorPolicy.STOP`
+    # get_many: Optional `GetMany` instance to customize the behavior of
+    #     the `get_many` method. Default to `None`, which means the default behavior
+    #     will be used.
+
+    # # Kstreams specific settings
+    # name: typing.Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()))
+    # initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None
+    # rebalance_listener: typing.Optional[RebalanceListener] = None
+    # middlewares: typing.Optional[typing.List[Middleware]] = None
+    # subscribe_by_pattern: bool = False
+    # error_policy: StreamErrorPolicy = StreamErrorPolicy.STOP
+    # get_many: typing.Optional[GetMany] = None
+
+    model_config = ConfigDict(arbitrary_types_allowed=True, extra="forbid")
+
+
 class Consumer(aiokafka.AIOKafkaConsumer):
     def __init__(
         self,
@@ -98,6 +227,8 @@ class Consumer(aiokafka.AIOKafkaConsumer):
     ):
         self.config = kwargs
 
+        # Move this to Middleware in the future to allow
+        # users to customize it more easily
         if key_deserializer is None:
 
             def key_deserializer(key):
@@ -116,6 +247,8 @@ class Producer(aiokafka.AIOKafkaProducer):
     ):
         self.config = kwargs
 
+        # Move this to Serializer in the future to allow
+        # users to customize it more easily
         if key_serializer is None:
 
             def key_serializer(key):

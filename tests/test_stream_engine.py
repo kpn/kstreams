@@ -5,7 +5,12 @@ from unittest import mock
 import pytest
 from pydantic import ValidationError
 
-from kstreams import ConsumerRecord, ProducerSettings, RecordMetadata, create_engine
+from kstreams import (
+    ConsumerRecord,
+    ProducerSettings,
+    RecordMetadata,
+    create_engine,
+)
 from kstreams.backends.kafka import Kafka
 from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
