@@ -1,3 +1,9 @@
+## 0.33.1 (2026-07-09)
+
+### Fix
+
+- **ci**: bump the all-actions-dependencies group with 2 updates (#402)
+
 ## 0.33.0 (2026-06-18)
 
 ### BREAKING CHANGE
