@@ -1,7 +1,7 @@
 from aiokafka.structs import RecordMetadata, TopicPartition
 
+from .backends.kafka import Consumer, Producer, ProducerSettings
 from .batch import BatchEvent
-from .clients import Consumer, Producer, ProducerSettings
 from .create import StreamEngine, create_engine
 from .prometheus.monitor import PrometheusMonitor, PrometheusMonitorType
 from .rebalance_listener import (

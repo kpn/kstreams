@@ -11,15 +11,14 @@ from kstreams import (
     TopicPartition,
     create_engine,
 )
-from kstreams.backends.kafka import Kafka
-from kstreams.clients import Consumer
+from kstreams.backends.kafka import Consumer, Kafka
 from kstreams.engine import Stream, StreamEngine
 
 
 @pytest.mark.asyncio
 async def test_consumer():
     with mock.patch(
-        "kstreams.clients.aiokafka.AIOKafkaConsumer.start"
+        "kstreams.backends.kafka.clients.aiokafka.AIOKafkaConsumer.start"
     ) as mock_start_super:
         consumer = Consumer()
 
@@ -30,7 +29,7 @@ async def test_consumer():
 @pytest.mark.asyncio
 async def test_consumer_with_ssl(ssl_context):
     backend = Kafka(security_protocol="SSL", ssl_context=ssl_context)
-    consumer = Consumer(**backend.model_dump())
+    consumer = Consumer(**backend.to_dict())
     assert consumer._client._ssl_context
 
 
@@ -71,7 +70,7 @@ async def test_add_stream_with_rebalance_listener(stream_engine: StreamEngine):
 
     with (
         mock.patch.multiple(Consumer, start=mock.DEFAULT, unsubscribe=mock.DEFAULT),
-        mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"),
+        mock.patch("kstreams.backends.kafka.clients.aiokafka.AIOKafkaProducer.start"),
     ):
 
         @stream_engine.stream(
@@ -106,7 +105,7 @@ async def test_stream_with_default_rebalance_listener():
 
     with (
         mock.patch.multiple(Consumer, start=mock.DEFAULT, unsubscribe=mock.DEFAULT),
-        mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"),
+        mock.patch("kstreams.backends.kafka.clients.aiokafka.AIOKafkaProducer.start"),
         mock.patch("kstreams.PrometheusMonitor.start") as monitor_start,
         mock.patch(
             "kstreams.PrometheusMonitor.clean_stream_consumer_metrics"
@@ -156,7 +155,7 @@ async def test_stream_manual_commit_rebalance_listener(stream_engine: StreamEngi
         mock.patch.multiple(
             Consumer, start=mock.DEFAULT, commit=mock.DEFAULT, unsubscribe=mock.DEFAULT
         ),
-        mock.patch("kstreams.clients.aiokafka.AIOKafkaProducer.start"),
+        mock.patch("kstreams.backends.kafka.clients.aiokafka.AIOKafkaProducer.start"),
     ):
 
         @stream_engine.stream(

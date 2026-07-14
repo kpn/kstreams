@@ -6,8 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from kstreams import ConsumerRecord, ProducerSettings, RecordMetadata, create_engine
-from kstreams.backends.kafka import Kafka
-from kstreams.clients import Consumer, Producer
+from kstreams.backends.kafka import Consumer, Kafka, Producer
 from kstreams.engine import Stream, StreamEngine
 from kstreams.exceptions import DuplicateStreamException, EngineNotStartedException
 

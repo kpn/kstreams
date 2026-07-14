@@ -2,11 +2,12 @@ import asyncio
 import re
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import ClassVar, DefaultDict, Dict, Optional, Sequence, Tuple
+from typing import TYPE_CHECKING, ClassVar, DefaultDict, Dict, Optional, Sequence, Tuple
 
 from kstreams.types import ConsumerRecord
 
-from . import test_clients
+if TYPE_CHECKING:
+    from .clients import InMemoryConsumer
 
 
 @dataclass
@@ -18,7 +19,7 @@ class Topic:
     )
     total_events: int = 0
     # for now we assumed that 1 streams is connected to 1 topic
-    consumer: Optional[test_clients.Consumer] = None
+    consumer: Optional["InMemoryConsumer"] = None
 
     async def put(self, event: ConsumerRecord) -> None:
         await self.queue.put(event)
@@ -107,16 +108,14 @@ class TopicManager:
         )
 
     @classmethod
-    def create(
-        cls, name: str, consumer: Optional["test_clients.Consumer"] = None
-    ) -> Topic:
+    def create(cls, name: str, consumer: Optional["InMemoryConsumer"] = None) -> Topic:
         topic = Topic(name=name, queue=asyncio.Queue(), consumer=consumer)
         cls.topics[name] = topic
         return topic
 
     @classmethod
     def get_or_create(
-        cls, name: str, consumer: Optional["test_clients.Consumer"] = None
+        cls, name: str, consumer: Optional["InMemoryConsumer"] = None
     ) -> Tuple[Topic, bool]:
         """
         A convenience method for looking up Topic by name.

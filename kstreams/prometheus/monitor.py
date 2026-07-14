@@ -5,7 +5,7 @@ from typing import DefaultDict, Dict, List, Optional, TypeVar
 from prometheus_client import Gauge
 
 from kstreams import TopicPartition
-from kstreams.clients import Consumer
+from kstreams.backends.kafka import Consumer
 from kstreams.streams import Stream
 
 logger = logging.getLogger(__name__)

@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "memory-backend"
+version = "0.1.0"
+description = ""
+authors = ["Marcos Schroh <marcos.schroh@kpn.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.14"
+kstreams = { path = "../../.", develop = true }
+aiorun = "^2025.1.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+app = "memory_backend.app:main"

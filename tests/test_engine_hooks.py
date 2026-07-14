@@ -4,7 +4,7 @@ from unittest import mock
 import pytest
 
 from kstreams import ConsumerRecord, StreamEngine, create_engine
-from kstreams.clients import Consumer, Producer
+from kstreams.backends.kafka import Consumer, Producer
 
 
 @pytest.mark.asyncio

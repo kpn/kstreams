@@ -2,16 +2,19 @@ from types import TracebackType
 from typing import Any, Dict, List, Optional, Type
 
 from kstreams import Consumer, Producer
+from kstreams.backends.memory import (
+    InMemoryConsumer,
+    InMemoryProducer,
+    Topic,
+    TopicManager,
+)
 from kstreams.batch import BatchEvent
 from kstreams.engine import StreamEngine
 from kstreams.prometheus.monitor import PrometheusMonitor
 from kstreams.serializers import NO_DEFAULT, Serializer
 from kstreams.streams import Stream
+from kstreams.structs import RecordMetadata
 from kstreams.types import ConsumerRecord, Headers
-
-from .structs import RecordMetadata
-from .test_clients import TestConsumer, TestProducer
-from .topics import Topic, TopicManager
 
 
 class TestMonitor(PrometheusMonitor):
@@ -39,8 +42,9 @@ class TestStreamClient:
         monitoring_enabled: bool = True,
         stop_engine_after_test: bool = True,
         topics: Optional[List[str]] = None,
-        test_producer_class: Type[Producer] = TestProducer,
-        test_consumer_class: Type[Consumer] = TestConsumer,
+        # remove this in the future and use backend instead
+        test_producer_class: Type[Producer] = InMemoryProducer,
+        test_consumer_class: Type[Consumer] = InMemoryConsumer,
     ) -> None:
         self.stream_engine = stream_engine
         self.test_producer_class = test_producer_class
