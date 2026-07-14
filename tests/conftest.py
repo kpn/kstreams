@@ -7,7 +7,8 @@ import pytest
 import pytest_asyncio
 from pytest_httpserver import HTTPServer
 
-from kstreams import clients, create_engine
+from kstreams import create_engine
+from kstreams.backends.kafka import Consumer, Producer
 from kstreams.utils import PY_VERSION, create_ssl_context_from_mem
 
 
@@ -105,8 +106,8 @@ def topics():
 async def stream_engine():
     stream_engine = create_engine(
         title="test-engine",
-        consumer_class=clients.Consumer,
-        producer_class=clients.Producer,
+        consumer_class=Consumer,
+        producer_class=Producer,
     )
     yield stream_engine
 

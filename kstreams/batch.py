@@ -4,7 +4,7 @@ from typing import Any, List, NamedTuple, Optional
 from aiokafka.producer.message_accumulator import BatchBuilder
 from aiokafka.structs import RecordMetadata
 
-from .clients import Producer
+from .backends.kafka import Producer
 from .types import EncodedHeaders, Headers
 
 

@@ -4,8 +4,8 @@ from typing import Callable, Set
 from unittest import mock
 
 from kstreams import ConsumerRecord, GetMany, Send, SendMany, TopicPartition
+from kstreams.backends.kafka import Consumer, Producer
 from kstreams.batch import BatchEvent
-from kstreams.clients import Consumer, Producer
 from kstreams.engine import Stream, StreamEngine
 from kstreams.streams import stream
 from kstreams.structs import TopicPartitionOffset

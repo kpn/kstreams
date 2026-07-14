@@ -5,9 +5,9 @@ import typing
 
 from aiokafka.structs import RecordMetadata
 
-from .backends.kafka import Kafka
+from .backends.kafka import Consumer, Producer, ProducerSettings
+from .backends.protocol import Backend
 from .batch import BatchAggregator, BatchEvent
-from .clients import Consumer, Producer, ProducerSettings
 from .consts import StreamErrorPolicy, UDFType
 from .exceptions import DuplicateStreamException, EngineNotStartedException
 from .middleware import Middleware
@@ -63,9 +63,9 @@ class StreamEngine:
     def __init__(
         self,
         *,
-        backend: Kafka,
-        consumer_class: typing.Type[Consumer],
-        producer_class: typing.Type[Producer],
+        backend: Backend,
+        consumer_class: typing.Optional[typing.Type[Consumer]] = None,
+        producer_class: typing.Optional[typing.Type[Producer]] = None,
         producer_settings: typing.Optional[ProducerSettings] = None,
         monitor: PrometheusMonitor,
         title: typing.Optional[str] = None,
@@ -78,8 +78,8 @@ class StreamEngine:
     ) -> None:
         self.title = title
         self.backend = backend
-        self.consumer_class = consumer_class
-        self.producer_class = producer_class
+        self.consumer_class = consumer_class or self.backend.consumer_class
+        self.producer_class = producer_class or self.backend.producer_class
         self.producer_settings = producer_settings
         self.deserializer = deserializer
         self.serializer = serializer
@@ -449,10 +449,8 @@ class StreamEngine:
         logger.info("Producer has STOPPED....")
 
     async def start_producer(self) -> None:
-        if self.producer_class is None:
-            return None
         config = {
-            **self.backend.model_dump(),
+            **self.backend.to_dict(),
             **(
                 self.producer_settings.model_dump(exclude_none=True)
                 if self.producer_settings
@@ -606,12 +604,15 @@ class StreamEngine:
             stream_from_func = stream_func(
                 topics,
                 name=name,
-                deserializer=deserializer,
                 initial_offsets=initial_offsets,
                 rebalance_listener=rebalance_listener,
                 middlewares=middlewares,
                 subscribe_by_pattern=subscribe_by_pattern,
                 get_many=get_many,
+                # to be removed in the future, use middleware instead
+                deserializer=deserializer,
+                # to be removed in the future, use backend instead
+                consumer_class=self.consumer_class,
                 **kwargs,
             )(func)
             self.add_stream(stream_from_func, error_policy=error_policy)

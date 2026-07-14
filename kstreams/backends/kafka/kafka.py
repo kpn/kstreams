@@ -1,8 +1,10 @@
 import ssl
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Type
 
 from pydantic import BaseModel, ConfigDict, model_validator
+
+from .clients import Consumer, Producer
 
 
 class SecurityProtocol(str, Enum):
@@ -113,6 +115,9 @@ class Kafka(BaseModel):
             Check [create ssl context from memerory util](https://kpn.github.io/kstreams/utils/#kstreams.utils.create_ssl_context_from_mem)
     """
 
+    consumer_class: Type[Consumer] = Consumer
+    producer_class: Type[Producer] = Producer
+
     bootstrap_servers: List[str] = ["localhost:9092"]
     security_protocol: SecurityProtocol = SecurityProtocol.PLAINTEXT
 
@@ -123,6 +128,9 @@ class Kafka(BaseModel):
     sasl_plain_password: Optional[str] = None
     sasl_oauth_token_provider: Optional[str] = None
     model_config = ConfigDict(arbitrary_types_allowed=True, use_enum_values=True)
+
+    def to_dict(self):
+        return self.model_dump(exclude={"consumer_class", "producer_class"})
 
     @model_validator(mode="after")
     @classmethod

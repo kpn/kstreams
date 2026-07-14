@@ -15,14 +15,14 @@ from kstreams import (
     TopicPartition,
     TopicPartitionOffset,
 )
-from kstreams.batch import BatchEvent
-from kstreams.streams import Stream
-from kstreams.test_utils import (
-    TestConsumer,
-    TestProducer,
-    TestStreamClient,
+from kstreams.backends.memory import (
+    InMemoryConsumer,
+    InMemoryProducer,
     TopicManager,
 )
+from kstreams.batch import BatchEvent
+from kstreams.streams import Stream
+from kstreams.test_utils import TestStreamClient
 from kstreams.utils import TimeoutErrorException
 
 topic = "local--kstreams-consumer"
@@ -36,8 +36,8 @@ async def test_engine_clients(stream_engine: StreamEngine):
     client = TestStreamClient(stream_engine)
 
     async with client:
-        assert stream_engine.consumer_class is TestConsumer
-        assert stream_engine.producer_class is TestProducer
+        assert stream_engine.consumer_class is InMemoryConsumer
+        assert stream_engine.producer_class is InMemoryProducer
 
     # after leaving the context, everything should go to normal
     assert client.stream_engine.consumer_class is client.engine_consumer_class
@@ -704,7 +704,7 @@ async def test_streams_consume_events_with_initial_offsets(stream_engine: Stream
 
         stream: Stream = Stream(
             topics=topic,
-            consumer_class=TestConsumer,
+            consumer_class=InMemoryConsumer,
             name="my-stream",
             func=func_stream,
             initial_offsets=[
@@ -742,7 +742,7 @@ async def test_streams_consume_events_with_initial_offsets(stream_engine: Stream
         assert await stream.consumer.position(tp2) == 0
 
         # Checl all the events were consumed
-        assert not TopicManager.get(name=topic).size()
+        assert not client.get_topic(topic_name=topic).size()
 
     process.assert_has_calls([call(event1), call(event1), call(event2)], any_order=True)
 
@@ -756,7 +756,7 @@ async def test_send_many_example():
     async with client:
         metadata: typing.List[RecordMetadata] = await app.send_many()
 
-        topic = TopicManager.get("local--kstreams-send-many")
+        topic = client.get_topic(topic_name="local--kstreams-send-many")
         assert topic.total_events == 5
         assert topic.consumed
 
