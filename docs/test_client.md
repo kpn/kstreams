@@ -285,7 +285,7 @@ async def test_send_many_example():
     async with client:
         batch_metadata: typing.List[RecordMetadata] = await app.send_many()
 
-        topic = TopicManager.get("local--kstreams-send-many")
+        topic = client.get_topic(topic_name="local--kstreams-send-many")
         assert topic.total_events == 5
         assert topic.consumed
 

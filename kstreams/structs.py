@@ -6,6 +6,13 @@ from pydantic import BaseModel, NonNegativeInt, PositiveInt
 from kstreams import TopicPartition
 
 
+class RecordMetadata(NamedTuple):
+    offset: int
+    partition: int
+    topic: str
+    timestamp: int
+
+
 class TopicPartitionOffset(NamedTuple):
     topic: str
     partition: int

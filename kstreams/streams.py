@@ -17,8 +17,8 @@ from kstreams.middleware.middleware import (
     Middleware,
 )
 
-from .backends.kafka import Kafka
-from .clients import Consumer
+from .backends.kafka import Consumer
+from .backends.protocol import Backend
 from .consts import StreamErrorPolicy, UDFType
 from .rebalance_listener import RebalanceListener
 from .serializers import Deserializer
@@ -210,7 +210,7 @@ class Stream:
         *,
         subscribe_by_pattern: bool = False,
         func: StreamFunc,
-        backend: typing.Optional[Kafka] = None,
+        backend: typing.Optional[Backend] = None,
         consumer_class: typing.Type[Consumer] = Consumer,
         name: typing.Optional[str] = None,
         config: typing.Optional[typing.Dict] = None,
@@ -246,7 +246,7 @@ class Stream:
     def _create_consumer(self) -> Consumer:
         if self.backend is None:
             raise BackendNotSet("A backend has not been set for this stream")
-        config = {**self.backend.model_dump(), **self.config}
+        config = {**self.backend.to_dict(), **self.config}
         return self.consumer_class(**config)
 
     def get_middlewares(self, engine: "StreamEngine") -> typing.Sequence[Middleware]:
@@ -546,6 +546,7 @@ def stream(
     rebalance_listener: typing.Optional[RebalanceListener] = None,
     middlewares: typing.Optional[typing.List[Middleware]] = None,
     get_many: typing.Optional[GetMany] = None,
+    consumer_class: typing.Type[Consumer] = Consumer,
     **kwargs,
 ) -> typing.Callable[[StreamFunc], Stream]:
     def decorator(func: StreamFunc) -> Stream:
@@ -559,6 +560,7 @@ def stream(
             middlewares=middlewares,
             subscribe_by_pattern=subscribe_by_pattern,
             get_many=get_many,
+            consumer_class=consumer_class,
             config=kwargs,
         )
         update_wrapper(s, func)

@@ -1,8 +1,8 @@
 from unittest import mock
 
 from kstreams import BatchEvent, RecordMetadata
+from kstreams.backends.kafka import Producer
 from kstreams.batch import BatchAggregator
-from kstreams.clients import Producer
 from kstreams.engine import StreamEngine
 
 

@@ -5,18 +5,16 @@ from dataclasses import dataclass, field
 
 import aiorun
 
-from kstreams import ConsumerRecord, ProducerSettings, create_engine
-from kstreams.backends import Kafka
+from kstreams import ConsumerRecord, create_engine
+from kstreams.backends import InMemory
 
 logger = logging.getLogger(__name__)
 
 topic = "local--kstreams-test"
-producer_settings = ProducerSettings(
-    client_id="my-producer", linger_ms=10, request_timeout_ms=80000
-)
 
 stream_engine = create_engine(
-    title="my-stream-engine", backend=Kafka(), producer_settings=producer_settings
+    title="my-stream-engine",
+    backend=InMemory(),
 )
 
 
@@ -79,3 +77,7 @@ async def stop(loop: asyncio.AbstractEventLoop):
 def main():
     logging.basicConfig(level=logging.INFO)
     aiorun.run(start(), stop_on_unhandled_errors=True, shutdown_callback=stop)
+
+
+if __name__ == "__main__":
+    main()

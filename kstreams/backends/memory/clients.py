@@ -14,13 +14,13 @@ from typing import (
     Union,
 )
 
-from kstreams import RebalanceListener, TopicPartition
-from kstreams.clients import Consumer, Producer
+from kstreams.backends.kafka import Consumer, Producer
+from kstreams.rebalance_listener import RebalanceListener, TopicPartition
 from kstreams.serializers import NO_DEFAULT, Serializer
+from kstreams.structs import RecordMetadata
 from kstreams.types import ConsumerRecord, EncodedHeaders
 from kstreams.utils import TimeoutErrorException
 
-from .structs import RecordMetadata
 from .topics import TopicManager
 
 
@@ -56,9 +56,7 @@ class Base:
     async def start(self): ...
 
 
-class TestProducer(Base, Producer):
-    __test__ = False
-
+class InMemoryProducer(Base, Producer):
     def create_batch(self) -> BatchEvents:
         return BatchEvents()
 
@@ -148,9 +146,7 @@ class TestProducer(Base, Producer):
         return None
 
 
-class TestConsumer(Base, Consumer):
-    __test__ = False
-
+class InMemoryConsumer(Base, Consumer):
     def __init__(self, group_id: Optional[str] = None, **kwargs) -> None:
         # copy the aiokafka behavior
         self.topics: Optional[Sequence[str]] = None
