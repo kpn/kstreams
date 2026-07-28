@@ -1,3 +1,9 @@
+## 0.34.0 (2026-07-28)
+
+### Feat
+
+- **backend**: InMemory backend added (#403)
+
 ## 0.33.1 (2026-07-09)
 
 ### Fix
