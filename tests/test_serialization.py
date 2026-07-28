@@ -5,8 +5,8 @@ from unittest import mock
 import pytest
 
 from kstreams import ConsumerRecord, StreamEngine, consts
+from kstreams.backends.kafka import Producer
 from kstreams.batch import BatchEvent
-from kstreams.clients import Producer
 from kstreams.streams import Stream
 from kstreams.test_utils.test_utils import TestStreamClient
 from kstreams.types import Headers
