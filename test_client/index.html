@@ -1230,7 +1230,7 @@ the events were procuced properly</p>
     <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="p">:</span>
         <span class="n">batch_metadata</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">RecordMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">send_many</span><span class="p">()</span>
 
-        <span class="n">topic</span> <span class="o">=</span> <span class="n">TopicManager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;local--kstreams-send-many&quot;</span><span class="p">)</span>
+        <span class="n">topic</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_topic</span><span class="p">(</span><span class="n">topic_name</span><span class="o">=</span><span class="s2">&quot;local--kstreams-send-many&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">topic</span><span class="o">.</span><span class="n">total_events</span> <span class="o">==</span> <span class="mi">5</span>
         <span class="k">assert</span> <span class="n">topic</span><span class="o">.</span><span class="n">consumed</span>
 
