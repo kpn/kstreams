@@ -1,3 +1,9 @@
+## 0.34.2 (2026-08-03)
+
+### Fix
+
+- **ci**: bump actions/setup-python in the all-actions-dependencies group (#405)
+
 ## 0.34.1 (2026-07-31)
 
 ### Fix
