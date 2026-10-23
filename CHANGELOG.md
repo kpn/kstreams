@@ -1,3 +1,9 @@
+## 0.34.6 (2026-10-23)
+
+### Fix
+
+- **deps**: bump certifi in /examples/confluent-example
+
 ## 0.34.5 (2026-10-05)
 
 ### Fix
