@@ -55,7 +55,10 @@ class JokerBlokerMiddleware(kstreams.middleware.BaseMiddleware):
         try:
             await self.next_call(cr)
         except ValueError:
-            print("Blocking the Joker 🤡⃤ 🤡⃤ 🤡⃤. so we can continue processing events... \n")
+            print(
+                "Blocking the Joker 🤡⃤ 🤡⃤ 🤡⃤. so we can continue processing events... \n"
+            )
+
 
 middlewares = [kstreams.middleware.Middleware(JokerBlokerMiddleware)]
 

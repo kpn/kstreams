@@ -8,10 +8,11 @@ license = "Apache-2.0"
 readme = "README.md"
 keywords = ["stream", "processing", "kafka", "event streaming"]
 classifiers = [
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Programming Language :: Python :: Implementation :: CPython",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
@@ -21,8 +22,8 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-aiokafka = {version = "^0.14.0", extras = ["lz4", "snappy", "zstd"]}
+python = "^3.11"
+aiokafka = {version = "^0.15.0", extras = ["lz4", "snappy", "zstd"]}
 prometheus-client = "<1.0"
 future = "^1.0.0"
 PyYAML = ">=5.4,<7.0.0"
@@ -30,18 +31,18 @@ pydantic = ">=2.0.0,<3.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9"
-pytest-asyncio = ">=0.24,<1.4"
+pytest-asyncio = "^1"
 pytest-benchmark = "^5.1.0"
 pytest-cov = ">=6,<8"
 pytest-httpserver = "^1.1.0"
 mypy = "^2"
-ruff = "0.15"
+ruff = "0.17"
 aiorun = ">=2024.5.1,<2026.0.0"
 jedi = "^0.20"
 mkdocs = "^1.1.2"
 uvicorn = "<1.0"
 commitizen = "^4"
-fastapi = ">=0.115,<0.122"
+fastapi = ">=0.115,<0.164"
 mkdocs-material = "^9.5.39"
 starlette-prometheus = "^0.10.0"
 codecov = "^2.1.12"
