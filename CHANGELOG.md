@@ -1,3 +1,9 @@
+## 0.35.0 (2026-11-16)
+
+### Fix
+
+- upgrade dependencies and drop python310
+
 ## 0.34.6 (2026-10-23)
 
 ### Fix
