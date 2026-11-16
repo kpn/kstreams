@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
     
     
       
@@ -29,10 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -1129,7 +1129,7 @@
           <tr class="doc-section-item">
             <td><code><span title="kstreams.streams.Stream.name">name</span></code></td>
             <td>
-                  <code><span title="Optional">Optional</span>[<span title="str">str</span>]</code>
+                  <code>Optional[<span title="str">str</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1140,7 +1140,7 @@
           <tr class="doc-section-item">
             <td><code><span title="kstreams.streams.Stream.topics">topics</span></code></td>
             <td>
-                  <code><span title="List">List</span>[<span title="str">str</span>]</code>
+                  <code>List[<span title="str">str</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1162,7 +1162,7 @@
           <tr class="doc-section-item">
             <td><code><span title="kstreams.streams.Stream.backend">backend</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="kstreams.backends.kafka.Kafka (kstreams.backends.Kafka)" href="../backends/#kstreams.backends.kafka.Kafka">Kafka</a></code>
+                  <code>Kafka</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1174,7 +1174,7 @@ Backend to connect. Default <code>Kafka</code></p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.streams.Stream.func">func</span></code></td>
             <td>
-                  <code><span title="Callable">Callable</span>[[<a class="autorefs autorefs-internal" title="kstreams.streams.Stream" href="#kstreams.streams.Stream">Stream</a>], <span title="Awaitable">Awaitable</span>[<span title="Any">Any</span>]]</code>
+                  <code>Callable[[<a class="autorefs autorefs-internal" title="kstreams.streams.Stream" href="#kstreams.streams.Stream">Stream</a>], Awaitable[Any]]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1186,7 +1186,7 @@ to be called when an event arrives</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.streams.Stream.config">config</span></code></td>
             <td>
-                  <code><span title="Dict">Dict</span>[<span title="str">str</span>, <span title="Any">Any</span>]</code>
+                  <code>Dict[<span title="str">str</span>, Any]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1199,7 +1199,7 @@ can be passed in the dictionary</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.streams.Stream.deserializer">deserializer</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Deserializer" href="../serialization/#kstreams.serializers.Deserializer">Deserializer</a></code>
+                  <code>Deserializer</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1211,7 +1211,7 @@ when an event is consumed</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.streams.Stream.initial_offsets">initial_offsets</span></code></td>
             <td>
-                  <code><span title="List">List</span>[<span title="kstreams.TopicPartitionOffset">TopicPartitionOffset</span>]</code>
+                  <code>List[TopicPartitionOffset]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1223,7 +1223,7 @@ TopicPartitionOffset that will <code>seek</code> the initial offsets to</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.streams.Stream.rebalance_listener">rebalance_listener</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="kstreams.RebalanceListener (kstreams.rebalance_listener.RebalanceListener)" href="../rebalance_listener/#kstreams.RebalanceListener">RebalanceListener</a></code>
+                  <code>RebalanceListener</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1240,12 +1240,12 @@ callbacks when partition are assigned or revoked</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">aiorun</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 
-<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span><span class="p">)</span>
 
 
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;my-group-id&quot;</span><span class="p">)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">"local--kstreams"</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">"my-group-id"</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">():</span>
@@ -1256,7 +1256,7 @@ callbacks when partition are assigned or revoked</p>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
         <span class="n">start</span><span class="p">(),</span>
         <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -1272,15 +1272,15 @@ of topics must be provided.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">aiorun</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 
-<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span><span class="p">)</span>
 
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span>
-    <span class="p">[</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="s2">&quot;local--hello-world&quot;</span><span class="p">],</span>
-    <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;my-group-id&quot;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s2">"local--kstreams"</span><span class="p">,</span> <span class="s2">"local--hello-world"</span><span class="p">],</span>
+    <span class="n">group_id</span><span class="o">=</span><span class="s2">"my-group-id"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">consume</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event from </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Event from </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">():</span>
@@ -1290,7 +1290,7 @@ of topics must be provided.</p>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
         <span class="n">start</span><span class="p">(),</span>
         <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -1307,21 +1307,21 @@ the regex <code>^dev--customer-.*</code>, for example <code>dev--customer-invoic
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">aiorun</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 
-<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span><span class="p">)</span>
 
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span>
-    <span class="n">topics</span><span class="o">=</span><span class="s2">&quot;^dev--customer-.*$&quot;</span><span class="p">,</span>
+    <span class="n">topics</span><span class="o">=</span><span class="s2">"^dev--customer-.*$"</span><span class="p">,</span>
     <span class="n">subscribe_by_pattern</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;my-group-id&quot;</span><span class="p">,</span>
+    <span class="n">group_id</span><span class="o">=</span><span class="s2">"my-group-id"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="s2">&quot;dev--customer-invoice&quot;</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Event from topic dev--customer-invoice&quot;</span>
-    <span class="k">elif</span> <span class="n">cr</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="s2">&quot;dev--customer-profile&quot;</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Event from topic dev--customer-profile&quot;</span>
+    <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="s2">"dev--customer-invoice"</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Event from topic dev--customer-invoice"</span>
+    <span class="k">elif</span> <span class="n">cr</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="s2">"dev--customer-profile"</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Event from topic dev--customer-profile"</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid topic </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid topic </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">():</span>
@@ -1331,7 +1331,7 @@ the regex <code>^dev--customer-.*</code>, for example <code>dev--customer-invoic
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
         <span class="n">start</span><span class="p">(),</span>
         <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -1353,15 +1353,15 @@ called N times, once for each event.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">aiorun</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">GetMany</span>
 
-<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span><span class="p">)</span>
 
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span>
-    <span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span>
+    <span class="s2">"local--kstreams"</span><span class="p">,</span>
     <span class="n">get_many</span><span class="o">=</span><span class="n">GetMany</span><span class="p">(</span><span class="n">max_records</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">timeout_ms</span><span class="o">=</span><span class="mi">1000</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">consume</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event from </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Event from </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">():</span>
@@ -1371,7 +1371,7 @@ called N times, once for each event.</p>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
         <span class="n">start</span><span class="p">(),</span>
         <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -1425,7 +1425,7 @@ for this reason it is possible to remove the <code>async for loop</code> using p
 <span class="kn">from</span><span class="w"> </span><span class="nn">.engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">stream_engine</span>
 
 
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">"local--kstreams"</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 </code></pre></div>
@@ -1436,7 +1436,7 @@ for this reason it is possible to remove the <code>async for loop</code> using p
 <span class="kn">from</span><span class="w"> </span><span class="nn">.engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">stream_engine</span>
 
 
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">"local--kstreams"</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
@@ -1448,11 +1448,11 @@ for this reason it is possible to remove the <code>async for loop</code> using p
 <span class="kn">from</span><span class="w"> </span><span class="nn">.engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">stream_engine</span>
 
 
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">"local--kstreams"</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-    <span class="k">await</span> <span class="n">send</span><span class="p">(</span><span class="s2">&quot;sink-to-elastic-topic&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">send</span><span class="p">(</span><span class="s2">"sink-to-elastic-topic"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -1461,21 +1461,21 @@ for this reason it is possible to remove the <code>async for loop</code> using p
 <span class="kn">from</span><span class="w"> </span><span class="nn">.engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">stream_engine</span>
 
 
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">"local--kstreams"</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">my_stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">send_many</span><span class="p">:</span> <span class="n">SendMany</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="n">batch_events</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">BatchEvent</span><span class="p">(</span>
-            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Hello world </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="si">}</span><span class="s2">!&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
+            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Hello world </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="si">}</span><span class="s2">!"</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
             <span class="n">key</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
     <span class="p">]</span>
 
     <span class="k">await</span> <span class="n">send_many</span><span class="p">(</span>
-        <span class="s2">&quot;local--kstreams-send-many&quot;</span><span class="p">,</span> <span class="n">batch_events</span><span class="o">=</span><span class="n">batch_events</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="mi">0</span>
+        <span class="s2">"local--kstreams-send-many"</span><span class="p">,</span> <span class="n">batch_events</span><span class="o">=</span><span class="n">batch_events</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="mi">0</span>
     <span class="p">)</span>
 </code></pre></div>
 </div>
@@ -1483,7 +1483,7 @@ for this reason it is possible to remove the <code>async for loop</code> using p
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">.engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">stream_engine</span>
 
 
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstreams&quot;</span><span class="p">)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">"local--kstreams"</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">consume</span><span class="p">(</span><span class="n">stream</span><span class="p">):</span>  <span class="c1"># you can specify the type but it will be the same result</span>
     <span class="k">async</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
@@ -1505,7 +1505,7 @@ for this reason it is possible to remove the <code>async for loop</code> using p
 <div class="highlight"><span class="filename">Stream instance</span><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">aiorun</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 
-<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span><span class="p">)</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MyDeserializer</span><span class="p">:</span>
@@ -1515,12 +1515,12 @@ for this reason it is possible to remove the <code>async for loop</code> using p
 
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="n">stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
-    <span class="s2">&quot;local--kstreams&quot;</span><span class="p">,</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span>
+    <span class="s2">"local--kstreams"</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"my-stream"</span>
     <span class="n">func</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>  <span class="c1"># coroutine or async generator</span>
     <span class="n">deserializer</span><span class="o">=</span><span class="n">MyDeserializer</span><span class="p">(),</span>
 <span class="p">)</span>
@@ -1537,7 +1537,7 @@ for this reason it is possible to remove the <code>async for loop</code> using p
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">start</span><span class="p">(),</span> <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">shutdown_callback</span><span class="o">=</span><span class="n">shutdown</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="removing-a-stream-from-the-engine">Removing a stream from the engine</h3>
@@ -1560,7 +1560,7 @@ This means that setting intial_offsets to be a hardcoded number might not get th
 <div class="highlight"><span class="filename">Initial Offsets from Database</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">structs</span>
 
 
-<span class="n">topic_name</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams&quot;</span>
+<span class="n">topic_name</span> <span class="o">=</span> <span class="s2">"local--kstreams"</span>
 <span class="n">db_table</span> <span class="o">=</span> <span class="n">ExampleDatabase</span><span class="p">()</span>
 <span class="n">initial_offset</span> <span class="o">=</span> <span class="n">structs</span><span class="o">.</span><span class="n">TopicPartitionOffset</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="n">topic_name</span><span class="p">,</span> <span class="n">partition</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">db_table</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
 
@@ -1571,7 +1571,7 @@ This means that setting intial_offsets to be a hardcoded number might not get th
 
 <span class="n">stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span>
     <span class="n">topic_name</span><span class="p">,</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-stream&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"my-stream"</span><span class="p">,</span>
     <span class="n">func</span><span class="o">=</span><span class="n">my_stream</span><span class="p">,</span>  <span class="c1"># coroutine or async generator</span>
     <span class="n">deserializer</span><span class="o">=</span><span class="n">MyDeserializer</span><span class="p">(),</span>
     <span class="n">initial_offsets</span><span class="o">=</span><span class="p">[</span><span class="n">initial_offset</span><span class="p">],</span>
@@ -1589,32 +1589,32 @@ This means that setting intial_offsets to be a hardcoded number might not get th
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">ConsumerRecord</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kstreams.consts</span><span class="w"> </span><span class="kn">import</span> <span class="n">StreamErrorPolicy</span>
 
-<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span><span class="p">)</span>
 
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span>
-    <span class="s2">&quot;local--hello-world&quot;</span><span class="p">,</span>
-    <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group&quot;</span><span class="p">,</span>
+    <span class="s2">"local--hello-world"</span><span class="p">,</span>
+    <span class="n">group_id</span><span class="o">=</span><span class="s2">"example-group"</span><span class="p">,</span>
     <span class="n">error_policy</span><span class="o">=</span><span class="n">StreamErrorPolicy</span><span class="o">.</span><span class="n">RESTART</span>
 <span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;error&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">"error"</span><span class="p">:</span>
         <span class="c1"># Stream will be restarted after the ValueError is raised</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;error....&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"error...."</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed. Payload </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Event consumed. Payload </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <p>We can see the logs:</p>
 <div class="highlight"><pre><span></span><code>ValueError:<span class="w"> </span>error....
 INFO:aiokafka.consumer.group_coordinator:LeaveGroup<span class="w"> </span>request<span class="w"> </span>succeeded
 INFO:aiokafka.consumer.consumer:Unsubscribed<span class="w"> </span>all<span class="w"> </span>topics<span class="w"> </span>or<span class="w"> </span>patterns<span class="w"> </span>and<span class="w"> </span>assigned<span class="w"> </span>partitions
-INFO:kstreams.streams:Stream<span class="w"> </span>consuming<span class="w"> </span>from<span class="w"> </span>topics<span class="w"> </span><span class="o">[</span><span class="s1">&#39;local--hello-world&#39;</span><span class="o">]</span><span class="w"> </span>has<span class="w"> </span>stopped!!!<span class="w"> </span>
+INFO:kstreams.streams:Stream<span class="w"> </span>consuming<span class="w"> </span>from<span class="w"> </span>topics<span class="w"> </span><span class="o">[</span><span class="s1">'local--hello-world'</span><span class="o">]</span><span class="w"> </span>has<span class="w"> </span>stopped!!!<span class="w"> </span>
 
 
 INFO:kstreams.middleware.middleware:Restarting<span class="w"> </span>stream<span class="w"> </span>&lt;kstreams.streams.Stream<span class="w"> </span>object<span class="w"> </span>at<span class="w"> </span>0x102d44050&gt;
-INFO:aiokafka.consumer.subscription_state:Updating<span class="w"> </span>subscribed<span class="w"> </span>topics<span class="w"> </span>to:<span class="w"> </span>frozenset<span class="o">({</span><span class="s1">&#39;local--hello-world&#39;</span><span class="o">})</span>
+INFO:aiokafka.consumer.subscription_state:Updating<span class="w"> </span>subscribed<span class="w"> </span>topics<span class="w"> </span>to:<span class="w"> </span>frozenset<span class="o">({</span><span class="s1">'local--hello-world'</span><span class="o">})</span>
 ...
-INFO:aiokafka.consumer.group_coordinator:Setting<span class="w"> </span>newly<span class="w"> </span>assigned<span class="w"> </span>partitions<span class="w"> </span><span class="o">{</span>TopicPartition<span class="o">(</span><span class="nv">topic</span><span class="o">=</span><span class="s1">&#39;local--hello-world&#39;</span>,<span class="w"> </span><span class="nv">partition</span><span class="o">=</span><span class="m">0</span><span class="o">)}</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>group<span class="w"> </span>example-group
+INFO:aiokafka.consumer.group_coordinator:Setting<span class="w"> </span>newly<span class="w"> </span>assigned<span class="w"> </span>partitions<span class="w"> </span><span class="o">{</span>TopicPartition<span class="o">(</span><span class="nv">topic</span><span class="o">=</span><span class="s1">'local--hello-world'</span>,<span class="w"> </span><span class="nv">partition</span><span class="o">=</span><span class="m">0</span><span class="o">)}</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>group<span class="w"> </span>example-group
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1625,15 +1625,15 @@ INFO:aiokafka.consumer.group_coordinator:Setting<span class="w"> </span>newly<sp
 <div class="highlight"><pre><span></span><code><span class="c1"># The consumer sends periodic heartbeats every 500 ms</span>
 <span class="c1"># On OffsetOutOfRange errors, the offset will move to the oldest available message (‘earliest’)</span>
 
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstream&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">,</span> <span class="n">session_timeout_ms</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">auto_offset_reset</span><span class="s2">&quot;earliest&quot;</span><span class="p">)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">"local--kstream"</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">"de-my-partition"</span><span class="p">,</span> <span class="n">session_timeout_ms</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">auto_offset_reset</span><span class="s2">"earliest"</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="manual-commit">Manual commit</h2>
 <p>When processing more sensitive data and you want to be sure that the <code>kafka offeset</code> is commited once that you have done your tasks, you can use <code>enable_auto_commit=False</code> mode of Consumer.</p>
-<div class="highlight"><span class="filename">Manual commit example</span><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstream&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;de-my-partition&quot;</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight"><span class="filename">Manual commit example</span><pre><span></span><code><span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">"local--kstream"</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">"de-my-partition"</span><span class="p">,</span> <span class="n">enable_auto_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Event consumed: headers: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">headers</span><span class="si">}</span><span class="s2">, payload: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># We need to make sure that the pyalod was stored before commiting the kafka offset</span>
     <span class="k">await</span> <span class="n">store_in_database</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
@@ -1649,7 +1649,7 @@ If you use the <code>yield</code> keyword inside a <code>coroutine</code> it wil
 <p>Consuming an <code>async generator</code> is simple, you just use the <code>async for in</code> clause. Because consuming events only happens with the <code>for loop</code>, you have to make sure that the <code>Stream</code> has been started properly and after leaving the <code>async for in</code> the <code>stream</code> has been properly stopped.</p>
 <p>To facilitate the process, we have <code>context manager</code> that makes sure of the <code>starting/stopping</code> process.</p>
 <div class="highlight"><span class="filename">Yield example</span><pre><span></span><code><span class="c1"># Create your stream</span>
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--kstream&quot;</span><span class="p">)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">"local--kstream"</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stream</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">):</span>
     <span class="k">yield</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span>
 
@@ -1708,7 +1708,7 @@ If messages is not available in the prefetched buffer this method waits
           <tr class="doc-section-item">
             <td><code><span title="kstreams.streams.Stream.getmany.partitions">partitions</span></code></td>
             <td>
-                  <code><span title="List">List</span>[<span title="kstreams.TopicPartition">TopicPartition</span>] | None</code>
+                  <code>List[<span title="kstreams.TopicPartition">TopicPartition</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1856,10 +1856,10 @@ with any records that are available currently in the buffer</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
     
   </body>

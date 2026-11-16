@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
     
     
       
@@ -29,10 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -1098,44 +1098,44 @@
 <span class="normal">231</span>
 <span class="normal">232</span>
 <span class="normal">233</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PrometheusMonitor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Metrics monitor to keep track of Producers and Consumers.</span>
 
 <span class="sd">     Attributes:</span>
 <span class="sd">        metrics_scrape_time (float): Amount of seconds that the monitor</span>
 <span class="sd">            will wait until next scrape iteration</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Producer metrics</span>
     <span class="n">MET_OFFSETS</span> <span class="o">=</span> <span class="n">Gauge</span><span class="p">(</span>
-        <span class="s2">&quot;topic_partition_offsets&quot;</span><span class="p">,</span> <span class="s2">&quot;help producer offsets&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;topic&quot;</span><span class="p">,</span> <span class="s2">&quot;partition&quot;</span><span class="p">]</span>
+        <span class="s2">"topic_partition_offsets"</span><span class="p">,</span> <span class="s2">"help producer offsets"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"topic"</span><span class="p">,</span> <span class="s2">"partition"</span><span class="p">]</span>
     <span class="p">)</span>
 
     <span class="c1"># Consumer metrics</span>
     <span class="n">MET_COMMITTED</span> <span class="o">=</span> <span class="n">Gauge</span><span class="p">(</span>
-        <span class="s2">&quot;consumer_committed&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;help consumer committed&quot;</span><span class="p">,</span>
-        <span class="p">[</span><span class="s2">&quot;topic&quot;</span><span class="p">,</span> <span class="s2">&quot;partition&quot;</span><span class="p">,</span> <span class="s2">&quot;consumer_group&quot;</span><span class="p">],</span>
+        <span class="s2">"consumer_committed"</span><span class="p">,</span>
+        <span class="s2">"help consumer committed"</span><span class="p">,</span>
+        <span class="p">[</span><span class="s2">"topic"</span><span class="p">,</span> <span class="s2">"partition"</span><span class="p">,</span> <span class="s2">"consumer_group"</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="n">MET_POSITION</span> <span class="o">=</span> <span class="n">Gauge</span><span class="p">(</span>
-        <span class="s2">&quot;consumer_position&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;help consumer position&quot;</span><span class="p">,</span>
-        <span class="p">[</span><span class="s2">&quot;topic&quot;</span><span class="p">,</span> <span class="s2">&quot;partition&quot;</span><span class="p">,</span> <span class="s2">&quot;consumer_group&quot;</span><span class="p">],</span>
+        <span class="s2">"consumer_position"</span><span class="p">,</span>
+        <span class="s2">"help consumer position"</span><span class="p">,</span>
+        <span class="p">[</span><span class="s2">"topic"</span><span class="p">,</span> <span class="s2">"partition"</span><span class="p">,</span> <span class="s2">"consumer_group"</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="n">MET_HIGHWATER</span> <span class="o">=</span> <span class="n">Gauge</span><span class="p">(</span>
-        <span class="s2">&quot;consumer_highwater&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;help consumer highwater&quot;</span><span class="p">,</span>
-        <span class="p">[</span><span class="s2">&quot;topic&quot;</span><span class="p">,</span> <span class="s2">&quot;partition&quot;</span><span class="p">,</span> <span class="s2">&quot;consumer_group&quot;</span><span class="p">],</span>
+        <span class="s2">"consumer_highwater"</span><span class="p">,</span>
+        <span class="s2">"help consumer highwater"</span><span class="p">,</span>
+        <span class="p">[</span><span class="s2">"topic"</span><span class="p">,</span> <span class="s2">"partition"</span><span class="p">,</span> <span class="s2">"consumer_group"</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="n">MET_LAG</span> <span class="o">=</span> <span class="n">Gauge</span><span class="p">(</span>
-        <span class="s2">&quot;consumer_lag&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;help consumer lag calculated using the last commited offset&quot;</span><span class="p">,</span>
-        <span class="p">[</span><span class="s2">&quot;topic&quot;</span><span class="p">,</span> <span class="s2">&quot;partition&quot;</span><span class="p">,</span> <span class="s2">&quot;consumer_group&quot;</span><span class="p">],</span>
+        <span class="s2">"consumer_lag"</span><span class="p">,</span>
+        <span class="s2">"help consumer lag calculated using the last commited offset"</span><span class="p">,</span>
+        <span class="p">[</span><span class="s2">"topic"</span><span class="p">,</span> <span class="s2">"partition"</span><span class="p">,</span> <span class="s2">"consumer_group"</span><span class="p">],</span>
     <span class="p">)</span>
     <span class="n">MET_POSITION_LAG</span> <span class="o">=</span> <span class="n">Gauge</span><span class="p">(</span>
-        <span class="s2">&quot;position_lag&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;help consumer position lag calculated using the consumer position&quot;</span><span class="p">,</span>
-        <span class="p">[</span><span class="s2">&quot;topic&quot;</span><span class="p">,</span> <span class="s2">&quot;partition&quot;</span><span class="p">,</span> <span class="s2">&quot;consumer_group&quot;</span><span class="p">],</span>
+        <span class="s2">"position_lag"</span><span class="p">,</span>
+        <span class="s2">"help consumer position lag calculated using the consumer position"</span><span class="p">,</span>
+        <span class="p">[</span><span class="s2">"topic"</span><span class="p">,</span> <span class="s2">"partition"</span><span class="p">,</span> <span class="s2">"consumer_group"</span><span class="p">],</span>
     <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics_scrape_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
@@ -1146,13 +1146,13 @@
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting Prometheus Monitoring started...&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Starting Prometheus Monitoring started..."</span><span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics_task</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_clean_consumer_metrics</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Prometheus Monitoring stopped...&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Prometheus Monitoring stopped..."</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add_topic_partition_offset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">partition</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span>
@@ -1161,12 +1161,12 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics_dict</span><span class="p">:</span> <span class="n">MetricsType</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">topic_partition</span><span class="p">,</span> <span class="n">partitions_metadata</span> <span class="ow">in</span> <span class="n">metrics_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">group_id</span> <span class="o">=</span> <span class="n">partitions_metadata</span><span class="p">[</span><span class="s2">&quot;group_id&quot;</span><span class="p">]</span>
-            <span class="n">position</span> <span class="o">=</span> <span class="n">partitions_metadata</span><span class="p">[</span><span class="s2">&quot;position&quot;</span><span class="p">]</span>
-            <span class="n">committed</span> <span class="o">=</span> <span class="n">partitions_metadata</span><span class="p">[</span><span class="s2">&quot;committed&quot;</span><span class="p">]</span>
-            <span class="n">highwater</span> <span class="o">=</span> <span class="n">partitions_metadata</span><span class="p">[</span><span class="s2">&quot;highwater&quot;</span><span class="p">]</span>
-            <span class="n">lag</span> <span class="o">=</span> <span class="n">partitions_metadata</span><span class="p">[</span><span class="s2">&quot;lag&quot;</span><span class="p">]</span>
-            <span class="n">position_lag</span> <span class="o">=</span> <span class="n">partitions_metadata</span><span class="p">[</span><span class="s2">&quot;position_lag&quot;</span><span class="p">]</span>
+            <span class="n">group_id</span> <span class="o">=</span> <span class="n">partitions_metadata</span><span class="p">[</span><span class="s2">"group_id"</span><span class="p">]</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="n">partitions_metadata</span><span class="p">[</span><span class="s2">"position"</span><span class="p">]</span>
+            <span class="n">committed</span> <span class="o">=</span> <span class="n">partitions_metadata</span><span class="p">[</span><span class="s2">"committed"</span><span class="p">]</span>
+            <span class="n">highwater</span> <span class="o">=</span> <span class="n">partitions_metadata</span><span class="p">[</span><span class="s2">"highwater"</span><span class="p">]</span>
+            <span class="n">lag</span> <span class="o">=</span> <span class="n">partitions_metadata</span><span class="p">[</span><span class="s2">"lag"</span><span class="p">]</span>
+            <span class="n">position_lag</span> <span class="o">=</span> <span class="n">partitions_metadata</span><span class="p">[</span><span class="s2">"position_lag"</span><span class="p">]</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">MET_COMMITTED</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
                 <span class="n">topic</span><span class="o">=</span><span class="n">topic_partition</span><span class="o">.</span><span class="n">topic</span><span class="p">,</span>
@@ -1195,12 +1195,12 @@
             <span class="p">)</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">position_lag</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_clean_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        This method should be called when a rebalance takes place</span>
 <span class="sd">        to clean all consumers metrics. When the rebalance finishes</span>
 <span class="sd">        new metrics will be generated per consumer based on the</span>
 <span class="sd">        consumer assigments</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">MET_LAG</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">MET_POSITION_LAG</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">MET_COMMITTED</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -1217,9 +1217,9 @@
             <span class="n">metrics_found</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MET_LAG</span><span class="o">.</span><span class="n">collect</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">samples</span><span class="p">:</span>
                 <span class="k">if</span> <span class="p">{</span>
-                    <span class="s2">&quot;topic&quot;</span><span class="p">:</span> <span class="n">topic</span><span class="p">,</span>
-                    <span class="s2">&quot;partition&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">partition</span><span class="p">),</span>
-                    <span class="s2">&quot;consumer_group&quot;</span><span class="p">:</span> <span class="n">group_id</span><span class="p">,</span>
+                    <span class="s2">"topic"</span><span class="p">:</span> <span class="n">topic</span><span class="p">,</span>
+                    <span class="s2">"partition"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">partition</span><span class="p">),</span>
+                    <span class="s2">"consumer_group"</span><span class="p">:</span> <span class="n">group_id</span><span class="p">,</span>
                 <span class="p">}</span> <span class="o">==</span> <span class="n">sample</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
                     <span class="n">metrics_found</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -1231,8 +1231,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">MET_HIGHWATER</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">partition</span><span class="p">,</span> <span class="n">group_id</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="s2">&quot;Metrics for consumer with group-id: &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">consumer</span><span class="o">.</span><span class="n">_group_id</span><span class="si">}</span><span class="s2"> not found&quot;</span>
+                    <span class="s2">"Metrics for consumer with group-id: "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">consumer</span><span class="o">.</span><span class="n">_group_id</span><span class="si">}</span><span class="s2"> not found"</span>
                 <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">producer</span><span class="p">):</span>
@@ -1242,34 +1242,34 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_streams</span> <span class="o">=</span> <span class="n">streams</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">generate_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer</span><span class="p">:</span> <span class="n">Consumer</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Generate Consumer Metrics for Prometheus</span>
 
 <span class="sd">        Format:</span>
 <span class="sd">            {</span>
-<span class="sd">                &quot;topic-1&quot;: {</span>
-<span class="sd">                    &quot;1&quot;: (</span>
-<span class="sd">                        [topic-1, partition-number, &#39;group-id-1&#39;],</span>
+<span class="sd">                "topic-1": {</span>
+<span class="sd">                    "1": (</span>
+<span class="sd">                        [topic-1, partition-number, 'group-id-1'],</span>
 <span class="sd">                        committed, position, highwater, lag, position_lag</span>
 <span class="sd">                    )</span>
-<span class="sd">                    &quot;2&quot;: (</span>
-<span class="sd">                        [topic-1, partition-number, &#39;group-id-1&#39;],</span>
+<span class="sd">                    "2": (</span>
+<span class="sd">                        [topic-1, partition-number, 'group-id-1'],</span>
 <span class="sd">                        committed, position, highwater, lag, position_lag</span>
 <span class="sd">                    )</span>
 <span class="sd">                },</span>
 <span class="sd">                ...</span>
-<span class="sd">                &quot;topic-n&quot;: {</span>
-<span class="sd">                    &quot;1&quot;: (</span>
-<span class="sd">                        [topic-n, partition-number, &#39;group-id-n&#39;],</span>
+<span class="sd">                "topic-n": {</span>
+<span class="sd">                    "1": (</span>
+<span class="sd">                        [topic-n, partition-number, 'group-id-n'],</span>
 <span class="sd">                        committed, position, highwater, lag, position_lag</span>
 <span class="sd">                    )</span>
-<span class="sd">                    &quot;2&quot;: (</span>
-<span class="sd">                        [topic-n, partition-number, &#39;group-id-n&#39;],</span>
+<span class="sd">                    "2": (</span>
+<span class="sd">                        [topic-n, partition-number, 'group-id-n'],</span>
 <span class="sd">                        committed, position, highwater, lag, position_lag</span>
 <span class="sd">                    )</span>
 <span class="sd">                }</span>
 <span class="sd">            }</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">metrics</span><span class="p">:</span> <span class="n">MetricsType</span> <span class="o">=</span> <span class="n">DefaultDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
 
         <span class="n">topic_partitions</span> <span class="o">=</span> <span class="n">consumer</span><span class="o">.</span><span class="n">assignment</span><span class="p">()</span>
@@ -1285,24 +1285,24 @@
                 <span class="n">position_lag</span> <span class="o">=</span> <span class="n">highwater</span> <span class="o">-</span> <span class="n">position</span>
 
             <span class="n">metrics</span><span class="p">[</span><span class="n">topic_partition</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;group_id&quot;</span><span class="p">:</span> <span class="n">consumer</span><span class="o">.</span><span class="n">_group_id</span><span class="p">,</span>
-                <span class="s2">&quot;committed&quot;</span><span class="p">:</span> <span class="n">committed</span><span class="p">,</span>
-                <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">position</span><span class="p">,</span>
-                <span class="s2">&quot;highwater&quot;</span><span class="p">:</span> <span class="n">highwater</span><span class="p">,</span>
-                <span class="s2">&quot;lag&quot;</span><span class="p">:</span> <span class="n">lag</span><span class="p">,</span>
-                <span class="s2">&quot;position_lag&quot;</span><span class="p">:</span> <span class="n">position_lag</span><span class="p">,</span>
+                <span class="s2">"group_id"</span><span class="p">:</span> <span class="n">consumer</span><span class="o">.</span><span class="n">_group_id</span><span class="p">,</span>
+                <span class="s2">"committed"</span><span class="p">:</span> <span class="n">committed</span><span class="p">,</span>
+                <span class="s2">"position"</span><span class="p">:</span> <span class="n">position</span><span class="p">,</span>
+                <span class="s2">"highwater"</span><span class="p">:</span> <span class="n">highwater</span><span class="p">,</span>
+                <span class="s2">"lag"</span><span class="p">:</span> <span class="n">lag</span><span class="p">,</span>
+                <span class="s2">"position_lag"</span><span class="p">:</span> <span class="n">position_lag</span><span class="p">,</span>
             <span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_consumer_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_metrics_task</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Task that runs in `backgroud` to generate</span>
 <span class="sd">        consumer metrics.</span>
 
 <span class="sd">        When self.running is False the task will finish and it</span>
 <span class="sd">        will be safe to stop consumers and producers.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metrics_scrape_time</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_streams</span><span class="p">:</span>
@@ -1311,8 +1311,8 @@
                         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_consumer_metrics</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">consumer</span><span class="p">)</span>
                     <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
                         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;Metrics for stream </span><span class="si">{</span><span class="n">stream</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> can not be generated &quot;</span>
-                            <span class="s2">&quot;probably because it has been removed&quot;</span>
+                            <span class="sa">f</span><span class="s2">"Metrics for stream </span><span class="si">{</span><span class="n">stream</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> can not be generated "</span>
+                            <span class="s2">"probably because it has been removed"</span>
                         <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -1430,34 +1430,34 @@
 <span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">generate_consumer_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer</span><span class="p">:</span> <span class="n">Consumer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Generate Consumer Metrics for Prometheus</span>
 
 <span class="sd">    Format:</span>
 <span class="sd">        {</span>
-<span class="sd">            &quot;topic-1&quot;: {</span>
-<span class="sd">                &quot;1&quot;: (</span>
-<span class="sd">                    [topic-1, partition-number, &#39;group-id-1&#39;],</span>
+<span class="sd">            "topic-1": {</span>
+<span class="sd">                "1": (</span>
+<span class="sd">                    [topic-1, partition-number, 'group-id-1'],</span>
 <span class="sd">                    committed, position, highwater, lag, position_lag</span>
 <span class="sd">                )</span>
-<span class="sd">                &quot;2&quot;: (</span>
-<span class="sd">                    [topic-1, partition-number, &#39;group-id-1&#39;],</span>
+<span class="sd">                "2": (</span>
+<span class="sd">                    [topic-1, partition-number, 'group-id-1'],</span>
 <span class="sd">                    committed, position, highwater, lag, position_lag</span>
 <span class="sd">                )</span>
 <span class="sd">            },</span>
 <span class="sd">            ...</span>
-<span class="sd">            &quot;topic-n&quot;: {</span>
-<span class="sd">                &quot;1&quot;: (</span>
-<span class="sd">                    [topic-n, partition-number, &#39;group-id-n&#39;],</span>
+<span class="sd">            "topic-n": {</span>
+<span class="sd">                "1": (</span>
+<span class="sd">                    [topic-n, partition-number, 'group-id-n'],</span>
 <span class="sd">                    committed, position, highwater, lag, position_lag</span>
 <span class="sd">                )</span>
-<span class="sd">                &quot;2&quot;: (</span>
-<span class="sd">                    [topic-n, partition-number, &#39;group-id-n&#39;],</span>
+<span class="sd">                "2": (</span>
+<span class="sd">                    [topic-n, partition-number, 'group-id-n'],</span>
 <span class="sd">                    committed, position, highwater, lag, position_lag</span>
 <span class="sd">                )</span>
 <span class="sd">            }</span>
 <span class="sd">        }</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">metrics</span><span class="p">:</span> <span class="n">MetricsType</span> <span class="o">=</span> <span class="n">DefaultDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
 
     <span class="n">topic_partitions</span> <span class="o">=</span> <span class="n">consumer</span><span class="o">.</span><span class="n">assignment</span><span class="p">()</span>
@@ -1473,12 +1473,12 @@
             <span class="n">position_lag</span> <span class="o">=</span> <span class="n">highwater</span> <span class="o">-</span> <span class="n">position</span>
 
         <span class="n">metrics</span><span class="p">[</span><span class="n">topic_partition</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;group_id&quot;</span><span class="p">:</span> <span class="n">consumer</span><span class="o">.</span><span class="n">_group_id</span><span class="p">,</span>
-            <span class="s2">&quot;committed&quot;</span><span class="p">:</span> <span class="n">committed</span><span class="p">,</span>
-            <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">position</span><span class="p">,</span>
-            <span class="s2">&quot;highwater&quot;</span><span class="p">:</span> <span class="n">highwater</span><span class="p">,</span>
-            <span class="s2">&quot;lag&quot;</span><span class="p">:</span> <span class="n">lag</span><span class="p">,</span>
-            <span class="s2">&quot;position_lag&quot;</span><span class="p">:</span> <span class="n">position_lag</span><span class="p">,</span>
+            <span class="s2">"group_id"</span><span class="p">:</span> <span class="n">consumer</span><span class="o">.</span><span class="n">_group_id</span><span class="p">,</span>
+            <span class="s2">"committed"</span><span class="p">:</span> <span class="n">committed</span><span class="p">,</span>
+            <span class="s2">"position"</span><span class="p">:</span> <span class="n">position</span><span class="p">,</span>
+            <span class="s2">"highwater"</span><span class="p">:</span> <span class="n">highwater</span><span class="p">,</span>
+            <span class="s2">"lag"</span><span class="p">:</span> <span class="n">lag</span><span class="p">,</span>
+            <span class="s2">"position_lag"</span><span class="p">:</span> <span class="n">position_lag</span><span class="p">,</span>
         <span class="p">}</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_add_consumer_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
@@ -1500,7 +1500,7 @@
 <p>Based on the lag, you will have to develop your own alerts. An alert should be pushed to Slack if you experience more than a particular amount of lag.</p>
 <p>You will require your <code>consumer_group</code> name in order to design a basic dashboard using the <code>consumer_lag</code>.</p>
 <p>We could add a query in Grafana like this:</p>
-<div class="highlight"><pre><span></span><code><span class="k">sum</span><span class="o">(</span><span class="nv">kafka_consumer_group_ConsumerLagMetrics_Value</span><span class="p">{</span><span class="nl">topic</span><span class="w"> </span><span class="o">=~</span><span class="w"> </span><span class="p">&quot;</span><span class="s">YOUR_OWN_TOPIC_NAME</span><span class="p">&quot;,</span><span class="w"> </span><span class="nl">groupId</span><span class="w"> </span><span class="o">=~</span><span class="p">&quot;</span><span class="s">YOUR_CONSUMER_GROUP</span><span class="p">&quot;,</span><span class="w"> </span><span class="nl">name</span><span class="o">=</span><span class="p">&quot;</span><span class="s">SumOffsetLag</span><span class="p">&quot;}</span><span class="o">)</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">topic</span><span class="o">)</span>
+<div class="highlight"><pre><span></span><code><span class="k">sum</span><span class="o">(</span><span class="nv">kafka_consumer_group_ConsumerLagMetrics_Value</span><span class="p">{</span><span class="nl">topic</span><span class="w"> </span><span class="o">=~</span><span class="w"> </span><span class="p">"</span><span class="s">YOUR_OWN_TOPIC_NAME</span><span class="p">",</span><span class="w"> </span><span class="nl">groupId</span><span class="w"> </span><span class="o">=~</span><span class="p">"</span><span class="s">YOUR_CONSUMER_GROUP</span><span class="p">",</span><span class="w"> </span><span class="nl">name</span><span class="o">=</span><span class="p">"</span><span class="s">SumOffsetLag</span><span class="p">"}</span><span class="o">)</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">topic</span><span class="o">)</span>
 </code></pre></div>
 <p>Remember to replace <code>YOUR_CONSUMER_GROUP</code> and <code>YOUR_OWN_TOPIC_NAME</code> with your <code>consumer_group</code> and <code>topic</code> respectively ⬆️</p>
 <h2 id="producer-metrics">Producer Metrics</h2>
@@ -1508,7 +1508,7 @@
 <p>The increase in LEO indicates the number of events produced in the last <code>N</code> minutes.</p>
 <p>If you know that events should occur every <code>N</code> minutes, you can trigger alerts if no events occur because this metric will tell you whether or not events occurred.</p>
 <p>We could add a query in Grafana like this, where <code>N</code> is <code>10m</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="k">sum</span><span class="o">(</span><span class="k">max</span><span class="o">(</span><span class="kr">increase</span><span class="o">(</span><span class="nv">kafka_log_Log_Value</span><span class="p">{</span><span class="nl">name</span><span class="o">=</span><span class="p">&quot;</span><span class="s">LogEndOffset</span><span class="p">&quot;,</span><span class="w"> </span><span class="nl">topic</span><span class="w"> </span><span class="o">=~</span><span class="w"> </span><span class="p">&quot;</span><span class="s">TOPIC_NAME</span><span class="p">&quot;}[</span><span class="s">10m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">partition</span><span class="p">,</span><span class="w"> </span><span class="nv">topic</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">topic</span><span class="o">)</span>
+<div class="highlight"><pre><span></span><code><span class="k">sum</span><span class="o">(</span><span class="k">max</span><span class="o">(</span><span class="kr">increase</span><span class="o">(</span><span class="nv">kafka_log_Log_Value</span><span class="p">{</span><span class="nl">name</span><span class="o">=</span><span class="p">"</span><span class="s">LogEndOffset</span><span class="p">",</span><span class="w"> </span><span class="nl">topic</span><span class="w"> </span><span class="o">=~</span><span class="w"> </span><span class="p">"</span><span class="s">TOPIC_NAME</span><span class="p">"}[</span><span class="s">10m</span><span class="p">]</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">partition</span><span class="p">,</span><span class="w"> </span><span class="nv">topic</span><span class="o">))</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="o">(</span><span class="nv">topic</span><span class="o">)</span>
 </code></pre></div>
 <p>Remember to modify <code>TOPIC_NAME</code> to the name of the topic you want to track ⬆️</p>
 <h2 id="custom-business-metrics">Custom Business Metrics</h2>
@@ -1530,8 +1530,8 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">MyAppPrometheusMonitor</span><span class="p">(</span><span class="n">PrometheusMonitor</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span> <span class="c1"># initialize kstream metrics</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">orders_received</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="s1">&#39;orders_received&#39;</span><span class="p">,</span> <span class="s1">&#39;Amount of orders received&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">orders_shipped</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="s1">&#39;orders_shipped&#39;</span><span class="p">,</span> <span class="s1">&#39;Amount of orders shipped&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orders_received</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="s1">'orders_received'</span><span class="p">,</span> <span class="s1">'Amount of orders received'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orders_shipped</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="s1">'orders_shipped'</span><span class="p">,</span> <span class="s1">'Amount of orders shipped'</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">increase_received</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amount</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">orders_received</span><span class="o">.</span><span class="n">inc</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span>
@@ -1540,13 +1540,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">orders_shipped</span><span class="o">.</span><span class="n">inc</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span>
 </code></pre></div>
 <p>In our kstreams app, we can:</p>
-<div class="highlight"><pre><span></span><code><span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-engine&quot;</span><span class="p">,</span> <span class="n">monitor</span><span class="o">=</span><span class="n">MyAppPrometheusMonitor</span><span class="p">())</span>
+<div class="highlight"><pre><span></span><code><span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"my-engine"</span><span class="p">,</span> <span class="n">monitor</span><span class="o">=</span><span class="n">MyAppPrometheusMonitor</span><span class="p">())</span>
 
-<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;my-special-orders&quot;</span><span class="p">)</span>
+<span class="nd">@stream_engine</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">"my-special-orders"</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">consume_orders_received</span><span class="p">(</span><span class="n">cr</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;NEW&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">"NEW"</span><span class="p">:</span>
         <span class="n">stream_engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">increase_received</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;SHIPPED&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">"SHIPPED"</span><span class="p">:</span>
         <span class="n">stream_engine</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">increase_shipped</span><span class="p">()</span>
 </code></pre></div>
 <p>Your app's prometheus would display this data, which you might utilize to build a stylish ✨dashboard✨ interface.</p>
@@ -1602,10 +1602,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
     
   </body>

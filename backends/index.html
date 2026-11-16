@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
     
     
       
@@ -29,10 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -958,7 +958,7 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -974,8 +974,8 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">kstreams.backends.kafka</span><span class="w"> </span><span class="kn">import</span> <span class="n">Kafka</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">Stream</span>
 
-<span class="n">backend</span> <span class="o">=</span> <span class="n">Kafka</span><span class="p">(</span><span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;localhost:9092&quot;</span><span class="p">])</span>
-<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">Kafka</span><span class="p">(</span><span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">"localhost:9092"</span><span class="p">])</span>
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <h4 id="kstreams.backends.kafka.Kafka--ssl">SSL</h4>
@@ -989,21 +989,21 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">get_ssl_context</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">create_ssl_context</span><span class="p">(</span>
-        <span class="n">cafile</span><span class="o">=</span><span class="s2">&quot;certificate-authority-file-path&quot;</span><span class="p">,</span>
-        <span class="n">capath</span><span class="o">=</span><span class="s2">&quot;points-to-directory-with-several-ca-certificates&quot;</span><span class="p">,</span>
-        <span class="n">cadata</span><span class="o">=</span><span class="s2">&quot;same-as-cafile-but-ASCII-or-bytes-format&quot;</span><span class="p">,</span>
-        <span class="n">certfile</span><span class="o">=</span><span class="s2">&quot;client-certificate-file-name&quot;</span><span class="p">,</span>
-        <span class="n">keyfile</span><span class="o">=</span><span class="s2">&quot;client-private-key-file-name&quot;</span><span class="p">,</span>
-        <span class="n">password</span><span class="o">=</span><span class="s2">&quot;password-to-load-certificate-chain&quot;</span><span class="p">,</span>
+        <span class="n">cafile</span><span class="o">=</span><span class="s2">"certificate-authority-file-path"</span><span class="p">,</span>
+        <span class="n">capath</span><span class="o">=</span><span class="s2">"points-to-directory-with-several-ca-certificates"</span><span class="p">,</span>
+        <span class="n">cadata</span><span class="o">=</span><span class="s2">"same-as-cafile-but-ASCII-or-bytes-format"</span><span class="p">,</span>
+        <span class="n">certfile</span><span class="o">=</span><span class="s2">"client-certificate-file-name"</span><span class="p">,</span>
+        <span class="n">keyfile</span><span class="o">=</span><span class="s2">"client-private-key-file-name"</span><span class="p">,</span>
+        <span class="n">password</span><span class="o">=</span><span class="s2">"password-to-load-certificate-chain"</span><span class="p">,</span>
     <span class="p">)</span>
 
 <span class="n">backend</span> <span class="o">=</span> <span class="n">Kafka</span><span class="p">(</span>
-    <span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;localhost:9094&quot;</span><span class="p">],</span>
-    <span class="n">security_protocol</span><span class="o">=</span><span class="s2">&quot;SSL&quot;</span><span class="p">,</span>
+    <span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">"localhost:9094"</span><span class="p">],</span>
+    <span class="n">security_protocol</span><span class="o">=</span><span class="s2">"SSL"</span><span class="p">,</span>
     <span class="n">ssl_context</span><span class="o">=</span><span class="n">get_ssl_context</span><span class="p">(),</span>
 <span class="p">)</span>
 
-<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1020,19 +1020,19 @@ for <code>SASL_PLAINTEXT</code> or <code>SASL_SSL</code></p>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">get_ssl_context</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">create_ssl_context_from_mem</span><span class="p">(</span>
-        <span class="n">cadata</span><span class="o">=</span><span class="s2">&quot;ca-certificates-as-unicode&quot;</span><span class="p">,</span>
-        <span class="n">certdata</span><span class="o">=</span><span class="s2">&quot;client-certificate-as-unicode&quot;</span><span class="p">,</span>
-        <span class="n">keydata</span><span class="o">=</span><span class="s2">&quot;client-private-key-as-unicode&quot;</span><span class="p">,</span>
-        <span class="n">password</span><span class="o">=</span><span class="s2">&quot;optional-password-to-load-certificate-chain&quot;</span><span class="p">,</span>
+        <span class="n">cadata</span><span class="o">=</span><span class="s2">"ca-certificates-as-unicode"</span><span class="p">,</span>
+        <span class="n">certdata</span><span class="o">=</span><span class="s2">"client-certificate-as-unicode"</span><span class="p">,</span>
+        <span class="n">keydata</span><span class="o">=</span><span class="s2">"client-private-key-as-unicode"</span><span class="p">,</span>
+        <span class="n">password</span><span class="o">=</span><span class="s2">"optional-password-to-load-certificate-chain"</span><span class="p">,</span>
     <span class="p">)</span>
 
 <span class="n">backend</span> <span class="o">=</span> <span class="n">Kafka</span><span class="p">(</span>
-    <span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;localhost:9094&quot;</span><span class="p">],</span>
-    <span class="n">security_protocol</span><span class="o">=</span><span class="s2">&quot;SSL&quot;</span><span class="p">,</span>
+    <span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">"localhost:9094"</span><span class="p">],</span>
+    <span class="n">security_protocol</span><span class="o">=</span><span class="s2">"SSL"</span><span class="p">,</span>
     <span class="n">ssl_context</span><span class="o">=</span><span class="n">get_ssl_context</span><span class="p">(),</span>
 <span class="p">)</span>
 
-<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1095,7 +1095,7 @@ as it does not provide any durability guarantees.</p>
 
 
 <span class="n">backend</span> <span class="o">=</span> <span class="n">InMemory</span><span class="p">()</span>
-<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1182,10 +1182,10 @@ as it does not provide any durability guarantees.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
     
   </body>

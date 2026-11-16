@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
     
     
       
@@ -29,10 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -1031,7 +1031,7 @@ certificate chain</p>
     <span class="n">keyfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper of [aiokafka.helpers.create_ssl_context](</span>
+<span class="w">    </span><span class="sd">"""Wrapper of [aiokafka.helpers.create_ssl_context](</span>
 <span class="sd">        https://aiokafka.readthedocs.io/en/stable/api.html#helpers</span>
 <span class="sd">    )</span>
 <span class="sd">    with typehints.</span>
@@ -1049,12 +1049,12 @@ certificate chain</p>
 <span class="sd">            read data in either ASCII or bytes format</span>
 <span class="sd">        certfile: optional filename of file in PEM format containing</span>
 <span class="sd">            the client certificate, as well as any CA certificates needed to</span>
-<span class="sd">            establish the certificate&#39;s authenticity</span>
+<span class="sd">            establish the certificate's authenticity</span>
 <span class="sd">        keyfile: optional filename containing the client private key.</span>
 <span class="sd">        password: optional password to be used when loading the</span>
 <span class="sd">            certificate chain</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">aiokafka_create_ssl_context</span><span class="p">(</span>
         <span class="n">cafile</span><span class="o">=</span><span class="n">cafile</span><span class="p">,</span>
         <span class="n">capath</span><span class="o">=</span><span class="n">capath</span><span class="p">,</span>
@@ -1211,7 +1211,7 @@ certificate chain</p>
     <span class="n">password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">cadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ssl</span><span class="o">.</span><span class="n">SSLContext</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a SSL context from data on memory.</span>
+<span class="w">    </span><span class="sd">"""Create a SSL context from data on memory.</span>
 
 <span class="sd">    This makes it easy to read the certificates from environmental variables</span>
 <span class="sd">    Usually the data is loaded from env variables.</span>
@@ -1219,20 +1219,20 @@ certificate chain</p>
 <span class="sd">    Arguments:</span>
 <span class="sd">        cadata: certificates used to sign broker certificates provided as unicode str</span>
 <span class="sd">        certdata: the client certificate, as well as any CA certificates needed to</span>
-<span class="sd">            establish the certificate&#39;s authenticity provided as unicode str</span>
+<span class="sd">            establish the certificate's authenticity provided as unicode str</span>
 <span class="sd">        keydata: the client private key provided as unicode str</span>
 <span class="sd">        password: optional password to be used when loading the</span>
 <span class="sd">            certificate chain</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">ExitStack</span><span class="p">()</span> <span class="k">as</span> <span class="n">stack</span><span class="p">:</span>
-        <span class="n">cert_file</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.crt&quot;</span><span class="p">))</span>
-        <span class="n">key_file</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.key&quot;</span><span class="p">))</span>
+        <span class="n">cert_file</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">".crt"</span><span class="p">))</span>
+        <span class="n">key_file</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">".key"</span><span class="p">))</span>
 
         <span class="c1"># expecting unicode data, writing it as bytes to files as utf-8</span>
-        <span class="n">cert_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">certdata</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="n">cert_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">certdata</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">))</span>
         <span class="n">cert_file</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
-        <span class="n">key_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">keydata</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="n">key_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">keydata</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">))</span>
         <span class="n">key_file</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
         <span class="n">ssl_context</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">create_default_context</span><span class="p">(</span><span class="n">cadata</span><span class="o">=</span><span class="n">cadata</span><span class="p">)</span>
@@ -1305,10 +1305,10 @@ certificate chain</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
     
   </body>

@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
     
     
       
@@ -29,10 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -949,7 +949,7 @@
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.backend">backend</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="kstreams.backends.kafka.Kafka (kstreams.backends.Kafka)" href="../backends/#kstreams.backends.kafka.Kafka">Kafka</a></code>
+                  <code>Kafka</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -960,7 +960,7 @@
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.consumer_class">consumer_class</span></code></td>
             <td>
-                  <code><span title="kstreams.Consumer">Consumer</span></code>
+                  <code>Consumer</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -972,7 +972,7 @@ instanciate a consumer. Default kstreams.Consumer</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.producer_class">producer_class</span></code></td>
             <td>
-                  <code><span title="kstreams.Producer">Producer</span></code>
+                  <code>Producer</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -984,7 +984,7 @@ instanciate the producer. Default kstreams.Producer</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.producer_settings">producer_settings</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="kstreams.ProducerSettings" href="../clients/#kstreams.ProducerSettings">ProducerSettings</a> | None</code>
+                  <code>ProducerSettings | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -995,7 +995,7 @@ instanciate the producer. Default kstreams.Producer</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.monitor">monitor</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="kstreams.PrometheusMonitor" href="../monitoring/#kstreams.PrometheusMonitor">PrometheusMonitor</a></code>
+                  <code>PrometheusMonitor</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1018,7 +1018,7 @@ the <a href="https://kpn.github.io/kstreams/metrics/">metrics</a></p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.serializer">serializer</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Serializer" href="../serialization/#kstreams.serializers.Serializer">Serializer</a> | None</code>
+                  <code>Serializer | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1030,7 +1030,7 @@ use when an event is produced.</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.deserializer">deserializer</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Deserializer" href="../serialization/#kstreams.serializers.Deserializer">Deserializer</a> | None</code>
+                  <code>Deserializer | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1048,12 +1048,12 @@ To override it per Stream, you can provide one per Stream</p>
 <div class="highlight"><span class="filename">Usage</span><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">kstreams</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">kstreams</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span>
 <span class="p">)</span>
 
-<span class="nd">@kstreams</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;local--hello-world&quot;</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">&quot;example-group&quot;</span><span class="p">)</span>
+<span class="nd">@kstreams</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">"local--hello-world"</span><span class="p">,</span> <span class="n">group_id</span><span class="o">=</span><span class="s2">"example-group"</span><span class="p">)</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">consume</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="n">kstreams</span><span class="o">.</span><span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;showing bytes: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"showing bytes: </span><span class="si">{</span><span class="n">cr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -1665,7 +1665,7 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="normal">620</span>
 <span class="normal">621</span>
 <span class="normal">622</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">StreamEngine</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        backend kstreams.backends.Kafka: Backend to connect. Default `Kafka`</span>
 <span class="sd">        consumer_class kstreams.Consumer: The consumer class to use when</span>
@@ -1684,21 +1684,21 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="sd">            To override it per Stream, you can provide one per Stream</span>
 
 <span class="sd">    !!! Example</span>
-<span class="sd">        ```python title=&quot;Usage&quot;</span>
+<span class="sd">        ```python title="Usage"</span>
 <span class="sd">        import kstreams</span>
 
 <span class="sd">        stream_engine = kstreams.create_engine(</span>
-<span class="sd">            title=&quot;my-stream-engine&quot;</span>
+<span class="sd">            title="my-stream-engine"</span>
 <span class="sd">        )</span>
 
-<span class="sd">        @kstreams.stream(&quot;local--hello-world&quot;, group_id=&quot;example-group&quot;)</span>
+<span class="sd">        @kstreams.stream("local--hello-world", group_id="example-group")</span>
 <span class="sd">        async def consume(stream: kstreams.ConsumerRecord) -&gt; None:</span>
-<span class="sd">            print(f&quot;showing bytes: {cr.value}&quot;)</span>
+<span class="sd">            print(f"showing bytes: {cr.value}")</span>
 
 
 <span class="sd">        await stream_engine.start()</span>
 <span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1744,7 +1744,7 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="n">serializer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Serializer</span><span class="p">]</span> <span class="o">=</span> <span class="n">NO_DEFAULT</span><span class="p">,</span>
         <span class="n">serializer_kwargs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RecordMetadata</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Attributes:</span>
 <span class="sd">            topic (str): Topic name to send the event to</span>
 <span class="sd">            value (Any): Event value</span>
@@ -1758,7 +1758,7 @@ To override it per Stream, you can provide one per Stream</p>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            RecordMetadata: Metadata of the sent record</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">EngineNotStartedException</span><span class="p">()</span>
 
@@ -1802,7 +1802,7 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="n">serializer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Serializer</span><span class="p">]</span> <span class="o">=</span> <span class="n">NO_DEFAULT</span><span class="p">,</span>
         <span class="n">serializer_kwargs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">RecordMetadata</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        If your application needs precise control over batch creation and submission</span>
 <span class="sd">        and you’re willing to forego partition selection,</span>
 <span class="sd">        you may use the `send_many` interface. `Send many` is more efficient</span>
@@ -1829,15 +1829,15 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="sd">            from kstreams import create_engine, BatchEvent</span>
 
 
-<span class="sd">            topic = &quot;local--kstreams-send-many&quot;</span>
-<span class="sd">            stream_engine = create_engine(title=&quot;my-stream-engine&quot;)</span>
+<span class="sd">            topic = "local--kstreams-send-many"</span>
+<span class="sd">            stream_engine = create_engine(title="my-stream-engine")</span>
 
 <span class="sd">            async def send_many(*, partition: int = 0):</span>
 <span class="sd">                batch_events = []</span>
 <span class="sd">                for id in range(5):</span>
 <span class="sd">                    batch_events.append(</span>
 <span class="sd">                        BatchEvent(</span>
-<span class="sd">                            value=f&quot;Hello world {str(id)}!&quot;.encode(),</span>
+<span class="sd">                            value=f"Hello world {str(id)}!".encode(),</span>
 <span class="sd">                            key=str(id),</span>
 <span class="sd">                        )</span>
 <span class="sd">                    )</span>
@@ -1855,7 +1855,7 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="sd">                await stream_engine.stop()</span>
 
 
-<span class="sd">            if __name__ == &quot;__main__&quot;:</span>
+<span class="sd">            if __name__ == "__main__":</span>
 <span class="sd">                aiorun.run(</span>
 <span class="sd">                    start(),</span>
 <span class="sd">                    stop_on_unhandled_errors=True,</span>
@@ -1865,13 +1865,13 @@ To override it per Stream, you can provide one per Stream</p>
 
 <span class="sd">        !!! Note</span>
 <span class="sd">            If the partition is not specified, then the partitions are selected</span>
-<span class="sd">            using the producer&#39;s partitioner. If `P` partitions are selected,</span>
+<span class="sd">            using the producer's partitioner. If `P` partitions are selected,</span>
 <span class="sd">            then internally `P` batches are created and sent</span>
 
 <span class="sd">        !!! Note</span>
 <span class="sd">            The result is a list of RecordMetadata, one for each batch sent if</span>
 <span class="sd">            multiple partitions were used</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">EngineNotStartedException</span><span class="p">()</span>
 
@@ -1936,7 +1936,7 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        A list of callables to run before the engine starts.</span>
 <span class="sd">        Handler are callables that do not take any arguments, and may be either</span>
 <span class="sd">        standard functions, or async functions.</span>
@@ -1945,25 +1945,25 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="sd">            func typing.Callable[[], typing.Any]: Func to callable before engine starts</span>
 
 <span class="sd">        !!! Example</span>
-<span class="sd">            ```python title=&quot;Engine before startup&quot;</span>
+<span class="sd">            ```python title="Engine before startup"</span>
 
 <span class="sd">            import kstreams</span>
 
 <span class="sd">            stream_engine = kstreams.create_engine(</span>
-<span class="sd">                title=&quot;my-stream-engine&quot;</span>
+<span class="sd">                title="my-stream-engine"</span>
 <span class="sd">            )</span>
 
 <span class="sd">            @stream_engine.on_startup</span>
 <span class="sd">            async def init_db() -&gt; None:</span>
-<span class="sd">                print(&quot;Initializing Database Connections&quot;)</span>
+<span class="sd">                print("Initializing Database Connections")</span>
 <span class="sd">                await init_db()</span>
 
 
 <span class="sd">            @stream_engine.on_startup</span>
 <span class="sd">            async def start_background_task() -&gt; None:</span>
-<span class="sd">                print(&quot;Some background task&quot;)</span>
+<span class="sd">                print("Some background task")</span>
 <span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_on_startup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">func</span>
 
@@ -1971,7 +1971,7 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        A list of callables to run before the engine stops.</span>
 <span class="sd">        Handler are callables that do not take any arguments, and may be either</span>
 <span class="sd">        standard functions, or async functions.</span>
@@ -1980,20 +1980,20 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="sd">            func typing.Callable[[], typing.Any]: Func to callable before engine stops</span>
 
 <span class="sd">        !!! Example</span>
-<span class="sd">            ```python title=&quot;Engine before stops&quot;</span>
+<span class="sd">            ```python title="Engine before stops"</span>
 
 <span class="sd">            import kstreams</span>
 
 <span class="sd">            stream_engine = kstreams.create_engine(</span>
-<span class="sd">                title=&quot;my-stream-engine&quot;</span>
+<span class="sd">                title="my-stream-engine"</span>
 <span class="sd">            )</span>
 
 <span class="sd">            @stream_engine.on_stop</span>
 <span class="sd">            async def close_db() -&gt; None:</span>
-<span class="sd">                print(&quot;Closing Database Connections&quot;)</span>
+<span class="sd">                print("Closing Database Connections")</span>
 <span class="sd">                await db_close()</span>
 <span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_on_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">func</span>
 
@@ -2001,7 +2001,7 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        A list of callables to run after the engine starts.</span>
 <span class="sd">        Handler are callables that do not take any arguments, and may be either</span>
 <span class="sd">        standard functions, or async functions.</span>
@@ -2010,20 +2010,20 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="sd">            func typing.Callable[[], typing.Any]: Func to callable after engine starts</span>
 
 <span class="sd">        !!! Example</span>
-<span class="sd">            ```python title=&quot;Engine after startup&quot;</span>
+<span class="sd">            ```python title="Engine after startup"</span>
 
 <span class="sd">            import kstreams</span>
 
 <span class="sd">            stream_engine = kstreams.create_engine(</span>
-<span class="sd">                title=&quot;my-stream-engine&quot;</span>
+<span class="sd">                title="my-stream-engine"</span>
 <span class="sd">            )</span>
 
 <span class="sd">            @stream_engine.after_startup</span>
 <span class="sd">            async def after_startup() -&gt; None:</span>
-<span class="sd">                print(&quot;Set pod as healthy&quot;)</span>
+<span class="sd">                print("Set pod as healthy")</span>
 <span class="sd">                await mark_healthy_pod()</span>
 <span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_after_startup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">func</span>
 
@@ -2031,7 +2031,7 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        A list of callables to run after the engine stops.</span>
 <span class="sd">        Handler are callables that do not take any arguments, and may be either</span>
 <span class="sd">        standard functions, or async functions.</span>
@@ -2040,19 +2040,19 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="sd">            func typing.Callable[[], typing.Any]: Func to callable after engine stops</span>
 
 <span class="sd">        !!! Example</span>
-<span class="sd">            ```python title=&quot;Engine after stops&quot;</span>
+<span class="sd">            ```python title="Engine after stops"</span>
 
 <span class="sd">            import kstreams</span>
 
 <span class="sd">            stream_engine = kstreams.create_engine(</span>
-<span class="sd">                title=&quot;my-stream-engine&quot;</span>
+<span class="sd">                title="my-stream-engine"</span>
 <span class="sd">            )</span>
 
 <span class="sd">            @stream_engine.after_stop</span>
 <span class="sd">            async def after_stop() -&gt; None:</span>
-<span class="sd">                print(&quot;Finishing backgrpund tasks&quot;)</span>
+<span class="sd">                print("Finishing backgrpund tasks")</span>
 <span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_after_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">func</span>
 
@@ -2077,7 +2077,7 @@ To override it per Stream, you can provide one per Stream</p>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitoring_task</span>
             <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cancelling </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">monitoring_task</span><span class="si">}</span><span class="s2"> now&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cancelling </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">monitoring_task</span><span class="si">}</span><span class="s2"> now"</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">monitoring_task</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
@@ -2086,7 +2086,7 @@ To override it per Stream, you can provide one per Stream</p>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Producer has STOPPED....&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Producer has STOPPED...."</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
@@ -2124,7 +2124,7 @@ To override it per Stream, you can provide one per Stream</p>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stop_streams</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">stream</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">streams_to_tasks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_stream</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Streams have STOPPED....&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Streams have STOPPED...."</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stop_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
@@ -2147,7 +2147,7 @@ To override it per Stream, you can provide one per Stream</p>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_stream</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">StreamErrorPolicy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Add a stream to the engine.</span>
 
 <span class="sd">        This method registers a new stream with the engine, setting up necessary</span>
@@ -2163,15 +2163,15 @@ To override it per Stream, you can provide one per Stream</p>
 <span class="sd">            DuplicateStreamException: If a stream with the same name already exists.</span>
 
 <span class="sd">        Notes:</span>
-<span class="sd">            - If the stream does not have a deserializer, the engine&#39;s deserializer</span>
+<span class="sd">            - If the stream does not have a deserializer, the engine's deserializer</span>
 <span class="sd">              is assigned to it.</span>
 <span class="sd">            - If the stream does not have a rebalance listener, a default</span>
 <span class="sd">              MetricsRebalanceListener is assigned.</span>
-<span class="sd">            - The stream&#39;s UDF handler is set up with the provided function and</span>
-<span class="sd">              engine&#39;s send method.</span>
-<span class="sd">            - If the stream&#39;s UDF handler type is not NO_TYPING, a middleware stack</span>
-<span class="sd">              is built for the stream&#39;s function.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            - The stream's UDF handler is set up with the provided function and</span>
+<span class="sd">              engine's send method.</span>
+<span class="sd">            - If the stream's UDF handler type is not NO_TYPING, a middleware stack</span>
+<span class="sd">              is built for the stream's function.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exist_stream</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">DuplicateStreamException</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">stream</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
@@ -2204,7 +2204,7 @@ To override it per Stream, you can provide one per Stream</p>
             <span class="n">stream</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_stream_middleware_stack</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_stream_middleware_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NextMiddlewareCall</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span><span class="p">,</span> <span class="s2">&quot;UdfHandler can not be None&quot;</span>
+        <span class="k">assert</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span><span class="p">,</span> <span class="s2">"UdfHandler can not be None"</span>
 
         <span class="n">middlewares</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">get_middlewares</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">next_call</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">udf_handler</span>
@@ -2317,7 +2317,7 @@ To override it per Stream, you can provide one per Stream</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send.value">value</span></code></td>
             <td>
-                  <code><span title="Any">Any</span></code>
+                  <code>Any</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2361,7 +2361,7 @@ To override it per Stream, you can provide one per Stream</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send.headers">headers</span></code></td>
             <td>
-                  <code><span title="Dict">Dict</span>[<span title="str">str</span>, <span title="str">str</span>] | None</code>
+                  <code>Dict[<span title="str">str</span>, <span title="str">str</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2372,7 +2372,7 @@ To override it per Stream, you can provide one per Stream</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send.serializer">serializer</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Serializer" href="../serialization/#kstreams.serializers.Serializer">Serializer</a> | None</code>
+                  <code>Serializer | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2384,7 +2384,7 @@ encode the event</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send.serializer_kwargs">serializer_kwargs</span></code></td>
             <td>
-                  <code><span title="Dict">Dict</span>[<span title="str">str</span>, <span title="Any">Any</span>] | None</code>
+                  <code>Dict[<span title="str">str</span>, Any] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2487,7 +2487,7 @@ encode the event</p>
     <span class="n">serializer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Serializer</span><span class="p">]</span> <span class="o">=</span> <span class="n">NO_DEFAULT</span><span class="p">,</span>
     <span class="n">serializer_kwargs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RecordMetadata</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        topic (str): Topic name to send the event to</span>
 <span class="sd">        value (Any): Event value</span>
@@ -2501,7 +2501,7 @@ encode the event</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        RecordMetadata: Metadata of the sent record</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">EngineNotStartedException</span><span class="p">()</span>
 
@@ -2595,7 +2595,7 @@ More events that you send, then more efficient it becomes.</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send_many.batch_events">batch_events</span></code></td>
             <td>
-                  <code><span title="List">List</span>[<span title="kstreams.structs.BatchEvent">BatchEvent</span>]</code>
+                  <code>List[BatchEvent]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2628,7 +2628,7 @@ More events that you send, then more efficient it becomes.</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send_many.headers">headers</span></code></td>
             <td>
-                  <code><span title="Dict">Dict</span>[<span title="str">str</span>, <span title="str">str</span>] | None</code>
+                  <code>Dict[<span title="str">str</span>, <span title="str">str</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2639,7 +2639,7 @@ More events that you send, then more efficient it becomes.</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send_many.serializer">serializer</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="kstreams.serializers.Serializer" href="../serialization/#kstreams.serializers.Serializer">Serializer</a> | None</code>
+                  <code>Serializer | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2651,7 +2651,7 @@ encode the event</p>
           <tr class="doc-section-item">
             <td><code><span title="kstreams.engine.StreamEngine.send_many.serializer_kwargs">serializer_kwargs</span></code></td>
             <td>
-                  <code><span title="Dict">Dict</span>[<span title="str">str</span>, <span title="Any">Any</span>] | None</code>
+                  <code>Dict[<span title="str">str</span>, Any] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2690,15 +2690,15 @@ encode the event</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kstreams</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">BatchEvent</span>
 
 
-<span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;local--kstreams-send-many&quot;</span>
-<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span><span class="p">)</span>
+<span class="n">topic</span> <span class="o">=</span> <span class="s2">"local--kstreams-send-many"</span>
+<span class="n">stream_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span><span class="p">)</span>
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_many</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">partition</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="n">batch_events</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
         <span class="n">batch_events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="n">BatchEvent</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Hello world </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="si">}</span><span class="s2">!&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
+                <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Hello world </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="si">}</span><span class="s2">!"</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
                 <span class="n">key</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">),</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -2716,7 +2716,7 @@ encode the event</p>
     <span class="k">await</span> <span class="n">stream_engine</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">aiorun</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
         <span class="n">start</span><span class="p">(),</span>
         <span class="n">stop_on_unhandled_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -2876,7 +2876,7 @@ multiple partitions were used</p>
     <span class="n">serializer</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Serializer</span><span class="p">]</span> <span class="o">=</span> <span class="n">NO_DEFAULT</span><span class="p">,</span>
     <span class="n">serializer_kwargs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">RecordMetadata</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    If your application needs precise control over batch creation and submission</span>
 <span class="sd">    and you’re willing to forego partition selection,</span>
 <span class="sd">    you may use the `send_many` interface. `Send many` is more efficient</span>
@@ -2903,15 +2903,15 @@ multiple partitions were used</p>
 <span class="sd">        from kstreams import create_engine, BatchEvent</span>
 
 
-<span class="sd">        topic = &quot;local--kstreams-send-many&quot;</span>
-<span class="sd">        stream_engine = create_engine(title=&quot;my-stream-engine&quot;)</span>
+<span class="sd">        topic = "local--kstreams-send-many"</span>
+<span class="sd">        stream_engine = create_engine(title="my-stream-engine")</span>
 
 <span class="sd">        async def send_many(*, partition: int = 0):</span>
 <span class="sd">            batch_events = []</span>
 <span class="sd">            for id in range(5):</span>
 <span class="sd">                batch_events.append(</span>
 <span class="sd">                    BatchEvent(</span>
-<span class="sd">                        value=f&quot;Hello world {str(id)}!&quot;.encode(),</span>
+<span class="sd">                        value=f"Hello world {str(id)}!".encode(),</span>
 <span class="sd">                        key=str(id),</span>
 <span class="sd">                    )</span>
 <span class="sd">                )</span>
@@ -2929,7 +2929,7 @@ multiple partitions were used</p>
 <span class="sd">            await stream_engine.stop()</span>
 
 
-<span class="sd">        if __name__ == &quot;__main__&quot;:</span>
+<span class="sd">        if __name__ == "__main__":</span>
 <span class="sd">            aiorun.run(</span>
 <span class="sd">                start(),</span>
 <span class="sd">                stop_on_unhandled_errors=True,</span>
@@ -2939,13 +2939,13 @@ multiple partitions were used</p>
 
 <span class="sd">    !!! Note</span>
 <span class="sd">        If the partition is not specified, then the partitions are selected</span>
-<span class="sd">        using the producer&#39;s partitioner. If `P` partitions are selected,</span>
+<span class="sd">        using the producer's partitioner. If `P` partitions are selected,</span>
 <span class="sd">        then internally `P` batches are created and sent</span>
 
 <span class="sd">    !!! Note</span>
 <span class="sd">        The result is a list of RecordMetadata, one for each batch sent if</span>
 <span class="sd">        multiple partitions were used</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">EngineNotStartedException</span><span class="p">()</span>
 
@@ -3040,18 +3040,18 @@ standard functions, or async functions.</p>
 <div class="highlight"><span class="filename">Engine before startup</span><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">kstreams</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">kstreams</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span>
 <span class="p">)</span>
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">on_startup</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">init_db</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initializing Database Connections&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Initializing Database Connections"</span><span class="p">)</span>
     <span class="k">await</span> <span class="n">init_db</span><span class="p">()</span>
 
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">on_startup</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start_background_task</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Some background task&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Some background task"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 
@@ -3095,7 +3095,7 @@ standard functions, or async functions.</p>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A list of callables to run before the engine starts.</span>
 <span class="sd">    Handler are callables that do not take any arguments, and may be either</span>
 <span class="sd">    standard functions, or async functions.</span>
@@ -3104,25 +3104,25 @@ standard functions, or async functions.</p>
 <span class="sd">        func typing.Callable[[], typing.Any]: Func to callable before engine starts</span>
 
 <span class="sd">    !!! Example</span>
-<span class="sd">        ```python title=&quot;Engine before startup&quot;</span>
+<span class="sd">        ```python title="Engine before startup"</span>
 
 <span class="sd">        import kstreams</span>
 
 <span class="sd">        stream_engine = kstreams.create_engine(</span>
-<span class="sd">            title=&quot;my-stream-engine&quot;</span>
+<span class="sd">            title="my-stream-engine"</span>
 <span class="sd">        )</span>
 
 <span class="sd">        @stream_engine.on_startup</span>
 <span class="sd">        async def init_db() -&gt; None:</span>
-<span class="sd">            print(&quot;Initializing Database Connections&quot;)</span>
+<span class="sd">            print("Initializing Database Connections")</span>
 <span class="sd">            await init_db()</span>
 
 
 <span class="sd">        @stream_engine.on_startup</span>
 <span class="sd">        async def start_background_task() -&gt; None:</span>
-<span class="sd">            print(&quot;Some background task&quot;)</span>
+<span class="sd">            print("Some background task")</span>
 <span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_on_startup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">func</span>
 </code></pre></div></td></tr></table></div>
@@ -3175,12 +3175,12 @@ standard functions, or async functions.</p>
 <div class="highlight"><span class="filename">Engine before stops</span><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">kstreams</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">kstreams</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span>
 <span class="p">)</span>
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">on_stop</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close_db</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Closing Database Connections&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Closing Database Connections"</span><span class="p">)</span>
     <span class="k">await</span> <span class="n">db_close</span><span class="p">()</span>
 </code></pre></div>
 </div>
@@ -3220,7 +3220,7 @@ standard functions, or async functions.</p>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A list of callables to run before the engine stops.</span>
 <span class="sd">    Handler are callables that do not take any arguments, and may be either</span>
 <span class="sd">    standard functions, or async functions.</span>
@@ -3229,20 +3229,20 @@ standard functions, or async functions.</p>
 <span class="sd">        func typing.Callable[[], typing.Any]: Func to callable before engine stops</span>
 
 <span class="sd">    !!! Example</span>
-<span class="sd">        ```python title=&quot;Engine before stops&quot;</span>
+<span class="sd">        ```python title="Engine before stops"</span>
 
 <span class="sd">        import kstreams</span>
 
 <span class="sd">        stream_engine = kstreams.create_engine(</span>
-<span class="sd">            title=&quot;my-stream-engine&quot;</span>
+<span class="sd">            title="my-stream-engine"</span>
 <span class="sd">        )</span>
 
 <span class="sd">        @stream_engine.on_stop</span>
 <span class="sd">        async def close_db() -&gt; None:</span>
-<span class="sd">            print(&quot;Closing Database Connections&quot;)</span>
+<span class="sd">            print("Closing Database Connections")</span>
 <span class="sd">            await db_close()</span>
 <span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_on_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">func</span>
 </code></pre></div></td></tr></table></div>
@@ -3295,12 +3295,12 @@ standard functions, or async functions.</p>
 <div class="highlight"><span class="filename">Engine after startup</span><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">kstreams</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">kstreams</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span>
 <span class="p">)</span>
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">after_startup</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">after_startup</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Set pod as healthy&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Set pod as healthy"</span><span class="p">)</span>
     <span class="k">await</span> <span class="n">mark_healthy_pod</span><span class="p">()</span>
 </code></pre></div>
 </div>
@@ -3340,7 +3340,7 @@ standard functions, or async functions.</p>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A list of callables to run after the engine starts.</span>
 <span class="sd">    Handler are callables that do not take any arguments, and may be either</span>
 <span class="sd">    standard functions, or async functions.</span>
@@ -3349,20 +3349,20 @@ standard functions, or async functions.</p>
 <span class="sd">        func typing.Callable[[], typing.Any]: Func to callable after engine starts</span>
 
 <span class="sd">    !!! Example</span>
-<span class="sd">        ```python title=&quot;Engine after startup&quot;</span>
+<span class="sd">        ```python title="Engine after startup"</span>
 
 <span class="sd">        import kstreams</span>
 
 <span class="sd">        stream_engine = kstreams.create_engine(</span>
-<span class="sd">            title=&quot;my-stream-engine&quot;</span>
+<span class="sd">            title="my-stream-engine"</span>
 <span class="sd">        )</span>
 
 <span class="sd">        @stream_engine.after_startup</span>
 <span class="sd">        async def after_startup() -&gt; None:</span>
-<span class="sd">            print(&quot;Set pod as healthy&quot;)</span>
+<span class="sd">            print("Set pod as healthy")</span>
 <span class="sd">            await mark_healthy_pod()</span>
 <span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_after_startup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">func</span>
 </code></pre></div></td></tr></table></div>
@@ -3415,12 +3415,12 @@ standard functions, or async functions.</p>
 <div class="highlight"><span class="filename">Engine after stops</span><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">kstreams</span>
 
 <span class="n">stream_engine</span> <span class="o">=</span> <span class="n">kstreams</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;my-stream-engine&quot;</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"my-stream-engine"</span>
 <span class="p">)</span>
 
 <span class="nd">@stream_engine</span><span class="o">.</span><span class="n">after_stop</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">after_stop</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finishing backgrpund tasks&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Finishing backgrpund tasks"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 
@@ -3458,7 +3458,7 @@ standard functions, or async functions.</p>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">func</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A list of callables to run after the engine stops.</span>
 <span class="sd">    Handler are callables that do not take any arguments, and may be either</span>
 <span class="sd">    standard functions, or async functions.</span>
@@ -3467,19 +3467,19 @@ standard functions, or async functions.</p>
 <span class="sd">        func typing.Callable[[], typing.Any]: Func to callable after engine stops</span>
 
 <span class="sd">    !!! Example</span>
-<span class="sd">        ```python title=&quot;Engine after stops&quot;</span>
+<span class="sd">        ```python title="Engine after stops"</span>
 
 <span class="sd">        import kstreams</span>
 
 <span class="sd">        stream_engine = kstreams.create_engine(</span>
-<span class="sd">            title=&quot;my-stream-engine&quot;</span>
+<span class="sd">            title="my-stream-engine"</span>
 <span class="sd">        )</span>
 
 <span class="sd">        @stream_engine.after_stop</span>
 <span class="sd">        async def after_stop() -&gt; None:</span>
-<span class="sd">            print(&quot;Finishing backgrpund tasks&quot;)</span>
+<span class="sd">            print("Finishing backgrpund tasks")</span>
 <span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_after_stop</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">func</span>
 </code></pre></div></td></tr></table></div>
@@ -3652,7 +3652,7 @@ You should probably set directly when instanciating a Stream, not here.</p>
 <span class="normal">564</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_stream</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">error_policy</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">StreamErrorPolicy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Add a stream to the engine.</span>
 
 <span class="sd">    This method registers a new stream with the engine, setting up necessary</span>
@@ -3668,15 +3668,15 @@ You should probably set directly when instanciating a Stream, not here.</p>
 <span class="sd">        DuplicateStreamException: If a stream with the same name already exists.</span>
 
 <span class="sd">    Notes:</span>
-<span class="sd">        - If the stream does not have a deserializer, the engine&#39;s deserializer</span>
+<span class="sd">        - If the stream does not have a deserializer, the engine's deserializer</span>
 <span class="sd">          is assigned to it.</span>
 <span class="sd">        - If the stream does not have a rebalance listener, a default</span>
 <span class="sd">          MetricsRebalanceListener is assigned.</span>
-<span class="sd">        - The stream&#39;s UDF handler is set up with the provided function and</span>
-<span class="sd">          engine&#39;s send method.</span>
-<span class="sd">        - If the stream&#39;s UDF handler type is not NO_TYPING, a middleware stack</span>
-<span class="sd">          is built for the stream&#39;s function.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        - The stream's UDF handler is set up with the provided function and</span>
+<span class="sd">          engine's send method.</span>
+<span class="sd">        - If the stream's UDF handler type is not NO_TYPING, a middleware stack</span>
+<span class="sd">          is built for the stream's function.</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exist_stream</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">DuplicateStreamException</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">stream</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
@@ -3771,10 +3771,10 @@ You should probably set directly when instanciating a Stream, not here.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
     
   </body>

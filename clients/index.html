@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
     
     
       
@@ -29,10 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -979,9 +979,9 @@ Default to 60000 (<code>1 minute</code>)</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kstreams.clients</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProducerSettings</span>
 
 
-<span class="n">backend</span> <span class="o">=</span> <span class="n">Kafka</span><span class="p">(</span><span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;localhost:9092&quot;</span><span class="p">])</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">Kafka</span><span class="p">(</span><span class="n">bootstrap_servers</span><span class="o">=</span><span class="p">[</span><span class="s2">"localhost:9092"</span><span class="p">])</span>
 <span class="n">producer_settings</span> <span class="o">=</span> <span class="n">ProducerSettings</span><span class="p">(</span>
-    <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;my-producer&quot;</span><span class="p">,</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="s2">"my-producer"</span><span class="p">,</span>
     <span class="n">linger_ms</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
     <span class="n">request_timeout_ms</span><span class="o">=</span><span class="mi">80000</span><span class="p">,</span>
 <span class="p">)</span>
@@ -1082,7 +1082,7 @@ Default to 60000 (<code>1 minute</code>)</p>
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ProducerSettings</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kafka producer configuration.</span>
+<span class="w">    </span><span class="sd">"""Kafka producer configuration.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        client_id: Name passed to Kafka brokers for request logging. Default to None.</span>
@@ -1122,9 +1122,9 @@ Default to 60000 (<code>1 minute</code>)</p>
 <span class="sd">        from kstreams.clients import ProducerSettings</span>
 
 
-<span class="sd">        backend = Kafka(bootstrap_servers=[&quot;localhost:9092&quot;])</span>
+<span class="sd">        backend = Kafka(bootstrap_servers=["localhost:9092"])</span>
 <span class="sd">        producer_settings = ProducerSettings(</span>
-<span class="sd">            client_id=&quot;my-producer&quot;,</span>
+<span class="sd">            client_id="my-producer",</span>
 <span class="sd">            linger_ms=10,</span>
 <span class="sd">            request_timeout_ms=80000,</span>
 <span class="sd">        )</span>
@@ -1134,14 +1134,14 @@ Default to 60000 (<code>1 minute</code>)</p>
 <span class="sd">            producer_settings=producer_settings</span>
 <span class="sd">        )</span>
 <span class="sd">        ```</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">client_id</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">metadata_max_age_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300000</span>
     <span class="n">request_timeout_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40000</span>
-    <span class="n">acks</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">acks</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"all"</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">compression_type</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span>
-        <span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="s2">&quot;snappy&quot;</span><span class="p">,</span> <span class="s2">&quot;lz4&quot;</span><span class="p">,</span> <span class="s2">&quot;zstd&quot;</span><span class="p">]</span>
+        <span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"gzip"</span><span class="p">,</span> <span class="s2">"snappy"</span><span class="p">,</span> <span class="s2">"lz4"</span><span class="p">,</span> <span class="s2">"zstd"</span><span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">max_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16384</span>
     <span class="n">partitioner</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1153,13 +1153,13 @@ Default to 60000 (<code>1 minute</code>)</p>
     <span class="n">transactional_id</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">transaction_timeout_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60000</span>
 
-    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;forbid&quot;</span><span class="p">)</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">"forbid"</span><span class="p">)</span>
 
-    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_idempotence_and_acks</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">enable_idempotence</span> <span class="ow">and</span> <span class="n">values</span><span class="o">.</span><span class="n">acks</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`acks` must be `all` when `enable_idempotence` is True&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`acks` must be `all` when `enable_idempotence` is True"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">values</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -1235,10 +1235,10 @@ Default to 60000 (<code>1 minute</code>)</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
     
   </body>
