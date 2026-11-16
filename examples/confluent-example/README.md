@@ -62,8 +62,9 @@ from schema_registry.serializers import AsyncAvroMessageSerializer
 
 
 class AvroSerializer(AsyncAvroMessageSerializer):
-
-    async def serialize(self, payload: Dict, serializer_kwargs: Dict[str, str], **kwargs) -> bytes:
+    async def serialize(
+        self, payload: Dict, serializer_kwargs: Dict[str, str], **kwargs
+    ) -> bytes:
         """
         Serialize a payload to avro-binary using the schema and the subject
         """
@@ -101,7 +102,7 @@ client = AsyncSchemaRegistryClient("http://localhost:8081")
 stream_engine = create_engine(
     title="my-stream-engine",
     serializer=serializers.AvroSerializer(client),
-    deserializer=serializers.AvroDeserializer(client)
+    deserializer=serializers.AvroDeserializer(client),
 )
 ```
 
@@ -125,7 +126,6 @@ await stream_engine.send(
         "subject": "deployment",
         "schema": deployment_schema,
     },
-
 )
 
 await stream_engine.send(

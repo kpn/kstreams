@@ -26,6 +26,7 @@ In this example we want to stream instances of `models.User` and `models.Address
 @dataclass
 class User(AvroModel):
     "An User"
+
     name: str
     age: int
     pets: typing.List[str]
@@ -35,18 +36,24 @@ class User(AvroModel):
 
     class Meta:
         namespace = "User.v1"
-        aliases = ["user-v1", "super user",]
+        aliases = [
+            "user-v1",
+            "super user",
+        ]
 
 
 @dataclass
 class Address(AvroModel):
     "An Address"
+
     street: str
     street_number: int
 
     class Meta:
         namespace = "Address.v1"
-        aliases = ["address-v1",]
+        aliases = [
+            "address-v1",
+        ]
 ```
 
 To accomplish it, we need to define custom `serializers` for our `models`:
@@ -54,6 +61,7 @@ To accomplish it, we need to define custom `serializers` for our `models`:
 ```python
 # serializers.py
 from kstreams import ConsumerRecord
+
 
 class AvroSerializer:
     async def serialize(self, instance: AvroModel, **kwargs) -> bytes:
@@ -76,7 +84,6 @@ class AvroDeserializer:
         data = self.model.deserialize(consumer_record.value)
         consumer_record.value = data
         return consumer_record
-
 ```
 
 Then, we inject the `serializers` in the `engine` and `streams` and we are ready to go
@@ -89,9 +96,7 @@ stream_engine = create_engine(
 )
 
 
-@stream_engine.stream(
-    user_topic, deserializer=serializers.AvroDeserializer(model=User)
-)
+@stream_engine.stream(user_topic, deserializer=serializers.AvroDeserializer(model=User))
 async def user_stream(cr: ConsumerRecord):
     print(f"Event consumed on topic {user_topic}. The user is {cr.value}")
 
