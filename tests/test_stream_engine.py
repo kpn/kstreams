@@ -1,5 +1,5 @@
 import asyncio
-from typing import Callable
+from typing import Callable, cast
 from unittest import mock
 
 import pytest
@@ -152,11 +152,13 @@ async def test_start_stop_stream_engine(stream_engine: StreamEngine):
             stream_engine._producer.start.assert_awaited()  # type: ignore
 
             await asyncio.sleep(0)  # Allow stream coroutine to run once
-            Consumer.start.assert_awaited()
+            consumer_start = cast(mock.MagicMock, Consumer.start)
+            consumer_start.assert_awaited()
 
             await stream_engine.stop()
             stream_engine._producer.stop.assert_awaited()  # type: ignore
-            Consumer.stop.assert_awaited()
+            consumer_stop = cast(mock.MagicMock, Consumer.stop)
+            consumer_stop.assert_awaited()
 
 
 @pytest.mark.asyncio
@@ -251,7 +253,8 @@ async def test_wait_for_streams_before_stop(
         # stop engine immediately, this should not break the streams
         # and it should wait until the event is processed.
         await stream_engine.stop()
-        Consumer.stop.assert_awaited()
+        consumer_stop = cast(mock.MagicMock, Consumer.stop)
+        consumer_stop.assert_awaited()
         save_to_db.assert_awaited_once_with(value)
 
 

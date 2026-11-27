@@ -1,5 +1,5 @@
 import asyncio
-from typing import Set
+from typing import Any, Set, cast
 from unittest import mock
 
 import pytest
@@ -11,7 +11,7 @@ from kstreams import (
     TopicPartition,
     create_engine,
 )
-from kstreams.backends.kafka import Consumer, Kafka
+from kstreams.backends.kafka import Consumer, Kafka, SecurityProtocol
 from kstreams.engine import Stream, StreamEngine
 
 
@@ -28,7 +28,7 @@ async def test_consumer():
 
 @pytest.mark.asyncio
 async def test_consumer_with_ssl(ssl_context):
-    backend = Kafka(security_protocol="SSL", ssl_context=ssl_context)
+    backend = Kafka(security_protocol=SecurityProtocol.SSL, ssl_context=ssl_context)
     consumer = Consumer(**backend.to_dict())
     assert consumer._client._ssl_context
 
@@ -43,7 +43,7 @@ async def test_init_consumer_with_multiple_topics():
 
 @pytest.mark.asyncio
 async def test_consumer_custom_kafka_config():
-    kafka_config = {
+    kafka_config: dict[str, Any] = {
         "bootstrap_servers": ["localhost:9093", "localhost:9094"],
         "group_id": "my-group-consumer",
     }
@@ -101,7 +101,7 @@ async def test_add_stream_with_rebalance_listener(stream_engine: StreamEngine):
 @pytest.mark.asyncio
 async def test_stream_with_default_rebalance_listener():
     topic = "local--hello-kpn"
-    topic_partitions = set(TopicPartition(topic=topic, partition=0))
+    topic_partitions = {TopicPartition(topic=topic, partition=0)}
 
     with (
         mock.patch.multiple(Consumer, start=mock.DEFAULT, unsubscribe=mock.DEFAULT),
@@ -127,6 +127,7 @@ async def test_stream_with_default_rebalance_listener():
         rebalance_listener = my_stream.rebalance_listener
 
         assert isinstance(rebalance_listener, MetricsRebalanceListener)
+        assert my_stream.consumer is not None
         # checking that the subscription has also the rebalance_listener
         assert isinstance(
             my_stream.consumer._subscription._listener, MetricsRebalanceListener
@@ -149,7 +150,7 @@ async def test_stream_with_default_rebalance_listener():
 @pytest.mark.asyncio
 async def test_stream_manual_commit_rebalance_listener(stream_engine: StreamEngine):
     topic = "local--hello-kpn"
-    topic_partitions = set(TopicPartition(topic=topic, partition=0))
+    topic_partitions = {TopicPartition(topic=topic, partition=0)}
 
     with (
         mock.patch.multiple(
@@ -183,7 +184,8 @@ async def test_stream_manual_commit_rebalance_listener(stream_engine: StreamEngi
         )
 
         await rebalance_listener.on_partitions_revoked(revoked=topic_partitions)
-        Consumer.commit.assert_awaited_once()
+        consumer_commit = cast(mock.MagicMock, Consumer.commit)
+        consumer_commit.assert_awaited_once()
 
         await stream_engine.stop()
         await stream_engine.clean_streams()

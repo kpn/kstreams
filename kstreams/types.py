@@ -7,7 +7,7 @@ if typing.TYPE_CHECKING:
     from .batch import BatchEvent  #  pragma: no cover
     from .serializers import Serializer  #  pragma: no cover
 
-Headers = typing.Dict[str, str]
+Headers = dict[str, str]
 EncodedHeaders = typing.Sequence[typing.Tuple[str, bytes]]
 StreamFunc = typing.Callable[..., typing.Any]
 EngineHooks = typing.Sequence[typing.Callable[[], typing.Any]]
@@ -41,7 +41,7 @@ class Send(typing.Protocol):
         timestamp_ms: typing.Optional[int] = None,
         headers: typing.Optional[Headers] = None,
         serializer: typing.Optional["Serializer"] = None,
-        serializer_kwargs: typing.Optional[typing.Dict] = None,
+        serializer_kwargs: typing.Optional[dict] = None,
     ) -> typing.Awaitable[RecordMetadata]: ...
 
 
@@ -69,12 +69,12 @@ class SendMany(typing.Protocol):
         self,
         topic: str,
         partition: int,
-        batch_events: typing.List["BatchEvent"],
+        batch_events: list["BatchEvent"],
         key: typing.Any = None,
         timestamp_ms: typing.Optional[int] = None,
         headers: typing.Optional[Headers] = None,
         serializer: typing.Optional["Serializer"] = None,
-        serializer_kwargs: typing.Optional[typing.Dict] = None,
+        serializer_kwargs: typing.Optional[dict] = None,
     ) -> typing.Awaitable[RecordMetadata]: ...
 
 

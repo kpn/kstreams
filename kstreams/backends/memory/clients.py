@@ -62,7 +62,7 @@ class InMemoryProducer(Base, Producer):
 
     async def send(
         self,
-        topic_name: str,
+        topic: str,
         value: Any = None,
         key: Any = None,
         partition: int = 0,
@@ -73,14 +73,14 @@ class InMemoryProducer(Base, Producer):
     ) -> Coroutine:
         partition = partition or 0
 
-        topic, _ = TopicManager.get_or_create(topic_name)
+        _topic, _ = TopicManager.get_or_create(topic)
         timestamp_ms = timestamp_ms or datetime.now().toordinal()
-        total_partition_events = topic.offset(partition=partition)
+        total_partition_events = _topic.offset(partition=partition)
 
         serialized_key_size = -1 if key is None else len(key)
         serialized_value_size = -1 if value is None else len(value)
         consumer_record: ConsumerRecord = ConsumerRecord(
-            topic=topic_name,
+            topic=topic,
             value=value,
             key=key,
             headers=headers or [],
@@ -93,11 +93,11 @@ class InMemoryProducer(Base, Producer):
             serialized_value_size=serialized_value_size,
         )
 
-        await topic.put(consumer_record)
+        await _topic.put(consumer_record)
 
         async def fut():
             return RecordMetadata(
-                topic=topic_name,
+                topic=topic,
                 partition=partition,
                 timestamp=timestamp_ms,
                 offset=total_partition_events + 1,
@@ -107,14 +107,14 @@ class InMemoryProducer(Base, Producer):
 
     async def send_batch(
         self,
-        batch_events: BatchEvents,
+        batch: BatchEvents,
         topic: str,
         *,
         partition: int,
     ) -> Coroutine:
         # Because we use an asyncio.Queue to store the events during testing,
         # we can call send once per event in the batch
-        for batch_event in batch_events.events:
+        for batch_event in batch.events:
             fut = await self.send(
                 topic,
                 value=batch_event.value,
@@ -210,27 +210,27 @@ class InMemoryConsumer(Base, Consumer):
         if topic_partition not in self._assignment:
             self._assignment.append(topic_partition)
 
-    def last_stable_offset(self, topic_partition: TopicPartition) -> int:
-        topic = TopicManager.get(topic_partition.topic)
+    def last_stable_offset(self, partition: TopicPartition) -> int:
+        topic = TopicManager.get(partition.topic)
 
         if topic is not None:
-            return topic.offset(partition=topic_partition.partition)
+            return topic.offset(partition=partition.partition)
         return -1
 
-    async def position(self, topic_partition: TopicPartition) -> int:
+    async def position(self, partition: TopicPartition) -> int:
         """
         Get the offset of the *next record* that will be fetched,
         so it returns offset(topic_partition) + 1
         """
-        return self.last_stable_offset(topic_partition) + 1
+        return self.last_stable_offset(partition) + 1
 
-    def highwater(self, topic_partition: TopicPartition) -> int:
+    def highwater(self, partition: TopicPartition) -> int:
         """
         A highwater offset is the offset that will be assigned to
         the *next message* that is produced, so it returns
         offset(topic_partition) + 1
         """
-        return self.last_stable_offset(topic_partition) + 1
+        return self.last_stable_offset(partition) + 1
 
     async def commit(self, offsets: Optional[Dict[TopicPartition, int]] = None) -> None:
         if offsets is not None:
@@ -238,8 +238,8 @@ class InMemoryConsumer(Base, Consumer):
                 self.partitions_committed[topic_partition] = offset
         return None
 
-    async def committed(self, topic_partition: TopicPartition) -> Optional[int]:
-        return self.partitions_committed.get(topic_partition, 0)
+    async def committed(self, partition: TopicPartition) -> Optional[int]:
+        return self.partitions_committed.get(partition, 0)
 
     async def end_offsets(
         self, partitions: List[TopicPartition]
@@ -296,9 +296,9 @@ class InMemoryConsumer(Base, Consumer):
         but it seems unnecessary for now; if end users request them we
         can add it
         """
-        data: typing.Dict[
-            TopicPartition, typing.List[typing.Optional[ConsumerRecord]]
-        ] = {self._assignment[0]: []}
+        data: dict[TopicPartition, list[typing.Optional[ConsumerRecord]]] = {
+            self._assignment[0]: []
+        }
 
         async def get_records():
             for _ in range(0, max_records):

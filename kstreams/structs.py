@@ -34,4 +34,4 @@ class GetMany(BaseModel):
 
     max_records: PositiveInt = 1
     timeout_ms: NonNegativeInt = 0
-    partitions: typing.Optional[typing.List[TopicPartition]] = None
+    partitions: typing.Optional[list[TopicPartition]] = None

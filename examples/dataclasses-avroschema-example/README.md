@@ -29,8 +29,8 @@ class User(AvroModel):
 
     name: str
     age: int
-    pets: typing.List[str]
-    accounts: typing.Dict[str, int]
+    pets: list[str]
+    accounts: dict[str, int]
     country: str = "Argentina"
     address: str = None
 

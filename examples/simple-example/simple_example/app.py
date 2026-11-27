@@ -26,7 +26,7 @@ class EventStore:
     Store events in memory
     """
 
-    events: typing.List[ConsumerRecord] = field(default_factory=list)
+    events: list[ConsumerRecord] = field(default_factory=list)
 
     def add(self, event: ConsumerRecord) -> None:
         self.events.append(event)

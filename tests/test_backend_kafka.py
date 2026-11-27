@@ -12,7 +12,7 @@ def test_default_ok():
 
 def test_plaintext_ok():
     b_servers = ["kafka:9092", "localhost:9093"]
-    kafka_backend = Kafka(bootstrap_servers=b_servers, security_protocol="PLAINTEXT")
+    kafka_backend = Kafka(bootstrap_servers=b_servers, security_protocol="PLAINTEXT")  # type: ignore [arg-type]
     assert kafka_backend.bootstrap_servers == b_servers
     assert kafka_backend.security_protocol == SecurityProtocol.PLAINTEXT
 
