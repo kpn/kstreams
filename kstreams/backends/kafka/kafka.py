@@ -1,6 +1,6 @@
 import ssl
 from enum import Enum
-from typing import List, Optional, Type
+from typing import Optional, Sequence, Type
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
@@ -118,7 +118,7 @@ class Kafka(BaseModel):
     consumer_class: Type[Consumer] = Consumer
     producer_class: Type[Producer] = Producer
 
-    bootstrap_servers: List[str] = ["localhost:9092"]
+    bootstrap_servers: Sequence[str] = ["localhost:9092"]
     security_protocol: SecurityProtocol = SecurityProtocol.PLAINTEXT
 
     ssl_context: Optional[ssl.SSLContext] = None

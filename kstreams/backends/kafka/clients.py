@@ -125,7 +125,10 @@ class Producer(aiokafka.AIOKafkaProducer):
         super().__init__(*args, key_serializer=key_serializer, **self.config)
 
     def all_partitions_for_topic(self, topic: str) -> typing.List[int]:
-        return list(self._metadata.partitions_for_topic(topic))
+        pft = self._metadata.partitions_for_topic(topic)
+        if pft is None:
+            return []
+        return list(pft)
 
     def available_partitions_for_topic(self, topic: str) -> typing.List[int]:
         return list(self._metadata.available_partitions_for_topic(topic))
