@@ -972,7 +972,7 @@
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Store events in memory</span>
 <span class="sd">    """</span>
-    <span class="n">events</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ConsumerRecord</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">events</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ConsumerRecord</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">ConsumerRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
@@ -1042,10 +1042,10 @@
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-</div>
 <p>Notice that the <code>produce</code> coroutine is not used to send events in the test case.
 The <code>TestStreamClient.send</code> coroutine is used instead.
 This allows to test <code>streams</code> without having producer code in your application</p>
+</div>
 <h3 id="testing-the-commit">Testing the Commit</h3>
 <p>In some cases your stream will commit, in this situation checking the commited partitions can be useful.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
@@ -1162,11 +1162,11 @@ the event was procuced in a proper way and the <code>topic</code> contains that 
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-</div>
 <p>Even thought the previous example is using a simple <code>produce</code> function,
 it shows what to do when the <code>procuder code</code> is encapsulated in other functions,
 for example a <code>FastAPI</code> view.
 Then you don't want to use <code>client.send</code> directly, just called the function that contains <code>stream_engine.send(...)</code></p>
+</div>
 <h2 id="sendmany">SendMany</h2>
 <p>Your application might produce many events and other application/s will consume it, but you want to make sure that
 the events were procuced properly</p>
@@ -1214,7 +1214,6 @@ the events were procuced properly</p>
 </code></pre></div>
 <p>Then you could have a <code>test_producer_example.py</code> file to test the code:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># test_send_many_example.py</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">aiokafka.structs</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordMetadata</span>
@@ -1295,7 +1294,7 @@ If we try to get the <code>target topic</code> event inside the <code>async with
 <span class="ne">ValueError</span><span class="p">:</span> <span class="n">You</span> <span class="n">might</span> <span class="n">be</span> <span class="n">trying</span> <span class="n">to</span> <span class="n">get</span> <span class="n">the</span> <span class="n">topic</span> <span class="n">target</span><span class="o">-</span><span class="n">topic</span> <span class="n">outside</span> <span class="n">the</span> <span class="err">`</span><span class="n">client</span> <span class="k">async</span> <span class="n">context</span><span class="err">`</span> <span class="ow">or</span> <span class="n">trying</span> <span class="n">to</span> <span class="n">get</span> <span class="n">an</span> <span class="n">event</span> <span class="kn">from</span><span class="w"> </span><span class="nn">an</span> <span class="n">empty</span> <span class="n">topic</span> <span class="n">target</span><span class="o">-</span><span class="n">topic</span><span class="o">.</span> <span class="n">Make</span> <span class="n">sure</span> <span class="n">that</span> <span class="n">the</span> <span class="n">code</span> <span class="ow">is</span> <span class="n">inside</span> <span class="n">the</span> <span class="k">async</span> <span class="n">contextand</span> <span class="n">the</span> <span class="n">topic</span> <span class="n">has</span> <span class="n">events</span><span class="o">.</span>
 </code></pre></div>
 <p>We can solve this with a <code>delay</code> (<code>await asyncio.sleep(...)</code>) inside the <code>async with</code> context to give time to the <code>TestStreamClient</code> to create the topic, however if the buisness logic
-inside the <code>consume</code> is slow we need to add more delay, then it will become a <code>race condition</code>.</p>
+inside the <code>consume</code> is slow we need to add more delay, then it will become a <code>race condition</code>.  </p>
 <p>To proper solve it, we can specify to the <code>TestStreamClient</code> the extra topics that we need during the test cycle.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">kstreams.test_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestStreamClient</span>
