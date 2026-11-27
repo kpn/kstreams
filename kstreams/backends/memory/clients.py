@@ -296,9 +296,9 @@ class InMemoryConsumer(Base, Consumer):
         but it seems unnecessary for now; if end users request them we
         can add it
         """
-        data: typing.Dict[
-            TopicPartition, typing.List[typing.Optional[ConsumerRecord]]
-        ] = {self._assignment[0]: []}
+        data: dict[TopicPartition, list[typing.Optional[ConsumerRecord]]] = {
+            self._assignment[0]: []
+        }
 
         async def get_records():
             for _ in range(0, max_records):

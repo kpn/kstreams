@@ -206,18 +206,18 @@ class Stream:
 
     def __init__(
         self,
-        topics: typing.Union[typing.List[str], str],
+        topics: typing.Union[list[str], str],
         *,
         subscribe_by_pattern: bool = False,
         func: StreamFunc,
         backend: typing.Optional[Backend] = None,
         consumer_class: typing.Type[Consumer] = Consumer,
         name: typing.Optional[str] = None,
-        config: typing.Optional[typing.Dict] = None,
+        config: typing.Optional[dict] = None,
         deserializer: Deprecated[typing.Optional[Deserializer]] = None,
-        initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
+        initial_offsets: typing.Optional[list[TopicPartitionOffset]] = None,
         rebalance_listener: typing.Optional[RebalanceListener] = None,
-        middlewares: typing.Optional[typing.List[Middleware]] = None,
+        middlewares: typing.Optional[list[Middleware]] = None,
         error_policy: StreamErrorPolicy = StreamErrorPolicy.STOP,
         get_many: typing.Optional[GetMany] = None,
     ) -> None:
@@ -334,9 +334,7 @@ class Stream:
             pattern=self.topics[0] if self.subscribe_by_pattern else None,
         )
 
-    async def commit(
-        self, offsets: typing.Optional[typing.Dict[TopicPartition, int]] = None
-    ):
+    async def commit(self, offsets: typing.Optional[dict[TopicPartition, int]] = None):
         await self.consumer.commit(offsets=offsets)  # type: ignore
 
     async def getone(self) -> ConsumerRecord:
@@ -361,10 +359,10 @@ class Stream:
     )
     async def getmany(
         self,
-        partitions: typing.Optional[typing.List[TopicPartition]] = None,
+        partitions: typing.Optional[list[TopicPartition]] = None,
         timeout_ms: int = 0,
         max_records: typing.Optional[int] = None,
-    ) -> typing.Dict[TopicPartition, typing.List[ConsumerRecord]]:
+    ) -> dict[TopicPartition, list[ConsumerRecord]]:
         """
         Get a batch of events from the assigned TopicPartition.
 
@@ -537,14 +535,14 @@ class Stream:
 
 
 def stream(
-    topics: typing.Union[typing.List[str], str],
+    topics: typing.Union[list[str], str],
     *,
     subscribe_by_pattern: bool = False,
     name: typing.Optional[str] = None,
     deserializer: Deprecated[typing.Optional[Deserializer]] = None,
-    initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
+    initial_offsets: typing.Optional[list[TopicPartitionOffset]] = None,
     rebalance_listener: typing.Optional[RebalanceListener] = None,
-    middlewares: typing.Optional[typing.List[Middleware]] = None,
+    middlewares: typing.Optional[list[Middleware]] = None,
     get_many: typing.Optional[GetMany] = None,
     consumer_class: typing.Type[Consumer] = Consumer,
     **kwargs,

@@ -1,7 +1,6 @@
 import asyncio
 import contextlib
 import importlib
-import typing
 from typing import Set
 from unittest.mock import Mock, call
 
@@ -107,7 +106,7 @@ async def test_send_many_events_with_test_client(stream_engine: StreamEngine):
 
 @pytest.mark.parametrize("partition", (1, None))
 async def test_send_many_keyless_events_with_test_client(
-    stream_engine: StreamEngine, partition: typing.Optional[int]
+    stream_engine: StreamEngine, partition: int | None
 ):
     topic = "local--kstreams"
     client = TestStreamClient(stream_engine)
@@ -754,7 +753,7 @@ async def test_send_many_example():
     client = TestStreamClient(app.stream_engine)
 
     async with client:
-        metadata: typing.List[RecordMetadata] = await app.send_many()
+        metadata: list[RecordMetadata] = await app.send_many()
 
         topic = client.get_topic(topic_name="local--kstreams-send-many")
         assert topic.total_events == 5

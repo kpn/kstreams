@@ -85,13 +85,13 @@ class StreamEngine:
         self.serializer = serializer
         self.monitor = monitor
         self._producer: typing.Optional[Producer] = None
-        self._streams: typing.List[Stream] = []
+        self._streams: list[Stream] = []
         self._on_startup = [] if on_startup is None else list(on_startup)
         self._on_stop = [] if on_stop is None else list(on_stop)
         self._after_startup = [] if after_startup is None else list(after_startup)
         self._after_stop = [] if after_stop is None else list(after_stop)
         self.monitoring_task: typing.Optional[asyncio.Task] = None
-        self.streams_to_tasks: typing.Dict[Stream, asyncio.Task] = {}
+        self.streams_to_tasks: dict[Stream, asyncio.Task] = {}
 
     async def send(
         self,
@@ -102,7 +102,7 @@ class StreamEngine:
         timestamp_ms: typing.Optional[int] = None,
         headers: typing.Optional[Headers] = None,
         serializer: typing.Optional[Serializer] = NO_DEFAULT,
-        serializer_kwargs: typing.Optional[typing.Dict] = None,
+        serializer_kwargs: typing.Optional[dict] = None,
     ) -> RecordMetadata:
         """
         Attributes:
@@ -154,14 +154,14 @@ class StreamEngine:
         self,
         topic: str,
         *,
-        batch_events: typing.List[BatchEvent],
+        batch_events: list[BatchEvent],
         partition: typing.Optional[int] = None,
         key: typing.Any = None,
         timestamp_ms: typing.Optional[int] = None,
         headers: typing.Optional[Headers] = None,
         serializer: typing.Optional[Serializer] = NO_DEFAULT,
-        serializer_kwargs: typing.Optional[typing.Dict] = None,
-    ) -> typing.List[RecordMetadata]:
+        serializer_kwargs: typing.Optional[dict] = None,
+    ) -> list[RecordMetadata]:
         """
         If your application needs precise control over batch creation and submission
         and you’re willing to forego partition selection,
@@ -470,9 +470,7 @@ class StreamEngine:
 
         await self._start_streams_on_background_mode(streams)
 
-    async def _start_streams_on_background_mode(
-        self, streams: typing.List[Stream]
-    ) -> None:
+    async def _start_streams_on_background_mode(self, streams: list[Stream]) -> None:
         # start all the streams
         for stream in streams:
             self.streams_to_tasks[stream] = asyncio.create_task(stream.start())
@@ -588,13 +586,13 @@ class StreamEngine:
 
     def stream(
         self,
-        topics: typing.Union[typing.List[str], str],
+        topics: typing.Union[list[str], str],
         *,
         name: typing.Optional[str] = None,
         deserializer: Deprecated[typing.Optional[Deserializer]] = None,
-        initial_offsets: typing.Optional[typing.List[TopicPartitionOffset]] = None,
+        initial_offsets: typing.Optional[list[TopicPartitionOffset]] = None,
         rebalance_listener: typing.Optional[RebalanceListener] = None,
-        middlewares: typing.Optional[typing.List[Middleware]] = None,
+        middlewares: typing.Optional[list[Middleware]] = None,
         subscribe_by_pattern: bool = False,
         error_policy: StreamErrorPolicy = StreamErrorPolicy.STOP,
         get_many: typing.Optional[GetMany] = None,

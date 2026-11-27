@@ -29,7 +29,7 @@ class UdfHandler(BaseMiddleware):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         signature = inspect.signature(self.next_call)
-        self.params: typing.List[typing.Any] = [
+        self.params: list[typing.Any] = [
             typing.get_origin(param.annotation) or param.annotation
             for param in signature.parameters.values()
         ]
