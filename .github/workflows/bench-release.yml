@@ -10,42 +10,30 @@ jobs:
     if: ${{ startsWith(github.event.head_commit.message, 'bump:') }}
     runs-on: ubuntu-latest
     steps:
-    - name: Check out
-      uses: actions/checkout@v7
-      with:
-        fetch-depth: 0
-        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-    - name: Setup python
-      uses: actions/setup-python@v7
-      with:
-        python-version: '3.15'
-        architecture: x64
-    - name: Set Cache
-      uses: actions/cache@v6.1.0
-      id: cache  # name for referring later
-      with:
-        path: .venv/
-        # The cache key depends on poetry.lock
-        key: ${{ runner.os }}-cache-${{ hashFiles('poetry.lock') }}-315
-        restore-keys: |
-          ${{ runner.os }}-cache-
-          ${{ runner.os }}-
-
-    - name: Install Dependencies
-      # if: steps.cache.outputs.cache-hit != 'true'
-      run: |
-        python -m pip install -U pip poetry
-        poetry --version
-        poetry env use python3.15
-        poetry config --local virtualenvs.in-project true
-        poetry install
-    - name: Benchmark code
-      run: |
-        ./scripts/bench-current
-    - name: Commit benchmark
-      run: |
-        git config --global user.email "action@github.com"
-        git config --global user.name "GitHub Action"
-        git add .benchmarks/
-        git commit -m "bench: current release"
-        git push origin master
+      - name: Check out
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - name: Setup python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.15"
+          architecture: x64
+      - name: Install Dependencies
+        run: |
+          python -m pip install -U pip poetry
+          poetry --version
+          poetry config --local virtualenvs.in-project true
+          poetry env use python3.15
+          poetry install
+      - name: Benchmark code
+        run: |
+          ./scripts/bench-current
+      - name: Commit benchmark
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add .benchmarks/
+          git commit -m "bench: current release"
+          git push origin master
