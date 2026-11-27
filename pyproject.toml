@@ -36,13 +36,13 @@ pytest-benchmark = "^5.1.0"
 pytest-cov = ">=6,<8"
 pytest-httpserver = "^1.1.0"
 mypy = "^2"
-ruff = "0.17"
+ruff = "^0.17"
 aiorun = ">=2024.5.1,<2026.0.0"
 jedi = "^0.20"
 mkdocs = "^1.1.2"
 uvicorn = "<1.0"
 commitizen = "^4"
-fastapi = ">=0.115,<0.164"
+fastapi = ">=0.115,<0.166"
 mkdocs-material = "^9.5.39"
 starlette-prometheus = "^0.10.0"
 codecov = "^2.1.12"
@@ -58,13 +58,16 @@ tag_format = "$version"
 update_changelog_on_bump = true
 major_version_zero = true
 
-[tool.pytest.ini_options]
+[tool.pytest]
 asyncio_mode = "auto"
 log_level = "DEBUG"
 filterwarnings = [
     "ignore::DeprecationWarning",
     "ignore::PendingDeprecationWarning",
 ]
+
+[tool.mypy]
+check_untyped_defs = true
 
 [[tool.mypy.overrides]]
 module = "aiokafka.*"

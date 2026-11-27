@@ -685,9 +685,9 @@ async def test_streams_consume_events_with_initial_offsets(stream_engine: Stream
 
     assignments: Set[TopicPartition] = set()
     assignments.update(
-        tp0,
-        tp1,
-        tp2,
+        [tp0],
+        [tp1],
+        [tp2],
     )
 
     async with client:
